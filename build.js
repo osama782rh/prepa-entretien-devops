@@ -30,5 +30,6 @@ function build(template, sortie) {
 
 console.log("Génération des fichiers autonomes :");
 build("quiz.html", "quiz.html");
+build("qcm.html", "qcm.html");
 build("etude.html", "etude.html");
 console.log("Terminé. Ouvre index.html dans ton navigateur.");

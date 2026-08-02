@@ -3412,7 +3412,7 @@ function home(){
   document.getElementById("app").innerHTML = `
     <div class="card">
       <h2 style="margin:0 0 4px;font-size:22px">Entraînement libre</h2>
-      <p class="sub">Tu tapes ta réponse avec tes mots — aucun QCM. Sois précis : le moteur cherche les mots-clés qui comptent. Si tu avais juste mais formulé autrement, tu peux te corriger toi-même après coup.</p>
+      <p class="sub">Tu tapes ta réponse avec tes mots. C'est le mode exigeant : si un niveau te bloque, va d'abord le faire en <a href="qcm.html">choix multiples</a> puis reviens. Le bouton <b>Indice</b> débloque une piste, et si tu avais juste mais formulé autrement, tu peux te corriger toi-même après coup.</p>
       <div class="modes">
         <button onclick="startDue()">Révision du jour</button>
         <button class="ghost" onclick="startRandom(30)">30 au hasard</button>
@@ -3425,8 +3425,11 @@ function home(){
     <div class="levels">${lv}</div>
     <div class="card" style="font-size:13.5px;color:var(--muted)">
       <b style="color:var(--ink)">Méthode anti-dump.</b> Le but n'est pas de reconnaître une réponse mais de savoir l'expliquer à voix haute. Avant de valider, formule ta réponse comme si un chef de projet BNP était en face. Les questions ratées reviennent plus vite (répétition espacée, 6 paliers).
-      <div class="row"><button class="ghost tiny" onclick="resetAll()">Réinitialiser ma progression</button>
-      <button class="ghost tiny" onclick="location.href='etude.html'">Partie étude →</button></div>
+      <div class="row">
+        <button class="ghost tiny" onclick="location.href='qcm.html'">← Mode choix multiples</button>
+        <button class="ghost tiny" onclick="location.href='etude.html'">Fiches d'étude →</button>
+        <button class="ghost tiny" onclick="resetAll()">Réinitialiser ma progression</button>
+      </div>
     </div>`;
   headerStats();
 }
@@ -3455,9 +3458,10 @@ function render(){
       <textarea id="ans" placeholder="Explique avec tes mots…" autocomplete="off" spellcheck="false"></textarea>
       <div class="row">
         <button onclick="check()">Valider</button>
+        <button class="ghost" onclick="indice()">Indice</button>
         <button class="ghost" onclick="skip()">Je ne sais pas</button>
       </div>
-      <div class="hint"><span class="kbd">Ctrl</span>+<span class="kbd">Entrée</span> pour valider</div>
+      <div class="hint" id="zoneIndice"><span class="kbd">Ctrl</span>+<span class="kbd">Entrée</span> pour valider</div>
       <div id="fb"></div>
     </div>`;
   const ta = document.getElementById("ans");
@@ -3483,7 +3487,19 @@ function feedback(ok, it, selfEval){
       ${selfEval && ok ? `<button class="ghost" onclick="selfKo()">Non, je devinais ✗</button>`:""}
     </div>`;
   document.getElementById("ans").disabled = true;
-  document.querySelectorAll(".row button").forEach(b=>{ if(b.textContent.includes("Valider")||b.textContent.includes("Je ne sais pas")) b.remove(); });
+  document.querySelectorAll(".row button").forEach(b=>{
+    const t = b.textContent;
+    if(t.includes("Valider") || t.includes("Indice") || t.includes("Je ne sais pas")) b.remove();
+  });
+}
+
+function indice(){
+  const it = S.list[S.i];
+  const mots = (it.accept || it.must || []).flat();
+  const nb = it.must ? it.must.length : 1;
+  document.getElementById("zoneIndice").innerHTML =
+    `Piste : la réponse tourne autour de « <b>${esc(mots[0])}</b> »` +
+    (nb > 1 ? ` — et il faut <b>${nb} éléments</b> distincts.` : ".");
 }
 
 function check(){
