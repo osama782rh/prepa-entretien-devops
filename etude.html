@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiches d'étude — Entretien BNP</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone.svg">
+<meta name="theme-color" content="#0d111a">
+<script>
+if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){
+  window.addEventListener("load", ()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+<style>
+  :root{
+    --bg:#0d111a; --surface:#151b27; --surface2:#1d2432; --ink:#dde4f0; --muted:#8d9ab2;
+    --accent:#6c8cff; --accent-soft:#1a2440; --ok:#3ecf8e; --warn:#edaa5f; --warn-soft:#2a2013;
+    --ko:#ff6b6b; --ko-soft:#2c1416; --border:#26303f; --code:#0a0e16;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f5f7fb; --surface:#fff; --surface2:#f0f3f9; --ink:#161d2b; --muted:#5c687d;
+      --accent:#2b5fd9; --accent-soft:#e6edfc; --ok:#1e7a46; --warn:#8a5a00; --warn-soft:#fdf3e3;
+      --ko:#b3352b; --ko-soft:#fbeae8; --border:#dce2ee; --code:#eef1f7;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;line-height:1.6}
+  .layout{display:flex;max-width:1180px;margin:0 auto;gap:24px;padding:20px 16px 80px}
+  nav{width:230px;flex-shrink:0;position:sticky;top:20px;align-self:flex-start;max-height:calc(100vh - 40px);overflow-y:auto}
+  nav h2{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:16px 0 6px}
+  nav a{display:block;padding:6px 10px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:14px;border-left:2px solid transparent}
+  nav a:hover{background:var(--surface2)}
+  nav a.on{background:var(--accent-soft);color:var(--accent);border-left-color:var(--accent);font-weight:600}
+  main{flex:1;min-width:0}
+  header.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  header.top h1{font-size:19px;margin:0}
+  header.top h1 span{color:var(--accent)}
+  a.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;padding:.5rem 1rem;border-radius:9px;font-size:14px;font-weight:600}
+  article{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;margin-bottom:18px}
+  article h2{margin:0 0 4px;font-size:23px}
+  article h3{margin:26px 0 8px;font-size:16.5px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:5px}
+  article h4{margin:18px 0 6px;font-size:14.5px}
+  article p{margin:8px 0}
+  article ul,article ol{margin:8px 0;padding-left:22px}
+  article li{margin:4px 0}
+  code{font-family:"Cascadia Code",Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:5px;font-size:.88em;border:1px solid var(--border)}
+  pre{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:13px 15px;overflow-x:auto;font-size:13.2px;line-height:1.5}
+  pre code{background:none;border:none;padding:0}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px;display:block;overflow-x:auto}
+  th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+  th{background:var(--surface2);font-weight:650}
+  .lead{color:var(--muted);font-size:14.5px;margin-bottom:4px}
+  .box{border-radius:10px;padding:12px 15px;margin:14px 0;font-size:14.3px;border-left:3px solid}
+  .box.piege{background:var(--ko-soft);border-color:var(--ko)}
+  .box.dire{background:var(--warn-soft);border-color:var(--warn)}
+  .box.piege b,.box.dire b{display:block;margin-bottom:4px;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+  .toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-top:14px}
+  .toc a{display:block;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-decoration:none;color:var(--ink)}
+  .toc a:hover{border-color:var(--accent)}
+  .toc a b{display:block;font-size:15px}
+  .toc a span{font-size:12.5px;color:var(--muted)}
+  @media(max-width:860px){
+    .layout{flex-direction:column;padding:16px 12px 60px}
+    article{padding:20px}
+    nav{width:100%;position:static;max-height:none;order:-1;display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;border-bottom:1px solid var(--border)}
+    nav h2{display:none}
+    nav a{flex:0 0 auto;white-space:nowrap;border-left:none;border-bottom:2px solid transparent;border-radius:8px 8px 0 0}
+    nav a.on{border-left:none;border-bottom-color:var(--accent)}
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav id="nav"></nav>
+  <main>
+    <header class="top">
+      <h1>Fiches <span>d'étude</span> — Entretien BNP</h1>
+      <a class="btn" href="quiz.html">Aller au quiz →</a>
+    </header>
+    <div id="content"></div>
+  </main>
+</div>
+
+<script>
+/* fiches/00-plan.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"plan",
+titre:"Plan de révision 15 jours",
+lead:"Comment utiliser ce dossier pour arriver prêt le jour J.",
+html:`
+<h3>Le principe</h3>
+<p>Tu ne retiendras pas en lisant. Tu retiendras en <b>essayant de répondre à voix haute, en te trompant, puis en corrigeant</b>. Le quiz est donc l'outil principal ; les fiches ne servent qu'à combler les trous que le quiz révèle.</p>
+<p>Règle de fer : ne lis une fiche qu'<b>après</b> avoir raté les questions du domaine correspondant. Lire avant donne l'illusion de savoir.</p>
+
+<h3>Rythme quotidien (≈ 2 à 3 h)</h3>
+<ol>
+<li><b>15 min — Révision du jour</b> : bouton « Révision du jour » dans le quiz. Ce sont les questions dues selon la répétition espacée. Non négociable, tous les jours.</li>
+<li><b>45 min — Nouveau niveau</b> : un niveau du quiz, en formulant chaque réponse <b>à voix haute et en entier</b> avant de taper. Si tu ne peux pas l'expliquer oralement, tu ne le sais pas.</li>
+<li><b>30 min — Fiches</b> : lis uniquement les fiches des domaines où tu es tombé sous 70 %.</li>
+<li><b>45 min — Pratique réelle</b> : tape les commandes, écris le Terraform, casse un pod. La mémoire des mains compte double en entretien technique.</li>
+<li><b>15 min — Mes points faibles</b> : bouton dédié, en fin de session.</li>
+</ol>
+
+<h3>Découpage sur 15 jours</h3>
+<table>
+<tr><th>Jours</th><th>Quiz</th><th>Focus pratique</th></tr>
+<tr><td>J1–J2</td><td>Niveaux 1 et 2</td><td>Linux : permissions, redirections, systemd, scripts avec <code>set -euo pipefail</code></td></tr>
+<tr><td>J3–J4</td><td>Niveau 3</td><td>Docker : multi-stage, non-root, debug d'un conteneur qui plante</td></tr>
+<tr><td>J5–J6</td><td>Niveau 4</td><td>Kubernetes : deployment + service + ingress, probes, requests/limits</td></tr>
+<tr><td>J7–J8</td><td>Niveau 5</td><td>Terraform : modules, for_each, backend distant, import, moved</td></tr>
+<tr><td>J9–J10</td><td>Niveau 6</td><td>Troubleshooting : casse volontairement des choses et répare-les chronomètre en main</td></tr>
+<tr><td>J11–J12</td><td>Niveaux 7 et 8</td><td>Architecture : dessine 3 archi au tableau (web 3-tiers, microservices, DR)</td></tr>
+<tr><td>J13</td><td>Niveau 9</td><td>Gouvernance, coûts, conformité — spécifique banque</td></tr>
+<tr><td>J14</td><td>Niveau 10</td><td>Oral : réponds aux 28 questions à voix haute, chronométré, sans lire</td></tr>
+<tr><td>J15</td><td>Marathon complet</td><td>Repos relatif. Relis la fiche « Jour J » uniquement.</td></tr>
+</table>
+
+<div class="box dire"><b>À faire absolument</b>
+Enregistre-toi en train de répondre à 5 questions du niveau 10. Réécoute. C'est brutal, et c'est ce qui te fera progresser le plus vite sur la forme — le débit, les « euh », les réponses qui partent dans tous les sens.</div>
+
+<h3>Ce qui est évalué par trois seniors</h3>
+<ul>
+<li><b>La profondeur</b> : ils vont relancer 3 fois sur la même question. « Et pourquoi ? », « et si ça tombe ? », « et à 10 000 req/s ? ». Une réponse apprise par cœur s'effondre à la deuxième relance.</li>
+<li><b>L'honnêteté</b> : dire « je ne sais pas, voilà comment je chercherais » vaut mieux qu'un bluff. Ils sont trois : l'un des trois saura.</li>
+<li><b>Le raisonnement d'exploitant</b> : qu'est-ce qui casse, comment tu le détectes, comment tu reviens en arrière. Beaucoup plus que la syntaxe.</li>
+<li><b>L'arbitrage</b> : à leur niveau, il n'y a pas de bonne réponse universelle. Il y a un contexte, des contraintes et un choix assumé.</li>
+</ul>
+
+<h3>Les 10 sujets qui tombent quasi sûrement</h3>
+<ol>
+<li>Explique ce qui se passe quand tu tapes une URL (version infra).</li>
+<li>Différence Security Group / NACL, ou NSG / Azure Firewall.</li>
+<li>Le state Terraform : à quoi il sert, comment tu le sécurises, que fait-on à plusieurs.</li>
+<li>Pod en CrashLoopBackOff / Pending : ta démarche de diagnostic.</li>
+<li>Comment tu gères les secrets dans un pipeline.</li>
+<li>Rolling update, blue/green, canary : différences et quand tu prends quoi.</li>
+<li>Comment tu fais un rollback quand la base a été migrée.</li>
+<li>Requests vs limits, et pourquoi un pod se fait OOMKill.</li>
+<li>Comment tu construis un SLO et à quoi sert un error budget.</li>
+<li>Raconte un incident que tu as géré.</li>
+</ol>
+`
+}]);
+
+</script>
+<script>
+/* fiches/01-linux.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"linux",
+titre:"Linux & Bash",
+lead:"Le socle. Un DevOps qui bafouille sur Linux perd la confiance des seniors en 3 minutes.",
+html:`
+<h3>Permissions</h3>
+<p>Format <code>drwxr-xr-x</code> : 1er caractère = TYPE (<code>d</code> répertoire, <code>-</code> fichier, <code>l</code> lien), puis 3 triplets rwx pour propriétaire / groupe / autres.</p>
+<table>
+<tr><th>Octal</th><th>Droits</th><th>Usage typique</th></tr>
+<tr><td>400</td><td>r--------</td><td>Clé privée .pem non modifiable</td></tr>
+<tr><td>600</td><td>rw-------</td><td>Clé SSH, fichier de secrets</td></tr>
+<tr><td>644</td><td>rw-r--r--</td><td>Fichier de config lisible</td></tr>
+<tr><td>755</td><td>rwxr-xr-x</td><td>Script exécutable, répertoire</td></tr>
+</table>
+<p>Sur un répertoire : <code>x</code> = droit de TRAVERSER, <code>r</code> = droit de LISTER. Un répertoire en 644 est illisible en pratique.</p>
+<p>Bits spéciaux : <b>setuid</b> (4xxx, s'exécute avec les droits du propriétaire — <code>passwd</code>), <b>setgid</b> (2xxx, hérite du groupe), <b>sticky bit</b> (1xxx, seul le propriétaire peut supprimer — <code>/tmp</code>).</p>
+
+<h3>Processus et signaux</h3>
+<table>
+<tr><th>Signal</th><th>N°</th><th>Effet</th></tr>
+<tr><td>SIGHUP</td><td>1</td><td>Rechargement de config (convention)</td></tr>
+<tr><td>SIGINT</td><td>2</td><td>Ctrl+C, interceptable</td></tr>
+<tr><td>SIGTERM</td><td>15</td><td>Arrêt propre demandé, interceptable — le défaut de <code>kill</code></td></tr>
+<tr><td>SIGKILL</td><td>9</td><td>Tué par le noyau, NON interceptable</td></tr>
+<tr><td>SIGSTOP</td><td>19</td><td>Suspend, non interceptable</td></tr>
+</table>
+<p>Exit code d'un process tué par signal = <b>128 + n°</b>. Donc <b>137</b> = SIGKILL (souvent OOM), <b>143</b> = SIGTERM. À connaître par cœur : ça tombe sur Kubernetes.</p>
+<p>États : R (running), S (sleep interruptible), <b>D</b> (uninterruptible, attente I/O — compte dans la load), Z (zombie), T (stoppé).</p>
+
+<h3>Diagnostic — la séquence à réciter</h3>
+<pre><code>uptime              # load 1/5/15 min — comparer au nb de cœurs (nproc)
+top / htop          # qui consomme, %CPU, %MEM, %wa
+free -m             # mémoire + SWAP (swap actif = mort lente)
+vmstat 1 5          # si/so (swap in/out), wa (iowait), r (run queue)
+iostat -x 1         # %util par device, await
+df -h / df -i       # espace ET inodes
+ss -tulnp           # ports en écoute + process
+dmesg -T | tail     # OOM killer, erreurs matérielles, réseau
+journalctl -u svc -f --since "10 min ago"</code></pre>
+
+<div class="box piege"><b>Pièges classiques</b>
+<ul>
+<li><b>Load élevée mais CPU bas</b> = attente I/O (état D), pas un problème de CPU.</li>
+<li><b>df plein mais du ne trouve rien</b> = fichier supprimé encore ouvert (<code>lsof | grep deleted</code>) ou inodes épuisés (<code>df -i</code>).</li>
+<li><b>« Too many open files »</b> = <code>LimitNOFILE</code> dans l'unité systemd, pas <code>ulimit</code> dans le shell. Et chercher la fuite d'abord.</li>
+<li><b>Le swap qui s'active</b> dégrade tout : mieux vaut souvent un OOM franc qu'un serveur qui rame une heure.</li>
+</ul></div>
+
+<h3>Bash — les réflexes de production</h3>
+<pre><code>#!/usr/bin/env bash
+set -euo pipefail          # échec immédiat, var non définie = erreur, échec dans un pipe
+IFS=$'\\n\\t'               # évite le découpage sur les espaces
+trap 'echo "erreur ligne $LINENO" >&2' ERR
+trap 'rm -f "$TMP"' EXIT   # nettoyage garanti
+
+TMP=$(mktemp)
+: "\${API_URL:?API_URL est obligatoire}"   # échoue avec un message clair</code></pre>
+<ul>
+<li><code>"$@"</code> et jamais <code>$*</code> pour relayer des arguments.</li>
+<li>Toujours guillemeter les variables : <code>"$var"</code>. Un chemin avec espace casse tout sinon.</li>
+<li><code>$(cmd)</code> plutôt que les backticks (imbricable, lisible).</li>
+<li><code>[[ ]]</code> plutôt que <code>[ ]</code> en bash (pas de découpage de mots, regex avec <code>=~</code>).</li>
+<li>Vérifier avec <b>shellcheck</b> en CI — mentionne-le, c'est un signal de maturité.</li>
+</ul>
+
+<h3>Texte : les 5 outils qui suffisent</h3>
+<pre><code>grep -rniE "pattern" .          # récursif, insensible, numéros de ligne, regex étendue
+grep -v / -c / -A3 -B3          # inverse / compte / contexte
+awk -F: '{print $1, $3}'        # colonnes, séparateur custom
+awk '$3 > 100 {sum+=$3} END{print sum}'
+sed -i 's/ancien/nouveau/g' f   # remplacement en place
+sort -k2 -rn | uniq -c | head   # tri numérique inverse + comptage
+cut -d: -f1,3 /etc/passwd
+xargs -r -n1 -P4 cmd            # parallélisation, -r = rien si entrée vide
+find . -type f -mtime +30 -name "*.log" -delete</code></pre>
+<p><b>À retenir</b> : <code>uniq</code> ne dédoublonne que des lignes ADJACENTES → toujours <code>sort | uniq</code>.</p>
+
+<h3>systemd</h3>
+<pre><code>systemctl status|start|stop|restart|reload mon.service
+systemctl enable --now mon.service     # au boot + tout de suite
+systemctl list-units --failed
+systemctl daemon-reload                # après modif d'un fichier .service
+journalctl -u mon.service -f -n 100 --since "1 hour ago" -p err</code></pre>
+<pre><code>[Unit]
+Description=Mon API
+After=network-online.target
+
+[Service]
+Type=simple
+User=app
+ExecStart=/opt/app/bin/api
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+<p><code>enable</code> ≠ <code>start</code> : <code>enable</code> crée le lien pour le boot, il ne lance rien maintenant (d'où <code>--now</code>).</p>
+
+<h3>Namespaces & cgroups (le socle des conteneurs)</h3>
+<table>
+<tr><th>Mécanisme</th><th>Rôle</th><th>Exemples</th></tr>
+<tr><td>Namespaces</td><td>Isolent ce que le process VOIT</td><td>pid, net, mnt, uts, ipc, user, cgroup</td></tr>
+<tr><td>cgroups</td><td>Limitent ce qu'il CONSOMME</td><td>cpu, memory, io, pids</td></tr>
+<tr><td>capabilities</td><td>Découpent les privilèges root</td><td>NET_ADMIN, SYS_TIME…</td></tr>
+</table>
+<p>Un conteneur = un processus normal + namespaces + cgroups + un rootfs overlay. Savoir dire ça posément impressionne toujours.</p>
+
+<div class="box dire"><b>Formulation qui marque des points</b>
+« Avant de regarder l'application, je valide le système : load, mémoire et swap, iowait, espace disque et inodes, ports en écoute, et <code>dmesg</code> pour un éventuel OOM. Ça élimine 80 % des fausses pistes en deux minutes. »</div>
+`
+}]);
+
+</script>
+<script>
+/* fiches/02-reseau.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"reseau",
+titre:"Réseau (TCP/IP, DNS, TLS, HTTP)",
+lead:"Le domaine où les seniors coincent le plus de candidats, parce que tout le monde le survole.",
+html:`
+<h3>Adressage et masques — à savoir de tête</h3>
+<table>
+<tr><th>CIDR</th><th>Adresses</th><th>Utilisables (AWS)</th><th>Usage</th></tr>
+<tr><td>/16</td><td>65 536</td><td>—</td><td>Un VPC / VNet entier</td></tr>
+<tr><td>/24</td><td>256</td><td>251</td><td>Un subnet standard</td></tr>
+<tr><td>/26</td><td>64</td><td>59</td><td>Petit subnet (endpoints, bastion)</td></tr>
+<tr><td>/28</td><td>16</td><td>11</td><td>Minimum AWS</td></tr>
+<tr><td>/32</td><td>1</td><td>—</td><td>Une IP unique (règles de firewall)</td></tr>
+</table>
+<p>Calcul rapide : <b>2^(32 − masque)</b>. AWS réserve 5 adresses par subnet (réseau, routeur, DNS, réservé, broadcast), Azure en réserve 5 aussi.</p>
+<p>Plages privées RFC1918 : <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>. Ne jamais choisir un plan qui chevauche celui de l'on-premise : le peering et le VPN deviennent impossibles.</p>
+
+<h3>TCP vs UDP</h3>
+<table>
+<tr><th></th><th>TCP</th><th>UDP</th></tr>
+<tr><td>Connexion</td><td>Handshake 3 temps (SYN, SYN-ACK, ACK)</td><td>Aucune</td></tr>
+<tr><td>Fiabilité</td><td>Retransmission, ordre garanti</td><td>Aucune garantie</td></tr>
+<tr><td>Contrôle</td><td>Congestion + flux</td><td>Non</td></tr>
+<tr><td>Usage</td><td>HTTP, SSH, bases de données</td><td>DNS, VoIP, streaming, métriques, QUIC</td></tr>
+</table>
+<p>Fermeture TCP : FIN / ACK / FIN / ACK, puis <b>TIME_WAIT</b> (2×MSL) côté initiateur. Beaucoup de TIME_WAIT = normal sur un proxy ; beaucoup de <b>CLOSE_WAIT</b> = <b>bug applicatif</b>, l'application ne ferme pas ses sockets.</p>
+
+<h3>Diagnostic réseau : la logique DROP vs REJECT</h3>
+<table>
+<tr><th>Symptôme client</th><th>Cause probable</th></tr>
+<tr><td>Timeout (ça pend)</td><td>Paquet DROPPÉ : SG/NSG/NACL, route absente, mauvaise IP</td></tr>
+<tr><td>Connection refused (immédiat)</td><td>Le paquet arrive, mais rien n'écoute sur le port</td></tr>
+<tr><td>Erreur DNS / nom inconnu</td><td>Résolution, pas réseau</td></tr>
+<tr><td>Petites requêtes OK, gros transferts figés</td><td>MTU / PMTUD cassé (ICMP bloqué)</td></tr>
+<tr><td>Intermittent et erratique</td><td>Conntrack saturé, un backend sur N en panne, DNS</td></tr>
+</table>
+<pre><code>dig +short api.exemple.com          # résolution seule
+dig @8.8.8.8 api.exemple.com        # tester un autre resolver
+nc -zv host 443                     # le port répond-il ?
+curl -v https://host/path           # DNS + TCP + TLS + HTTP, avec les temps
+curl -w "%{time_namelookup} %{time_connect} %{time_appconnect} %{time_total}\\n" -o /dev/null -s URL
+openssl s_client -connect host:443 -servername host -showcerts
+traceroute / mtr host               # où ça s'arrête
+tcpdump -i any -n port 443 -c 50    # le SYN arrive-t-il ? le SYN-ACK repart-il ?
+ip route get 10.0.2.15              # quelle route sera empruntée</code></pre>
+
+<h3>DNS</h3>
+<table>
+<tr><th>Type</th><th>Rôle</th></tr>
+<tr><td>A / AAAA</td><td>Nom → IPv4 / IPv6</td></tr>
+<tr><td>CNAME</td><td>Alias vers un autre NOM. <b>Interdit à l'apex</b> du domaine</td></tr>
+<tr><td>ALIAS / A-alias</td><td>Équivalent CNAME utilisable à l'apex (Route 53, Azure DNS)</td></tr>
+<tr><td>MX / TXT / NS / SOA</td><td>Mail / vérifications et SPF-DKIM / serveurs de noms / autorité</td></tr>
+<tr><td>SRV</td><td>Service + port (utilisé par K8s pour les headless services)</td></tr>
+</table>
+<p><b>TTL</b> : le nerf de la guerre en bascule. On abaisse le TTL (60 s) plusieurs heures AVANT une migration, sinon les caches gardent l'ancienne IP pendant des heures. Attention : certains resolvers ignorent les TTL très courts.</p>
+
+<h3>TLS</h3>
+<ol>
+<li>ClientHello : versions et suites supportées, SNI (quel nom d'hôte on demande).</li>
+<li>ServerHello + certificat (+ chaîne d'intermédiaires).</li>
+<li>Le client valide : chaîne jusqu'à une CA de confiance, date de validité, nom qui correspond, révocation.</li>
+<li>Échange de clés ECDHE → dérivation d'une <b>clé de session symétrique</b> (forward secrecy).</li>
+<li>Tout le trafic est ensuite chiffré en symétrique (AES-GCM).</li>
+</ol>
+<div class="box piege"><b>Erreurs de certificat les plus fréquentes en entreprise</b>
+<ul>
+<li><b>Chaîne incomplète</b> : le navigateur compense, pas un client Java/Go/curl. Vérifier avec <code>openssl s_client -showcerts</code>.</li>
+<li><b>CA d'entreprise absente</b> du truststore du conteneur — classique derrière un proxy d'inspection TLS bancaire. Il faut injecter le bundle CA dans l'image.</li>
+<li><b>SNI manquant</b> sur un hôte mutualisé → on tombe sur le mauvais certificat.</li>
+<li><b>Expiration</b> : la cause d'incident la plus bête et la plus fréquente. Il faut une alerte à J-30 et de l'automatisation (ACME, Key Vault, ACM).</li>
+</ul></div>
+
+<h3>HTTP — codes à connaître</h3>
+<table>
+<tr><th>Code</th><th>Sens</th><th>Ce que ça dit en prod</th></tr>
+<tr><td>301 / 302</td><td>Redirection permanente / temporaire</td><td>301 est mis en cache par le navigateur — attention</td></tr>
+<tr><td>400 / 422</td><td>Requête invalide</td><td>Problème client, pas serveur</td></tr>
+<tr><td>401 / 403</td><td>Non authentifié / non autorisé</td><td>401 = qui es-tu, 403 = tu n'as pas le droit</td></tr>
+<tr><td>429</td><td>Trop de requêtes</td><td>Throttling : respecter <code>Retry-After</code></td></tr>
+<tr><td>499</td><td>Client parti (nginx)</td><td>Le client a abandonné : ton backend est trop lent</td></tr>
+<tr><td>500</td><td>Erreur applicative</td><td>Bug côté code</td></tr>
+<tr><td>502</td><td>Bad gateway</td><td>Le backend a répondu n'importe quoi ou est mort</td></tr>
+<tr><td>503</td><td>Service indisponible</td><td>Aucun backend sain / surcharge</td></tr>
+<tr><td>504</td><td>Gateway timeout</td><td>Le backend est trop lent, le proxy a coupé</td></tr>
+</table>
+<p><b>502 vs 503 vs 504</b> : question classique. 502 = réponse invalide du backend, 503 = pas de backend disponible, 504 = backend trop lent. Savoir les distinguer oriente immédiatement le diagnostic.</p>
+
+<h3>Load balancing</h3>
+<table>
+<tr><th></th><th>L4</th><th>L7</th></tr>
+<tr><td>Voit</td><td>IP + port</td><td>Host, path, headers, cookies</td></tr>
+<tr><td>Permet</td><td>TCP/UDP, TLS passthrough, IP source préservée</td><td>Routage par URL, terminaison TLS, WAF, sticky session, réécriture</td></tr>
+<tr><td>AWS / Azure</td><td>NLB / Azure Load Balancer</td><td>ALB / Application Gateway</td></tr>
+</table>
+<p><b>Health checks</b> : un LB ne route que vers les cibles saines. Une santé mal configurée (endpoint qui teste la base alors qu'on veut juste savoir si le process vit) provoque des retraits en cascade. Séparer « liveness » et « readiness » vaut aussi pour les LB.</p>
+
+<h3>Proxy vs reverse proxy vs NAT</h3>
+<ul>
+<li><b>Proxy (forward)</b> : côté client, sortant. Filtrage, cache, inspection TLS. Obligatoire en banque — pense à <code>HTTP_PROXY</code>/<code>NO_PROXY</code> dans les conteneurs.</li>
+<li><b>Reverse proxy</b> : côté serveur, entrant. nginx, ALB, App Gateway, Ingress.</li>
+<li><b>NAT</b> : réécriture d'adresse. En sortie de VPC, l'IP source devient celle du NAT Gateway → c'est CETTE IP que le partenaire doit autoriser.</li>
+</ul>
+
+<div class="box dire"><b>La question « que se passe-t-il quand je tape une URL »</b>
+Réponds en 8 étapes : résolution DNS (caches successifs) → connexion TCP → handshake TLS → requête HTTP au reverse proxy → sélection d'un backend sain → traitement applicatif (cache, base) → réponse (compression, cache CDN) → rendu et appels secondaires. Puis propose d'aller plus loin sur l'étape qui les intéresse. C'est LA question qui permet de démontrer toute ta culture infra en 2 minutes.</div>
+`
+}]);
+
+</script>
+<script>
+/* fiches/03-git-docker.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"git-docker",
+titre:"Git & Docker",
+lead:"Deux outils que tu utilises tous les jours — donc deux domaines où l'approximation se voit immédiatement.",
+html:`
+<h3>Git — modèle mental</h3>
+<p>Un commit = un objet immuable contenant un pointeur vers un ARBRE (instantané complet du projet), le ou les parents, l'auteur et le message. Git stocke des <b>instantanés</b>, pas des diffs — les diffs sont calculés à l'affichage.</p>
+<p>Trois zones : <b>working tree</b> (tes fichiers) → <b>index / staging</b> (le brouillon du prochain commit) → <b>dépôt</b> (les commits).</p>
+
+<h3>Les commandes qui comptent</h3>
+<pre><code>git add -p                    # choisir morceau par morceau ce qui part
+git commit --amend            # corriger le dernier commit (jamais après un push partagé)
+git rebase -i HEAD~5          # nettoyer l'historique local avant la PR
+git log --oneline --graph --all
+git diff --staged
+git stash / git stash pop
+git bisect start / bad / good # trouver le commit fautif en log2(n) étapes
+git reflog                    # LE filet de sécurité : retrouver ce qu'on a "perdu"
+git blame -L 40,60 fichier
+git cherry-pick &lt;sha&gt;         # rejouer un commit ailleurs (hotfix vers release)
+git revert &lt;sha&gt;              # annuler en ajoutant un commit (sûr sur branche partagée)</code></pre>
+
+<h3>reset : les trois modes</h3>
+<table>
+<tr><th>Mode</th><th>HEAD</th><th>Index</th><th>Fichiers</th><th>Quand</th></tr>
+<tr><td>--soft</td><td>déplacé</td><td>gardé</td><td>gardés</td><td>Refaire le commit autrement</td></tr>
+<tr><td>--mixed</td><td>déplacé</td><td>vidé</td><td>gardés</td><td>Défaire un <code>add</code></td></tr>
+<tr><td>--hard</td><td>déplacé</td><td>vidé</td><td><b>écrasés</b></td><td>Tout jeter — irréversible sauf reflog</td></tr>
+</table>
+
+<h3>merge vs rebase</h3>
+<ul>
+<li><b>merge</b> : crée un commit de fusion, préserve l'histoire réelle, sûr sur une branche partagée.</li>
+<li><b>rebase</b> : rejoue tes commits au-dessus de la cible → historique linéaire mais <b>nouveaux hash</b>.</li>
+<li><b>Règle d'or</b> : jamais de rebase sur une branche déjà poussée et partagée. En pratique : rebase local pour nettoyer avant la PR, merge pour intégrer.</li>
+</ul>
+
+<div class="box piege"><b>Le piège du secret commité</b>
+<code>git revert</code> ne protège rien : le blob reste dans l'historique. Il faut (1) <b>révoquer le secret immédiatement</b> — c'est la seule action qui compte —, (2) réécrire l'historique (<code>git filter-repo</code>, BFG), (3) forcer le push et purger les forks/caches, (4) chercher ce qui a été fait avec dans les logs d'audit. Un candidat qui répond juste « je fais un revert » se fait éliminer sur cette question.</div>
+
+<h3>Stratégies de branches</h3>
+<table>
+<tr><th></th><th>GitFlow</th><th>Trunk-based</th></tr>
+<tr><td>Branches</td><td>main, develop, feature, release, hotfix</td><td>main + branches de quelques heures</td></tr>
+<tr><td>Intégration</td><td>Tardive, gros merges</td><td>Continue, petits lots</td></tr>
+<tr><td>Inachevé</td><td>Reste en branche</td><td>Caché par feature flag</td></tr>
+<tr><td>Adapté à</td><td>Releases versionnées, produits packagés</td><td>SaaS, livraison fréquente</td></tr>
+</table>
+
+<h3>Docker — Dockerfile de production</h3>
+<pre><code># syntax=docker/dockerfile:1
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY package*.json ./              # AVANT le code : cache des dépendances
+RUN npm ci --omit=dev
+COPY . .
+RUN npm run build
+
+FROM gcr.io/distroless/nodejs20-debian12 AS runtime
+WORKDIR /app
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+USER 10001                          # non-root
+EXPOSE 3000
+ENTRYPOINT ["/nodejs/bin/node", "dist/server.js"]</code></pre>
+<ul>
+<li><b>Multi-stage</b> : compile dans une image lourde, livre une image minimale sans compilateur ni sources.</li>
+<li><b>Ordre des couches</b> : du moins changeant au plus changeant, pour maximiser le cache.</li>
+<li><b>.dockerignore</b> : exclure <code>.git</code>, <code>node_modules</code>, <code>.env</code> — sinon on gonfle le contexte et on fuite des secrets.</li>
+<li><b>Forme exec</b> (JSON) pour ENTRYPOINT/CMD : la forme shell met <code>/bin/sh</code> en PID 1 qui ne relaie pas SIGTERM.</li>
+<li><b>Tag immuable</b> : version sémantique ou SHA de commit, jamais <code>latest</code> en prod.</li>
+</ul>
+
+<h3>CMD vs ENTRYPOINT</h3>
+<table>
+<tr><th></th><th>ENTRYPOINT</th><th>CMD</th></tr>
+<tr><td>Rôle</td><td>L'exécutable fixe</td><td>Les arguments par défaut</td></tr>
+<tr><td>Surcharge par <code>docker run</code></td><td>Non (sauf <code>--entrypoint</code>)</td><td>Oui, en passant des arguments</td></tr>
+</table>
+
+<h3>Durcissement d'un conteneur</h3>
+<pre><code>docker run --read-only \\
+  --cap-drop ALL --security-opt no-new-privileges \\
+  --user 10001:10001 \\
+  --memory 512m --cpus 1 \\
+  --tmpfs /tmp \\
+  monimage:1.4.2</code></pre>
+<p>Équivalent Kubernetes : <code>securityContext</code> avec <code>runAsNonRoot</code>, <code>readOnlyRootFilesystem</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities.drop: [ALL]</code>, <code>seccompProfile: RuntimeDefault</code>.</p>
+
+<h3>Où va la place disque</h3>
+<pre><code>docker system df -v              # ventilation images / conteneurs / volumes / cache
+docker system prune -a --volumes # attention : supprime les volumes non utilisés
+docker image prune -f</code></pre>
+<p>Le coupable le plus fréquent : les <b>logs json-file sans rotation</b>. Configurer <code>log-opts: max-size=10m, max-file=3</code> dans le daemon.json.</p>
+
+<div class="box piege"><b>« Ça marche sur mon poste »</b>
+Causes structurelles à citer : architecture différente (build ARM sur Mac vs nœuds amd64 → <code>docker buildx --platform</code>), variables et secrets présents en local via <code>.env</code>, DNS et proxy d'entreprise, contraintes de sécurité en cluster (non-root, filesystem read-only, capabilities), et limites de ressources qui déclenchent un OOM absent en local.</div>
+
+<h3>Registry et supply chain</h3>
+<ul>
+<li>Registry privé (ECR, ACR, Harbor, Nexus) avec des images de base approuvées et scannées.</li>
+<li>Pin par <b>digest</b> (<code>image@sha256:…</code>) en production, pas par tag mutable.</li>
+<li>Scan continu (Trivy, Grype) — un scan au build ne suffit pas, les CVE apparaissent après.</li>
+<li>Signature (Cosign) + politique d'admission qui refuse les images non signées.</li>
+<li>SBOM généré au build pour répondre à « quel composant est affecté par cette CVE ? » en minutes plutôt qu'en semaines.</li>
+</ul>
+`
+}]);
+
+</script>
+<script>
+/* fiches/04-kubernetes.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"kubernetes",
+titre:"Kubernetes",
+lead:"Le domaine le plus challengé en entretien DevOps. Vise la profondeur : le cycle de vie, le réseau, le troubleshooting.",
+html:`
+<h3>Architecture</h3>
+<table>
+<tr><th>Composant</th><th>Rôle</th></tr>
+<tr><td><b>kube-apiserver</b></td><td>Seule porte d'entrée : authN, authZ (RBAC), admission, validation, écriture dans etcd</td></tr>
+<tr><td><b>etcd</b></td><td>Base clé-valeur distribuée (Raft) = l'unique source de vérité</td></tr>
+<tr><td><b>kube-scheduler</b></td><td>Choisit un nœud pour chaque Pod non assigné (filtrage puis scoring)</td></tr>
+<tr><td><b>controller-manager</b></td><td>Boucles de réconciliation (Deployment, ReplicaSet, Node, Job…)</td></tr>
+<tr><td><b>kubelet</b></td><td>Agent sur chaque nœud : démarre les conteneurs via CRI, remonte le statut, exécute les probes</td></tr>
+<tr><td><b>kube-proxy</b></td><td>Programme iptables/IPVS pour implémenter les Services</td></tr>
+<tr><td><b>CoreDNS</b></td><td>DNS interne du cluster</td></tr>
+</table>
+
+<h3>Le chemin d'un <code>kubectl apply</code></h3>
+<p>kubectl → API server (authentification, RBAC, <b>mutating</b> webhooks, validation de schéma, <b>validating</b> webhooks) → etcd → Deployment controller crée un ReplicaSet → ReplicaSet controller crée les Pods (sans nœud) → scheduler assigne un nœud → kubelet du nœud appelle containerd (CRI) → conteneurs démarrés → statut remonté.</p>
+<p><b>Le concept clé</b> : boucle de réconciliation <em>level-triggered</em>. Les contrôleurs comparent en permanence état désiré et état observé, ils sont idempotents, et le système s'auto-répare même après une perte d'événements.</p>
+
+<h3>Workloads</h3>
+<table>
+<tr><th>Objet</th><th>Pour quoi</th></tr>
+<tr><td>Deployment</td><td>Stateless, Pods interchangeables, rolling update et rollback</td></tr>
+<tr><td>StatefulSet</td><td>Identité stable (<code>db-0</code>), PVC par Pod, ordre de démarrage — bases, brokers</td></tr>
+<tr><td>DaemonSet</td><td>Un Pod par nœud — agents de logs, CNI, monitoring</td></tr>
+<tr><td>Job / CronJob</td><td>Traitement ponctuel / planifié</td></tr>
+</table>
+
+<h3>Probes — la question qui tombe toujours</h3>
+<table>
+<tr><th>Probe</th><th>Échec ⇒</th><th>Usage</th></tr>
+<tr><td><b>liveness</b></td><td>Le conteneur est REDÉMARRÉ</td><td>Détecter un blocage définitif (deadlock)</td></tr>
+<tr><td><b>readiness</b></td><td>Retiré des Endpoints (plus de trafic), pas de redémarrage</td><td>Dépendance temporairement indisponible, démarrage</td></tr>
+<tr><td><b>startup</b></td><td>Désactive les deux autres tant qu'elle n'a pas réussi</td><td>Applications longues à démarrer (JVM)</td></tr>
+</table>
+<div class="box piege"><b>Piège liveness</b> : une liveness qui teste la base de données transforme une panne de base en boucle de redémarrage de TOUS les pods. La liveness ne doit tester QUE la santé interne du process. Les dépendances externes, c'est la readiness.</div>
+
+<h3>Requests / limits</h3>
+<ul>
+<li><b>requests</b> : ce que le scheduler réserve. C'est la base du placement ET du calcul du HPA.</li>
+<li><b>limits</b> : plafond. CPU dépassé → <b>throttling</b> (ralentissement). Mémoire dépassée → <b>OOMKill</b> immédiat (exit 137).</li>
+<li>Classes QoS : <b>Guaranteed</b> (requests = limits, évincé en dernier), <b>Burstable</b>, <b>BestEffort</b> (rien de défini, évincé en premier).</li>
+<li>Bonne pratique courante : requests mémoire = limits mémoire (la mémoire n'est pas compressible), et pas de limite CPU trop serrée pour éviter un throttling inutile.</li>
+</ul>
+
+<h3>Réseau</h3>
+<p><b>Modèle CNI</b> : chaque Pod a son IP, tous les Pods se joignent <b>sans NAT</b>, un Pod se voit avec la même IP que les autres le voient.</p>
+<table>
+<tr><th>Service</th><th>Effet</th></tr>
+<tr><td>ClusterIP</td><td>IP virtuelle interne (défaut)</td></tr>
+<tr><td>NodePort</td><td>Port 30000-32767 ouvert sur chaque nœud</td></tr>
+<tr><td>LoadBalancer</td><td>Provisionne un LB cloud</td></tr>
+<tr><td>Headless (<code>clusterIP: None</code>)</td><td>Renvoie les IP des Pods — pour les StatefulSets</td></tr>
+</table>
+<p>DNS : <code>&lt;service&gt;.&lt;namespace&gt;.svc.cluster.local</code>. Pour un StatefulSet : <code>db-0.db.default.svc.cluster.local</code>.</p>
+<p><b>NetworkPolicy</b> : par défaut tout est ouvert. Dès qu'une policy sélectionne un Pod dans une direction, tout le reste devient interdit DANS CETTE DIRECTION. Bonne pratique : default-deny par namespace puis ouverture explicite. Nécessite un CNI qui les implémente (Calico, Cilium).</p>
+
+<h3>Stockage</h3>
+<p><b>PVC</b> (la demande) → <b>StorageClass</b> (le type + provisioner) → <b>PV</b> (le volume réel, créé dynamiquement).</p>
+<ul>
+<li><code>ReadWriteOnce</code> : un seul nœud à la fois (disque bloc : EBS, Azure Disk).</li>
+<li><code>ReadWriteMany</code> : plusieurs nœuds (NFS, EFS, Azure Files).</li>
+<li><code>reclaimPolicy</code> : <b>Delete</b> (le volume part avec le PVC — dangereux en prod) vs <b>Retain</b>.</li>
+<li>Un Pod RWO bloqué en Pending avec « Multi-Attach » = l'ancien nœud n'a pas relâché le volume. C'est une protection contre la double écriture, pas un bug.</li>
+</ul>
+
+<h3>Autoscaling</h3>
+<table>
+<tr><th>Mécanisme</th><th>Ajuste</th><th>Prérequis</th></tr>
+<tr><td>HPA</td><td>Nombre de réplicas</td><td>metrics-server + <b>requests définies</b></td></tr>
+<tr><td>VPA</td><td>requests/limits d'un Pod</td><td>Redémarre le Pod ; ne pas combiner avec HPA sur la même métrique</td></tr>
+<tr><td>Cluster Autoscaler</td><td>Nombre de NŒUDS</td><td>Se déclenche sur des Pods Pending</td></tr>
+<tr><td>KEDA</td><td>Réplicas sur événement (file, Kafka, cron)</td><td>Permet le scale-to-zero</td></tr>
+</table>
+
+<h3>Placement</h3>
+<ul>
+<li><b>Taint / toleration</b> : le NŒUD repousse ; seuls les Pods tolérants y vont (nœuds GPU, nœuds système).</li>
+<li><b>nodeSelector / nodeAffinity</b> : le POD choisit où aller (required ou preferred).</li>
+<li><b>podAntiAffinity</b> / <b>topologySpreadConstraints</b> : répartir les réplicas sur des nœuds et des zones différents. <b>Indispensable</b> pour une vraie HA — sinon les 3 réplicas peuvent atterrir sur le même nœud.</li>
+<li><b>PodDisruptionBudget</b> : protège pendant les disruptions VOLONTAIRES (drain, upgrade). Ne protège pas d'un crash.</li>
+</ul>
+
+<h3>Troubleshooting — la méthode</h3>
+<pre><code>kubectl get pods -o wide
+kubectl describe pod &lt;pod&gt;            # EVENTS en bas = 80% des réponses
+kubectl logs &lt;pod&gt; -c &lt;conteneur&gt; --previous --tail=200
+kubectl get events --sort-by=.lastTimestamp -A
+kubectl get endpoints &lt;svc&gt;            # vide = selector/readiness
+kubectl exec -it &lt;pod&gt; -- sh
+kubectl debug -it &lt;pod&gt; --image=busybox --target=&lt;conteneur&gt;   # image sans shell
+kubectl top pods / nodes
+kubectl auth can-i create pods --as=system:serviceaccount:ns:sa</code></pre>
+<table>
+<tr><th>Symptôme</th><th>Causes à vérifier dans l'ordre</th></tr>
+<tr><td>Pending</td><td>Ressources insuffisantes → taints/affinity → PVC non lié → quota de namespace</td></tr>
+<tr><td>ImagePullBackOff</td><td>Tag inexistant → imagePullSecret manquant → registry injoignable (proxy)</td></tr>
+<tr><td>CrashLoopBackOff</td><td><code>logs --previous</code> : bug, config manquante, liveness trop stricte, OOM</td></tr>
+<tr><td>OOMKilled (137)</td><td>Pic mémoire &gt; limit ; regarder le <b>max</b> du working set, pas la moyenne ; régler le heap sur le cgroup</td></tr>
+<tr><td>Service sans trafic</td><td>Endpoints vides → selector ≠ labels → readiness KO → targetPort ≠ port écouté</td></tr>
+<tr><td>502 pendant un déploiement</td><td>Race d'arrêt : ajouter <code>preStop</code> sleep, readiness qui bascule avant l'arrêt, arrêt gracieux</td></tr>
+<tr><td>DNS intermittent</td><td>CoreDNS saturé, <code>ndots:5</code>, conntrack plein → NodeLocal DNSCache</td></tr>
+</table>
+
+<h3>Sécurité</h3>
+<ul>
+<li><b>RBAC</b> : Role (namespacé) / ClusterRole + RoleBinding / ClusterRoleBinding. Un ServiceAccount dédié par application, jamais <code>default</code>, jamais <code>cluster-admin</code>.</li>
+<li><b>Pod Security Admission</b> : niveaux <code>privileged</code> / <code>baseline</code> / <code>restricted</code> par namespace.</li>
+<li><b>Secrets</b> : base64, <b>pas chiffrés</b> par défaut dans etcd. Activer l'encryption at rest, ou externaliser (External Secrets Operator + Key Vault/Secrets Manager, CSI Secret Store).</li>
+<li><b>Admission policies</b> (Kyverno, Gatekeeper) : imposer registry approuvé, image signée, non-root, labels obligatoires, interdiction de <code>latest</code>.</li>
+<li><b>Identité cloud</b> : IRSA / Pod Identity (AWS), Workload Identity (Azure/GCP) — droits par application, aucune clé statique.</li>
+</ul>
+
+<h3>Helm / Kustomize / GitOps</h3>
+<ul>
+<li><b>Helm</b> : templating + gestion de releases. Bien pour packager du tiers. <code>helm template</code> pour voir le rendu, <code>helm diff</code> avant upgrade.</li>
+<li><b>Kustomize</b> : superposition de patches sans templating, natif dans kubectl. Bien pour des variantes d'environnement.</li>
+<li><b>Opérateur (CRD + contrôleur)</b> : quand il y a une logique CONTINUE (jour 2 : sauvegarde, bascule, upgrade). Helm ne fait que rendre un template à l'installation.</li>
+<li><b>GitOps</b> (Argo CD, Flux) : l'agent dans le cluster tire depuis Git et réconcilie. Pas de credentials cluster dans la CI, dérive corrigée, rollback = revert Git.</li>
+</ul>
+
+<div class="box dire"><b>Ce qui distingue un candidat senior</b>
+Il ne récite pas les objets : il parle du <b>cycle de vie</b> (comment un Pod naît, devient prêt, reçoit du trafic, s'arrête proprement), de ce qui casse et de comment il le détecte. Si on te demande « c'est quoi un Deployment », enchaîne spontanément sur le ReplicaSet, le rolling update et le rollback : tu réponds à la question suivante avant qu'elle soit posée.</div>
+`
+}]);
+
+</script>
+<script>
+/* fiches/05-terraform.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"terraform",
+titre:"Terraform & IaC",
+lead:"Le state, le découpage et le workflow d'équipe : c'est là-dessus qu'on distingue un utilisateur d'un praticien.",
+html:`
+<h3>Le workflow</h3>
+<pre><code>terraform init          # providers, modules, backend, lock file
+terraform fmt -recursive
+terraform validate      # syntaxe et cohérence, sans appel API
+terraform plan -out=tf.plan
+terraform apply tf.plan # applique CE plan-là, pas un replan
+terraform destroy</code></pre>
+<p>Symboles du plan : <code>+</code> création, <code>-</code> destruction, <code>~</code> modification en place, <code>-/+</code> <b>remplacement</b> (destroy puis create). Chercher systématiquement la mention <code># forces replacement</code>.</p>
+
+<h3>Le state</h3>
+<ul>
+<li>Il mémorise la correspondance code ↔ ressources réelles (IDs, attributs, dépendances). Sans lui, Terraform ne sait plus ce qu'il gère.</li>
+<li>Il contient souvent des <b>secrets en clair</b> : jamais dans Git, toujours en backend distant chiffré, accès restreint.</li>
+<li><b>Backend distant obligatoire à plusieurs</b>, pour le partage ET le <b>verrouillage</b> : sans lock, deux apply simultanés corrompent le state.</li>
+</ul>
+<pre><code>terraform {
+  required_version = "~> 1.9"
+  required_providers {
+    azurerm = { source = "hashicorp/azurerm", version = "~> 4.0" }
+  }
+  backend "azurerm" {
+    resource_group_name  = "rg-tfstate"
+    storage_account_name = "sttfstateprod"
+    container_name       = "tfstate"
+    key                  = "plateforme/prod.tfstate"
+  }
+}</code></pre>
+<p>Équivalent AWS : backend <code>s3</code> avec <code>encrypt = true</code>, versioning activé et verrouillage (DynamoDB ou lockfile natif S3).</p>
+
+<h3>Commandes de state</h3>
+<table>
+<tr><th>Commande</th><th>Effet</th><th>Quand</th></tr>
+<tr><td><code>state list / show</code></td><td>Inspecter</td><td>Diagnostic</td></tr>
+<tr><td><code>import</code> (ou bloc <code>import</code>)</td><td>Prendre en gestion une ressource existante</td><td>Reprise d'infra manuelle</td></tr>
+<tr><td><code>state rm</code></td><td>Retirer du state <b>sans détruire</b></td><td>Abandonner la gestion, migrer vers un autre state</td></tr>
+<tr><td><code>state mv</code> / bloc <code>moved</code></td><td>Changer l'adresse d'une ressource</td><td>Refactoring — <b>préférer le bloc <code>moved</code></b> : versionné et revu en PR</td></tr>
+<tr><td><code>force-unlock &lt;id&gt;</code></td><td>Libérer un verrou coincé</td><td>Après avoir VÉRIFIÉ qu'aucun apply ne tourne</td></tr>
+<tr><td><code>taint</code> / <code>-replace</code></td><td>Forcer la recréation</td><td>Ressource dans un état incohérent</td></tr>
+</table>
+<p><b>L'import ne génère pas le code</b> : on écrit d'abord la ressource, on importe, puis on itère sur le plan jusqu'à « no changes ».</p>
+
+<h3>count vs for_each</h3>
+<pre><code># count : indexé par POSITION → supprimer un élément décale tout
+resource "azurerm_storage_account" "s" { count = 3 }
+
+# for_each : indexé par CLÉ → adresse stable
+resource "azurerm_storage_account" "s" {
+  for_each = { logs = "Standard_LRS", data = "Standard_GRS" }
+  name     = "st\${each.key}"
+  account_replication_type = each.value
+}</code></pre>
+<p><b>Règle</b> : <code>count</code> uniquement pour un booléen (0 ou 1). <code>for_each</code> dès que les éléments sont distincts. La clé doit venir d'une valeur <b>connue au plan</b> — sinon Terraform refuse (« known after apply »).</p>
+
+<h3>lifecycle</h3>
+<pre><code>lifecycle {
+  prevent_destroy       = true                # bloque toute destruction (base prod)
+  create_before_destroy = true                # crée le remplaçant avant de supprimer
+  ignore_changes        = [tags["LastScan"]]  # ignorer une dérive légitime
+  replace_triggered_by  = [null_resource.v]   # forcer un remplacement piloté
+}</code></pre>
+
+<h3>Structure d'un module</h3>
+<pre><code>modules/reseau/
+  main.tf        # ressources
+  variables.tf   # entrées typées, avec description et validation
+  outputs.tf     # tout ce dont l'appelant a besoin
+  versions.tf    # required_providers
+  README.md</code></pre>
+<pre><code>variable "environnement" {
+  type        = string
+  description = "dev | rec | prod"
+  validation {
+    condition     = contains(["dev","rec","prod"], var.environnement)
+    error_message = "Environnement invalide."
+  }
+}</code></pre>
+<div class="box piege"><b>Un module ne déclare JAMAIS</b> de bloc <code>provider</code> ni de <code>backend</code> : il les reçoit du root module (<code>providers = { aws = aws.eu }</code>). Un module qui définit son provider ne peut plus être supprimé proprement.</div>
+
+<h3>Découpage des states</h3>
+<p>On découpe par <b>rayon d'impact</b> et par <b>cycle de vie</b> :</p>
+<ul>
+<li><b>Socle / landing zone</b> : réseau, IAM, DNS, journalisation. Change rarement, très critique, droits très restreints.</li>
+<li><b>Plateforme</b> : cluster, registry, coffres, bases partagées.</li>
+<li><b>Applications</b> : un state par application × environnement. Change souvent, risque circonscrit.</li>
+</ul>
+<p>Bénéfices : plan rapide, erreur limitée, verrous indépendants, droits séparés. Coût : des contrats entre states. Pour lire une valeur produite ailleurs, préférer une <b>data source sur une source de vérité</b> (SSM Parameter, Key Vault, tag) plutôt que <code>terraform_remote_state</code>, qui exige un droit de lecture sur tout le state distant — donc sur ses secrets.</p>
+
+<h3>Multi-région / multi-compte</h3>
+<pre><code>provider "aws" { region = "eu-west-3" }
+provider "aws" { alias = "us", region = "us-east-1" }
+
+resource "aws_acm_certificate" "cdn" {
+  provider = aws.us    # CloudFront exige us-east-1
+  ...
+}</code></pre>
+
+<h3>Pipeline Terraform d'entreprise</h3>
+<ol>
+<li><b>PR</b> → <code>fmt -check</code>, <code>validate</code>, <code>tflint</code></li>
+<li>Scan conformité : <b>tfsec / Checkov / OPA-Conftest</b> sur le plan JSON</li>
+<li><code>plan</code> publié en commentaire de PR, relu par un humain (2 yeux en prod)</li>
+<li>Merge → <code>apply</code> du <b>plan sauvegardé</b></li>
+<li>Tests de smoke + notification</li>
+<li>Détection de drift planifiée (<code>plan -detailed-exitcode</code>, code 2 = dérive)</li>
+</ol>
+<p>Authentification du pipeline par <b>OIDC</b> (aucun secret longue durée), environnements protégés avec approbation manuelle sur la prod, séparation des identités plan (lecture) et apply (écriture).</p>
+
+<h3>Problèmes classiques</h3>
+<table>
+<tr><th>Symptôme</th><th>Cause / réponse</th></tr>
+<tr><td>Diff perpétuel</td><td>L'API renvoie une valeur normalisée différente (casse, ordre, JSON). Écrire la forme canonique, sinon <code>ignore_changes</code> ciblé</td></tr>
+<tr><td>Veut détruire/recréer</td><td>Un attribut immuable a changé. Lire <code># forces replacement</code>. Parade : <code>moved</code>, <code>ignore_changes</code>, <code>prevent_destroy</code></td></tr>
+<tr><td>Apply échoué à mi-chemin</td><td>Le state reflète ce qui a été créé. On relance un <b>plan</b>, on corrige, on ré-applique — on ne restaure pas un vieux state à l'aveugle</td></tr>
+<tr><td>Ressource supprimée à la main</td><td>Terraform la recrée au prochain apply. Sinon : import ou <code>state rm</code> + suppression du code</td></tr>
+<tr><td>Erreur de verrouillage</td><td>Un autre apply tourne (ou a planté). Vérifier avant tout <code>force-unlock</code></td></tr>
+<tr><td>Throttling API (429)</td><td>Réduire <code>-parallelism</code> (défaut 10)</td></tr>
+</table>
+
+<h3>Terraform vs natif</h3>
+<table>
+<tr><th></th><th>Terraform</th><th>Bicep / CloudFormation</th></tr>
+<tr><td>Portée</td><td>Multi-fournisseur, y compris hors cloud (DNS, GitHub, Datadog, Vault)</td><td>Un seul cloud</td></tr>
+<tr><td>State</td><td>À gérer et sécuriser</td><td>Géré par la plateforme</td></tr>
+<tr><td>Nouveautés</td><td>Délai provider</td><td>Support dès le jour 1</td></tr>
+<tr><td>Argument</td><td>Homogénéité des pratiques et des compétences</td><td>Zéro état à opérer, support éditeur</td></tr>
+</table>
+
+<div class="box dire"><b>Phrase qui rassure un architecte bancaire</b>
+« Le state est un actif critique : backend managé répliqué et versionné, chiffrement, verrouillage, accès limité aux pipelines, restauration testée. Et en dernier recours, il est reconstructible par import — contrairement à une infrastructure non décrite, que personne ne sait recréer. »</div>
+`
+}]);
+
+</script>
+<script>
+/* fiches/06-aws.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"aws",
+titre:"AWS",
+lead:"IAM, VPC et le modèle de responsabilité : le reste se déduit.",
+html:`
+<h3>Fondations</h3>
+<ul>
+<li><b>Région</b> = zone géographique (eu-west-3 Paris). <b>AZ</b> = un ou plusieurs datacenters isolés, reliés à faible latence. HA = multi-AZ. DR = multi-région.</li>
+<li><b>Responsabilité partagée</b> : AWS sécurise LE cloud (matériel, hyperviseur, réseau physique), le client sécurise DANS le cloud (IAM, chiffrement, patchs OS, configuration, données).</li>
+</ul>
+
+<h3>IAM — le cœur de l'entretien</h3>
+<p><b>Ordre d'évaluation</b> : deny par défaut → un <b>Deny explicite</b> l'emporte toujours → sinon il faut un Allow explicite dans l'intersection SCP ∩ permission boundary ∩ identity policy (ou une resource policy).</p>
+<table>
+<tr><th>Type</th><th>Attachée à</th><th>Particularité</th></tr>
+<tr><td>Identity-based</td><td>User, group, rôle</td><td>Ce que CETTE identité peut faire</td></tr>
+<tr><td>Resource-based</td><td>Bucket, clé KMS, SQS, Lambda</td><td>Contient un <code>Principal</code> → permet le cross-compte sans AssumeRole</td></tr>
+<tr><td>SCP (Organizations)</td><td>OU / compte</td><td>Plafond de permissions, n'accorde rien</td></tr>
+<tr><td>Permission boundary</td><td>User / rôle</td><td>Plafond individuel — pour la délégation encadrée</td></tr>
+<tr><td>Session policy</td><td>Session STS</td><td>Réduit temporairement les droits</td></tr>
+</table>
+<p><b>Rôle vs user</b> : un rôle n'a pas de credentials permanents, on l'endosse via STS et on reçoit des credentials temporaires. Sur EC2 (instance profile), sur EKS (<b>IRSA</b> / Pod Identity), pour la CI (<b>OIDC</b>). Objectif : zéro clé d'accès statique.</p>
+<div class="box piege"><b>AccessDenied malgré la bonne policy</b> — les 4 suspects : (1) un Deny explicite ailleurs (bucket policy, SCP, boundary), (2) l'objet est chiffré KMS et il manque <code>kms:Decrypt</code> sur la CLÉ, (3) une condition non satisfaite (<code>aws:SourceIp</code>, MFA, tag), (4) le mauvais compte/région. Outils : IAM Policy Simulator, CloudTrail, IAM Access Analyzer.</div>
+
+<h3>VPC</h3>
+<ul>
+<li>Un subnet est <b>public</b> uniquement si sa route table a <code>0.0.0.0/0 → igw</code>. Le nom n'a aucune valeur.</li>
+<li><b>NAT Gateway</b> : sortie internet pour les subnets privés. Doit être DANS un subnet public (il lui faut une EIP et une route vers l'IGW). Un NAT par AZ pour la résilience — et c'est un poste de coût majeur (heure + Go).</li>
+<li><b>Peering</b> : non transitif, CIDR non chevauchants. Au-delà de quelques VPC → <b>Transit Gateway</b>.</li>
+<li><b>VPC Endpoints</b> : Gateway (S3, DynamoDB — gratuit, ajoute une route) vs Interface/PrivateLink (ENI privée, payant, la plupart des services).</li>
+</ul>
+<table>
+<tr><th></th><th>Security Group</th><th>NACL</th></tr>
+<tr><td>Niveau</td><td>ENI / instance</td><td>Subnet</td></tr>
+<tr><td>État</td><td><b>Stateful</b> (retour auto-autorisé)</td><td><b>Stateless</b> (règle dans chaque sens + ports éphémères)</td></tr>
+<tr><td>Règles</td><td>Allow uniquement</td><td>Allow ET Deny, numérotées, premier match</td></tr>
+<tr><td>Référence</td><td>Peut cibler un autre SG</td><td>CIDR uniquement</td></tr>
+</table>
+
+<h3>Compute</h3>
+<ul>
+<li><b>EC2</b> : familles <code>t</code> burstable (crédits CPU), <code>m</code> général, <code>c</code> compute, <code>r</code> mémoire. <code>user_data</code> ne s'exécute qu'au PREMIER démarrage.</li>
+<li><b>Tarification</b> : On-Demand → Savings Plans / Reserved (−40 à −70 % sur un engagement 1-3 ans) → <b>Spot</b> (−90 %, interruptible avec 2 min de préavis) pour les charges tolérantes.</li>
+<li><b>ASG + ELB</b> : l'ASG gère la CAPACITÉ (remplacement des instances non saines, scaling), l'ELB la RÉPARTITION. Les deux ensemble, avec le health check ELB comme critère de remplacement.</li>
+<li><b>ECS / EKS / Fargate / Lambda</b> : du plus contrôlé au plus managé. Fargate supprime la gestion des nœuds ; Lambda facture à l'invocation (attention aux <b>cold starts</b> : package léger, init hors du handler, Provisioned Concurrency si nécessaire).</li>
+</ul>
+
+<h3>Stockage</h3>
+<table>
+<tr><th>Service</th><th>Nature</th><th>Points d'attention</th></tr>
+<tr><td>S3</td><td>Objet</td><td>Cohérence forte depuis 2020. Block Public Access, versioning, Object Lock (WORM), lifecycle, chiffrement SSE-KMS</td></tr>
+<tr><td>EBS</td><td>Bloc, une AZ</td><td>Attaché à une instance à la fois (sauf multi-attach io2). Snapshots incrémentaux dans S3</td></tr>
+<tr><td>EFS</td><td>NFS partagé multi-AZ</td><td>Plus lent et plus cher, mais ReadWriteMany</td></tr>
+</table>
+<p>Classes S3 : Standard → Standard-IA / One Zone-IA → Intelligent-Tiering → Glacier Instant / Flexible / Deep Archive. Critère : fréquence d'accès et délai de restitution acceptable.</p>
+
+<h3>Bases et messagerie</h3>
+<ul>
+<li><b>RDS</b> : Multi-AZ = <b>haute disponibilité</b> (réplique synchrone en standby, bascule automatique, pas de lecture). Read Replica = <b>montée en charge en lecture</b> (asynchrone). Ne pas confondre — question fréquente.</li>
+<li><b>Aurora</b> : stockage distribué sur 3 AZ, 6 copies, bascule plus rapide, réplicas en lecture jusqu'à 15.</li>
+<li><b>DynamoDB</b> : clé de partition + clé de tri, latence constante à toute échelle, mais le modèle d'accès doit être connu à l'avance.</li>
+<li><b>SQS</b> (file, pull, un consommateur par message) vs <b>SNS</b> (pub/sub, push). <b>Fan-out</b> = SNS vers plusieurs SQS. Toujours une <b>DLQ</b> avec alerte sur sa profondeur.</li>
+</ul>
+
+<h3>Observabilité et gouvernance</h3>
+<table>
+<tr><th>Service</th><th>Répond à</th></tr>
+<tr><td>CloudTrail</td><td>Qui a fait quel appel API, quand, depuis où (audit)</td></tr>
+<tr><td>CloudWatch</td><td>Métriques, logs, alarmes (santé, performance)</td></tr>
+<tr><td>AWS Config</td><td>État et historique de CONFIGURATION, règles de conformité, remédiation</td></tr>
+<tr><td>GuardDuty / Security Hub</td><td>Détection de menaces / agrégation de la posture</td></tr>
+<tr><td>X-Ray</td><td>Tracing distribué</td></tr>
+</table>
+
+<h3>Multi-compte</h3>
+<p>AWS Organizations avec des OU par usage (Sécurité, Infrastructure, Prod, Non-Prod, Sandbox), <b>un compte par application × environnement</b>. Comptes centraux : Log Archive (bucket immuable, Object Lock), Security/Audit, Network. SCP interdisant de désactiver CloudTrail/GuardDuty. Control Tower ou Landing Zone Accelerator pour industrialiser. Bénéfices : isolation du rayon d'impact, quotas séparés, facturation par équipe.</p>
+
+<h3>Architecture web 3-tiers de référence</h3>
+<pre><code>Route 53
+  → CloudFront (+ WAF, cache statique)
+    → ALB (subnets publics, 2-3 AZ)
+      → ASG / ECS / EKS (subnets privés)
+        → RDS Multi-AZ (subnets base de données) + read replicas
+Sortie : NAT Gateway par AZ
+Secrets : Secrets Manager | Statique : S3
+Observabilité : CloudWatch + alarmes | Tout en IaC</code></pre>
+
+<h3>Optimisation des coûts (par impact)</h3>
+<ol>
+<li>Rightsizing — les instances sont surdimensionnées par défaut.</li>
+<li>Savings Plans / Reserved sur la base stable.</li>
+<li>Extinction planifiée du hors-production (nuits + week-ends ≈ −65 %).</li>
+<li>Spot pour le tolérant aux interruptions.</li>
+<li>Lifecycle S3, suppression des snapshots et volumes EBS orphelins.</li>
+<li>Transfert de données : inter-AZ inutile, NAT Gateway au Go, CloudFront.</li>
+<li>Rétention CloudWatch Logs (par défaut : infinie).</li>
+</ol>
+<p>Prérequis à tout : <b>tagging obligatoire</b> imposé par SCP/Config, sinon on ne peut rien attribuer.</p>
+`
+}]);
+
+</script>
+<script>
+/* fiches/07-azure.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"azure",
+titre:"Azure",
+lead:"Le cloud dominant en banque française. Identité, réseau privé et gouvernance sont les trois axes attendus.",
+html:`
+<h3>Hiérarchie et gouvernance</h3>
+<p><b>Management Group → Subscription → Resource Group → Ressource.</b> RBAC et Policy s'héritent du haut vers le bas.</p>
+<ul>
+<li><b>Resource Group</b> : conteneur logique, une ressource appartient à exactement un RG. Supprimer le RG supprime tout.</li>
+<li><b>Resource Lock</b> : <code>CanNotDelete</code> ou <code>ReadOnly</code>, hérité — protège la prod (et casse parfois Terraform : c'est voulu).</li>
+<li><b>Tags</b> : imposés par Azure Policy, indispensables pour la refacturation.</li>
+</ul>
+
+<h3>Identité : Entra ID vs RBAC</h3>
+<table>
+<tr><th></th><th>Entra ID (ex-Azure AD)</th><th>Azure RBAC</th></tr>
+<tr><td>Gère</td><td>L'annuaire : identités, groupes, applications, rôles d'annuaire</td><td>Les droits sur les RESSOURCES Azure</td></tr>
+<tr><td>Exemple de rôle</td><td>Global Administrator, User Administrator</td><td>Owner, Contributor, Reader, rôles custom</td></tr>
+</table>
+<div class="box piege">Un <b>Global Administrator n'a par défaut AUCUN droit sur les ressources</b> : ce sont deux plans distincts. Il doit activer « Elevate access » pour devenir User Access Administrator à la racine. Question de niveau senior qui piège beaucoup de monde.</div>
+<p><b>Rôles clés</b> : Owner (tout + attribuer des droits), Contributor (tout <b>sauf</b> attribuer des droits), Reader, User Access Administrator. Assigner au niveau le plus élevé pertinent, à des <b>groupes</b>, jamais à des personnes.</p>
+
+<h3>Identités applicatives</h3>
+<table>
+<tr><th></th><th>Service Principal</th><th>Managed Identity</th></tr>
+<tr><td>Secret</td><td>À gérer, stocker, faire tourner, expire</td><td>Aucun — géré par Azure (token via IMDS)</td></tr>
+<tr><td>Usage</td><td>Hors Azure (CI externe, on-premise)</td><td>Ressource dans Azure — <b>toujours à préférer</b></td></tr>
+</table>
+<p><b>System-assigned</b> : liée au cycle de vie de la ressource (1:1, supprimée avec elle). <b>User-assigned</b> : objet indépendant, réutilisable, permet d'assigner les droits RBAC AVANT de créer la ressource — ce qui règle le problème poule/œuf en Terraform.</p>
+<p><b>PIM</b> (Privileged Identity Management) : élévation juste-à-temps avec approbation, justification et expiration. C'est LA réponse attendue sur « comment gérez-vous les accès admin en production ».</p>
+
+<h3>Réseau</h3>
+<ul>
+<li><b>VNet</b> + subnets. <b>Peering</b> non transitif (d'où le hub-and-spoke).</li>
+<li><b>NSG</b> : filtre L3/L4 (5-tuple, service tags, ASG), attaché à un subnet ou une NIC. Gratuit. Règles par priorité.</li>
+<li><b>Azure Firewall</b> : service managé centralisé, règles applicatives par <b>FQDN</b>, threat intelligence, DNAT/SNAT, logs complets. Placé dans le hub.</li>
+<li><b>UDR (route table)</b> : surcharge le routage système. Cas classique : <code>0.0.0.0/0</code> → IP privée du firewall (next hop = Virtual Appliance) pour forcer l'inspection.</li>
+<li><b>Application Gateway</b> (L7 + WAF) vs <b>Load Balancer</b> (L4) vs <b>Front Door</b> (global, CDN + WAF).</li>
+</ul>
+
+<h3>Private Endpoint — la question qui revient</h3>
+<p>Il donne une <b>IP privée dans ton VNet</b> à un service PaaS (Storage, SQL, Key Vault) : le trafic ne passe plus par internet, et on désactive <code>publicNetworkAccess</code>.</p>
+<div class="box piege"><b>Le piège DNS</b> : le FQDN public (<code>monstorage.blob.core.windows.net</code>) doit désormais résoudre vers l'IP privée. Il faut une <b>Private DNS Zone</b> (<code>privatelink.blob.core.windows.net</code>) liée au VNet, avec un enregistrement A. Sans elle, on retombe sur l'IP publique et ça échoue. Pour une App Service, il faut en plus la VNet Integration et <code>vnetRouteAllEnabled</code>.</p>
+<p>Différence avec <b>Service Endpoint</b> : celui-ci garde l'IP publique mais route par le backbone Azure et permet de filtrer par subnet. Le Private Endpoint est plus fort (IP privée, accessible depuis l'on-premise via ExpressRoute).</div>
+
+<h3>Topologie hub-and-spoke</h3>
+<pre><code>Hub : Azure Firewall + VPN/ExpressRoute Gateway + Bastion + Private DNS
+  ↕ peering
+Spoke prod / Spoke rec / Spoke dev  (une app ou une équipe par spoke)
+UDR dans chaque spoke : 0.0.0.0/0 → IP privée du firewall</code></pre>
+<p>Les spokes ne se parlent pas directement : tout transite par le hub pour inspection. C'est le modèle standard des landing zones bancaires.</p>
+
+<h3>Compute — comment choisir</h3>
+<table>
+<tr><th>Service</th><th>Quand</th></tr>
+<tr><td><b>App Service</b></td><td>Application web classique, peu d'ops, slots de déploiement. Le défaut raisonnable</td></tr>
+<tr><td><b>Container Apps</b></td><td>Microservices conteneurisés, scale-to-zero, KEDA, Dapr, sans gérer de cluster</td></tr>
+<tr><td><b>AKS</b></td><td>Besoin de contrôle fin (opérateurs, CRD, mesh, multi-tenant) ET une équipe capable d'opérer</td></tr>
+<tr><td><b>Functions</b></td><td>Événementiel, court, sporadique</td></tr>
+<tr><td><b>VM / VMSS</b></td><td>Legacy, logiciel tiers, contraintes d'OS</td></tr>
+</table>
+<p><b>Deployment slots</b> : instance parallèle pour déployer, chauffer et tester, puis swap quasi instantané avec retour arrière possible. <b>Piège</b> : par défaut les app settings SUIVENT le swap — il faut cocher « deployment slot setting » (sticky) sur ce qui est spécifique à l'environnement.</p>
+
+<h3>Stockage et données</h3>
+<ul>
+<li><b>Storage Account</b> : Blob (objet), File (SMB/NFS), Queue, Table. Redondance : <b>LRS</b> (3 copies, 1 datacenter) → <b>ZRS</b> (3 zones) → <b>GRS</b> (+ région appairée, asynchrone) → <b>GZRS</b>. Variantes RA-* pour lire le secondaire.</li>
+<li><b>Azure SQL</b> : DTU vs vCore, Business Critical (réplicas locaux, latence faible) vs General Purpose. Failover groups pour le DR. Auth par Entra ID plutôt que login SQL, TDE par défaut.</li>
+<li><b>Cosmos DB</b> : multi-modèle, distribution globale, <b>5 niveaux de cohérence</b> (strong, bounded staleness, session, consistent prefix, eventual) — la question piège est de savoir que « session » est le défaut et un bon compromis.</li>
+<li><b>Key Vault</b> : secrets, clés, certificats. Accès par RBAC (ou access policies sur les coffres anciens). <b>Soft delete + purge protection</b> : le nom reste réservé après suppression → recréer le même coffre échoue tant que la rétention court (piège en environnement éphémère).</li>
+</ul>
+
+<h3>Gouvernance : Azure Policy</h3>
+<table>
+<tr><th>Effet</th><th>Usage</th></tr>
+<tr><td><code>Deny</code></td><td>Bloquer la création non conforme (région interdite, IP publique, absence de tag)</td></tr>
+<tr><td><code>Audit</code></td><td>Constater sans bloquer — pour mesurer avant d'imposer</td></tr>
+<tr><td><code>DeployIfNotExists</code></td><td>Déployer automatiquement le manquant (diagnostic settings, agent)</td></tr>
+<tr><td><code>Modify</code></td><td>Ajouter ou corriger des propriétés (tags)</td></tr>
+</table>
+<p><b>Policy ≠ RBAC</b> : le RBAC dit QUI peut agir, la Policy dit CE QUI peut exister. Un Owner reste bloqué par un Deny. Assigner les initiatives au niveau <b>management group</b> pour couvrir les subscriptions futures ; les exceptions passent par une <b>exemption datée</b>, jamais par une désactivation.</p>
+
+<h3>Observabilité</h3>
+<p><b>Azure Monitor</b> + <b>Log Analytics workspace</b> (centralise via les diagnostic settings de chaque ressource), <b>Application Insights</b> (APM, traces distribuées), <b>Container Insights</b> pour AKS. Langage de requête : <b>KQL</b>.</p>
+<pre><code>AzureDiagnostics
+| where TimeGenerated > ago(1h)
+| where ResourceType == "APPLICATIONGATEWAYS"
+| summarize count() by httpStatus_d, bin(TimeGenerated, 5m)
+| order by TimeGenerated desc</code></pre>
+
+<h3>Landing zone</h3>
+<p>Le socle déployé avant toute application : hiérarchie de management groups, subscriptions par usage (identité, connectivité, management, landing zones prod/non-prod), initiatives Policy, RBAC + PIM, réseau hub-and-spoke, DNS privé, journalisation centralisée, sauvegarde et DR — le tout en IaC (Terraform CAF/ALZ ou Bicep). C'est le vocabulaire attendu chez un grand compte.</p>
+`
+}]);
+
+</script>
+<script>
+/* fiches/08-cicd.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"cicd",
+titre:"CI/CD & stratégies de déploiement",
+lead:"Ici, ce qu'on évalue c'est ta capacité à livrer souvent SANS augmenter le risque. C'est un sujet de gouvernance autant que de technique.",
+html:`
+<h3>Vocabulaire exact</h3>
+<table>
+<tr><th>Terme</th><th>Définition</th></tr>
+<tr><td>Continuous Integration</td><td>Chaque commit est intégré et validé automatiquement sur le tronc, plusieurs fois par jour</td></tr>
+<tr><td>Continuous Delivery</td><td>Chaque build est <b>prêt</b> à partir en prod ; un humain déclenche</td></tr>
+<tr><td>Continuous Deployment</td><td>Tout build qui passe part en prod <b>automatiquement</b></td></tr>
+</table>
+<p>En banque, on vise la <b>Delivery</b> : l'approbation reste, mais elle devient un clic tracé sur un pipeline fiable au lieu d'une opération manuelle.</p>
+
+<h3>Ordre des étapes (fail fast)</h3>
+<pre><code>lint / format          (secondes)
+tests unitaires        (1-3 min)
+build + SBOM           (artefact UNIQUE, versionné)
+scan SAST + SCA + secrets
+tests d'intégration
+push de l'image signée vers le registry
+déploiement dev → tests de smoke
+déploiement rec → tests e2e / DAST
+[approbation] → prod (progressif) → smoke + surveillance</code></pre>
+<p><b>Build once, deploy many</b> : on construit UN artefact et on le PROMEUT d'environnement en environnement. Reconstruire par environnement, c'est déployer autre chose que ce qui a été testé.</p>
+
+<h3>Stratégies de déploiement</h3>
+<table>
+<tr><th>Stratégie</th><th>Principe</th><th>Coût / risque</th></tr>
+<tr><td><b>Recreate</b></td><td>On arrête tout, on redémarre</td><td>Coupure — seulement en dev</td></tr>
+<tr><td><b>Rolling update</b></td><td>Remplacement progressif (maxSurge / maxUnavailable)</td><td>Défaut K8s. Deux versions coexistent → compatibilité requise</td></tr>
+<tr><td><b>Blue/green</b></td><td>Deux environnements complets, bascule totale</td><td>Rollback instantané, mais double capacité</td></tr>
+<tr><td><b>Canary</b></td><td>1 % → 10 % → 50 % → 100 % selon les métriques</td><td>Moins cher, détection réelle, mais plus long</td></tr>
+<tr><td><b>Feature flag</b></td><td>Déploiement ≠ activation</td><td>Le plus puissant : on désactive sans redéployer. Coût : dette de flags à nettoyer</td></tr>
+<tr><td><b>Shadow / mirroring</b></td><td>On duplique le trafic vers la nouvelle version sans servir sa réponse</td><td>Test réaliste sans risque — attention aux effets de bord (écritures)</td></tr>
+</table>
+
+<h3>Migrations de base : expand / contract</h3>
+<ol>
+<li><b>Expand</b> : ajouter la nouvelle colonne/table, nullable, sans rien casser.</li>
+<li>Déployer le code qui écrit dans l'ancien ET le nouveau, et lit le nouveau avec repli.</li>
+<li>Migrer les données existantes (par lots, en arrière-plan).</li>
+<li><b>Contract</b> : une fois toutes les instances migrées et stabilisées, supprimer l'ancien.</li>
+</ol>
+<div class="box piege"><b>La question qui tue</b> : « comment tu rollback si la migration est déjà passée ? » La bonne réponse n'est pas « je restaure une sauvegarde » : c'est que les migrations doivent être <b>rétrocompatibles</b>, donc l'ancien binaire tourne sur le nouveau schéma. Sinon : roll-forward avec un correctif, la restauration étant un dernier recours assumé avec perte de données.</div>
+
+<h3>Secrets dans le pipeline</h3>
+<ol>
+<li><b>Le mieux</b> : fédération d'identité <b>OIDC</b> entre le fournisseur CI et le cloud. Le pipeline échange un token signé contre des credentials temporaires. Aucun secret longue durée stocké.</li>
+<li><b>Sinon</b> : coffre (Key Vault, Secrets Manager, Vault) avec injection au runtime, scope par environnement, masquage dans les logs, rotation.</li>
+<li><b>Jamais</b> : secret en variable de pipeline non protégée, dans le code, dans une image (<code>ARG</code> reste dans <code>docker history</code>), ou dans le state Terraform accessible largement.</li>
+</ol>
+
+<h3>Sécuriser la chaîne CI/CD elle-même</h3>
+<ul>
+<li>Branches protégées, revue obligatoire, commits signés, interdiction du bypass.</li>
+<li><b>Runners éphémères</b> et isolés par niveau de sensibilité — un runner persistant devient un vecteur de mouvement latéral.</li>
+<li>Actions/images tierces <b>épinglées par digest</b>, jamais <code>@main</code>.</li>
+<li>Séparation des identités <b>build</b> (lecture) et <b>deploy</b> (écriture), environnements protégés avec approbation distincte en prod.</li>
+<li>Attention aux déclencheurs qui exécutent du code de fork avec les secrets du dépôt (<code>pull_request_target</code>) — approbation manuelle obligatoire pour les contributeurs externes.</li>
+<li>Journalisation immuable : qui a approuvé, quel artefact, quand.</li>
+</ul>
+
+<h3>GitOps</h3>
+<table>
+<tr><th></th><th>Push (CI classique)</th><th>Pull (GitOps)</th></tr>
+<tr><td>Qui déploie</td><td>La CI, avec des credentials cluster</td><td>Un agent DANS le cluster (Argo CD, Flux)</td></tr>
+<tr><td>Credentials</td><td>Dans la CI — surface d'attaque</td><td>Aucun credential cluster à l'extérieur</td></tr>
+<tr><td>Dérive</td><td>Non détectée</td><td>Détectée et corrigée en continu</td></tr>
+<tr><td>Rollback</td><td>Rejouer un pipeline</td><td><code>git revert</code></td></tr>
+<tr><td>Audit</td><td>Logs de pipeline</td><td>Historique Git = preuve de l'état désiré</td></tr>
+</table>
+<p>Pattern courant : un dépôt applicatif (code) + un dépôt de déploiement (manifestes). La CI construit l'image et ouvre une PR sur le dépôt de déploiement pour bumper le tag ; l'approbation de cette PR EST l'autorisation de mise en production.</p>
+
+<h3>Mutualiser 50 pipelines</h3>
+<p>Templates versionnés dans un dépôt central : <code>include</code> GitLab, reusable workflows GitHub, templates Azure DevOps, shared library Jenkins. Chaque dépôt applicatif ne garde qu'une dizaine de lignes. <b>Versionner les templates</b> (tag immuable, jamais <code>@main</code>), annoncer les dépréciations, garder une porte de sortie pour les cas particuliers.</p>
+
+<h3>Métriques DORA</h3>
+<table>
+<tr><th>Métrique</th><th>Mesure</th><th>Élite</th></tr>
+<tr><td>Deployment frequency</td><td>Fréquence de mise en production</td><td>À la demande, plusieurs fois par jour</td></tr>
+<tr><td>Lead time for changes</td><td>Du commit à la prod</td><td>Moins d'un jour</td></tr>
+<tr><td>Change failure rate</td><td>% de déploiements causant une dégradation</td><td>0-15 %</td></tr>
+<tr><td>Time to restore</td><td>Durée de rétablissement</td><td>Moins d'une heure</td></tr>
+</table>
+<p><b>L'argument clé</b> : vitesse et stabilité progressent ENSEMBLE. Déployer souvent, en petits lots, réduit le risque — parce qu'on sait exactement ce qui a changé et qu'on revient en arrière facilement. C'est la réponse à « chez nous on livre une fois par trimestre, c'est plus sûr ».</p>
+
+<div class="box dire"><b>Nuance bancaire à ne pas oublier</b>
+Les périodes de gel (clôture comptable, arrêtés, jours de place) sont une contrainte métier <b>légitime</b>, pas une résistance au changement. Montrer qu'on la respecte tout en gardant un chemin d'urgence (hotfix avec approbation renforcée) prouve qu'on a déjà travaillé dans ce contexte.</div>
+`
+}]);
+
+</script>
+<script>
+/* fiches/09-securite.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"securite",
+titre:"Sécurité & conformité",
+lead:"En banque, c'est le domaine qui fait la différence entre un bon DevOps et un DevOps embauchable.",
+html:`
+<h3>Les fondamentaux à énoncer sans hésiter</h3>
+<ul>
+<li><b>AuthN puis AuthZ</b> : authentification = qui tu es ; autorisation = ce que tu as le droit de faire.</li>
+<li><b>Moindre privilège</b> : le minimum de droits, pour la durée minimale. On part de zéro et on ajoute ; on audite ce qui n'a jamais servi (Access Advisor, Access Analyzer, Access Reviews) et on le retire.</li>
+<li><b>Défense en profondeur</b> : plusieurs couches indépendantes (réseau, identité, chiffrement, détection). Aucune n'est censée être infaillible.</li>
+<li><b>Séparation des tâches</b> : personne ne peut seul écrire ET mettre en production un changement.</li>
+<li><b>Zero trust</b> : pas de réseau interne de confiance ; chaque appel est authentifié et autorisé quelle que soit sa provenance.</li>
+</ul>
+
+<h3>Chiffrement</h3>
+<table>
+<tr><th></th><th>Symétrique</th><th>Asymétrique</th></tr>
+<tr><td>Clé</td><td>Une seule, partagée</td><td>Paire publique/privée</td></tr>
+<tr><td>Vitesse</td><td>Rapide (AES)</td><td>Lent (RSA, ECDSA)</td></tr>
+<tr><td>Problème résolu</td><td>Volume de données</td><td>Distribution des clés, authentification, signature</td></tr>
+</table>
+<p><b>TLS combine les deux</b> : l'asymétrique authentifie le serveur et établit un secret partagé (ECDHE → <b>forward secrecy</b>), puis tout le trafic passe en symétrique.</p>
+<p><b>Chiffrement par enveloppe</b> (KMS / Key Vault) : le service génère une <b>data key</b>, la renvoie en clair ET chiffrée par la clé maître. On chiffre les données localement avec la clé en clair, on la jette de la mémoire, on stocke la version chiffrée à côté. La clé maître ne quitte jamais le HSM. C'est ce qui rend le chiffrement performant à grande échelle.</p>
+<div class="box piege">Chiffrement au repos + en transit ne protègent <b>pas</b> d'un accès légitime détourné : si l'identité autorisée à déchiffrer est compromise, tout est lisible. D'où l'importance de l'IAM, de la segmentation et de la journalisation.</div>
+
+<h3>Gestion des secrets — hiérarchie des bonnes pratiques</h3>
+<ol>
+<li><b>Pas de secret du tout</b> : identité fédérée (Managed Identity, IRSA, OIDC). Le meilleur secret est celui qui n'existe pas.</li>
+<li><b>Coffre</b> (Key Vault, Secrets Manager, Vault) avec injection au runtime, rotation automatisée, journalisation des accès.</li>
+<li><b>Variables de pipeline protégées</b>, scopées par environnement, masquées.</li>
+<li><b>Jamais</b> : dans le code, dans une image, dans un tfvars commité, dans un fichier partagé.</li>
+</ol>
+<p><b>Secret fuité</b> : la seule action qui compte est de <b>le révoquer</b>. Réécrire l'historique Git ne protège rien si le secret reste valide. Ensuite : audit de ce qui a été fait avec, recherche de persistance, post-mortem sur pourquoi il existait.</p>
+
+<h3>Sécurité des conteneurs et de la chaîne d'approvisionnement</h3>
+<table>
+<tr><th>Étape</th><th>Contrôle</th></tr>
+<tr><td>Développement</td><td>Détection de secrets en pre-commit, SAST, revue de code</td></tr>
+<tr><td>Dépendances</td><td>SCA + SBOM, lockfiles, dépôts internes miroirs (anti-typosquatting)</td></tr>
+<tr><td>Build</td><td>Runner éphémère, base durcie (distroless), non-root, multi-stage</td></tr>
+<tr><td>Registry</td><td>Privé, scan continu, signature Cosign, pin par digest</td></tr>
+<tr><td>Déploiement</td><td>Admission policy : registry approuvé, image signée, non-root, pas de <code>latest</code></td></tr>
+<tr><td>Runtime</td><td>read-only rootfs, capabilities drop ALL, seccomp, NetworkPolicy, détection runtime (Falco)</td></tr>
+</table>
+<p><b>Prioriser 200 CVE</b> : par risque réel — sévérité ET exploitabilité (KEV, EPSS, exploit public), présence effective dans le chemin d'exécution, exposition du service, disponibilité d'un correctif. Souvent, changer d'image de base en élimine 80 % d'un coup.</p>
+
+<h3>Identité et accès humains</h3>
+<ul>
+<li>MFA résistante au phishing (FIDO2) obligatoire, surtout sur les comptes privilégiés.</li>
+<li><b>Accès juste-à-temps</b> : PIM (Entra ID), IAM Identity Center avec sessions courtes. Aucun compte admin permanent.</li>
+<li>Accès prod via bastion / Session Manager plutôt que SSH direct, avec enregistrement de session.</li>
+<li>Revues d'accès périodiques, désactivation automatique des comptes dormants, départ = révocation immédiate.</li>
+<li>Objectif final : l'accès humain direct est l'<b>exception documentée</b>, l'automatisation est le chemin normal.</li>
+</ul>
+
+<h3>JWT — ce qu'il faut savoir dire</h3>
+<p>Trois parties base64url : header, payload, signature. Le payload est <b>signé, pas chiffré</b> → lisible par tous, jamais de secret dedans.</p>
+<p>Erreurs classiques : ne pas vérifier la signature, accepter <code>alg: none</code> ou laisser le token choisir l'algorithme, ne pas valider <code>exp</code>/<code>aud</code>/<code>iss</code>, et croire qu'on peut révoquer un JWT (il faut des durées courtes + refresh token, ou une liste de révocation).</p>
+
+<h3>Le confused deputy</h3>
+<p>Un service tiers autorisé à endosser ton rôle peut être manipulé pour agir sur les ressources d'un autre client. Parades AWS : <code>ExternalId</code> dans la trust policy pour les rôles cross-compte tiers, conditions <code>aws:SourceAccount</code> / <code>aws:SourceArn</code> pour les services. Sortir ça en entretien te classe immédiatement.</p>
+
+<h3>Conformité — le vocabulaire bancaire</h3>
+<table>
+<tr><th>Cadre</th><th>Ce qu'il impose (version DevOps)</th></tr>
+<tr><td><b>DORA</b> (UE, applicable depuis janvier 2025)</td><td>Gestion du risque IT, notification rapide des incidents majeurs, tests de résilience, <b>surveillance des prestataires tiers critiques</b> (donc les clouds) : registre des dépendances, stratégies de sortie, scénarios de bascule testés</td></tr>
+<tr><td><b>RGPD</b></td><td>Localisation et transferts, minimisation, durée de conservation appliquée <b>y compris dans les logs et les sauvegardes</b>, droit à l'effacement et à la portabilité, notification sous 72 h</td></tr>
+<tr><td><b>PCI-DSS</b></td><td>Segmentation du périmètre carte, chiffrement, journalisation, revues d'accès, tests d'intrusion</td></tr>
+<tr><td><b>ISO 27001 / NIST</b></td><td>Système de management de la sécurité, contrôles documentés et audités</td></tr>
+<tr><td><b>ACPR / EBA</b></td><td>Externalisation informatique : réversibilité, auditabilité, continuité</td></tr>
+</table>
+
+<h3>Prouver la conformité à un auditeur</h3>
+<p>La chaîne complète : demande/ticket → PR revue avec approbation nommée → commit signé → build tracé avec artefact versionné et SBOM → journal de déploiement horodaté → état réel via l'IaC et l'inventaire (AWS Config, Azure Resource Graph). En GitOps, le dépôt Git EST la preuve de l'état désiré et le contrôleur prouve la réconciliation.</p>
+<p><b>Exceptions</b> : jamais en désactivant un contrôle. On crée une <b>exemption nommée, datée, avec un propriétaire et une justification</b>, inscrite dans un registre revu périodiquement.</p>
+
+<h3>Policy as Code — les trois moments</h3>
+<ol>
+<li><b>En CI</b>, sur le plan Terraform JSON (OPA/Conftest, Sentinel, Checkov) — le moins cher, bloque avant création.</li>
+<li><b>À l'admission</b> côté plateforme (Azure Policy Deny, SCP AWS, Kyverno/Gatekeeper) — rend le contrôle <b>non contournable</b>, même hors pipeline.</li>
+<li><b>En continu</b> sur l'existant (Config, Defender for Cloud) — détecte la dérive.</li>
+</ol>
+<p>La CI seule ne suffit jamais : quelqu'un finira par agir hors pipeline.</p>
+
+<h3>Réponse à incident de sécurité — l'ordre</h3>
+<ol>
+<li><b>Contenir</b> : révoquer/désactiver, isoler la ressource (sans la détruire — on préserve les preuves).</li>
+<li><b>Évaluer</b> : logs d'audit, quelle période, quelles actions, quelles données.</li>
+<li><b>Éradiquer</b> : chercher la persistance (nouvelles identités, clés, règles, tâches planifiées).</li>
+<li><b>Restaurer</b> depuis un état sain vérifié.</li>
+<li><b>Notifier</b> selon les obligations (RSSI, DPO, régulateur, clients).</li>
+<li><b>Post-mortem blameless</b> avec actions systémiques datées.</li>
+</ol>
+
+<div class="box dire"><b>Formulation qui rassure en banque</b>
+« Mon principe, c'est que le contrôle ne doit pas dépendre de la discipline des gens : il doit être dans la plateforme. Une policy en admission, une branche protégée, une identité fédérée — ce sont des contrôles qu'on ne peut pas oublier d'appliquer. »</div>
+`
+}]);
+
+</script>
+<script>
+/* fiches/10-obs-sre.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"obs-sre",
+titre:"Observabilité & SRE",
+lead:"Ce qui prouve que tu as vraiment exploité de la production, et pas seulement construit des pipelines.",
+html:`
+<h3>Les trois piliers</h3>
+<table>
+<tr><th>Pilier</th><th>Répond à</th><th>Coût</th></tr>
+<tr><td><b>Métriques</b></td><td>QUOI — agrégats numériques, tendances, alerting</td><td>Faible, mais cardinalité limitée</td></tr>
+<tr><td><b>Logs</b></td><td>POURQUOI — événements détaillés horodatés</td><td>Élevé au volume</td></tr>
+<tr><td><b>Traces</b></td><td>OÙ — parcours d'une requête entre services</td><td>Moyen, avec échantillonnage</td></tr>
+</table>
+<p>Ils se corrèlent par un <b>trace ID</b> propagé partout et injecté dans les logs. Sans cette corrélation, on a trois silos et pas de l'observabilité.</p>
+<p><b>Monitoring vs observabilité</b> : le monitoring répond aux questions qu'on a prévues ; l'observabilité permet de répondre à celles qu'on n'avait <b>pas</b> anticipées, sans redéployer.</p>
+
+<h3>Que mesurer</h3>
+<ul>
+<li><b>RED</b> (services) : <b>R</b>ate (req/s), <b>E</b>rrors (taux), <b>D</b>uration (latence en percentiles).</li>
+<li><b>USE</b> (ressources) : <b>U</b>tilization, <b>S</b>aturation, <b>E</b>rrors — CPU, mémoire, disque, réseau, pools.</li>
+<li><b>Four Golden Signals</b> (Google) : latence, trafic, erreurs, saturation.</li>
+</ul>
+<p><b>Percentiles, pas moyennes</b> : 99 requêtes à 50 ms et une à 10 s donnent une moyenne rassurante et un utilisateur furieux. Sur une page qui fait 20 appels, le p99 de chaque appel devient l'expérience normale.</p>
+<div class="box piege">On ne <b>moyenne pas des percentiles</b> : ils ne sont pas additifs. Il faut agréger les buckets bruts de l'histogramme (<code>histogram_quantile()</code> sur la somme des buckets).</div>
+
+<h3>Prometheus</h3>
+<p>Modèle <b>pull</b> : Prometheus scrape des endpoints <code>/metrics</code> découverts par service discovery. Avantage : il sait qui ne répond plus (<code>up == 0</code>). Pour les jobs batch éphémères : Pushgateway, avec parcimonie.</p>
+<table>
+<tr><th>Type</th><th>Usage</th></tr>
+<tr><td>Counter</td><td>Ne fait qu'augmenter (requêtes, erreurs) → toujours avec <code>rate()</code></td></tr>
+<tr><td>Gauge</td><td>Monte et descend (mémoire, connexions actives)</td></tr>
+<tr><td>Histogram</td><td>Buckets cumulatifs → quantiles agrégeables côté serveur</td></tr>
+<tr><td>Summary</td><td>Quantiles calculés côté client → non agrégeables</td></tr>
+</table>
+<pre><code># Taux d'erreur 5xx sur 5 minutes
+sum(rate(http_requests_total{status=~"5.."}[5m]))
+  / sum(rate(http_requests_total[5m]))
+
+# Latence p95
+histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le))
+
+# Pods qui redémarrent
+increase(kube_pod_container_status_restarts_total[15m]) > 0</code></pre>
+<div class="box piege"><b>Explosion de cardinalité</b> : chaque combinaison de labels crée une série temporelle stockée en mémoire. Un ID utilisateur, un trace ID ou une URL avec paramètres en label = des millions de séries = TSDB à genoux. Les labels doivent être de cardinalité <b>bornée et connue</b> (service, méthode, code, région). Le détail unitaire appartient aux logs et aux traces.</div>
+
+<h3>Logs</h3>
+<ul>
+<li><b>Structurés (JSON)</b> : indexables et requêtables par champ, sans regex fragile.</li>
+<li>Champs indispensables : timestamp, level, service, version, environnement, <b>trace_id</b>, message.</li>
+<li>Niveaux utilisés correctement : ERROR = quelque chose à corriger, WARN = anormal mais géré, INFO = événement métier, DEBUG = désactivé en prod.</li>
+<li><b>Jamais</b> de données personnelles ou de secrets dans les logs — ils partent dans un SIEM et des sauvegardes longue durée (sujet RGPD).</li>
+<li><b>Maîtriser le coût</b> : rétention différenciée (7 j chaud / 90 j froid / archive), échantillonnage des succès en gardant 100 % des erreurs, filtrage au niveau de l'agent.</li>
+</ul>
+
+<h3>Traces distribuées</h3>
+<p><b>OpenTelemetry</b> est le standard : SDK d'instrumentation + collector + export vers le backend (Jaeger, Tempo, Datadog, App Insights). Propagation du contexte via l'en-tête W3C <code>traceparent</code>. Une trace se coupe au premier service non instrumenté — d'où l'importance de la couverture.</p>
+<p>Échantillonnage : head-based (décision au départ, simple) vs tail-based (décision après la trace complète — permet de garder 100 % des erreurs et des requêtes lentes, plus coûteux).</p>
+
+<h3>SLI / SLO / SLA / error budget</h3>
+<table>
+<tr><th>Terme</th><th>Définition</th></tr>
+<tr><td><b>SLI</b></td><td>L'indicateur mesuré : % de requêtes réussies sous 300 ms</td></tr>
+<tr><td><b>SLO</b></td><td>L'objectif interne : 99,9 % sur 28 jours glissants</td></tr>
+<tr><td><b>SLA</b></td><td>L'engagement contractuel avec pénalités. Toujours <b>SLA &lt; SLO</b></td></tr>
+<tr><td><b>Error budget</b></td><td>100 % − SLO. Avec 99,9 % : ~43 min/mois d'indisponibilité autorisée</td></tr>
+</table>
+<table>
+<tr><th>SLO</th><th>Indispo / an</th><th>Indispo / mois</th></tr>
+<tr><td>99 %</td><td>3,65 jours</td><td>7,2 h</td></tr>
+<tr><td>99,9 %</td><td>8,76 h</td><td>43 min</td></tr>
+<tr><td>99,95 %</td><td>4,38 h</td><td>22 min</td></tr>
+<tr><td>99,99 %</td><td>52 min</td><td>4,3 min</td></tr>
+</table>
+<p><b>À savoir dire</b> : on ne peut pas être plus fiable que la somme de ses dépendances. Si les services managés sous-jacents sont à 99,9 %, promettre 99,99 % au métier est une fiction — sauf à payer du multi-région et de l'automatisation totale de bascule.</p>
+<p><b>Construire un SLO</b> : parcours utilisateur critique → SLI mesuré <b>côté utilisateur</b> (au load balancer, pas dans l'app) → cible issue de l'historique et pas d'un chiffre rond → fenêtre glissante 28-30 jours → budget d'erreur → validation par le métier.</p>
+
+<h3>Alerting</h3>
+<ul>
+<li>Alerter sur les <b>symptômes</b> (ce que l'utilisateur subit), pas sur les causes (CPU à 90 % ne dérange personne si le service répond).</li>
+<li>Une alerte qui réveille doit cumuler : <b>impact réel</b> + <b>urgence</b> + <b>action possible</b> avec un runbook. Le reste va en ticket ou en dashboard.</li>
+<li><b>Burn rate multi-fenêtres</b> plutôt qu'un seuil instantané : alerte rapide si on consomme le budget d'erreur 14× trop vite sur 1 h, alerte lente à 6× sur 6 h. Ça élimine l'essentiel des faux positifs.</li>
+<li>Mesurer le taux de faux positifs et la charge d'astreinte : une équipe réveillée pour rien cesse de lire les alertes.</li>
+</ul>
+
+<h3>Gestion d'incident</h3>
+<p>Rôles explicites : <b>Incident Commander</b> (décide, ne tape pas au clavier), Operations (investiguent), Communications (informe métier et direction), Scribe (horodate). Un canal unique, des points de situation réguliers.</p>
+<p><b>Priorité : mitiger avant de comprendre.</b> Rollback, scale, bascule, circuit breaker — la compréhension vient après le rétablissement.</p>
+<p><b>Post-mortem blameless</b> sous 48 h : chronologie, impact chiffré, causes systémiques, actions <b>assignées et datées</b>. Chercher un coupable garantit que les incidents suivants ne seront pas remontés.</p>
+
+<h3>Concepts de résilience à maîtriser</h3>
+<table>
+<tr><th>Concept</th><th>Ce qu'il évite</th></tr>
+<tr><td><b>Timeout</b></td><td>Attendre indéfiniment. Doit <b>décroître</b> en profondeur d'appel</td></tr>
+<tr><td><b>Retry + backoff + jitter</b></td><td>Le retry storm. Le <b>jitter</b> est le détail que tout le monde oublie</td></tr>
+<tr><td><b>Budget de retry</b></td><td>L'amplification : max ~10 % du trafic en retries</td></tr>
+<tr><td><b>Circuit breaker</b></td><td>La cascade : échec rapide au lieu d'accumuler des threads en attente</td></tr>
+<tr><td><b>Bulkhead</b></td><td>Qu'une dépendance lente consomme tout le pool de threads</td></tr>
+<tr><td><b>Load shedding</b></td><td>Traiter mal 100 % plutôt que bien 80 %</td></tr>
+<tr><td><b>Idempotence</b></td><td>Le double débit sur retry — <b>fondamental en finance</b></td></tr>
+<tr><td><b>Dégradation gracieuse</b></td><td>Le tout ou rien : couper les fonctions secondaires, garder le cœur</td></tr>
+</table>
+
+<h3>Continuité et reprise</h3>
+<table>
+<tr><th>Stratégie DR</th><th>RTO</th><th>Coût</th></tr>
+<tr><td>Backup & restore</td><td>Heures</td><td>Minimal</td></tr>
+<tr><td>Pilot light</td><td>Dizaines de minutes</td><td>Faible</td></tr>
+<tr><td>Warm standby</td><td>Minutes</td><td>Moyen</td></tr>
+<tr><td>Multi-site actif/actif</td><td>Quasi nul</td><td>Maximal</td></tr>
+</table>
+<p><b>RTO</b> = en combien de temps on revient. <b>RPO</b> = combien de données on accepte de perdre. Les deux se négocient avec le métier, pas entre techniciens.</p>
+<div class="box piege">Une sauvegarde jamais restaurée n'est pas une sauvegarde. Règle <b>3-2-1</b> (3 copies, 2 supports, 1 hors site) + 1 copie <b>immuable</b> contre les ransomwares, et un exercice de restauration <b>chronométré</b> au moins annuel — qui valide aussi la restauration des CLÉS de chiffrement et des dépendances (DNS, comptes de service).</div>
+
+<h3>Toil et error budget policy</h3>
+<p><b>Toil</b> : travail manuel, répétitif, automatisable, sans valeur durable, qui croît avec le service. Limite de référence : 50 % du temps. Au-delà, on gèle les nouveautés pour automatiser.</p>
+<p><b>Error budget policy</b> : tant qu'il reste du budget, on déploie vite ; quand il est consommé, on gèle les features et on investit dans la fiabilité. C'est l'outil qui transforme un débat d'opinion en règle acceptée d'avance par le métier et la technique.</p>
+`
+}]);
+
+</script>
+<script>
+/* fiches/11-sql.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"sql",
+titre:"SQL & bases de données",
+lead:"En banque, la donnée est le sujet. Un DevOps qui ne sait pas lire un plan d'exécution plafonne vite.",
+html:`
+<h3>ACID</h3>
+<table>
+<tr><th>Lettre</th><th>Garantie</th></tr>
+<tr><td><b>A</b>tomicité</td><td>Tout ou rien : la transaction s'applique entièrement ou pas du tout</td></tr>
+<tr><td><b>C</b>ohérence</td><td>Les contraintes (clés, checks) restent respectées avant et après</td></tr>
+<tr><td><b>I</b>solation</td><td>Les transactions concurrentes ne se voient pas à moitié</td></tr>
+<tr><td><b>D</b>urabilité</td><td>Une fois commité, ça survit à un crash (WAL / journal)</td></tr>
+</table>
+
+<h3>Niveaux d'isolation</h3>
+<table>
+<tr><th>Niveau</th><th>Empêche</th><th>Reste possible</th></tr>
+<tr><td>Read Uncommitted</td><td>—</td><td>Lecture sale (dirty read)</td></tr>
+<tr><td>Read Committed</td><td>Lecture sale</td><td>Lecture non répétable</td></tr>
+<tr><td>Repeatable Read</td><td>Lecture non répétable</td><td>Phantom read</td></tr>
+<tr><td>Serializable</td><td>Tout</td><td>Coût en concurrence / conflits de sérialisation</td></tr>
+</table>
+<p>Défaut : Read Committed sur PostgreSQL et Oracle, Repeatable Read sur MySQL/InnoDB. Plus on monte, plus on verrouille : c'est un arbitrage cohérence / concurrence.</p>
+
+<h3>Jointures</h3>
+<table>
+<tr><th>Type</th><th>Résultat</th></tr>
+<tr><td>INNER JOIN</td><td>Uniquement les lignes ayant une correspondance des deux côtés</td></tr>
+<tr><td>LEFT JOIN</td><td>Toutes les lignes de gauche, NULL à droite si pas de correspondance</td></tr>
+<tr><td>RIGHT / FULL</td><td>Symétrique / union des deux</td></tr>
+<tr><td>CROSS JOIN</td><td>Produit cartésien — presque toujours une erreur involontaire</td></tr>
+</table>
+<pre><code>-- Trouver les orphelins
+SELECT c.id FROM clients c
+LEFT JOIN commandes o ON o.client_id = c.id
+WHERE o.id IS NULL;</code></pre>
+<p><code>WHERE</code> filtre les LIGNES avant agrégation ; <code>HAVING</code> filtre les GROUPES après <code>GROUP BY</code> et peut porter sur un agrégat.</p>
+
+<h3>Ordre d'exécution logique</h3>
+<pre><code>FROM / JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT</code></pre>
+<p>Ça explique pourquoi on ne peut pas utiliser un alias du SELECT dans le WHERE, mais qu'on le peut dans le ORDER BY.</p>
+
+<h3>Index</h3>
+<ul>
+<li>Structure B-tree triée qui évite le parcours complet. Accélère la LECTURE, ralentit chaque INSERT/UPDATE/DELETE et occupe de l'espace.</li>
+<li><b>Index composite</b> : l'ordre des colonnes compte (règle du préfixe le plus à gauche). Un index sur (a, b) sert pour <code>WHERE a=…</code> et <code>WHERE a=… AND b=…</code>, pas pour <code>WHERE b=…</code> seul.</li>
+<li><b>Sélectivité</b> : indexer une colonne à 2 valeurs distinctes sur 10 M de lignes ne sert à rien.</li>
+<li><b>Index couvrant</b> : contient toutes les colonnes de la requête → pas d'accès à la table (index-only scan).</li>
+</ul>
+<div class="box piege"><b>Ce qui casse un index</b> : une fonction appliquée à la colonne (<code>WHERE UPPER(nom) = 'X'</code>, <code>WHERE DATE(created_at) = …</code>), un <code>LIKE '%x'</code> avec joker en tête, une conversion implicite de type, un <code>OR</code> sur des colonnes différentes. Solution : index fonctionnel, ou réécrire (<code>created_at >= '2026-01-01' AND created_at < '2026-01-02'</code>).</div>
+
+<h3>Diagnostiquer une requête lente</h3>
+<pre><code>EXPLAIN ANALYZE SELECT …;    -- PostgreSQL : plan RÉEL avec les temps</code></pre>
+<ol>
+<li><b>Seq Scan</b> sur une grosse table filtrée → index manquant.</li>
+<li>Estimation de lignes très différente du réel → <b>statistiques périmées</b> (<code>ANALYZE</code>).</li>
+<li>Nested Loop sur un gros volume → mauvais ordre de jointure.</li>
+<li>Tri sur disque (<code>external merge</code>) → <code>work_mem</code> insuffisant.</li>
+<li>Volume ramené inutile : <code>SELECT *</code>, absence de pagination, N+1 côté ORM.</li>
+<li>Sinon : contention, verrous, saturation I/O.</li>
+</ol>
+
+<h3>Verrous et deadlocks</h3>
+<p>Un <b>deadlock</b> = deux transactions attendent chacune un verrou détenu par l'autre ; le SGBD tue une victime et l'application doit rejouer.</p>
+<p><b>Prévention structurelle</b> : accéder aux ressources toujours dans le MÊME ordre, transactions courtes, éviter les traitements applicatifs à l'intérieur d'une transaction, indexer pour verrouiller des lignes plutôt que des plages.</p>
+<p>Surveiller les sessions <code>idle in transaction</code> : une transaction ouverte et oubliée bloque le VACUUM et fait gonfler la base.</p>
+
+<h3>MVCC (PostgreSQL)</h3>
+<p>Un UPDATE n'écrase pas la ligne : il écrit une nouvelle version et marque l'ancienne comme morte. Les lecteurs ne bloquent pas les écrivains.</p>
+<p><b>Contrepartie</b> : accumulation de tuples morts (bloat) → VACUUM / autovacuum indispensable, sous peine de tables gonflées, d'index inefficaces et, à l'extrême, d'un risque de wraparound des transaction IDs. C'est un sujet d'exploitation classique en production.</p>
+
+<h3>Réplication et scaling</h3>
+<table>
+<tr><th>Mécanisme</th><th>Apporte</th><th>Limite</th></tr>
+<tr><td>Réplique synchrone (RDS Multi-AZ, Always On)</td><td>Haute disponibilité, RPO ≈ 0</td><td>Latence d'écriture, pas de lecture sur le standby (RDS)</td></tr>
+<tr><td>Réplique asynchrone (read replica)</td><td>Montée en charge en LECTURE</td><td><b>Lag</b> → lectures potentiellement périmées</td></tr>
+<tr><td>Partitionnement (partitioning)</td><td>Tables énormes découpées par date/clé</td><td>Requêtes doivent filtrer sur la clé de partition</td></tr>
+<tr><td>Sharding</td><td>Écriture horizontale</td><td>Jointures et transactions cross-shard très coûteuses</td></tr>
+</table>
+<div class="box piege"><b>Multi-AZ ≠ Read Replica</b> : le premier c'est de la DISPONIBILITÉ (bascule automatique, réplication synchrone), le second c'est de la PERFORMANCE en lecture (asynchrone, avec lag). Question fréquente et discriminante.</div>
+
+<h3>Pool de connexions</h3>
+<p>Une base sature souvent en connexions bien avant de saturer en CPU. Chaque connexion PostgreSQL = un processus. Avec 20 réplicas applicatifs × un pool de 20 = 400 connexions pour une base dimensionnée à 100.</p>
+<p>Solutions : dimensionner le pool en fonction du nombre TOTAL d'instances, un proxy de connexions (PgBouncer, RDS Proxy), des timeouts d'inactivité, et surveiller les sessions <code>idle in transaction</code>.</p>
+
+<h3>SQL vs NoSQL</h3>
+<p>On choisit sur le <b>modèle d'accès</b>, pas sur la mode :</p>
+<ul>
+<li><b>Relationnel</b> : relations riches, requêtes ad hoc, intégrité transactionnelle, reporting. Domine en banque — la cohérence et l'auditabilité priment.</li>
+<li><b>Clé-valeur / document</b> (DynamoDB, Cosmos) : accès connus à l'avance, par clé, échelle horizontale massive, latence constante.</li>
+<li><b>Colonne</b> (Cassandra) : écriture massive, séries temporelles.</li>
+<li><b>Graphe</b> (Neo4j) : relations profondes (détection de fraude, KYC).</li>
+</ul>
+
+<h3>CAP et PACELC</h3>
+<p>En cas de <b>Partition</b> réseau (inévitable en distribué), il faut choisir : <b>C</b>ohérence (refuser de répondre du côté minoritaire) ou <b>A</b>vailability (répondre avec des données potentiellement périmées). Pour un solde de compte : CP. Pour un catalogue produit : AP.</p>
+<p><b>PACELC</b> complète : en cas de Partition → A ou C ; <b>Else</b> (fonctionnement normal) → Latence ou Cohérence. C'est plus honnête, parce que l'arbitrage existe aussi hors panne.</p>
+
+<h3>Migrations de schéma en production</h3>
+<ul>
+<li>Toujours <b>rétrocompatibles</b> (expand/contract) — voir la fiche CI/CD.</li>
+<li>Versionnées et rejouables (Flyway, Liquibase, migrations applicatives), jamais de DDL manuel.</li>
+<li>Attention aux verrous : ajouter une colonne NOT NULL avec valeur par défaut peut réécrire toute la table sur les vieilles versions. Sur PostgreSQL récent, c'est instantané — savoir vérifier la version compte.</li>
+<li>Créer les index en <code>CONCURRENTLY</code> pour ne pas bloquer les écritures.</li>
+<li>Sur les grosses tables : migrer par lots avec pauses, pas en une transaction géante.</li>
+</ul>
+`
+}]);
+
+</script>
+<script>
+/* fiches/12-entretien.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"entretien",
+titre:"Jour J — posture & pièges",
+lead:"Trois seniors qui te challengent : ce qui se joue là n'est plus seulement technique.",
+html:`
+<h3>Ce qu'ils cherchent réellement</h3>
+<table>
+<tr><th>Ils testent</th><th>Comment</th><th>Ce qui les rassure</th></tr>
+<tr><td>La profondeur</td><td>Trois relances sur la même question</td><td>Tu descends d'un cran à chaque fois au lieu de répéter</td></tr>
+<tr><td>L'honnêteté</td><td>Une question hors de ton périmètre</td><td>« Je ne sais pas, voilà comment je chercherais »</td></tr>
+<tr><td>Le réflexe d'exploitant</td><td>« Et si ça tombe à 3 h du matin ? »</td><td>Tu parles détection, mitigation, rollback</td></tr>
+<tr><td>L'arbitrage</td><td>« Pourquoi pas l'autre solution ? »</td><td>Tu nommes les critères et tu assumes un choix</td></tr>
+<tr><td>La collaboration</td><td>Ils te contredisent</td><td>Tu restes calme et tu ramènes aux faits</td></tr>
+</table>
+
+<h3>La structure de réponse en 4 temps</h3>
+<ol>
+<li><b>Réponse directe</b> en une phrase. Ne commence jamais par « alors, ça dépend… ».</li>
+<li><b>Le pourquoi</b> : le mécanisme, en 2-3 phrases.</li>
+<li><b>Un cas concret</b> ou un piège associé — c'est ce qui prouve l'expérience.</li>
+<li><b>La nuance</b> : « en revanche, si le contexte est X, je ferais plutôt Y ».</li>
+</ol>
+<p>Exemple : « Requests et limits ? — Les requests servent au scheduler à placer le Pod, les limits sont un plafond. [pourquoi] Concrètement, dépasser la limite CPU provoque du throttling, dépasser la limite mémoire provoque un OOMKill immédiat, parce que la mémoire n'est pas compressible. [piège] L'erreur classique, c'est de définir un HPA sans requests : le calcul de pourcentage devient impossible et il reste inactif. [nuance] En pratique, je mets requests = limits sur la mémoire, et je reste large sur le CPU pour éviter un throttling inutile. »</p>
+
+<h3>Répondre à une question dont tu ne sais rien</h3>
+<p>Ne bluffe jamais : ils sont trois, l'un d'eux saura. La formule qui marche :</p>
+<p><em>« Je n'ai pas travaillé avec ça directement. De ce que j'en comprends, c'est [analogie avec ce que tu connais]. Si je devais m'y mettre, je commencerais par [démarche concrète]. Est-ce que c'est central dans le poste ? »</em></p>
+<p>Ça montre : lucidité, capacité d'analogie, méthode d'apprentissage, et intérêt pour leur contexte. Un bluff démonté coûte beaucoup plus cher qu'un trou assumé.</p>
+
+<h3>Quand ils te contredisent</h3>
+<ul>
+<li><b>Ne cède pas immédiatement</b> — ça montre que tu n'avais pas d'argument.</li>
+<li><b>Ne campe pas non plus</b> — ça montre que tu es difficile à travailler.</li>
+<li>Reformule leur objection : « si je comprends bien, votre inquiétude porte sur l'exploitabilité plutôt que sur la technique ? »</li>
+<li>Reconnais ce qui est vrai, puis propose : « vous avez raison sur le coût opérationnel. Une version plus simple serait X, on perdrait Y — est-ce acceptable dans votre contexte ? »</li>
+<li>Ramène aux critères : « on optimise pour le time-to-market, le coût d'exploitation, ou la conformité ? »</li>
+</ul>
+
+<h3>Vocabulaire qui te classe (à placer naturellement)</h3>
+<ul>
+<li><b>Rayon d'impact</b> / blast radius</li>
+<li><b>Idempotence</b>, <b>rétrocompatibilité</b>, <b>expand/contract</b></li>
+<li><b>Error budget</b>, <b>SLO</b>, <b>toil</b>, <b>post-mortem blameless</b></li>
+<li><b>Moindre privilège</b>, <b>séparation des tâches</b>, <b>juste-à-temps</b></li>
+<li><b>Décision réversible vs irréversible</b></li>
+<li><b>Plan de contrôle vs plan de données</b></li>
+<li><b>DORA</b> (les 4 métriques ET le règlement européen — les deux existent, ne les confonds pas)</li>
+</ul>
+
+<h3>Vocabulaire qui te dessert</h3>
+<ul>
+<li>« C'est une best practice » sans dire pourquoi.</li>
+<li>« Il suffit de… » — rien ne suffit en production.</li>
+<li>« On fait toujours comme ça » — c'est l'absence d'arbitrage.</li>
+<li>« Le dev n'avait qu'à… » — jamais de mépris pour une autre équipe, même justifié.</li>
+<li>Nommer des outils sans nommer le problème qu'ils résolvent.</li>
+</ul>
+
+<h3>Raconter un incident (format attendu)</h3>
+<ol>
+<li><b>Contexte + impact chiffré</b> : « service de paiement, 40 minutes, ~3 000 transactions en échec ».</li>
+<li><b>Détection</b> : comment on l'a su — alerte, client, hasard (sois honnête).</li>
+<li><b>Décision</b> : ce que tu as fait EN PREMIER et pourquoi — mitiger avant de comprendre.</li>
+<li><b>Résolution</b> : la cause réelle, sans jargon inutile.</li>
+<li><b>Ce qui a changé après</b> : l'action systémique. <b>C'est cette partie qu'ils écoutent le plus.</b></li>
+</ol>
+<div class="box dire">Si tu n'as pas vécu d'incident majeur, ne l'invente pas. Prends un incident réel de ton périmètre, même modeste, et traite-le avec cette rigueur : un candidat qui analyse proprement un petit incident vaut mieux qu'un candidat qui raconte mal une grosse panne.</div>
+
+<h3>Questions à leur poser (choisis-en 3)</h3>
+<ul>
+<li>Comment se passe l'astreinte, et à quelle fréquence elle sonne réellement ?</li>
+<li>Quel a été le dernier incident majeur, et qu'est-ce qui a changé après ?</li>
+<li>Quelle autonomie a l'équipe pour mettre en production ? Combien de temps entre un commit et la prod ?</li>
+<li>Quelle est la plus grosse dette technique que vous assumez aujourd'hui ?</li>
+<li>Qu'est-ce qui ferait que dans six mois vous seriez très contents d'avoir recruté cette personne ?</li>
+<li>Comment cohabitent les équipes plateforme et les équipes applicatives ?</li>
+</ul>
+<p>Ne poser aucune question, ou seulement sur le télétravail et les congés, gâche une bonne performance technique.</p>
+
+<h3>Spécificités du contexte bancaire</h3>
+<ul>
+<li>La <b>conformité n'est pas un frein à contourner</b> : c'est une contrainte de conception. Le bon discours est « je rends le contrôle automatique et non contournable », pas « je trouve un moyen de passer outre ».</li>
+<li>Les <b>périodes de gel</b> (clôtures, arrêtés comptables) sont légitimes. Montre que tu sais vivre avec, et que tu gardes un chemin d'urgence encadré.</li>
+<li>Le <b>legacy</b> est massif et ne disparaîtra pas. Un candidat qui veut tout réécrire fait peur ; un candidat qui parle de pattern strangler et de migration progressive rassure.</li>
+<li>La <b>réversibilité</b> et la <b>stratégie de sortie</b> vis-à-vis d'un fournisseur cloud sont des sujets réels (DORA). Savoir que ça existe te distingue.</li>
+<li>L'environnement est <b>contraint</b> : proxy obligatoire, pas de sortie internet, registry interne, CA d'entreprise. Montre que tu sais travailler comme ça.</li>
+</ul>
+
+<h3>Les 30 dernières minutes avant l'entretien</h3>
+<ol>
+<li>Relis uniquement : les 4 métriques DORA, SLI/SLO/SLA/error budget, SG vs NACL, requests vs limits, liveness vs readiness, expand/contract.</li>
+<li>Prépare une phrase de présentation de 90 secondes : qui tu es, ce que tu as construit, pourquoi ce poste. Répète-la à voix haute.</li>
+<li>Prépare ton incident et ton « dernière fois où tu t'es trompé ».</li>
+<li>Note tes 3 questions pour eux.</li>
+<li>Respire. Ils cherchent quelqu'un avec qui travailler, pas une encyclopédie.</li>
+</ol>
+
+<div class="box dire"><b>La phrase à garder en tête</b>
+Tu n'as pas besoin de tout savoir. Tu as besoin de montrer que face à ce que tu ne sais pas, tu as une méthode — et qu'en production, tu penses d'abord à ce qui casse, comment tu le détectes et comment tu reviens en arrière.</div>
+`
+}]);
+
+</script>
+<script>
+const F = window.FICHES || [];
+const nav = document.getElementById("nav");
+const content = document.getElementById("content");
+
+nav.innerHTML = "<h2>Fiches</h2>" + F.map(f=>`<a href="#${f.id}" data-id="${f.id}">${f.titre}</a>`).join("");
+
+function show(id){
+  const f = F.find(x=>x.id===id) || F[0];
+  content.innerHTML = `<article><h2>${f.titre}</h2><div class="lead">${f.lead||""}</div>${f.html}</article>`;
+  document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("on", a.dataset.id===f.id));
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", ()=>show(location.hash.slice(1)));
+show(location.hash.slice(1) || F[0].id);
+</script>
+</body>
+</html>

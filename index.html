@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Préparation entretien BNP — DevOps</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone.svg">
+<meta name="theme-color" content="#0d111a">
+<script>
+if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){
+  window.addEventListener("load", ()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+<style>
+  :root{--bg:#0d111a;--surface:#151b27;--surface2:#1d2432;--ink:#dde4f0;--muted:#8d9ab2;
+        --accent:#6c8cff;--accent-soft:#1a2440;--border:#26303f;--ok:#3ecf8e}
+  @media (prefers-color-scheme: light){
+    :root{--bg:#f5f7fb;--surface:#fff;--surface2:#f0f3f9;--ink:#161d2b;--muted:#5c687d;
+          --accent:#2b5fd9;--accent-soft:#e6edfc;--border:#dce2ee;--ok:#1e7a46}
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;line-height:1.6}
+  .wrap{max-width:780px;margin:0 auto;padding:48px 18px 80px}
+  h1{font-size:30px;margin:0 0 6px}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--muted);margin:0 0 30px}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.cards{grid-template-columns:1fr}}
+  a.card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;text-decoration:none;color:inherit;transition:.15s}
+  a.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  a.card b{display:block;font-size:19px;margin-bottom:4px}
+  a.card span{font-size:14px;color:var(--muted)}
+  .box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:22px;font-size:14.5px}
+  .box h2{margin:0 0 10px;font-size:16px;color:var(--accent)}
+  ul{margin:8px 0;padding-left:20px}
+  li{margin:5px 0}
+  .stat{display:flex;gap:26px;flex-wrap:wrap;margin-top:14px;font-size:14px;color:var(--muted)}
+  .stat b{display:block;font-size:23px;color:var(--ink);font-variant-numeric:tabular-nums}
+  code{font-family:"Cascadia Code",Consolas,monospace;background:var(--surface2);padding:1px 5px;border-radius:5px;border:1px solid var(--border);font-size:.88em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Préparation <span>entretien BNP</span></h1>
+  <p class="sub">Terraform · Kubernetes · Azure · AWS · Linux · Réseau · CI/CD · Sécurité · SRE · SQL</p>
+
+  <div class="cards">
+    <a class="card" href="quiz.html">
+      <b>Quiz →</b>
+      <span>610 questions sur 10 niveaux progressifs, tous domaines mélangés. Réponses tapées, zéro QCM, répétition espacée.</span>
+    </a>
+    <a class="card" href="etude.html">
+      <b>Fiches d'étude →</b>
+      <span>13 fiches denses, orientées « ce qu'il faut savoir dire » plutôt que tutoriel.</span>
+    </a>
+  </div>
+
+  <div class="stat">
+    <div><b>610</b>questions</div>
+    <div><b>10</b>niveaux</div>
+    <div><b>13</b>domaines</div>
+    <div><b>13</b>fiches</div>
+  </div>
+
+  <div class="box">
+    <h2>Comment ça marche</h2>
+    <ul>
+      <li><b>Aucun QCM.</b> Tu tapes ta réponse avec tes mots. Le moteur cherche les mots-clés qui comptent.</li>
+      <li>Si tu avais juste mais formulé autrement, le bouton <em>« En fait j'avais juste »</em> te laisse te corriger — sois honnête, c'est ta progression.</li>
+      <li>Les questions ratées reviennent plus vite (<b>répétition espacée</b>, 6 paliers). Le bouton <em>Révision du jour</em> te sert les questions dues.</li>
+      <li>Les niveaux mélangent tous les domaines : la difficulté monte, pas le sujet.</li>
+      <li>Ta progression est stockée dans le navigateur (localStorage) — reste sur le même navigateur.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>La règle qui fait la différence</h2>
+    <p>Formule ta réponse <b>à voix haute et en entier</b> avant de taper. Si tu ne peux pas l'expliquer oralement à quelqu'un, tu ne le sais pas — tu le reconnais. C'est exactement la différence que trois seniors verront en 3 minutes.</p>
+    <p style="color:var(--muted)">Le plan de révision sur 15 jours est la première fiche de la partie étude.</p>
+  </div>
+</div>
+</body>
+</html>

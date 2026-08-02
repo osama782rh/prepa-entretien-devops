@@ -1,0 +1,15 @@
+{
+  "name": "Prépa entretien BNP — DevOps",
+  "short_name": "Prépa BNP",
+  "description": "610 questions DevOps sur 10 niveaux + fiches d'étude, utilisable hors ligne.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d111a",
+  "theme_color": "#0d111a",
+  "icons": [
+    { "src": "./icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "./icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
