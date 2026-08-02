@@ -98,6 +98,74 @@ Environment=NODE_ENV=production
 WantedBy=multi-user.target</code></pre>
 <p><code>enable</code> ≠ <code>start</code> : <code>enable</code> crée le lien pour le boot, il ne lance rien maintenant (d'où <code>--now</code>).</p>
 
+<h3>SSH — au-delà du « je me connecte »</h3>
+<pre><code>ssh-keygen -t ed25519 -C "osama@poste"     # ed25519, pas RSA 2048
+ssh -i ~/.ssh/cle.pem -o IdentitiesOnly=yes user@hote
+ssh -J bastion user@hote-prive              # rebond (ProxyJump)
+ssh -L 5432:db-interne:5432 user@bastion    # tunnel LOCAL : port local → distant
+ssh -R 8080:localhost:3000 user@serveur     # tunnel INVERSE
+ssh-add -l                                   # clés chargées dans l'agent
+ssh -vvv user@hote                           # debug d'authentification</code></pre>
+<p><code>~/.ssh/config</code> évite de retaper les options et documente le parc :</p>
+<pre><code>Host prod-*
+  User deploy
+  IdentityFile ~/.ssh/prod_ed25519
+  IdentitiesOnly yes
+  ProxyJump bastion.exemple.com
+  ServerAliveInterval 60</code></pre>
+<ul>
+<li><b>Permissions</b> : <code>~/.ssh</code> en 700, clé privée en 600 (ou 400), <code>authorized_keys</code> en 600. SSH REFUSE une clé trop permissive — cause d'échec très fréquente.</li>
+<li><b>Durcissement de sshd</b> : <code>PermitRootLogin no</code>, <code>PasswordAuthentication no</code>, <code>AllowGroups</code>, MFA. Toujours garder une session ouverte en testant une modification de sshd.</li>
+<li><b>En production cloud</b>, la bonne réponse n'est plus SSH direct mais SSM Session Manager (AWS) ou Azure Bastion : pas de port 22 ouvert, pas de clé à gérer, accès contrôlé par IAM et session enregistrée.</li>
+</ul>
+
+<h3>Utilisateurs, groupes et élévation</h3>
+<pre><code>id osama                        # uid, gid, groupes
+usermod -aG docker osama        # -a INDISPENSABLE, sinon on REMPLACE les groupes
+getent group docker
+sudo -l                         # ce que j'ai le droit de faire
+visudo                          # éditer sudoers avec validation syntaxique</code></pre>
+<table>
+<tr><th></th><th>Effet</th></tr>
+<tr><td><code>su</code></td><td>Change d'utilisateur en gardant l'environnement courant</td></tr>
+<tr><td><code>su -</code></td><td>Login shell complet (PATH, HOME, profil de la cible)</td></tr>
+<tr><td><code>sudo</code></td><td>Élévation par commande, <b>journalisée</b>, politique fine — le seul acceptable en production auditée</td></tr>
+</table>
+<div class="box piege">Ajouter un utilisateur au groupe <code>docker</code> équivaut à lui donner root sur la machine : il peut lancer un conteneur privilégié qui monte <code>/</code>. Ce n'est pas une permission anodine, et un auditeur le sait.</div>
+
+<h3>Disques, systèmes de fichiers, montages</h3>
+<pre><code>lsblk -f                    # arborescence des disques + systèmes de fichiers + UUID
+blkid                       # UUID à utiliser dans fstab
+mount | column -t
+findmnt /var
+mkfs.ext4 /dev/sdb1
+mount -o noatime /dev/sdb1 /data
+df -h / df -i               # espace ET inodes
+du -ah /var | sort -rh | head</code></pre>
+<pre><code># /etc/fstab — TOUJOURS par UUID, jamais par /dev/sdX (l'ordre change au reboot)
+UUID=1234-abcd  /data  ext4  defaults,noatime,nofail  0  2</code></pre>
+<div class="box piege"><b>L'option <code>nofail</code></b> : sans elle, une entrée fstab invalide empêche la machine de démarrer et t'oblige à passer par la console de secours. Après toute modification de fstab, valider avec <code>mount -a</code> AVANT de redémarrer.</div>
+<p><b>LVM</b> en trois mots : disques physiques (PV) → regroupés en volume group (VG) → découpés en volumes logiques (LV) redimensionnables à chaud. C'est ce qui permet d'agrandir <code>/var</code> sans réinstaller : <code>lvextend -L +20G /dev/vg0/var &amp;&amp; resize2fs /dev/vg0/var</code>.</p>
+
+<h3>Paquets et démarrage</h3>
+<pre><code># Debian/Ubuntu                    # RHEL/Rocky
+apt update && apt install -y x      dnf install -y x
+apt list --installed | grep x       rpm -qa | grep x
+dpkg -S /usr/bin/curl               rpm -qf /usr/bin/curl   # quel paquet fournit ce fichier</code></pre>
+<p><b>Séquence de démarrage</b> : firmware → bootloader (GRUB) → noyau + initramfs → <code>systemd</code> (PID 1) → target (<code>multi-user.target</code>, <code>graphical.target</code>). Diagnostic : <code>systemd-analyze blame</code> pour voir ce qui ralentit le boot, <code>journalctl -b -1</code> pour lire les logs du démarrage précédent après un crash.</p>
+
+<h3>Planification : cron ou timer systemd ?</h3>
+<pre><code># crontab -e         min heure jour mois jourSemaine
+*/15 * * * *  /opt/scripts/collecte.sh >> /var/log/collecte.log 2>&1</code></pre>
+<table>
+<tr><th></th><th>cron</th><th>timer systemd</th></tr>
+<tr><td>Journalisation</td><td>À gérer soi-même</td><td>Native dans journald</td></tr>
+<tr><td>Rattrapage après extinction</td><td>Non</td><td>Oui (<code>Persistent=true</code>)</td></tr>
+<tr><td>Dépendances, limites de ressources</td><td>Non</td><td>Oui (c'est une unité)</td></tr>
+<tr><td>Chevauchement d'exécutions</td><td>Possible</td><td>Empêché par défaut</td></tr>
+</table>
+<div class="box piege"><b>Cause n°1 d'un cron qui échoue alors qu'il marche à la main</b> : l'environnement minimal — PATH réduit, pas de <code>.bashrc</code>, HOME différent. Réflexes : chemins absolus partout, variables déclarées explicitement en tête de crontab, et redirection de stdout ET stderr vers un fichier pour pouvoir lire l'erreur.</div>
+
 <h3>Namespaces & cgroups (le socle des conteneurs)</h3>
 <table>
 <tr><th>Mécanisme</th><th>Rôle</th><th>Exemples</th></tr>

@@ -109,9 +109,9 @@ html:`
 <tr><td>J1–J2</td><td>Niveaux 1 et 2</td><td>Linux : permissions, redirections, systemd, scripts avec <code>set -euo pipefail</code></td></tr>
 <tr><td>J3–J4</td><td>Niveau 3</td><td>Docker : multi-stage, non-root, debug d'un conteneur qui plante</td></tr>
 <tr><td>J5–J6</td><td>Niveau 4</td><td>Kubernetes : deployment + service + ingress, probes, requests/limits</td></tr>
-<tr><td>J7–J8</td><td>Niveau 5</td><td>Terraform : modules, for_each, backend distant, import, moved</td></tr>
+<tr><td>J7–J8</td><td>Niveau 5</td><td>Terraform : modules, for_each, backend distant, import, moved. Survole Ansible si tu n'en as jamais fait</td></tr>
 <tr><td>J9–J10</td><td>Niveau 6</td><td>Troubleshooting : casse volontairement des choses et répare-les chronomètre en main</td></tr>
-<tr><td>J11–J12</td><td>Niveaux 7 et 8</td><td>Architecture : dessine 3 archi au tableau (web 3-tiers, microservices, DR)</td></tr>
+<tr><td>J11–J12</td><td>Niveaux 7 et 8</td><td>Architecture : lis la fiche <b>Architecture &amp; system design</b>, puis dessine ses 3 schémas de mémoire, chronomètre en main</td></tr>
 <tr><td>J13</td><td>Niveau 9</td><td>Gouvernance, coûts, conformité — spécifique banque</td></tr>
 <tr><td>J14</td><td>Niveau 10</td><td>Oral : réponds aux 28 questions à voix haute, chronométré, sans lire</td></tr>
 <tr><td>J15</td><td>Marathon complet</td><td>Repos relatif. Relis la fiche « Jour J » uniquement.</td></tr>
@@ -247,6 +247,74 @@ Environment=NODE_ENV=production
 WantedBy=multi-user.target</code></pre>
 <p><code>enable</code> ≠ <code>start</code> : <code>enable</code> crée le lien pour le boot, il ne lance rien maintenant (d'où <code>--now</code>).</p>
 
+<h3>SSH — au-delà du « je me connecte »</h3>
+<pre><code>ssh-keygen -t ed25519 -C "osama@poste"     # ed25519, pas RSA 2048
+ssh -i ~/.ssh/cle.pem -o IdentitiesOnly=yes user@hote
+ssh -J bastion user@hote-prive              # rebond (ProxyJump)
+ssh -L 5432:db-interne:5432 user@bastion    # tunnel LOCAL : port local → distant
+ssh -R 8080:localhost:3000 user@serveur     # tunnel INVERSE
+ssh-add -l                                   # clés chargées dans l'agent
+ssh -vvv user@hote                           # debug d'authentification</code></pre>
+<p><code>~/.ssh/config</code> évite de retaper les options et documente le parc :</p>
+<pre><code>Host prod-*
+  User deploy
+  IdentityFile ~/.ssh/prod_ed25519
+  IdentitiesOnly yes
+  ProxyJump bastion.exemple.com
+  ServerAliveInterval 60</code></pre>
+<ul>
+<li><b>Permissions</b> : <code>~/.ssh</code> en 700, clé privée en 600 (ou 400), <code>authorized_keys</code> en 600. SSH REFUSE une clé trop permissive — cause d'échec très fréquente.</li>
+<li><b>Durcissement de sshd</b> : <code>PermitRootLogin no</code>, <code>PasswordAuthentication no</code>, <code>AllowGroups</code>, MFA. Toujours garder une session ouverte en testant une modification de sshd.</li>
+<li><b>En production cloud</b>, la bonne réponse n'est plus SSH direct mais SSM Session Manager (AWS) ou Azure Bastion : pas de port 22 ouvert, pas de clé à gérer, accès contrôlé par IAM et session enregistrée.</li>
+</ul>
+
+<h3>Utilisateurs, groupes et élévation</h3>
+<pre><code>id osama                        # uid, gid, groupes
+usermod -aG docker osama        # -a INDISPENSABLE, sinon on REMPLACE les groupes
+getent group docker
+sudo -l                         # ce que j'ai le droit de faire
+visudo                          # éditer sudoers avec validation syntaxique</code></pre>
+<table>
+<tr><th></th><th>Effet</th></tr>
+<tr><td><code>su</code></td><td>Change d'utilisateur en gardant l'environnement courant</td></tr>
+<tr><td><code>su -</code></td><td>Login shell complet (PATH, HOME, profil de la cible)</td></tr>
+<tr><td><code>sudo</code></td><td>Élévation par commande, <b>journalisée</b>, politique fine — le seul acceptable en production auditée</td></tr>
+</table>
+<div class="box piege">Ajouter un utilisateur au groupe <code>docker</code> équivaut à lui donner root sur la machine : il peut lancer un conteneur privilégié qui monte <code>/</code>. Ce n'est pas une permission anodine, et un auditeur le sait.</div>
+
+<h3>Disques, systèmes de fichiers, montages</h3>
+<pre><code>lsblk -f                    # arborescence des disques + systèmes de fichiers + UUID
+blkid                       # UUID à utiliser dans fstab
+mount | column -t
+findmnt /var
+mkfs.ext4 /dev/sdb1
+mount -o noatime /dev/sdb1 /data
+df -h / df -i               # espace ET inodes
+du -ah /var | sort -rh | head</code></pre>
+<pre><code># /etc/fstab — TOUJOURS par UUID, jamais par /dev/sdX (l'ordre change au reboot)
+UUID=1234-abcd  /data  ext4  defaults,noatime,nofail  0  2</code></pre>
+<div class="box piege"><b>L'option <code>nofail</code></b> : sans elle, une entrée fstab invalide empêche la machine de démarrer et t'oblige à passer par la console de secours. Après toute modification de fstab, valider avec <code>mount -a</code> AVANT de redémarrer.</div>
+<p><b>LVM</b> en trois mots : disques physiques (PV) → regroupés en volume group (VG) → découpés en volumes logiques (LV) redimensionnables à chaud. C'est ce qui permet d'agrandir <code>/var</code> sans réinstaller : <code>lvextend -L +20G /dev/vg0/var &amp;&amp; resize2fs /dev/vg0/var</code>.</p>
+
+<h3>Paquets et démarrage</h3>
+<pre><code># Debian/Ubuntu                    # RHEL/Rocky
+apt update && apt install -y x      dnf install -y x
+apt list --installed | grep x       rpm -qa | grep x
+dpkg -S /usr/bin/curl               rpm -qf /usr/bin/curl   # quel paquet fournit ce fichier</code></pre>
+<p><b>Séquence de démarrage</b> : firmware → bootloader (GRUB) → noyau + initramfs → <code>systemd</code> (PID 1) → target (<code>multi-user.target</code>, <code>graphical.target</code>). Diagnostic : <code>systemd-analyze blame</code> pour voir ce qui ralentit le boot, <code>journalctl -b -1</code> pour lire les logs du démarrage précédent après un crash.</p>
+
+<h3>Planification : cron ou timer systemd ?</h3>
+<pre><code># crontab -e         min heure jour mois jourSemaine
+*/15 * * * *  /opt/scripts/collecte.sh >> /var/log/collecte.log 2>&1</code></pre>
+<table>
+<tr><th></th><th>cron</th><th>timer systemd</th></tr>
+<tr><td>Journalisation</td><td>À gérer soi-même</td><td>Native dans journald</td></tr>
+<tr><td>Rattrapage après extinction</td><td>Non</td><td>Oui (<code>Persistent=true</code>)</td></tr>
+<tr><td>Dépendances, limites de ressources</td><td>Non</td><td>Oui (c'est une unité)</td></tr>
+<tr><td>Chevauchement d'exécutions</td><td>Possible</td><td>Empêché par défaut</td></tr>
+</table>
+<div class="box piege"><b>Cause n°1 d'un cron qui échoue alors qu'il marche à la main</b> : l'environnement minimal — PATH réduit, pas de <code>.bashrc</code>, HOME différent. Réflexes : chemins absolus partout, variables déclarées explicitement en tête de crontab, et redirection de stdout ET stderr vers un fichier pour pouvoir lire l'erreur.</div>
+
 <h3>Namespaces & cgroups (le socle des conteneurs)</h3>
 <table>
 <tr><th>Mécanisme</th><th>Rôle</th><th>Exemples</th></tr>
@@ -375,57 +443,148 @@ Réponds en 8 étapes : résolution DNS (caches successifs) → connexion TCP �
 
 </script>
 <script>
-/* fiches/03-git-docker.js */
+/* fiches/03-git.js */
 window.FICHES = (window.FICHES || []).concat([{
-id:"git-docker",
-titre:"Git & Docker",
-lead:"Deux outils que tu utilises tous les jours — donc deux domaines où l'approximation se voit immédiatement.",
+id:"git",
+titre:"Git & workflows",
+lead:"Outil quotidien, donc domaine où l'approximation se remarque immédiatement.",
 html:`
-<h3>Git — modèle mental</h3>
-<p>Un commit = un objet immuable contenant un pointeur vers un ARBRE (instantané complet du projet), le ou les parents, l'auteur et le message. Git stocke des <b>instantanés</b>, pas des diffs — les diffs sont calculés à l'affichage.</p>
-<p>Trois zones : <b>working tree</b> (tes fichiers) → <b>index / staging</b> (le brouillon du prochain commit) → <b>dépôt</b> (les commits).</p>
+<h3>Le modèle mental</h3>
+<p>Un commit est un objet <b>immuable</b> identifié par un hash, contenant : un pointeur vers un ARBRE (l'instantané complet du projet), le ou les parents, l'auteur, la date, le message. Git stocke des <b>instantanés</b>, pas des diffs — les diffs sont calculés à l'affichage.</p>
+<p>Une <b>branche</b> n'est qu'un pointeur mobile vers un commit : un fichier de 41 octets dans <code>.git/refs/heads/</code>. D'où la gratuité totale des branches.</p>
+<p>Trois zones : <b>working tree</b> (tes fichiers) → <b>index / staging</b> (le brouillon du prochain commit) → <b>dépôt</b> (les commits). Un commit fige l'INDEX, pas le disque.</p>
 
-<h3>Les commandes qui comptent</h3>
+<h3>Les objets Git</h3>
+<table>
+<tr><th>Objet</th><th>Contient</th></tr>
+<tr><td><b>blob</b></td><td>Le contenu d'un fichier (sans son nom)</td></tr>
+<tr><td><b>tree</b></td><td>Une arborescence : noms, modes, pointeurs vers blobs et trees</td></tr>
+<tr><td><b>commit</b></td><td>Un tree + parents + métadonnées</td></tr>
+<tr><td><b>tag annoté</b></td><td>Un pointeur nommé + auteur + message + signature éventuelle</td></tr>
+</table>
+<p>Tout est adressé par le contenu : deux fichiers identiques dans dix branches = un seul blob stocké. C'est ce qui explique la compacité des dépôts Git.</p>
+
+<h3>Les commandes qui comptent vraiment</h3>
 <pre><code>git add -p                    # choisir morceau par morceau ce qui part
 git commit --amend            # corriger le dernier commit (jamais après un push partagé)
 git rebase -i HEAD~5          # nettoyer l'historique local avant la PR
-git log --oneline --graph --all
+git log --oneline --graph --all --decorate
+git log -S "motDePasse"       # chercher un commit qui a AJOUTÉ ou RETIRÉ ce texte
+git log --follow -- fichier   # suivre un fichier à travers ses renommages
 git diff --staged
-git stash / git stash pop
+git stash push -m "wip" / git stash pop
 git bisect start / bad / good # trouver le commit fautif en log2(n) étapes
-git reflog                    # LE filet de sécurité : retrouver ce qu'on a "perdu"
+git reflog                    # LE filet de sécurité
 git blame -L 40,60 fichier
-git cherry-pick &lt;sha&gt;         # rejouer un commit ailleurs (hotfix vers release)
-git revert &lt;sha&gt;              # annuler en ajoutant un commit (sûr sur branche partagée)</code></pre>
+git cherry-pick &lt;sha&gt;
+git revert &lt;sha&gt;              # sûr sur une branche partagée
+git clean -nd                 # -n = simulation AVANT de supprimer les non suivis</code></pre>
 
 <h3>reset : les trois modes</h3>
 <table>
 <tr><th>Mode</th><th>HEAD</th><th>Index</th><th>Fichiers</th><th>Quand</th></tr>
 <tr><td>--soft</td><td>déplacé</td><td>gardé</td><td>gardés</td><td>Refaire le commit autrement</td></tr>
-<tr><td>--mixed</td><td>déplacé</td><td>vidé</td><td>gardés</td><td>Défaire un <code>add</code></td></tr>
+<tr><td>--mixed <i>(défaut)</i></td><td>déplacé</td><td>vidé</td><td>gardés</td><td>Défaire un <code>add</code></td></tr>
 <tr><td>--hard</td><td>déplacé</td><td>vidé</td><td><b>écrasés</b></td><td>Tout jeter — irréversible sauf reflog</td></tr>
 </table>
+<p><b>reset vs revert vs checkout</b> : <code>reset</code> déplace la branche (réécrit l'histoire), <code>revert</code> ajoute un commit d'annulation (sûr en partagé), <code>checkout</code>/<code>switch</code>/<code>restore</code> change ce que tu as sous les yeux sans toucher à l'historique.</p>
 
 <h3>merge vs rebase</h3>
-<ul>
-<li><b>merge</b> : crée un commit de fusion, préserve l'histoire réelle, sûr sur une branche partagée.</li>
-<li><b>rebase</b> : rejoue tes commits au-dessus de la cible → historique linéaire mais <b>nouveaux hash</b>.</li>
-<li><b>Règle d'or</b> : jamais de rebase sur une branche déjà poussée et partagée. En pratique : rebase local pour nettoyer avant la PR, merge pour intégrer.</li>
-</ul>
+<table>
+<tr><th></th><th>merge</th><th>rebase</th></tr>
+<tr><td>Effet</td><td>Commit de fusion, histoire réelle préservée</td><td>Commits rejoués au-dessus de la cible</td></tr>
+<tr><td>Hash</td><td>Inchangés</td><td><b>Nouveaux</b></td></tr>
+<tr><td>Historique</td><td>Graphe</td><td>Linéaire</td></tr>
+<tr><td>Sur branche partagée</td><td>Sûr</td><td><b>Jamais</b></td></tr>
+</table>
+<p>Pratique courante : rebase local pour nettoyer avant la PR, merge (ou squash-merge) pour intégrer. <code>git pull --rebase</code> évite les commits de merge parasites sur une branche personnelle.</p>
+<p><b>Squash merge</b> : toute la branche devient un seul commit sur main. Historique très lisible, mais on perd le détail — et attention, la branche source apparaît alors comme « non fusionnée » à Git, ce qui casse le cherry-pick ultérieur.</p>
 
-<div class="box piege"><b>Le piège du secret commité</b>
-<code>git revert</code> ne protège rien : le blob reste dans l'historique. Il faut (1) <b>révoquer le secret immédiatement</b> — c'est la seule action qui compte —, (2) réécrire l'historique (<code>git filter-repo</code>, BFG), (3) forcer le push et purger les forks/caches, (4) chercher ce qui a été fait avec dans les logs d'audit. Un candidat qui répond juste « je fais un revert » se fait éliminer sur cette question.</div>
+<h3>Résoudre un conflit</h3>
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+ma version
+=======
+la leur
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/x</code></pre>
+<ol>
+<li>Éditer pour produire le résultat VOULU (pas juste choisir un côté).</li>
+<li>Retirer les marqueurs.</li>
+<li><code>git add fichier</code></li>
+<li><code>git merge --continue</code> (ou <code>rebase --continue</code>).</li>
+</ol>
+<p><code>git merge --abort</code> annule tout. <code>git rerere</code> mémorise la résolution pour la rejouer automatiquement si le même conflit revient (utile en rebase long).</p>
+<p>Le vrai remède est en amont : branches courtes et intégration fréquente. Un conflit énorme est un symptôme d'organisation, pas de Git.</p>
 
 <h3>Stratégies de branches</h3>
 <table>
-<tr><th></th><th>GitFlow</th><th>Trunk-based</th></tr>
-<tr><td>Branches</td><td>main, develop, feature, release, hotfix</td><td>main + branches de quelques heures</td></tr>
-<tr><td>Intégration</td><td>Tardive, gros merges</td><td>Continue, petits lots</td></tr>
-<tr><td>Inachevé</td><td>Reste en branche</td><td>Caché par feature flag</td></tr>
-<tr><td>Adapté à</td><td>Releases versionnées, produits packagés</td><td>SaaS, livraison fréquente</td></tr>
+<tr><th></th><th>GitFlow</th><th>Trunk-based</th><th>GitHub Flow</th></tr>
+<tr><td>Branches</td><td>main, develop, feature, release, hotfix</td><td>main + branches de quelques heures</td><td>main + feature branches courtes</td></tr>
+<tr><td>Intégration</td><td>Tardive, gros merges</td><td>Continue</td><td>Continue</td></tr>
+<tr><td>Inachevé</td><td>Reste en branche</td><td>Caché par feature flag</td><td>Feature flag</td></tr>
+<tr><td>Adapté à</td><td>Produits versionnés livrés au client</td><td>SaaS, livraison fréquente</td><td>Web, équipes petites</td></tr>
 </table>
+<div class="box dire"><b>Ce qu'il faut savoir dire</b>
+« GitFlow est rigoureux mais il fait vivre les branches longtemps : l'intégration est tardive, les merges sont douloureux et la CI n'est plus vraiment continue. En trunk-based, on intègre plusieurs fois par jour et on cache l'inachevé derrière des feature flags. En banque, GitFlow reste fréquent pour les composants versionnés livrés à d'autres équipes — ce n'est pas absurde, c'est un choix lié au mode de livraison. »</div>
 
-<h3>Docker — Dockerfile de production</h3>
+<h3>Protection de branche — les règles attendues</h3>
+<ul>
+<li>Push direct interdit sur <code>main</code>, tout passe par PR.</li>
+<li>N approbations dont au moins un <b>CODEOWNER</b>, réapprobation à chaque nouveau commit.</li>
+<li>Checks de CI obligatoires au vert.</li>
+<li>Force-push et suppression de branche interdits.</li>
+<li><b>Commits signés</b> exigés (GPG, SSH ou signature du forge).</li>
+<li>Pas de bypass administrateur — c'est le point que regarde un auditeur.</li>
+</ul>
+<p>Ces règles matérialisent la <b>séparation des tâches</b> : personne ne peut seul écrire et faire partir un changement en production.</p>
+
+<h3>Secrets et historique</h3>
+<div class="box piege"><b>Le piège classique</b>
+<code>git revert</code> ne protège rien : le blob reste dans l'historique et reste récupérable. L'ordre correct :
+<ol>
+<li><b>RÉVOQUER le secret</b> — c'est la seule action qui compte vraiment.</li>
+<li>Réécrire l'historique (<code>git filter-repo</code>, BFG) et forcer le push.</li>
+<li>Purger les forks, caches, PR et artefacts de CI qui en gardent une copie.</li>
+<li>Auditer ce qui a été fait avec le secret pendant sa période d'exposition.</li>
+<li>Post-mortem : pourquoi il existait, et mise en place de la détection.</li>
+</ol>
+Un candidat qui répond seulement « je fais un revert » se fait éliminer sur cette question.</div>
+<p>Prévention : hook <code>pre-commit</code> (gitleaks, detect-secrets) — accélérateur contournable avec <code>--no-verify</code> — DOUBLÉ d'un contrôle côté serveur non contournable (push protection du forge, ou job CI bloquant).</p>
+
+<h3>Divers utile</h3>
+<ul>
+<li><b><code>.gitignore</code></b> n'a aucun effet sur un fichier DÉJÀ suivi : il faut <code>git rm --cached</code> d'abord.</li>
+<li><b>Tag annoté et signé</b> pour les releases (<code>git tag -s v1.2.0 -m "..."</code>) — c'est ce qui rend une release auditable.</li>
+<li><b><code>--force-with-lease</code></b> plutôt que <code>--force</code> : refuse d'écraser si quelqu'un a poussé entre-temps.</li>
+<li><b><code>git worktree</code></b> : plusieurs branches dans plusieurs répertoires depuis le même dépôt, sans re-cloner ni stasher.</li>
+<li><b>Monorepo vs multi-repo</b> : le monorepo simplifie le refactoring transverse et la cohérence des versions, mais impose de l'outillage (détection des changements, build sélectif). Le multi-repo isole mais fait dériver les versions.</li>
+</ul>
+`
+}]);
+
+</script>
+<script>
+/* fiches/04-docker.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"docker",
+titre:"Docker & conteneurs",
+lead:"Savoir expliquer ce qu'est RÉELLEMENT un conteneur vaut plus que connaître 40 options de la CLI.",
+html:`
+<h3>Ce qu'est un conteneur, précisément</h3>
+<p>Un processus Linux ordinaire, isolé par trois mécanismes du noyau :</p>
+<table>
+<tr><th>Mécanisme</th><th>Rôle</th><th>Exemples</th></tr>
+<tr><td><b>namespaces</b></td><td>Isolent ce que le process VOIT</td><td>pid, net, mnt, uts, ipc, user, cgroup</td></tr>
+<tr><td><b>cgroups</b></td><td>Limitent ce qu'il CONSOMME</td><td>cpu, memory, io, pids</td></tr>
+<tr><td><b>capabilities / seccomp / LSM</b></td><td>Restreignent ce qu'il PEUT FAIRE</td><td>drop NET_ADMIN, filtrer les appels système</td></tr>
+</table>
+<p>Plus un système de fichiers en couches (OverlayFS). <b>Pas de machine virtuelle, pas d'hyperviseur, pas de noyau invité</b> — d'où le démarrage en millisecondes, mais aussi une isolation plus faible qu'une VM et une dépendance au noyau de l'hôte.</p>
+
+<h3>Image vs conteneur</h3>
+<p>L'<b>image</b> est un modèle immuable en lecture seule : un empilement de couches identifiées par leur digest, plus un manifeste. Le <b>conteneur</b> est une instance en exécution de cette image, avec une couche d'écriture éphémère au-dessus. Analogie : classe / objet.</p>
+<p>Écrire dans un fichier d'une couche basse déclenche un <b>copy-up</b> : le fichier ENTIER est copié dans la couche d'écriture. D'où la lenteur des écritures sur de gros fichiers, et la règle : les données vont dans un volume, pas dans le conteneur.</p>
+<p>Un <b>manifest list / image index</b> référence plusieurs manifestes, un par couple OS/architecture. C'est ce qui permet à <code>FROM alpine</code> de fonctionner sur amd64 et arm64 — et son absence explique qu'une image buildée sur un Mac M-series casse sur des nœuds x86.</p>
+
+<h3>Dockerfile de production</h3>
 <pre><code># syntax=docker/dockerfile:1
 FROM node:20-alpine AS build
 WORKDIR /app
@@ -438,56 +597,100 @@ FROM gcr.io/distroless/nodejs20-debian12 AS runtime
 WORKDIR /app
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
-USER 10001                          # non-root
+USER 10001
 EXPOSE 3000
 ENTRYPOINT ["/nodejs/bin/node", "dist/server.js"]</code></pre>
 <ul>
-<li><b>Multi-stage</b> : compile dans une image lourde, livre une image minimale sans compilateur ni sources.</li>
+<li><b>Multi-stage</b> : on compile dans une image lourde, on livre une image minimale sans compilateur ni sources.</li>
 <li><b>Ordre des couches</b> : du moins changeant au plus changeant, pour maximiser le cache.</li>
-<li><b>.dockerignore</b> : exclure <code>.git</code>, <code>node_modules</code>, <code>.env</code> — sinon on gonfle le contexte et on fuite des secrets.</li>
-<li><b>Forme exec</b> (JSON) pour ENTRYPOINT/CMD : la forme shell met <code>/bin/sh</code> en PID 1 qui ne relaie pas SIGTERM.</li>
-<li><b>Tag immuable</b> : version sémantique ou SHA de commit, jamais <code>latest</code> en prod.</li>
+<li><b>Nettoyer dans la MÊME couche</b> : <code>RUN apt-get update &amp;&amp; apt-get install -y x &amp;&amp; rm -rf /var/lib/apt/lists/*</code>. Supprimer dans une couche ultérieure n'enlève rien au poids.</li>
+<li><b>Forme exec</b> (JSON) pour ENTRYPOINT/CMD : la forme shell met <code>/bin/sh</code> en PID 1, qui ne relaie pas SIGTERM.</li>
+<li><b>Tag immuable</b> : version sémantique ou SHA de commit. Jamais <code>latest</code> en production.</li>
 </ul>
 
-<h3>CMD vs ENTRYPOINT</h3>
+<h3>Les instructions qui piègent</h3>
 <table>
-<tr><th></th><th>ENTRYPOINT</th><th>CMD</th></tr>
-<tr><td>Rôle</td><td>L'exécutable fixe</td><td>Les arguments par défaut</td></tr>
-<tr><td>Surcharge par <code>docker run</code></td><td>Non (sauf <code>--entrypoint</code>)</td><td>Oui, en passant des arguments</td></tr>
+<tr><th>Instruction</th><th>Ce qu'elle fait vraiment</th></tr>
+<tr><td><code>EXPOSE 8080</code></td><td><b>Rien</b> de fonctionnel : simple métadonnée. Publier exige <code>-p</code> au run ou un Service côté K8s</td></tr>
+<tr><td><code>ENTRYPOINT</code></td><td>L'exécutable fixe, non remplacé par les arguments de <code>docker run</code></td></tr>
+<tr><td><code>CMD</code></td><td>Les arguments par défaut, remplaçables</td></tr>
+<tr><td><code>ARG</code></td><td>Variable de BUILD — reste visible dans <code>docker history</code>. Jamais de secret</td></tr>
+<tr><td><code>ENV</code></td><td>Variable persistée dans l'image et l'exécution</td></tr>
+<tr><td><code>ADD</code></td><td>Comme COPY mais décompresse et télécharge des URL — préférer <code>COPY</code>, plus prévisible</td></tr>
+<tr><td><code>HEALTHCHECK</code></td><td>Utilisé par Docker/Compose, <b>ignoré par Kubernetes</b> (qui veut des probes)</td></tr>
 </table>
 
-<h3>Durcissement d'un conteneur</h3>
+<h3>Le PID 1 et les signaux</h3>
+<p>Deux problèmes classiques quand le processus principal est un shell :</p>
+<ul>
+<li>Il ne relaie pas SIGTERM → <code>docker stop</code> attend 10 s puis SIGKILL. En Kubernetes, cela donne des 502 pendant les déploiements.</li>
+<li>Il ne récolte pas les processus enfants terminés → accumulation de <b>zombies</b>.</li>
+</ul>
+<p>Solutions : forme exec, un init léger (<code>tini</code>, <code>docker run --init</code>), ou un gestionnaire de signaux dans l'application.</p>
+
+<h3>Durcissement</h3>
 <pre><code>docker run --read-only \\
   --cap-drop ALL --security-opt no-new-privileges \\
   --user 10001:10001 \\
   --memory 512m --cpus 1 \\
   --tmpfs /tmp \\
+  --pids-limit 200 \\
   monimage:1.4.2</code></pre>
-<p>Équivalent Kubernetes : <code>securityContext</code> avec <code>runAsNonRoot</code>, <code>readOnlyRootFilesystem</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities.drop: [ALL]</code>, <code>seccompProfile: RuntimeDefault</code>.</p>
+<p>Équivalent Kubernetes dans <code>securityContext</code> : <code>runAsNonRoot: true</code>, <code>readOnlyRootFilesystem: true</code>, <code>allowPrivilegeEscalation: false</code>, <code>capabilities.drop: [ALL]</code>, <code>seccompProfile: RuntimeDefault</code>.</p>
+<div class="box piege"><b>Le socket Docker monté dans un conteneur</b>
+<code>-v /var/run/docker.sock:/var/run/docker.sock</code> donne le contrôle du daemon : on peut lancer un conteneur privilégié qui monte <code>/</code> de l'hôte. C'est un <b>root sur le nœud</b>, donc sur tous les conteneurs voisins. Pour construire des images sans daemon : Kaniko, Buildah, ou BuildKit en mode rootless.</div>
 
-<h3>Où va la place disque</h3>
-<pre><code>docker system df -v              # ventilation images / conteneurs / volumes / cache
-docker system prune -a --volumes # attention : supprime les volumes non utilisés
-docker image prune -f</code></pre>
-<p>Le coupable le plus fréquent : les <b>logs json-file sans rotation</b>. Configurer <code>log-opts: max-size=10m, max-file=3</code> dans le daemon.json.</p>
-
-<div class="box piege"><b>« Ça marche sur mon poste »</b>
-Causes structurelles à citer : architecture différente (build ARM sur Mac vs nœuds amd64 → <code>docker buildx --platform</code>), variables et secrets présents en local via <code>.env</code>, DNS et proxy d'entreprise, contraintes de sécurité en cluster (non-root, filesystem read-only, capabilities), et limites de ressources qui déclenchent un OOM absent en local.</div>
-
-<h3>Registry et supply chain</h3>
+<h3>Réseau et volumes</h3>
 <ul>
-<li>Registry privé (ECR, ACR, Harbor, Nexus) avec des images de base approuvées et scannées.</li>
-<li>Pin par <b>digest</b> (<code>image@sha256:…</code>) en production, pas par tag mutable.</li>
-<li>Scan continu (Trivy, Grype) — un scan au build ne suffit pas, les CVE apparaissent après.</li>
-<li>Signature (Cosign) + politique d'admission qui refuse les images non signées.</li>
-<li>SBOM généré au build pour répondre à « quel composant est affecté par cette CVE ? » en minutes plutôt qu'en semaines.</li>
+<li><b>Réseau bridge personnalisé</b> (<code>docker network create</code>) : indispensable pour la résolution DNS par nom de conteneur, absente du bridge par défaut.</li>
+<li><b>Volume nommé</b> vs <b>bind mount</b> : le volume est géré par Docker, portable, sauvegardable ; le bind mount dépend de l'arborescence de l'hôte et de ses permissions. En production : volume ou stockage externe.</li>
+<li>Les données écrites hors volume disparaissent avec le conteneur — un conteneur doit être <b>stateless par défaut</b>.</li>
 </ul>
+
+<h3>BuildKit</h3>
+<pre><code>DOCKER_BUILDKIT=1 docker build \\
+  --secret id=npmrc,src=$HOME/.npmrc \\
+  --cache-from type=registry,ref=monregistry/app:cache \\
+  --cache-to   type=registry,ref=monregistry/app:cache,mode=max \\
+  --platform linux/amd64,linux/arm64 \\
+  -t monregistry/app:1.4.2 --push .</code></pre>
+<p>Apports : parallélisation du graphe de build, cache exportable et partagé entre machines (crucial pour des runners CI éphémères), montage de secrets (<code>--mount=type=secret</code>) sans les laisser dans les couches, cache de dépendances (<code>--mount=type=cache</code>), builds multi-plateformes.</p>
+
+<h3>Disque qui se remplit</h3>
+<pre><code>docker system df -v              # ventilation images / conteneurs / volumes / cache
+docker system prune -a --volumes # ATTENTION : supprime les volumes non utilisés
+docker image prune -f</code></pre>
+<p>Le coupable le plus fréquent : les <b>logs json-file sans rotation</b>. À configurer dans <code>/etc/docker/daemon.json</code> : <code>"log-opts": {"max-size":"10m","max-file":"3"}</code>. Côté Kubernetes, c'est la garbage collection du kubelet et les logs applicatifs écrits dans le conteneur au lieu de stdout.</p>
+
+<h3>« Ça marche sur mon poste »</h3>
+<div class="box piege">Les causes structurelles à citer :
+<ol>
+<li><b>Architecture</b> différente (build ARM sur Mac vs nœuds amd64) → <code>buildx --platform</code>.</li>
+<li><b>Config et secrets</b> présents en local via un <code>.env</code> absent en cluster.</li>
+<li><b>DNS et proxy</b> d'entreprise obligatoire, CA interne absente de l'image.</li>
+<li><b>Contraintes de sécurité</b> en cluster : non-root imposé, filesystem read-only, capabilities retirées.</li>
+<li><b>Limites de ressources</b> qui déclenchent un OOM absent en local.</li>
+</ol></div>
+
+<h3>Docker Compose</h3>
+<p>Décrit et lance plusieurs conteneurs liés sur UNE machine. Excellent en dev et en test d'intégration. <b>Ce n'est pas un orchestrateur de production</b> : pas de haute disponibilité, pas de scheduling multi-nœuds, pas de self-healing réel, pas de rolling update sûr.</p>
+
+<h3>Chaîne d'approvisionnement</h3>
+<ul>
+<li>Registry privé (ECR, ACR, Harbor, Nexus) miroir des images de base approuvées et durcies.</li>
+<li><b>Pin par digest</b> (<code>image@sha256:…</code>) en production — un tag est mutable et ne prouve rien.</li>
+<li><b>Scan continu</b> (Trivy, Grype) : un scan au build ne suffit pas, les CVE apparaissent après.</li>
+<li><b>Signature</b> (Cosign) + politique d'admission qui refuse les images non signées.</li>
+<li><b>SBOM</b> généré au build : c'est ce qui permet de répondre en minutes à « quelle application utilise cette bibliothèque vulnérable ? ».</li>
+</ul>
+<div class="box dire"><b>La phrase qui montre le niveau</b>
+« Un conteneur, ce n'est pas une machine légère : c'est un processus normal avec des namespaces, des cgroups et un rootfs overlay. Ça explique à la fois pourquoi il démarre en millisecondes et pourquoi l'isolation est plus faible qu'une VM — donc pourquoi on ne mutualise pas n'importe quoi sur un même nœud en environnement sensible. »</div>
 `
 }]);
 
 </script>
 <script>
-/* fiches/04-kubernetes.js */
+/* fiches/05-kubernetes.js */
 window.FICHES = (window.FICHES || []).concat([{
 id:"kubernetes",
 titre:"Kubernetes",
@@ -618,7 +821,116 @@ Il ne récite pas les objets : il parle du <b>cycle de vie</b> (comment un Pod n
 
 </script>
 <script>
-/* fiches/05-terraform.js */
+/* fiches/06-helm-gitops.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"helm-gitops",
+titre:"Helm, Kustomize & GitOps",
+lead:"Comment on déploie réellement dans Kubernetes — et pourquoi le GitOps est la réponse attendue en banque.",
+html:`
+<h3>Le problème à résoudre</h3>
+<p>Des manifestes YAML bruts ne passent pas l'échelle : il faut les paramétrer par environnement, les versionner, les déployer de façon reproductible, savoir revenir en arrière et détecter les dérives. Trois familles d'outils y répondent différemment.</p>
+
+<h3>Helm</h3>
+<p>Un gestionnaire de paquets : un <b>chart</b> est un ensemble de templates Go + un <code>values.yaml</code>, installé sous forme de <b>release</b> versionnée dans le cluster.</p>
+<pre><code>mon-chart/
+  Chart.yaml          # nom, version du chart, version de l'app, dépendances
+  values.yaml         # valeurs par défaut
+  templates/
+    deployment.yaml
+    service.yaml
+    _helpers.tpl      # fonctions de nommage réutilisables
+    NOTES.txt</code></pre>
+<pre><code>helm template mon-app ./chart -f values-prod.yaml   # voir le rendu SANS déployer
+helm diff upgrade mon-app ./chart -f values-prod.yaml  # plugin, mais indispensable
+helm upgrade --install mon-app ./chart -f values-prod.yaml \\
+  --atomic --timeout 5m         # rollback automatique si échec
+helm history mon-app
+helm rollback mon-app 3</code></pre>
+<table>
+<tr><th>Points forts</th><th>Points faibles</th></tr>
+<tr><td>Écosystème énorme pour le logiciel tiers</td><td>Templating Go peu lisible dès que ça se complique</td></tr>
+<tr><td>Releases versionnées, rollback natif</td><td>Erreurs de template détectées tard</td></tr>
+<tr><td>Dépendances entre charts</td><td>Ne gère rien après l'installation (pas de jour 2)</td></tr>
+<tr><td>Hooks de cycle de vie (pre-upgrade…)</td><td>L'état de la release vit dans un Secret du cluster</td></tr>
+</table>
+<div class="box piege"><b>Pièges Helm</b>
+<ul>
+<li><code>--atomic</code> et <code>--wait</code> ne sont pas activés par défaut : sans eux, un upgrade « réussit » alors que les Pods ne démarrent pas.</li>
+<li>Un <code>helm upgrade</code> sur un chart tiers dont on n'a pas figé la version peut tout changer sans prévenir — <b>toujours épingler <code>--version</code></b>.</li>
+<li>Les hooks (<code>pre-upgrade</code>) ne sont pas rollbackés comme le reste : une migration jouée par un hook ne se défait pas.</li>
+<li>Supprimer une release ne supprime pas les CRD installées par le chart — et supprimer une CRD supprime toutes ses instances.</li>
+</ul></div>
+
+<h3>Kustomize</h3>
+<p>Pas de templating : une <b>base</b> de manifestes valides et des <b>overlays</b> qui appliquent des patches déclaratifs. Intégré nativement à kubectl (<code>kubectl apply -k</code>).</p>
+<pre><code>base/
+  kustomization.yaml    # liste des ressources + labels/annotations communs
+  deployment.yaml
+overlays/
+  prod/
+    kustomization.yaml  # patches, replicas, images, configMapGenerator
+    patch-ressources.yaml</code></pre>
+<pre><code>kubectl kustomize overlays/prod        # voir le rendu
+kubectl apply -k overlays/prod</code></pre>
+<p>Atouts : les fichiers de base restent des manifestes Kubernetes valides et lisibles, les <code>configMapGenerator</code>/<code>secretGenerator</code> ajoutent un hash au nom — ce qui <b>déclenche automatiquement un rollout</b> quand la config change (Helm ne le fait pas sans astuce de checksum).</p>
+<p>Limite : pas de logique conditionnelle, pas de boucles. Au-delà d'un certain nombre de variantes, les overlays deviennent aussi illisibles que des templates.</p>
+
+<h3>Helm ou Kustomize ?</h3>
+<div class="box dire"><b>Réponse défendable en entretien</b>
+« Helm pour packager et distribuer — notamment tout le logiciel tiers, où l'écosystème est incontournable. Kustomize pour décliner nos propres applications par environnement, parce qu'on garde des manifestes lisibles et qu'on évite une couche de templating. Les deux se combinent d'ailleurs : Argo CD sait rendre un chart Helm puis lui appliquer des patches Kustomize. »</div>
+
+<h3>Opérateurs et CRD</h3>
+<p>Une <b>CRD</b> ajoute un type d'objet à l'API Kubernetes ; un <b>opérateur</b> est le contrôleur qui l'implémente, encodant la connaissance opérationnelle : sauvegarde, bascule, montée de version, resharding.</p>
+<p><b>Quand écrire un opérateur plutôt qu'un chart ?</b> Quand il y a une logique <b>continue</b> à appliquer. Helm ne fait que rendre un template au moment de l'installation ; il ne réagit à rien ensuite. Un opérateur réconcilie en permanence.</p>
+<div class="box piege">Un opérateur tiers demande souvent des droits cluster très larges et installe des CRD : c'est une dépendance critique à traiter comme telle — revue de sécurité, version épinglée, compatibilité vérifiée avant chaque upgrade de cluster, et sauvegarde des ressources personnalisées (ce sont des données).</div>
+
+<h3>GitOps</h3>
+<p>L'état désiré est déclaré dans Git ; un <b>agent dans le cluster</b> (Argo CD, Flux) tire ce dépôt et réconcilie en continu.</p>
+<table>
+<tr><th></th><th>Push (CI classique)</th><th>Pull (GitOps)</th></tr>
+<tr><td>Qui déploie</td><td>La CI, avec des credentials cluster</td><td>Un agent DANS le cluster</td></tr>
+<tr><td>Credentials</td><td>Dans la CI — surface d'attaque</td><td>Aucun credential cluster à l'extérieur</td></tr>
+<tr><td>Dérive</td><td>Non détectée</td><td>Détectée et corrigée automatiquement</td></tr>
+<tr><td>Rollback</td><td>Rejouer un pipeline</td><td><code>git revert</code></td></tr>
+<tr><td>Audit</td><td>Logs de pipeline</td><td>Historique Git = preuve de l'état désiré</td></tr>
+<tr><td>Nouveau cluster</td><td>Rejouer tous les pipelines</td><td>Pointer l'agent sur le dépôt</td></tr>
+</table>
+
+<h3>Le pattern à deux dépôts</h3>
+<pre><code>depot-application/          depot-deploiement/
+  src/                        apps/mon-app/
+  Dockerfile                    base/
+  .gitlab-ci.yml                overlays/{dev,rec,prod}/
+
+CI : build → test → push image:sha-abc123
+   → ouvre une PR sur depot-deploiement qui bump le tag
+   → l'approbation de CETTE PR est l'autorisation de mise en production
+   → Argo CD détecte le merge et applique</code></pre>
+<p>Bénéfice majeur en banque : l'autorisation de déploiement devient une <b>revue de code tracée et signée</b>, ce qui satisfait la séparation des tâches sans ajouter de guichet manuel.</p>
+
+<h3>Argo CD — les notions à connaître</h3>
+<ul>
+<li><b>Application</b> : la liaison entre une source (dépôt + chemin + révision) et une destination (cluster + namespace).</li>
+<li><b>Sync policy</b> : manuelle ou automatique, avec <code>prune</code> (supprimer ce qui a disparu de Git) et <code>selfHeal</code> (annuler les modifications faites à la main dans le cluster).</li>
+<li><b>Statut</b> : <code>Synced</code>/<code>OutOfSync</code> (conformité à Git) et <code>Healthy</code>/<code>Degraded</code> (santé réelle) — deux axes distincts.</li>
+<li><b>Sync waves</b> et hooks pour ordonner (migration de base avant l'application).</li>
+<li><b>App of Apps</b> ou ApplicationSet pour générer des dizaines d'applications à partir d'un modèle.</li>
+</ul>
+<div class="box piege"><b>La question piège</b> : « avec <code>selfHeal</code> activé, que se passe-t-il si un ingénieur corrige un incident en modifiant un Deployment à la main ? » — Argo annule sa correction en quelques secondes. D'où l'importance de savoir suspendre la synchronisation pendant un incident, et de faire passer le correctif par Git ensuite.</div>
+
+<h3>Les secrets en GitOps</h3>
+<p>Le problème : l'état désiré est dans Git, mais on n'y met pas de secrets en clair. Trois réponses :</p>
+<ol>
+<li><b>External Secrets Operator / Secrets Store CSI</b> : le secret reste dans Key Vault / Secrets Manager / Vault, le cluster le synchronise ou le monte. <b>Approche à privilégier en banque</b> : rotation centralisée, accès audité.</li>
+<li><b>Sealed Secrets / SOPS</b> : le secret CHIFFRÉ est versionné dans Git, seul le cluster peut le déchiffrer. Simple, mais la rotation et la révocation sont manuelles.</li>
+<li>Injection au runtime par un agent (Vault Agent) : rien n'est stocké côté cluster.</li>
+</ol>
+`
+}]);
+
+</script>
+<script>
+/* fiches/07-terraform.js */
 window.FICHES = (window.FICHES || []).concat([{
 id:"terraform",
 titre:"Terraform & IaC",
@@ -758,7 +1070,145 @@ resource "aws_acm_certificate" "cdn" {
 
 </script>
 <script>
-/* fiches/06-aws.js */
+/* fiches/08-ansible.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"ansible",
+titre:"Ansible & gestion de configuration",
+lead:"Le parc de VM ne disparaîtra pas. En banque, Ansible reste omniprésent — et c'est un sujet où beaucoup de candidats cloud sont pris de court.",
+html:`
+<h3>Où Ansible se place</h3>
+<table>
+<tr><th>Outil</th><th>Répond à</th></tr>
+<tr><td><b>Terraform</b></td><td><i>Provisionner</i> : créer la VM, le réseau, la base — le CYCLE DE VIE des ressources</td></tr>
+<tr><td><b>Ansible</b></td><td><i>Configurer</i> : ce qui se passe DANS la machine — paquets, fichiers, services, utilisateurs</td></tr>
+<tr><td><b>Packer</b></td><td><i>Fabriquer l'image</i> : figer une configuration dans une AMI / image managée</td></tr>
+</table>
+<div class="box dire"><b>La réponse attendue sur « Terraform ou Ansible ? »</b>
+« Ce ne sont pas des concurrents. Terraform gère le cycle de vie de l'infrastructure, Ansible la configuration à l'intérieur. Dans une approche immuable, on utilise plutôt Packer + Ansible pour construire une image dorée, et Terraform pour déployer cette image — on ne configure plus les machines en place, on les remplace. Ansible garde toute sa valeur sur le legacy, les appliances, les bases, et l'orchestration de procédures (bascules, patching coordonné). »</div>
+
+<h3>Les concepts</h3>
+<table>
+<tr><th>Terme</th><th>Ce que c'est</th></tr>
+<tr><td><b>Inventaire</b></td><td>La liste des hôtes, groupés (statique en INI/YAML, ou dynamique depuis AWS/Azure)</td></tr>
+<tr><td><b>Playbook</b></td><td>Un fichier YAML : quelles tâches, sur quels hôtes, dans quel ordre</td></tr>
+<tr><td><b>Tâche (task)</b></td><td>Un appel à un module, avec ses paramètres</td></tr>
+<tr><td><b>Module</b></td><td>L'unité de travail (<code>apt</code>, <code>copy</code>, <code>systemd</code>, <code>user</code>…) — c'est lui qui porte l'idempotence</td></tr>
+<tr><td><b>Rôle</b></td><td>Un ensemble réutilisable et structuré (tasks, handlers, templates, defaults, vars)</td></tr>
+<tr><td><b>Handler</b></td><td>Une tâche déclenchée SEULEMENT si une autre a produit un changement (redémarrer nginx)</td></tr>
+<tr><td><b>Facts</b></td><td>Les informations collectées sur l'hôte (OS, IP, mémoire), utilisables comme variables</td></tr>
+<tr><td><b>Collection</b></td><td>Le format de distribution moderne (modules + rôles + plugins), installé via Ansible Galaxy</td></tr>
+</table>
+
+<h3>Ce qui distingue Ansible</h3>
+<ul>
+<li><b>Sans agent</b> : il se connecte en SSH (ou WinRM) et exécute du Python sur la cible. Rien à installer ni à maintenir sur les serveurs — argument décisif face à Puppet ou Chef en environnement contraint.</li>
+<li><b>Push</b> : c'est le poste de contrôle qui déclenche, contrairement au modèle pull de Puppet/Chef. Simple, mais il faut un déclencheur (pipeline, AWX/Tower).</li>
+<li><b>Déclaratif au niveau du module</b>, procédural au niveau du playbook : les tâches s'exécutent dans l'ordre, mais chaque module vise un ÉTAT.</li>
+</ul>
+
+<h3>L'idempotence — le concept central</h3>
+<p>Rejouer le même playbook ne doit rien changer si l'état est déjà correct. Ansible le rapporte : <code>ok</code> (déjà conforme) vs <code>changed</code> (a modifié).</p>
+<div class="box piege"><b>Ce qui casse l'idempotence</b>
+<ul>
+<li>Le module <b><code>shell</code> / <code>command</code></b> : Ansible ne peut pas savoir si l'action est nécessaire — il l'exécute toujours et rapporte <code>changed</code>. Correctifs : <code>creates=</code>, <code>removes=</code>, <code>when:</code>, ou <code>changed_when: false</code> pour une commande de simple lecture.</li>
+<li><code>lineinfile</code> avec une regex trop lâche, qui réécrit à chaque passage.</li>
+<li>Toute génération aléatoire ou horodatée dans un template.</li>
+</ul>
+Règle : chercher d'abord un module dédié. <code>shell</code> est un aveu d'échec — accepté, mais à justifier.</div>
+
+<h3>Un playbook lisible</h3>
+<pre><code>---
+- name: Socle applicatif
+  hosts: web
+  become: true
+  vars:
+    version_app: "1.4.2"
+  tasks:
+    - name: Paquets requis
+      ansible.builtin.apt:
+        name: [nginx, curl]
+        state: present
+        update_cache: true
+
+    - name: Configuration nginx
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        mode: "0644"
+        validate: "nginx -t -c %s"     # refuse d'écrire une conf invalide
+      notify: Recharger nginx
+
+    - name: Service actif au démarrage
+      ansible.builtin.systemd:
+        name: nginx
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Recharger nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: reloaded</code></pre>
+<p>Points de qualité visibles ici : noms explicites, modules dédiés plutôt que <code>shell</code>, <code>validate</code> qui empêche de casser le service, handler déclenché uniquement sur changement réel.</p>
+
+<h3>Structure d'un projet</h3>
+<pre><code>inventaires/
+  prod/hosts.yml
+  prod/group_vars/web.yml
+  rec/hosts.yml
+roles/
+  socle/{tasks,handlers,templates,defaults,vars,meta}/
+  applicatif/
+playbooks/
+  site.yml
+ansible.cfg
+requirements.yml        # collections et rôles externes, VERSIONNÉS</code></pre>
+<p><b>Précédence des variables</b> : <code>defaults/</code> du rôle (la plus faible, donc surchargeable) &lt; <code>group_vars</code> &lt; <code>host_vars</code> &lt; <code>vars/</code> du rôle &lt; <code>-e</code> en ligne de commande (la plus forte). Mettre les valeurs par défaut dans <code>defaults/</code> et jamais dans <code>vars/</code> est ce qui rend un rôle réutilisable.</p>
+
+<h3>Sécurité et secrets</h3>
+<ul>
+<li><b>Ansible Vault</b> chiffre des fichiers ou des variables : <code>ansible-vault encrypt_string</code>. La clé de déchiffrement doit venir d'un coffre ou du pipeline, jamais d'un fichier commité.</li>
+<li>Mieux : lire les secrets à l'exécution depuis Key Vault / Secrets Manager / HashiCorp Vault via un lookup, pour ne rien stocker dans le dépôt.</li>
+<li><code>no_log: true</code> sur les tâches manipulant un secret, sinon il apparaît dans la sortie et les logs du pipeline.</li>
+<li>Le poste (ou le runner) qui exécute Ansible détient des accès SSH privilégiés sur tout le parc : c'est une cible de premier ordre, à traiter comme un bastion.</li>
+</ul>
+
+<h3>Exploitation</h3>
+<pre><code>ansible-playbook site.yml --check --diff     # dry-run + montre les différences
+ansible-playbook site.yml --limit web-03      # cibler un hôte
+ansible-playbook site.yml --tags nginx
+ansible-playbook site.yml --start-at-task "Configuration nginx"
+ansible-inventory --graph
+ansible-lint                                   # qualité, en CI</code></pre>
+<p><b><code>--check --diff</code> est l'équivalent du <code>terraform plan</code></b> : c'est le réflexe à citer. Limite honnête : en mode check, les tâches dépendant du résultat d'une tâche précédente non exécutée peuvent échouer ou rapporter faux.</p>
+
+<h3>Déploiement sans coupure</h3>
+<pre><code>- hosts: web
+  serial: "25%"          # par vagues de 25% du parc
+  max_fail_percentage: 0 # on arrête au premier échec
+  pre_tasks:
+    - name: Retirer du load balancer
+      ...
+  post_tasks:
+    - name: Remettre dans le load balancer après contrôle de santé
+      ...</code></pre>
+<p><code>serial</code> transforme un playbook en <b>rolling update</b>. C'est ce qui permet de patcher un parc en production sans interruption, et c'est exactement l'usage bancaire typique.</p>
+
+<h3>À savoir dire en entretien</h3>
+<div class="box dire">
+<ul>
+<li>« Ansible ne remplace pas Terraform : l'un provisionne, l'autre configure. »</li>
+<li>« Je préfère l'immuable quand c'est possible — Packer + Ansible pour construire l'image, puis on remplace les machines au lieu de les modifier. Ansible en place reste pertinent pour le legacy et l'orchestration de procédures. »</li>
+<li>« L'idempotence n'est pas magique : elle vient des modules. Dès qu'on tombe dans <code>shell</code>, c'est à nous de la garantir. »</li>
+<li>« En CI : <code>ansible-lint</code>, puis <code>--check --diff</code> sur un environnement de recette avant tout run en production, et un déploiement par vagues avec <code>serial</code>. »</li>
+</ul></div>
+`
+}]);
+
+</script>
+<script>
+/* fiches/09-aws.js */
 window.FICHES = (window.FICHES || []).concat([{
 id:"aws",
 titre:"AWS",
@@ -862,7 +1312,7 @@ Observabilité : CloudWatch + alarmes | Tout en IaC</code></pre>
 
 </script>
 <script>
-/* fiches/07-azure.js */
+/* fiches/10-azure.js */
 window.FICHES = (window.FICHES || []).concat([{
 id:"azure",
 titre:"Azure",
@@ -959,7 +1409,7 @@ UDR dans chaque spoke : 0.0.0.0/0 → IP privée du firewall</code></pre>
 
 </script>
 <script>
-/* fiches/08-cicd.js */
+/* fiches/11-cicd.js */
 window.FICHES = (window.FICHES || []).concat([{
 id:"cicd",
 titre:"CI/CD & stratégies de déploiement",
@@ -1054,7 +1504,7 @@ Les périodes de gel (clôture comptable, arrêtés, jours de place) sont une co
 
 </script>
 <script>
-/* fiches/09-securite.js */
+/* fiches/12-securite.js */
 window.FICHES = (window.FICHES || []).concat([{
 id:"securite",
 titre:"Sécurité & conformité",
@@ -1156,7 +1606,7 @@ html:`
 
 </script>
 <script>
-/* fiches/10-obs-sre.js */
+/* fiches/13-obs-sre.js */
 window.FICHES = (window.FICHES || []).concat([{
 id:"obs-sre",
 titre:"Observabilité & SRE",
@@ -1277,7 +1727,126 @@ increase(kube_pod_container_status_restarts_total[15m]) > 0</code></pre>
 
 </script>
 <script>
-/* fiches/11-sql.js */
+/* fiches/14-messagerie.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"messagerie",
+titre:"Messagerie & flux (Kafka, files)",
+lead:"Le découplage asynchrone est la colonne vertébrale des SI bancaires. Savoir en parler correctement fait la différence au niveau architecture.",
+html:`
+<h3>Pourquoi de l'asynchrone</h3>
+<table>
+<tr><th></th><th>Appel synchrone</th><th>Messagerie</th></tr>
+<tr><td>Couplage</td><td>Temporel : si l'appelé est mort, l'appelant l'est aussi</td><td>Découplé : le producteur n'attend pas le consommateur</td></tr>
+<tr><td>Pics de charge</td><td>Se propagent immédiatement</td><td>Absorbés par le tampon</td></tr>
+<tr><td>Consommateurs</td><td>Un appel, un destinataire</td><td>Plusieurs consommateurs indépendants du même flux</td></tr>
+<tr><td>Cohérence</td><td>Immédiate</td><td>À terme (eventual)</td></tr>
+<tr><td>Débogage</td><td>Simple, une pile d'appels</td><td>Difficile sans tracing distribué</td></tr>
+</table>
+<p><b>Quand choisir quoi</b> : synchrone quand l'utilisateur attend une réponse pour décider (autorisation de paiement, vérification de solde). Asynchrone pour la propagation (notification, mise à jour d'un référentiel, alimentation analytique, comptabilisation).</p>
+
+<h3>File vs publication/abonnement</h3>
+<ul>
+<li><b>File (queue)</b> : un message, UN consommateur qui le traite. Répartition du travail entre workers. RabbitMQ, SQS, Azure Service Bus.</li>
+<li><b>Pub/Sub</b> : un message, PLUSIEURS abonnés qui le reçoivent chacun. SNS, Event Grid, topics Service Bus.</li>
+<li><b>Journal (log) distribué</b> : les messages sont conservés dans un journal ordonné et relisible ; chaque consommateur avance à son rythme avec son propre curseur. Kafka, Event Hubs, Kinesis.</li>
+</ul>
+<p><b>Pattern fan-out</b> : un topic pub/sub publie vers plusieurs files, chacune consommée par un service indépendant. Chaque consommateur a son propre rythme et sa propre DLQ — la panne de l'un n'affecte pas les autres.</p>
+
+<h3>Kafka — le modèle</h3>
+<table>
+<tr><th>Notion</th><th>Ce que c'est</th></tr>
+<tr><td><b>Topic</b></td><td>Un flux nommé de messages</td></tr>
+<tr><td><b>Partition</b></td><td>Un journal ordonné et immuable. L'unité de parallélisme ET d'ordre</td></tr>
+<tr><td><b>Offset</b></td><td>La position d'un message dans sa partition</td></tr>
+<tr><td><b>Consumer group</b></td><td>Un ensemble de consommateurs qui se répartissent les partitions</td></tr>
+<tr><td><b>Réplication</b></td><td>Chaque partition a un leader et des réplicas (ISR = in-sync replicas)</td></tr>
+<tr><td><b>Rétention</b></td><td>Les messages restent N jours (ou N Go) même après lecture</td></tr>
+</table>
+<p><b>Les trois conséquences à connaître par cœur :</b></p>
+<ol>
+<li><b>L'ordre n'est garanti QUE dans une partition.</b> Si l'ordre compte pour un client donné, il faut que sa clé le range toujours dans la même partition.</li>
+<li><b>Le parallélisme est plafonné par le nombre de partitions.</b> Ajouter un 11ᵉ consommateur à un topic de 10 partitions ne sert à rien — il restera inactif.</li>
+<li><b>La lecture ne consomme pas.</b> Le message reste jusqu'à expiration de la rétention : on peut rejouer un flux depuis le début, ce qui est précieux pour reconstruire un état ou corriger un bug de traitement.</li>
+</ol>
+<div class="box piege"><b>La clé de partition, le vrai piège</b>
+Une clé mal choisie déséquilibre tout : si 80 % des messages portent le même identifiant de tenant, une partition reçoit 80 % du trafic et son consommateur devient le goulot, pendant que les autres dorment. On veut une clé à <b>forte cardinalité et bien distribuée</b>, tout en préservant l'ordre là où c'est nécessaire. Et le nombre de partitions ne se réduit jamais : on ne peut qu'augmenter, ce qui redistribue les clés.</div>
+
+<h3>Garanties de livraison</h3>
+<table>
+<tr><th>Garantie</th><th>Signifie</th><th>Coût</th></tr>
+<tr><td><b>At most once</b></td><td>Jamais de doublon, mais perte possible</td><td>Inacceptable en finance</td></tr>
+<tr><td><b>At least once</b></td><td>Jamais de perte, doublons possibles</td><td>Le défaut réaliste — impose l'idempotence côté consommateur</td></tr>
+<tr><td><b>Exactly once</b></td><td>Ni perte ni doublon</td><td>Possible dans Kafka (producteur idempotent + transactions) mais uniquement de bout en bout Kafka→Kafka, avec un coût en débit</td></tr>
+</table>
+<div class="box dire"><b>Ce qu'il faut absolument savoir dire</b>
+« En pratique on conçoit pour de l'<i>at least once</i> et on rend le traitement <b>idempotent</b> : chaque message porte une clé d'idempotence, le consommateur enregistre ce qu'il a déjà traité et ignore les rejeux. L'exactly-once de bout en bout à travers plusieurs systèmes hétérogènes est un mythe — ce qu'on obtient, c'est un effet observable exactement une fois. Sur un débit bancaire, c'est ce qui empêche de débiter deux fois. »</div>
+
+<h3>Commit des offsets</h3>
+<p>Le moment du commit détermine la garantie :</p>
+<ul>
+<li>Commit <b>avant</b> traitement → at most once (si le consommateur meurt, le message est perdu).</li>
+<li>Commit <b>après</b> traitement → at least once (si le consommateur meurt après le traitement mais avant le commit, le message est rejoué).</li>
+<li>L'auto-commit périodique est le pire des deux : on ne sait plus où on en est. À désactiver dans tout traitement sérieux.</li>
+</ul>
+
+<h3>Dead letter queue</h3>
+<p>Un message « poison » (mal formé, provoquant une exception) est redélivré indéfiniment : il bloque le traitement, sature les logs et fait croire à une panne générale. La DLQ le met de côté après N tentatives.</p>
+<ul>
+<li>Toujours définir un <code>maxReceiveCount</code> (SQS) ou l'équivalent.</li>
+<li><b>Alerter sur la profondeur de la DLQ</b> — une DLQ que personne ne regarde est une perte de données silencieuse.</li>
+<li>Prévoir la procédure de rejeu après correction, et conserver la cause de l'échec avec le message.</li>
+</ul>
+
+<h3>Exploitation : ce qu'on surveille</h3>
+<table>
+<tr><th>Métrique</th><th>Ce qu'elle dit</th></tr>
+<tr><td><b>Consumer lag</b></td><td>Le retard en messages. LA métrique reine : si elle croît, le consommateur ne tient pas la charge</td></tr>
+<tr><td>Profondeur de file / DLQ</td><td>Accumulation, messages en échec</td></tr>
+<tr><td>Âge du plus vieux message</td><td>Complète le lag : 10 000 messages de retard sur un flux rapide n'est pas grave, 30 minutes d'âge oui</td></tr>
+<tr><td>Rééquilibrages (rebalances)</td><td>Trop fréquents = consommateurs instables, traitement interrompu en boucle</td></tr>
+<tr><td>ISR sous le minimum</td><td>Risque de perte : les écritures peuvent être refusées ou non répliquées</td></tr>
+</table>
+<div class="box piege"><b>Le rebalance storm</b> : si le traitement d'un lot dépasse <code>max.poll.interval.ms</code>, le broker considère le consommateur mort, déclenche un rééquilibrage, le travail est réattribué… et le nouveau consommateur met le même temps. Le groupe passe son temps à se rééquilibrer sans jamais avancer. Correctifs : réduire la taille des lots, augmenter le délai, ou sortir le traitement lourd de la boucle de poll.</div>
+
+<h3>Back-pressure et absorption</h3>
+<p>Une file qui grossit indéfiniment n'est pas une solution, c'est un report du problème : la mémoire, le disque ou la rétention finiront par lâcher, et la latence de bout en bout devient inacceptable bien avant.</p>
+<ul>
+<li>Dimensionner la rétention et surveiller l'espace disque des brokers.</li>
+<li>Autoscaler les consommateurs sur le <b>lag</b> (KEDA le fait nativement) plutôt que sur le CPU.</li>
+<li>Prévoir un mécanisme de rejet ou de dégradation en amont quand le tampon dépasse un seuil.</li>
+</ul>
+
+<h3>Schémas et compatibilité</h3>
+<p>Un flux vit des années et ses consommateurs évoluent séparément : le contrat doit être versionné. <b>Schema Registry</b> (Avro, Protobuf, JSON Schema) valide et impose des règles de compatibilité :</p>
+<ul>
+<li><b>Backward</b> : les nouveaux consommateurs lisent les anciens messages (on peut ajouter un champ optionnel).</li>
+<li><b>Forward</b> : les anciens consommateurs lisent les nouveaux messages.</li>
+<li><b>Full</b> : les deux.</li>
+</ul>
+<p>Règle pratique : on n'enlève jamais un champ et on ne change jamais son type — on ajoute, on déprécie, on retire bien plus tard. C'est le pendant du pattern expand/contract des bases de données.</p>
+
+<h3>Patterns d'architecture associés</h3>
+<ul>
+<li><b>Outbox</b> : pour éviter d'écrire en base ET publier un message dans deux transactions distinctes (l'une peut échouer), on écrit le message dans une table <i>outbox</i> DANS la transaction métier, et un processus séparé (ou du CDC) le publie. Réponse classique au problème de la double écriture.</li>
+<li><b>CDC (change data capture)</b> : on lit le journal de transactions de la base (Debezium) pour produire un flux d'événements sans modifier l'application.</li>
+<li><b>Event sourcing</b> : l'état est reconstruit en rejouant les événements. Très puissant pour l'auditabilité bancaire, très coûteux en complexité — à ne proposer que si le besoin d'audit ou de reconstitution le justifie.</li>
+<li><b>Saga</b> : une transaction distribuée découpée en étapes locales avec des compensations, puisqu'il n'y a pas de commit à deux phases praticable entre microservices.</li>
+</ul>
+
+<h3>Équivalences cloud</h3>
+<table>
+<tr><th>Concept</th><th>AWS</th><th>Azure</th></tr>
+<tr><td>File</td><td>SQS</td><td>Service Bus Queue</td></tr>
+<tr><td>Pub/Sub</td><td>SNS</td><td>Service Bus Topic / Event Grid</td></tr>
+<tr><td>Journal distribué</td><td>Kinesis / MSK</td><td>Event Hubs (compatible protocole Kafka)</td></tr>
+<tr><td>DLQ</td><td>Native sur SQS</td><td>Native sur Service Bus</td></tr>
+</table>
+`
+}]);
+
+</script>
+<script>
+/* fiches/15-sql.js */
 window.FICHES = (window.FICHES || []).concat([{
 id:"sql",
 titre:"SQL & bases de données",
@@ -1389,7 +1958,168 @@ WHERE o.id IS NULL;</code></pre>
 
 </script>
 <script>
-/* fiches/12-entretien.js */
+/* fiches/16-architecture.js */
+window.FICHES = (window.FICHES || []).concat([{
+id:"architecture",
+titre:"Architecture & system design",
+lead:"C'est là que trois chefs seniors passeront le plus de temps. Il n'y a pas de bonne réponse — il y a une méthode et des arbitrages assumés.",
+html:`
+<h3>La méthode, en 6 temps</h3>
+<p>Face à « concevez-nous X », <b>ne dessine pas tout de suite</b>. Le réflexe qui distingue un senior :</p>
+<ol>
+<li><b>Clarifier</b> — 3 à 5 minutes de questions. C'est évalué autant que la solution.</li>
+<li><b>Chiffrer</b> — volumétrie, débit, taille des données, ratio lecture/écriture.</li>
+<li><b>Poser le contrat</b> — API, modèle de données, garanties.</li>
+<li><b>Dessiner le chemin nominal</b> — simple, sans optimisation prématurée.</li>
+<li><b>Passer à l'échelle</b> — identifier le goulot et le traiter, un à la fois.</li>
+<li><b>Traiter les pannes</b> — qu'est-ce qui tombe, comment on le détecte, comment on dégrade.</li>
+</ol>
+
+<h3>1. Les questions à poser (apprends-les)</h3>
+<table>
+<tr><th>Catégorie</th><th>Questions</th></tr>
+<tr><td><b>Charge</b></td><td>Combien d'utilisateurs ? de requêtes par seconde en moyenne et en pic ? le pic est-il prévisible ?</td></tr>
+<tr><td><b>Données</b></td><td>Quel volume ? quelle croissance ? ratio lecture/écriture ? durée de conservation ?</td></tr>
+<tr><td><b>Latence</b></td><td>Quel p99 acceptable ? l'utilisateur attend-il la réponse ?</td></tr>
+<tr><td><b>Cohérence</b></td><td>Peut-on servir une donnée périmée de quelques secondes ? (réponse différente pour un solde et pour un catalogue)</td></tr>
+<tr><td><b>Disponibilité</b></td><td>Quel SLO ? quel RTO/RPO ? que se passe-t-il concrètement pendant une indisponibilité ?</td></tr>
+<tr><td><b>Contraintes</b></td><td>Résidence des données, conformité, existant à intégrer, budget, compétences de l'équipe</td></tr>
+</table>
+<div class="box dire"><b>Formulation</b> : « Avant de dessiner, j'ai besoin de cadrer : quel volume, quelle latence acceptable, et est-ce qu'on tolère une cohérence à terme sur cette donnée ? Les réponses changent complètement l'architecture. »</div>
+
+<h3>2. Les ordres de grandeur à connaître</h3>
+<table>
+<tr><th>Opération</th><th>Ordre de grandeur</th></tr>
+<tr><td>Lecture mémoire</td><td>~100 ns</td></tr>
+<tr><td>Lecture SSD</td><td>~100 µs</td></tr>
+<tr><td>Aller-retour réseau dans un datacenter</td><td>~0,5 ms</td></tr>
+<tr><td>Aller-retour Paris → Francfort</td><td>~10 ms</td></tr>
+<tr><td>Aller-retour Paris → Virginie</td><td>~80 ms</td></tr>
+<tr><td>Requête SQL simple indexée</td><td>1 à 10 ms</td></tr>
+<tr><td>Appel HTTP interne</td><td>5 à 50 ms</td></tr>
+</table>
+<p><b>Conversions utiles</b> : 1 million de requêtes/jour ≈ 12 req/s en moyenne (mais le pic vaut souvent 5 à 10× la moyenne). 100 Go/jour ≈ 1,2 Mo/s. Un serveur applicatif classique tient quelques milliers de req/s si la base suit — et c'est presque toujours la base qui ne suit pas.</p>
+
+<h3>3. Le squelette d'une architecture web</h3>
+<pre><code>DNS → CDN (statique, cache) → WAF → Load balancer L7
+   → Passerelle d'API (authN/Z, rate limiting, routage)
+     → Services applicatifs (stateless, plusieurs zones)
+       → Cache (Redis)
+       → Base de données (primaire + réplicas de lecture)
+       → File / broker → workers asynchrones
+Observabilité transverse · Secrets dans un coffre · Tout en IaC</code></pre>
+<p><b>Le principe structurant</b> : garder les services <b>stateless</b>. L'état va dans la base, le cache ou l'objet — pas dans le processus. C'est ce qui rend le scaling horizontal, le rolling update et le remplacement d'instance triviaux.</p>
+
+<h3>4. Passer à l'échelle : dans quel ordre</h3>
+<ol>
+<li><b>Mesurer</b> où est réellement le goulot. L'intuition se trompe.</li>
+<li><b>Cache</b> : le levier au meilleur rapport gain/effort. Attention à l'invalidation et au cache froid.</li>
+<li><b>Réplicas de lecture</b> si le trafic est majoritairement en lecture (le cas le plus fréquent).</li>
+<li><b>Scaling horizontal</b> des services stateless.</li>
+<li><b>Asynchrone</b> : sortir du chemin critique tout ce qui peut attendre (notifications, indexation, reporting).</li>
+<li><b>Partitionnement</b> de la base (par date, par tenant) quand une table devient ingérable.</li>
+<li><b>Sharding</b> en dernier recours : les jointures et transactions inter-shards coûtent très cher.</li>
+</ol>
+<div class="box piege">Ne propose jamais du sharding ou du multi-région en ouverture. Un senior entendra « il applique une recette ». On ajoute de la complexité quand une mesure le justifie, pas avant.</div>
+
+<h3>5. Le cache — ce qu'il faut maîtriser</h3>
+<table>
+<tr><th>Stratégie</th><th>Fonctionnement</th><th>Risque</th></tr>
+<tr><td><b>Cache-aside</b></td><td>L'app lit le cache, sinon la base puis remplit le cache</td><td>Le plus courant ; fenêtre d'incohérence après écriture</td></tr>
+<tr><td><b>Write-through</b></td><td>Écriture simultanée cache + base</td><td>Latence d'écriture accrue</td></tr>
+<tr><td><b>Write-behind</b></td><td>Écriture en cache, base mise à jour ensuite</td><td>Perte possible si le cache tombe</td></tr>
+</table>
+<p><b>Invalidation</b> : TTL (simple, incohérence bornée), invalidation explicite à l'écriture (juste mais fragile si un chemin l'oublie), ou versionnement de clé. « Il n'y a que deux problèmes difficiles en informatique : l'invalidation de cache et le nommage. »</p>
+<div class="box piege"><b>Deux pannes que le cache provoque</b>
+<ul>
+<li><b>Cache stampede</b> : de nombreuses clés expirent en même temps, tous les clients frappent l'origine et la tuent. Parades : TTL avec <b>jitter</b>, verrou de recalcul, rafraîchissement anticipé.</li>
+<li><b>Cache froid</b> : après un redémarrage, le service ne tient plus le trafic nominal car il comptait sur un taux de hit élevé. D'où la remontée progressive du trafic et le dimensionnement de l'origine pour un scénario sans cache.</li>
+</ul></div>
+
+<h3>6. Concevoir pour la panne</h3>
+<table>
+<tr><th>Mécanisme</th><th>Ce qu'il évite</th></tr>
+<tr><td><b>Timeout</b></td><td>L'attente infinie. Doit <b>décroître</b> en profondeur d'appel</td></tr>
+<tr><td><b>Retry + backoff + jitter</b></td><td>Le retry storm. Le jitter est le détail que tout le monde oublie</td></tr>
+<tr><td><b>Budget de retry</b></td><td>L'amplification : plafonner à ~10 % du trafic</td></tr>
+<tr><td><b>Circuit breaker</b></td><td>La cascade : échec rapide au lieu d'accumuler des threads en attente</td></tr>
+<tr><td><b>Bulkhead</b></td><td>Qu'une dépendance lente consomme tout le pool</td></tr>
+<tr><td><b>Load shedding</b></td><td>Traiter mal 100 % plutôt que bien 80 %</td></tr>
+<tr><td><b>Idempotence</b></td><td>Le double débit sur retry — <b>fondamental en finance</b></td></tr>
+<tr><td><b>Dégradation gracieuse</b></td><td>Le tout ou rien</td></tr>
+</table>
+<p><b>La question qui suit toujours</b> : « et si ce composant tombe ? » Prépare la réponse pour CHAQUE boîte de ton schéma : comment on le détecte, ce qui continue de fonctionner, comment on revient.</p>
+
+<h3>7. Monolithe ou microservices</h3>
+<table>
+<tr><th></th><th>Monolithe modulaire</th><th>Microservices</th></tr>
+<tr><td>Complexité</td><td>Dans le code</td><td>Déplacée dans le réseau et l'exploitation</td></tr>
+<tr><td>Déploiement</td><td>Un seul, coordonné</td><td>Indépendants — le vrai gain</td></tr>
+<tr><td>Transactions</td><td>ACID locales</td><td>Sagas et compensations</td></tr>
+<tr><td>Observabilité</td><td>Une pile d'appels</td><td>Tracing distribué obligatoire</td></tr>
+<tr><td>Prérequis</td><td>Discipline de découpage</td><td>Plateforme mature, équipes autonomes, CI/CD solide</td></tr>
+</table>
+<div class="box dire"><b>Réponse défendable</b>
+« Je commencerais par un monolithe modulaire bien découpé, et je n'extrairais un service que quand un besoin réel apparaît : des équipes qui se bloquent mutuellement, un composant à scaler différemment, un cycle de release divergent. Les microservices ne suppriment pas la complexité, ils la déplacent du code vers le réseau et l'exploitation — et cette complexité-là se paie tous les jours. Loi de Conway : l'architecture finira par refléter l'organisation, donc c'est l'organisation qui doit décider du découpage. »</div>
+
+<h3>8. Découper un domaine</h3>
+<ul>
+<li>Par <b>capacité métier</b> (paiement, KYC, tarification), pas par couche technique.</li>
+<li>Un service possède ses données : <b>pas de base partagée</b> entre services — sinon c'est un monolithe distribué, le pire des deux mondes.</li>
+<li>Les frontières doivent minimiser les allers-retours : si deux services s'appellent en boucle pour une seule requête utilisateur, la frontière est mal placée.</li>
+<li>Contrats versionnés et rétrocompatibles, testés par des tests de contrat.</li>
+</ul>
+
+<h3>9. Haute disponibilité vs reprise après sinistre</h3>
+<table>
+<tr><th></th><th>Haute disponibilité</th><th>Reprise après sinistre</th></tr>
+<tr><td>Couvre</td><td>Panne locale (instance, zone)</td><td>Sinistre majeur (région, corruption, ransomware)</td></tr>
+<tr><td>Déclenchement</td><td>Automatique, sans intervention</td><td>Souvent une décision assumée</td></tr>
+<tr><td>Mesure</td><td>SLO de disponibilité</td><td>RTO / RPO</td></tr>
+<tr><td>Moyen</td><td>Multi-AZ, réplicas, load balancing</td><td>Multi-région, sauvegardes isolées, exercices</td></tr>
+</table>
+<p>Stratégies DR par coût croissant : <b>Backup &amp; restore</b> (heures) → <b>Pilot light</b> (dizaines de minutes) → <b>Warm standby</b> (minutes) → <b>Actif/actif</b> (quasi nul).</p>
+<div class="box piege"><b>Ce qu'on oublie systématiquement en bascule de région</b> : le TTL DNS trop long, les secrets et clés de chiffrement régionaux non répliqués (l'app démarre mais ne déchiffre rien), les quotas jamais demandés dans la région de secours, et le pipeline de déploiement hébergé dans la région tombée.</div>
+
+<h3>10. Cohérence : CAP et PACELC</h3>
+<p>En cas de <b>partition</b> réseau (inévitable en distribué), il faut choisir : rester <b>cohérent</b> en refusant de répondre (CP), ou rester <b>disponible</b> en servant une donnée potentiellement périmée (AP).</p>
+<ul>
+<li>Solde de compte, autorisation de paiement → <b>CP</b>. On préfère refuser que se tromper.</li>
+<li>Catalogue, recommandations, historique consultatif → <b>AP</b>.</li>
+</ul>
+<p><b>PACELC</b> complète : en cas de Partition → A ou C ; <b>Else</b> (fonctionnement normal) → Latence ou Cohérence. Plus honnête, car l'arbitrage existe aussi hors panne : une réplication synchrone multi-région coûte de la latence en permanence.</p>
+
+<h3>11. Les patterns de migration</h3>
+<ul>
+<li><b>Strangler fig</b> : une façade devant le legacy, on extrait un domaine à la fois et on route progressivement. Chaque étape est réversible. On commence par un domaine périphérique, jamais par le cœur.</li>
+<li><b>Expand / contract</b> pour les schémas de données : ajouter, migrer, basculer, puis seulement supprimer.</li>
+<li><b>Double run</b> avec réconciliation automatique : les deux systèmes tournent, on compare les résultats et on alerte sur les écarts. C'est ce qui manque à la plupart des migrations ratées.</li>
+<li><b>Les 6R</b> : Retire, Retain, Rehost (lift &amp; shift), Replatform, Repurchase, Refactor.</li>
+</ul>
+
+<h3>12. Trois architectures à savoir dessiner de tête</h3>
+<div class="box dire"><b>Entraîne-toi au tableau, chronomètre en main</b>
+<ol>
+<li><b>Application web 3-tiers hautement disponible</b> : DNS → CDN/WAF → LB multi-AZ → services stateless → base primaire/réplicas → cache → sortie NAT. Sais dire où est chaque composant et ce qui se passe si chaque brique tombe.</li>
+<li><b>Chaîne de traitement asynchrone</b> : API d'ingestion → broker partitionné → consommateurs idempotents scalables → stockage → DLQ + rejeu. Sais expliquer le choix de la clé de partition et la garantie de livraison.</li>
+<li><b>Reprise multi-région</b> : réplication des données, bascule DNS avec health checks, secrets et quotas dans les deux régions, et la procédure d'exercice.</li>
+</ol>
+Dessine-les sur papier sans regarder. Si tu bloques sur une flèche, c'est là qu'il faut réviser.</div>
+
+<h3>13. Les phrases qui font la différence</h3>
+<ul>
+<li>« Quelle contrainte justifie ce choix ? » — tu relies chaque décision à une exigence.</li>
+<li>« C'est une décision <b>réversible</b>, donc on peut essayer vite ; celle-là ne l'est pas, on prend le temps. »</li>
+<li>« Le goulot ici sera la base, pas les serveurs applicatifs. »</li>
+<li>« On ne peut pas être plus fiable que la somme de nos dépendances. »</li>
+<li>« Ce que je propose coûte X en complexité opérationnelle — est-ce que ça se justifie dans votre contexte ? »</li>
+</ul>
+`
+}]);
+
+</script>
+<script>
+/* fiches/17-entretien.js */
 window.FICHES = (window.FICHES || []).concat([{
 id:"entretien",
 titre:"Jour J — posture & pièges",

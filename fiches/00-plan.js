@@ -22,9 +22,9 @@ html:`
 <tr><td>J1–J2</td><td>Niveaux 1 et 2</td><td>Linux : permissions, redirections, systemd, scripts avec <code>set -euo pipefail</code></td></tr>
 <tr><td>J3–J4</td><td>Niveau 3</td><td>Docker : multi-stage, non-root, debug d'un conteneur qui plante</td></tr>
 <tr><td>J5–J6</td><td>Niveau 4</td><td>Kubernetes : deployment + service + ingress, probes, requests/limits</td></tr>
-<tr><td>J7–J8</td><td>Niveau 5</td><td>Terraform : modules, for_each, backend distant, import, moved</td></tr>
+<tr><td>J7–J8</td><td>Niveau 5</td><td>Terraform : modules, for_each, backend distant, import, moved. Survole Ansible si tu n'en as jamais fait</td></tr>
 <tr><td>J9–J10</td><td>Niveau 6</td><td>Troubleshooting : casse volontairement des choses et répare-les chronomètre en main</td></tr>
-<tr><td>J11–J12</td><td>Niveaux 7 et 8</td><td>Architecture : dessine 3 archi au tableau (web 3-tiers, microservices, DR)</td></tr>
+<tr><td>J11–J12</td><td>Niveaux 7 et 8</td><td>Architecture : lis la fiche <b>Architecture &amp; system design</b>, puis dessine ses 3 schémas de mémoire, chronomètre en main</td></tr>
 <tr><td>J13</td><td>Niveau 9</td><td>Gouvernance, coûts, conformité — spécifique banque</td></tr>
 <tr><td>J14</td><td>Niveau 10</td><td>Oral : réponds aux 28 questions à voix haute, chronométré, sans lire</td></tr>
 <tr><td>J15</td><td>Marathon complet</td><td>Repos relatif. Relis la fiche « Jour J » uniquement.</td></tr>
