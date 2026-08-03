@@ -73,6 +73,15 @@ function build(template, sortie) {
 
   html = html.replace("/*__INDEX__*/", () => "const INDEX = " + JSON.stringify(INDEX) + ";");
 
+  /* <!--__BANQUE:dossier__--> : inline TOUS les .js du dossier, sans liste à tenir à jour */
+  html = html.replace(/<!--__BANQUE:([a-z]+)__-->/g, (m, dossier) => {
+    const fichiers = fichiersDe(dossier);
+    console.log(`    ${dossier}/ : ${fichiers.length} fichiers de questions inlinés`);
+    return fichiers.map(p =>
+      `<script>\n/* ${dossier}/${path.basename(p)} */\n${fs.readFileSync(p, "utf8")}\n</script>`
+    ).join("\n");
+  });
+
   html = html.replace(/<script src="([^"]+\.js)"><\/script>\s*/g, (m, rel) => {
     const p = path.join(root, rel);
     if (!fs.existsSync(p)) { console.warn("  ! introuvable, ignoré :", rel); return ""; }
