@@ -4,11 +4,12 @@
  *
  * Incrémenter VERSION à chaque nouvelle mise en ligne pour forcer la mise à jour.
  */
-const VERSION = "prepa-bnp-v3";
+const VERSION = "prepa-bnp-v4";
 
 const FICHIERS = [
   "./",
   "./index.html",
+  "./formations.html",
   "./qcm.html",
   "./quiz.html",
   "./etude.html",

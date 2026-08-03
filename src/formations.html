@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formations — Entretien BNP</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone.svg">
+<meta name="theme-color" content="#0d111a">
+<script>
+if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){
+  window.addEventListener("load", ()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+<style>
+  :root{
+    --bg:#0d111a; --surface:#151b27; --surface2:#1d2432; --ink:#dde4f0; --muted:#8d9ab2;
+    --accent:#c48cff; --accent-soft:#241a38; --ok:#3ecf8e; --libre:#6c8cff; --qcm:#3ecf8e;
+    --border:#26303f; --warn:#edaa5f; --warn-soft:#2a2013;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f5f7fb; --surface:#fff; --surface2:#f0f3f9; --ink:#161d2b; --muted:#5c687d;
+      --accent:#7b3fd4; --accent-soft:#f1e8fd; --ok:#1e7a46; --libre:#2b5fd9; --qcm:#1e7a46;
+      --border:#dce2ee; --warn:#8a5a00; --warn-soft:#fdf3e3;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;line-height:1.55}
+  .wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px}
+  a{color:var(--accent)}
+  header.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  header.top h1{font-size:19px;margin:0;font-weight:700}
+  header.top h1 span{color:var(--accent)}
+  .hstats{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .hstats b{color:var(--ink)}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+
+  .modes{display:inline-flex;background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:3px;gap:3px;margin-bottom:6px}
+  .modes button{border:none;background:none;color:var(--muted);font:inherit;font-size:14px;font-weight:650;
+    padding:.45rem 1rem;border-radius:8px;cursor:pointer}
+  .modes button.on{background:var(--bg);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+  .modes button.on[data-m="qcm"]{color:var(--qcm)}
+  .modes button.on[data-m="libre"]{color:var(--libre)}
+
+  .onglets{display:flex;gap:7px;overflow-x:auto;padding:4px 0 10px;margin-bottom:4px;border-bottom:1px solid var(--border)}
+  .onglets button{flex:0 0 auto;white-space:nowrap;border:1px solid var(--border);background:var(--surface);
+    color:var(--ink);font:inherit;font-size:14px;padding:.5rem .95rem;border-radius:20px;cursor:pointer}
+  .onglets button:hover{border-color:var(--accent)}
+  .onglets button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+  .onglets button .n{opacity:.65;font-size:12.5px;margin-left:5px}
+
+  .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:16px}
+  .niv{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 13px;
+    text-align:left;color:inherit;font:inherit;cursor:pointer;transition:.15s;display:block;text-decoration:none}
+  .niv:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .niv .n{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent)}
+  .niv .t{font-weight:650;font-size:14px;margin:3px 0 5px;line-height:1.3}
+  .niv .m{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .bar{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-top:8px}
+  .bar i{display:block;height:100%;background:var(--ok);width:0}
+  .niv.vide{opacity:.45;cursor:not-allowed;pointer-events:none}
+  .niv.vide .n{color:var(--muted)}
+
+  .resume{display:flex;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:14px;
+    padding-top:12px;border-top:1px dashed var(--border)}
+  .resume b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .avert{background:var(--warn-soft);border-left:3px solid var(--warn);border-radius:8px;
+    padding:10px 13px;font-size:13.5px;margin-top:14px}
+  .liens{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .liens a{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:.4rem .8rem;
+    font-size:13px;text-decoration:none;color:var(--ink)}
+  .liens a:hover{border-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Formations <span>par bloc</span></h1>
+    <div class="hstats" id="hstats"></div>
+  </header>
+
+  <div class="card">
+    <p class="sub">Choisis un domaine et un niveau : tu révises bloc par bloc, dans le mode que tu veux. Les niveaux sans question sont grisés avec leur compte réel — ce sont tes angles morts.</p>
+    <div class="modes" id="modes">
+      <button data-m="qcm" class="on" onclick="setMode('qcm')">Choix multiples</button>
+      <button data-m="libre" onclick="setMode('libre')">Réponses libres</button>
+    </div>
+    <div class="onglets" id="onglets"></div>
+    <div class="grille" id="grille"></div>
+    <div class="resume" id="resume"></div>
+    <div id="avert"></div>
+    <div class="liens">
+      <a href="index.html">← Accueil</a>
+      <a href="qcm.html">Tous les QCM</a>
+      <a href="quiz.html">Toutes les réponses libres</a>
+      <a href="etude.html">Fiches d'étude</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/*__INDEX__*/
+
+const TITRES = {1:"Vocabulaire & fondations",2:"Bases opérationnelles",3:"Usage quotidien",4:"Intermédiaire",
+  5:"Réseau, sécurité, état",6:"Troubleshooting",7:"Architecture & production",8:"Internes & cas limites",
+  9:"Résilience, coûts, gouvernance",10:"Entretien senior"};
+
+function lire(cle){ try{ return (JSON.parse(localStorage.getItem(cle))||{}).q || {}; }catch(e){ return {}; } }
+const ETAT = { libre: lire("bnp_devops_v1"), qcm: lire("bnp_qcm_v1") };
+
+let mode = localStorage.getItem("bnp_form_mode") || "qcm";
+let courante = localStorage.getItem("bnp_form_onglet") || INDEX[0].id;
+if(!INDEX.some(f=>f.id===courante)) courante = INDEX[0].id;
+
+function setMode(m){
+  mode = m;
+  localStorage.setItem("bnp_form_mode", m);
+  document.querySelectorAll("#modes button").forEach(b=>b.classList.toggle("on", b.dataset.m===m));
+  rendre();
+}
+function setOnglet(id){
+  courante = id;
+  localStorage.setItem("bnp_form_onglet", id);
+  rendre();
+}
+
+function acquis(ids, m){
+  const st = ETAT[m];
+  return ids.filter(id => st[id] && st[id].box >= 3).length;
+}
+
+function rendre(){
+  const f = INDEX.find(x=>x.id===courante);
+  const page = mode === "qcm" ? "qcm.html" : "quiz.html";
+
+  document.getElementById("onglets").innerHTML = INDEX.map(x=>{
+    const n = x[mode].flat().length;
+    return `<button class="${x.id===courante?'on':''}" onclick="setOnglet('${x.id}')">${x.titre}<span class="n">${n}</span></button>`;
+  }).join("");
+
+  document.getElementById("grille").innerHTML = f[mode].map((ids, i)=>{
+    const l = i+1;
+    if(!ids.length){
+      return `<div class="niv vide">
+        <div class="n">Niveau ${l}</div><div class="t">${TITRES[l]}</div>
+        <div class="m">aucune question</div><div class="bar"><i></i></div></div>`;
+    }
+    const a = acquis(ids, mode);
+    const pct = Math.round(a/ids.length*100);
+    const url = `${page}?dom=${encodeURIComponent(f.doms.join(","))}&lvl=${l}&titre=${encodeURIComponent(f.titre)}`;
+    return `<a class="niv" href="${url}">
+      <div class="n">Niveau ${l}</div><div class="t">${TITRES[l]}</div>
+      <div class="m">${ids.length} question${ids.length>1?'s':''} · ${pct}% acquis</div>
+      <div class="bar"><i style="width:${pct}%"></i></div></a>`;
+  }).join("");
+
+  const tous = f[mode].flat();
+  const vides = f[mode].filter(a=>!a.length).length;
+  document.getElementById("resume").innerHTML =
+    `<span>Total <b>${tous.length}</b> questions</span>
+     <span>Acquises <b>${acquis(tous, mode)}</b></span>
+     <span>Niveaux couverts <b>${10-vides}/10</b></span>`;
+
+  document.getElementById("avert").innerHTML = vides
+    ? `<div class="avert"><b>${vides} niveau${vides>1?'x':''} sans question</b> sur ce bloc. Ce n'est pas un bug : la banque a été écrite pour l'entretien, pas domaine par domaine. Utilise les autres blocs pour ces niveaux de difficulté.</div>`
+    : "";
+
+  const totL = INDEX.reduce((s,x)=>s+x.libre.flat().length,0);
+  const totQ = INDEX.reduce((s,x)=>s+x.qcm.flat().length,0);
+  document.getElementById("hstats").innerHTML =
+    `<b>${INDEX.length}</b> blocs · <b>${totQ}</b> QCM · <b>${totL}</b> libres`;
+}
+
+setMode(mode);
+</script>
+</body>
+</html>

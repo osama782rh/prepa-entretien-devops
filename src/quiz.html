@@ -360,7 +360,16 @@ function finish(){
 }
 function replayWrong(){ start(shuffle(S.wrong), "Rattrapage — "+S.label); }
 
-home();
+/* Lancement direct depuis le menu Formations : quiz.html?dom=Terraform,Ansible&lvl=3&titre=… */
+(function router(){
+  const p = new URLSearchParams(location.search);
+  const dom = p.get("dom"), lvl = p.get("lvl");
+  if(!dom || !lvl){ home(); return; }
+  const doms = dom.split(",");
+  const liste = BANK.filter(q => q.lvl === Number(lvl) && doms.includes(q.dom));
+  if(!liste.length){ home(); return; }
+  start(shuffle(liste), (p.get("titre") || dom) + " — niveau " + lvl);
+})();
 </script>
 </body>
 </html>
