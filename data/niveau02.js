@@ -78,7 +78,7 @@ window.QBANK = (window.QBANK || []).concat([
 
 { id:"n2-tf-01", lvl:2, dom:"Terraform",
   q:"Que fait <code>terraform plan</code> et quelles sont les quatre actions possibles affichées ?",
-  must:[["+","cree"],["-","detruit"],["~","modifie"]],
+  must:[["cree","creation","ajoute"],["detruit","destruction","supprime"],["modifie","modification","change"]],
   explain:"Il rafraîchit l'état, compare config vs state et affiche un dry-run : <code>+</code> création, <code>-</code> destruction, <code>~</code> modification en place, <code>-/+</code> remplacement (destroy puis create). Aucun changement n'est appliqué. En CI, on sauvegarde le plan (<code>-out</code>) et on applique CE plan-là." },
 
 { id:"n2-tf-02", lvl:2, dom:"Terraform",

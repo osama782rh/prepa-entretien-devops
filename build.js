@@ -38,19 +38,15 @@ function charger(fichiers, cle) {
   return banque;
 }
 
-const fichiersLibre = [];
-for (let i = 1; i <= 10; i++) {
-  const n = String(i).padStart(2, "0");
-  ["", "b"].forEach(s => {
-    const p = path.join(root, "data", `niveau${n}${s}.js`);
-    if (fs.existsSync(p)) fichiersLibre.push(p);
-  });
+/* Tous les .js du dossier, triés : niveau*.js puis import-*.js */
+function fichiersDe(dossier) {
+  return fs.readdirSync(path.join(root, dossier))
+    .filter(f => f.endsWith(".js"))
+    .sort()
+    .map(f => path.join(root, dossier, f));
 }
-const fichiersQcm = [];
-for (let i = 1; i <= 10; i++) {
-  const p = path.join(root, "qcm", `niveau${String(i).padStart(2, "0")}.js`);
-  if (fs.existsSync(p)) fichiersQcm.push(p);
-}
+const fichiersLibre = fichiersDe("data");
+const fichiersQcm = fichiersDe("qcm");
 
 const LIBRE = charger(fichiersLibre, "QBANK");
 const QCM = charger(fichiersQcm, "QCM");

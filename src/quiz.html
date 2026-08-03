@@ -110,6 +110,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
 <script src="data/niveau08b.js"></script>
 <script src="data/niveau09b.js"></script>
 <script src="data/niveau10b.js"></script>
+<script src="data/import-existants.js"></script>
 <script>
 /* ============ MODELE ============ */
 const BANK = window.QBANK || [];
@@ -151,10 +152,18 @@ function norm(s){
     .replace(/[^a-z0-9+#./_-]+/g," ")
     .replace(/\s+/g," ").trim();
 }
-function hit(n, needle){ return n.includes(norm(needle)); }
+function hit(n, needle){
+  const a = norm(needle);
+  if(!a) return false;                     // mot-clé vide : ne doit JAMAIS tout valider
+  if(a.length <= 3){                       // court (chiffres, sigles) : mot entier exigé
+    const echap = a.replace(/[.*+?^${}()|[\]\\\/-]/g, "\\$&");
+    return new RegExp("(^|\\s)" + echap + "($|\\s)").test(n);
+  }
+  return n.includes(a);                    // long : sous-chaîne, pour rester tolérant
+}
 function evaluate(input, item){
   const n = norm(input);
-  if(n.length < 2) return false;
+  if(!n) return false;
   if(item.must && item.must.length){
     const allMust = item.must.every(g => Array.isArray(g) ? g.some(x=>hit(n,x)) : hit(n,g));
     if(!allMust) return false;

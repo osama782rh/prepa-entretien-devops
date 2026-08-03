@@ -4,7 +4,7 @@
  *
  * Incrémenter VERSION à chaque nouvelle mise en ligne pour forcer la mise à jour.
  */
-const VERSION = "prepa-bnp-v4";
+const VERSION = "prepa-bnp-v5";
 
 const FICHIERS = [
   "./",
