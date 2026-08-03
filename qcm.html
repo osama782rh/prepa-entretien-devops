@@ -3075,6 +3075,57 @@ window.QCM = (window.QCM || []).concat([
 </script>
 <script>
 const BANK = window.QCM || [];
+
+/* Rééquilibrage des propositions.
+   Quand la bonne réponse est nettement plus longue que les autres, sa longueur
+   trahit la réponse et on peut réussir sans savoir. Beaucoup de ces réponses ont
+   la forme « affirmation — justification » : on ne garde que l'affirmation dans
+   la proposition et on déplace la justification en tête de l'explication.
+   Rien n'est perdu, et la transformation est refusée si elle rend la bonne
+   réponse trop proche d'un distracteur. */
+const DECOUPES = [
+  t => { const m = t.match(/^(.{15,}?)\s*\(([^()]{8,})\)\s*$/);   return m && [m[1], m[2]]; }, // parenthèse finale
+  t => { const m = t.match(/^(.{15,}?)\s[—–:]\s(.+)$/);           return m && [m[1], m[2]]; }, // tiret ou deux-points
+  t => { const m = t.match(/^(.{15,}?),\s(car|parce que|ce qui|afin de|pour que|donc)\s(.+)$/i);
+         return m && [m[1], m[2] + " " + m[3]]; },                                             // proposition causale
+  t => { const m = t.match(/^(.{15,}?[.!?])\s+(\S.+)$/);          return m && [m[1], m[2]]; }  // phrase suivante
+];
+
+function equilibrer(banque){
+  let n = 0;
+  banque.forEach(q => {
+    const autres = q.choix.filter((_,i) => i !== q.bonne).map(c => String(c).length);
+    const maxAutre = Math.max(...autres);
+    let bonne = String(q.choix[q.bonne]);
+    if(bonne.length / maxAutre < 1.6) return;               // pas de biais
+
+    const deplacees = [];
+    for(let passe = 0; passe < 3 && bonne.length / maxAutre >= 1.6; passe++){
+      let applique = false;
+      for(const decouper of DECOUPES){
+        const r = decouper(bonne);
+        if(!r) continue;
+        const tete = r[0].trim().replace(/[,;:—–]$/, ""), queue = r[1].trim();
+        if(!queue || tete.length < 15) continue;
+        // refus si la tête devient ambiguë avec un distracteur
+        if(q.choix.some((c,i) => i !== q.bonne && String(c).slice(0,18) === tete.slice(0,18))) continue;
+        bonne = tete; deplacees.push(queue); applique = true;
+        break;
+      }
+      if(!applique) break;
+    }
+
+    if(!deplacees.length || bonne.length / maxAutre >= 1.6) return;  // le découpage n'a pas suffi
+
+    q.choix = q.choix.slice();
+    q.choix[q.bonne] = bonne;
+    const j = deplacees.map(s => s.charAt(0).toUpperCase() + s.slice(1) + (/[.!?]$/.test(s) ? "" : ".")).join(" ");
+    q.explain = j + " " + (q.explain || "");
+    n++;
+  });
+  return n;
+}
+const REEQUILIBREES = equilibrer(BANK);
 const LEVEL_TITLES = {
   1:"Vocabulaire & fondations",
   2:"Bases opérationnelles",
