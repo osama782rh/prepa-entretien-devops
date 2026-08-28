@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CKA Trainer — Certified Kubernetes Administrator</title>
+<style>
+  :root {
+    --ground: #F5F7FB;
+    --surface: #FFFFFF;
+    --ink: #161D2B;
+    --muted: #5C687D;
+    --accent: #2B5FD9;
+    --accent-deep: #1E45A3;
+    --accent-soft: #E6EDFC;
+    --good: #1E7A46;
+    --good-soft: #E7F5EC;
+    --bad: #B3352B;
+    --bad-soft: #FBEAE8;
+    --warn: #8A5A00;
+    --warn-soft: #FDF3E3;
+    --border: #DCE2EE;
+    --term-bg: #0E1420;
+    --term-ink: #D6E2F5;
+    --term-green: #7FD98C;
+    --shadow: 0 2px 8px rgba(22,29,43,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0D111A; --surface: #151B27; --ink: #DDE4F0; --muted: #93A0B5;
+      --accent: #7FA8F5; --accent-deep: #A6C3F9; --accent-soft: #182338;
+      --good: #5BC98A; --good-soft: #12291B; --bad: #F08578; --bad-soft: #2E1512;
+      --warn: #EDAA5F; --warn-soft: #2A2013; --border: #26303F;
+      --term-bg: #080C14; --term-ink: #CBD9EE; --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    font-size: 16px; line-height: 1.5; min-height: 100vh;
+  }
+  code, .mono { font-family: "Cascadia Code", "Cascadia Mono", Consolas, monospace; }
+  code { background: var(--accent-soft); color: var(--accent-deep); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+  header.top h1 { font-size: 20px; margin: 0; font-weight: 700; }
+  header.top h1 .k8s { color: var(--accent); }
+  .stats { display: flex; gap: 14px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stats b { color: var(--ink); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); }
+
+  .home h2 { margin: 0 0 4px; font-size: 24px; }
+  .home p.sub { color: var(--muted); margin: 0 0 12px; }
+  .exam-banner { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin-bottom: 8px; }
+  .weights { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; font-size: 12.5px; margin: 8px 0 0; }
+  .weights .wl { color: var(--muted); }
+  .weights .wv { font-weight: 700; color: var(--accent-deep); font-variant-numeric: tabular-nums; text-align: right; }
+  .weights .big { color: var(--accent); }
+
+  .filters { margin: 16px 0 10px; display: grid; gap: 8px; }
+  .frow { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+  .seg { display: flex; gap: 4px; flex-wrap: wrap; }
+  .seg button { border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 13.5px; }
+  .seg button.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .seg button:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 1px; }
+
+  .modes { display: grid; gap: 10px; }
+  .mode-btn {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; cursor: pointer; text-align: left; color: var(--ink);
+    font-family: inherit; font-size: 15px; transition: border-color .15s, transform .1s;
+  }
+  .mode-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .mode-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mode-btn.hero { border-color: var(--accent); background: var(--accent-soft); }
+  .mode-btn .ico { font-size: 24px; width: 34px; text-align: center; }
+  .mode-btn .t { font-weight: 650; }
+  .mode-btn .d { font-size: 13px; color: var(--muted); }
+  .mode-btn .n { margin-left: auto; font-size: 12.5px; color: var(--accent); background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2px 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .qmeta { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .pill { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; border-radius: 20px; padding: 3px 11px; }
+  .pill.lv1 { background: var(--good-soft); color: var(--good); }
+  .pill.lv2 { background: var(--accent-soft); color: var(--accent); }
+  .pill.lv3 { background: var(--bad-soft); color: var(--bad); }
+  .pill.dom { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+  .progressbar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+  .progressbar div { height: 100%; background: var(--accent); border-radius: 3px; transition: width .25s; }
+  .question { font-size: 18.5px; font-weight: 650; margin: 0 0 16px; line-height: 1.45; text-wrap: balance; }
+
+  .term-input { position: relative; }
+  .term-input .prompt {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--term-green); font-family: "Cascadia Code", Consolas, monospace; font-size: 15px; pointer-events: none;
+  }
+  input[type=text] {
+    width: 100%; padding: 13px 14px; font-size: 15px; font-family: inherit;
+    border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink);
+  }
+  input.cmd {
+    font-family: "Cascadia Code", Consolas, monospace; font-size: 14.5px;
+    background: var(--term-bg); color: var(--term-ink); border-color: #24304a; padding-left: 34px;
+  }
+  input[type=text]:focus { outline: none; border-color: var(--accent); }
+  .choices { display: grid; gap: 8px; }
+  .choice {
+    text-align: left; padding: 11px 14px; border: 2px solid var(--border); border-radius: 10px;
+    background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 15px;
+  }
+  .choice:hover { border-color: var(--accent); }
+  .choice.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .choice.good { border-color: var(--good); background: var(--good-soft); font-weight: 600; }
+  .choice.bad { border-color: var(--bad); background: var(--bad-soft); }
+  .choice:disabled { cursor: default; opacity: .85; }
+
+  .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .btn { padding: 11px 22px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 650; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-deep); }
+  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+
+  .feedback { margin-top: 18px; border-radius: 12px; padding: 14px 16px; font-size: 15px; }
+  .feedback.ok { background: var(--good-soft); border: 1px solid var(--good); }
+  .feedback.ko { background: var(--bad-soft); border: 1px solid var(--bad); }
+  .feedback.info { background: var(--accent-soft); border: 1px solid var(--accent); }
+  .feedback .verdict { font-weight: 750; font-size: 16px; }
+  .feedback.ok .verdict { color: var(--good); }
+  .feedback.ko .verdict { color: var(--bad); }
+  .feedback.info .verdict { color: var(--accent-deep); }
+  .feedback .rep { margin: 8px 0 0; }
+  .feedback .exp { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+  .feedback .alt { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+  .sol {
+    display: block; background: var(--term-bg); color: var(--term-ink); border-radius: 8px;
+    padding: 9px 12px; margin-top: 6px; font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 13.5px; overflow-x: auto; white-space: pre;
+  }
+  .doclink { display: inline-block; margin-top: 8px; font-size: 13px; color: var(--accent-deep); }
+
+  pre.qcode {
+    background: var(--term-bg); color: var(--term-ink); border-radius: 10px;
+    padding: 12px 14px; overflow-x: auto; font-size: 12.5px; line-height: 1.55;
+    font-family: "Cascadia Code", Consolas, monospace; margin: 0 0 14px; text-align: left;
+  }
+  .order-hint { font-size: 13.5px; color: var(--muted); margin: 0 0 8px; }
+  .order-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .order-list:empty { display: none; }
+  .order-item { text-align: left; padding: 10px 13px; border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 14.5px; }
+  .order-item:hover { border-color: var(--accent); }
+  .order-item.picked { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .order-item:disabled { cursor: default; opacity: .85; }
+
+  .lab { background: var(--ground); border: 1px solid var(--border); border-radius: 12px; padding: 4px 16px 12px; margin-bottom: 10px; }
+  .lab summary { cursor: pointer; font-weight: 650; padding: 10px 0; font-size: 15.5px; }
+  .lab.done summary { color: var(--good); }
+  .lab .lab-time { color: var(--muted); font-weight: 400; font-size: 13px; }
+  .lab ol { padding-left: 20px; font-size: 14.5px; }
+  .lab li { margin: 5px 0; }
+  .lab .lab-obj, .lab .lab-verif { font-size: 14px; }
+  .lab .lab-verif { background: var(--good-soft); border-radius: 8px; padding: 8px 12px; }
+  .labs-note { background: var(--warn-soft); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; color: var(--warn); margin-bottom: 14px; }
+
+  .pb h3 { font-size: 17px; margin: 24px 0 6px; color: var(--accent-deep); }
+  .pb h3:first-of-type { margin-top: 8px; }
+  .pb p, .pb li { font-size: 14.5px; }
+  .pb ul, .pb ol { padding-left: 20px; }
+  .pb li { margin: 4px 0; }
+  .pb .tip { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 14px; margin: 10px 0; }
+  .pb .crit { background: var(--bad-soft); border: 1px solid var(--bad); border-radius: 10px; padding: 10px 14px; font-size: 14px; margin: 10px 0; }
+
+  .end { text-align: center; }
+  .end .big { font-size: 52px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin: 10px 0 0; }
+  .end .verdict { font-size: 18px; font-weight: 650; margin: 6px 0 18px; }
+  .end .detail { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .end .bydom { text-align: left; font-size: 13.5px; margin: 0 auto 18px; max-width: 460px; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; }
+  .end .bydom .dl { color: var(--muted); }
+  .end .bydom .dv { font-variant-numeric: tabular-nums; font-weight: 650; }
+  .kbd-hint { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 14px; }
+  .hidden { display: none; }
+
+  /* ---- Mode Maîtrise ---- */
+  .dash { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  .dash h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-deep); }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  .dash-cell { background: var(--surface); border-radius: 9px; padding: 8px 10px; text-align: center; }
+  .dash-cell .v { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .dash-cell .k { font-size: 11px; color: var(--muted); line-height: 1.25; }
+  .dash-cell.danger .v { color: var(--bad); }
+  .dash-cell.due .v { color: var(--accent); }
+  .dash-cell.mastered .v { color: var(--good); }
+  .dash-cell.reco .v { color: var(--warn); }
+  .dash-note { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+
+  .conf-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .conf-label { width: 100%; font-size: 12.5px; color: var(--muted); margin-bottom: 2px; }
+  .conf {
+    flex: 1 1 30%; min-width: 120px; padding: 11px 12px; border-radius: 10px; cursor: pointer;
+    font-family: inherit; font-size: 14.5px; font-weight: 650; border: 2px solid var(--border);
+    background: var(--surface); color: var(--ink); text-align: center; line-height: 1.25;
+  }
+  .conf small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
+  .conf:hover { border-color: var(--accent); }
+  .conf:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+  .conf.c3 { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+  .conf.c3:hover { border-color: var(--good); background: var(--good-soft); }
+  .conf.c1 { border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .conf.c1:hover { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+
+  .srs-flag { font-size: 12.5px; border-radius: 8px; padding: 7px 11px; margin-top: 10px; }
+  .srs-flag.danger { background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad); font-weight: 600; }
+  .srs-flag.reco { background: color-mix(in srgb, var(--warn) 12%, transparent); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
+  .srs-next { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+  .matrix { max-width: 420px; margin: 0 auto 18px; }
+  .matrix table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .matrix th, .matrix td { padding: 7px 9px; border: 1px solid var(--border); text-align: center; }
+  .matrix th { background: var(--accent-soft); color: var(--accent-deep); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .matrix td.n { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; }
+  .matrix td.danger { background: var(--bad-soft); color: var(--bad); }
+  .matrix td.good { background: var(--good-soft); color: var(--good); }
+  .matrix caption { caption-side: bottom; font-size: 12px; color: var(--muted); padding-top: 8px; text-align: left; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1><span class="k8s">CKA</span> Trainer · Kubernetes Administrator</h1>
+    <div class="stats">
+      <span>Série : <b id="streak">0</b> 🔥</span>
+      <span>Score : <b id="score">0</b></span>
+    </div>
+  </header>
+
+  <!-- Accueil -->
+  <div id="screen-home" class="card home">
+    <h2>Entraînement CKA</h2>
+    <p class="sub">La CKA est <b>100 % pratique</b> : ici tu tapes de vraies commandes, tu ne cliques pas.</p>
+    <div class="exam-banner">
+      <b>2 heures · 15 à 20 tâches pratiques · 66 % requis · 1 retake gratuit · valable 2 ans.</b>
+      Un seul onglet de doc autorisé : <code>kubernetes.io/docs</code>, <code>kubernetes.io/blog</code>, <code>helm.sh/docs</code> et <code>gateway-api.sigs.k8s.io</code>. La recherche du site est permise, mais interdiction d'ouvrir un résultat externe.
+      <div class="weights">
+        <span class="wl big">Troubleshooting</span><span class="wv big">30 %</span>
+        <span class="wl">Architecture, installation &amp; configuration</span><span class="wv">25 %</span>
+        <span class="wl">Services &amp; networking</span><span class="wv">20 %</span>
+        <span class="wl">Workloads &amp; scheduling</span><span class="wv">15 %</span>
+        <span class="wl">Storage</span><span class="wv">10 %</span>
+      </div>
+    </div>
+    <div class="filters">
+      <div class="frow">
+        Questions :
+        <div class="seg" id="countSeg">
+          <button data-n="10">10</button>
+          <button data-n="20" class="on">20</button>
+          <button data-n="0">Toutes</button>
+        </div>
+      </div>
+      <div class="frow">
+        Domaine :
+        <div class="seg" id="domSeg">
+          <button data-d="all" class="on">Tous</button>
+          <button data-d="tshoot">Troubleshoot</button>
+          <button data-d="arch">Architecture</button>
+          <button data-d="net">Réseau</button>
+          <button data-d="wl">Workloads</button>
+          <button data-d="stor">Storage</button>
+        </div>
+      </div>
+    </div>
+    <div class="dash">
+      <h3>🧠 Ta progression</h3>
+      <div class="dash-grid">
+        <div class="dash-cell danger"><div class="v" id="dCroyances">0</div><div class="k">croyances fausses</div></div>
+        <div class="dash-cell due"><div class="v" id="dDue">0</div><div class="k">à réviser</div></div>
+        <div class="dash-cell mastered"><div class="v" id="dMastered">0</div><div class="k">ancrés</div></div>
+        <div class="dash-cell reco"><div class="v" id="dReco">0</div><div class="k">reconnaissance ?</div></div>
+        <div class="dash-cell"><div class="v" id="dNew">0</div><div class="k">jamais vus</div></div>
+      </div>
+      <p class="dash-note" id="dNote"></p>
+    </div>
+    <div class="modes">
+      <button class="mode-btn" data-mode="maitrise" style="border-color:var(--accent);background:var(--accent-soft)">
+        <span class="ico">🧠</span>
+        <span><span class="t">Session Maîtrise (recommandé)</span><br><span class="d">Répétition espacée pilotée par ta confiance — corrige d'abord ce que tu crois savoir à tort</span></span>
+        <span class="n" id="nmaitrise"></span>
+      </button>
+      <button class="mode-btn hero" data-mode="cmd">
+        <span class="ico">⌨️</span>
+        <span><span class="t">Drills de commandes</span><br><span class="d">Tape la vraie commande kubectl — LA compétence qui fait passer l'examen</span></span>
+        <span class="n" id="ncmd"></span>
+      </button>
+      <button class="mode-btn" data-mode="tshoot">
+        <span class="ico">🔧</span>
+        <span><span class="t">Troubleshooting</span><br><span class="d">30 % de l'examen : symptôme → diagnostic → correction</span></span>
+        <span class="n" id="ntshoot"></span>
+      </button>
+      <button class="mode-btn" data-mode="yaml">
+        <span class="ico">📄</span>
+        <span><span class="t">Manifests YAML à compléter</span><br><span class="d">Les champs exacts qu'on ne retrouve pas assez vite dans la doc</span></span>
+        <span class="n" id="nyaml"></span>
+      </button>
+      <button class="mode-btn" data-mode="1">
+        <span class="ico">🌱</span>
+        <span><span class="t">Concepts &amp; architecture</span><br><span class="d">Composants du control plane, objets, vocabulaire</span></span>
+        <span class="n" id="n1"></span>
+      </button>
+      <button class="mode-btn" data-mode="docs">
+        <span class="ico">📚</span>
+        <span><span class="t">Où chercher dans la doc</span><br><span class="d">La doc est autorisée : savoir où regarder vaut des minutes</span></span>
+        <span class="n" id="ndocs"></span>
+      </button>
+      <button class="mode-btn" data-mode="task">
+        <span class="ico">🎯</span>
+        <span><span class="t">Tâches d'examen</span><br><span class="d">Énoncés réalistes et séquences d'actions à ordonner</span></span>
+        <span class="n" id="ntask"></span>
+      </button>
+      <button class="mode-btn" data-mode="mix">
+        <span class="ico">🎲</span>
+        <span><span class="t">Tout mélanger</span><br><span class="d">Toute la banque aléatoirement</span></span>
+        <span class="n" id="nmix"></span>
+      </button>
+      <button class="mode-btn" data-mode="err">
+        <span class="ico">🩹</span>
+        <span><span class="t">Rejouer mes erreurs</span><br><span class="d">Uniquement ce que tu as déjà raté</span></span>
+        <span class="n" id="nerr"></span>
+      </button>
+      <button class="mode-btn" data-mode="labs">
+        <span class="ico">🧪</span>
+        <span><span class="t">Labs sur cluster réel</span><br><span class="d">Tâches chronométrées façon examen, sur ton propre cluster</span></span>
+        <span class="n" id="nlabs"></span>
+      </button>
+      <button class="mode-btn" data-mode="playbook">
+        <span class="ico">📋</span>
+        <span><span class="t">Playbook du jour J</span><br><span class="d">Setup, alias, gestion du temps, pièges — à lire la veille</span></span>
+        <span class="n">à lire</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div id="screen-quiz" class="card hidden">
+    <div class="qmeta">
+      <span class="pill" id="qLevel"></span>
+      <span class="pill dom" id="qDom"></span>
+      <span style="margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums" id="qCount"></span>
+    </div>
+    <div class="progressbar"><div id="qBar" style="width:0%"></div></div>
+    <p class="question" id="qText"></p>
+    <div id="qInputZone"></div>
+    <div class="conf-row hidden" id="confRow">
+      <span class="conf-label">Valide en déclarant ta confiance — c'est ce qui pilote ta prochaine révision :</span>
+      <button class="conf c1" data-conf="1" id="conf1">✋ Au hasard<small>touche 1</small></button>
+      <button class="conf c2" data-conf="2" id="conf2">🤔 Hésitant<small>touche 2 ou Entrée</small></button>
+      <button class="conf c3" data-conf="3" id="conf3">💪 Sûr<small>touche 3</small></button>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnValidate">Valider</button>
+      <button class="btn primary hidden" id="btnNext">Suivant →</button>
+      <button class="btn ghost" id="btnReveal">💡 Je ne sais pas</button>
+      <button class="btn ghost" id="btnQuit">Quitter</button>
+    </div>
+    <div id="qFeedback"></div>
+    <p class="kbd-hint">Entrée = valider / question suivante</p>
+  </div>
+
+  <!-- Fin -->
+  <div id="screen-end" class="card end hidden">
+    <h2>Session terminée !</h2>
+    <p class="big" id="endScore"></p>
+    <p class="verdict" id="endVerdict"></p>
+    <div class="matrix hidden" id="endMatrix"></div>
+    <div class="bydom" id="endByDom"></div>
+    <p class="detail" id="endDetail"></p>
+    <div class="actions" style="justify-content:center">
+      <button class="btn primary" id="btnReplayErrors">🩹 Rejouer mes erreurs</button>
+      <button class="btn ghost" id="btnHome">← Menu</button>
+    </div>
+  </div>
+
+  <!-- Labs -->
+  <div id="screen-labs" class="card hidden">
+    <h2>🧪 Labs sur cluster réel</h2>
+    <p class="labs-note">
+      <b>Monte ton cluster d'abord</b> — le plus simple et gratuit : <code>kind</code> (Docker) pour tout sauf les labs kubeadm/etcd, qui exigent de vraies VM (Multipass, Vagrant ou 2-3 VM Azure B1s que tu supprimes après).<br><br>
+      ⏱️ <b>Chronomètre-toi.</b> À l'examen tu as ~6-7 min par tâche. Un lab réussi mais en 25 minutes est un lab échoué.
+    </p>
+    <div id="labsList"></div>
+    <div class="actions">
+      <button class="btn ghost" id="btnLabsHome">← Menu</button>
+    </div>
+  </div>
+
+  <!-- Playbook -->
+  <div id="screen-playbook" class="card pb hidden">
+    <h2>📋 Playbook du jour J</h2>
+    <div id="pbContent"></div>
+    <div class="actions">
+      <button class="btn ghost" id="btnPbHome">← Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   BANQUE — CKA (curriculum en vigueur)
+   d : arch | net | wl | stor | tshoot
+   types : cmd (commande à taper) | input | qcm | order
+   ===================================================================== */
+const QUESTIONS = [
+/* ================= CONCEPTS & ARCHITECTURE ================= */
+{ id:"c-apiserver", level:1, d:"arch", dom:"Control plane", type:"input",
+  q:"Quel composant du control plane est le SEUL à communiquer directement avec etcd et sert de point d'entrée à toutes les requêtes ?",
+  accept:["kube-apiserver","apiserver","api server"],
+  explain:"kube-apiserver : porte d'entrée unique (REST), authentification, autorisation, admission. Tous les autres composants passent par lui — jamais directement par etcd." },
+{ id:"c-etcd", level:1, d:"arch", dom:"Control plane", type:"input",
+  q:"Quel composant stocke l'intégralité de l'état du cluster sous forme de base clé-valeur distribuée ?",
+  accept:["etcd"],
+  explain:"etcd. C'est LA donnée à sauvegarder : un snapshot etcd suffit à restaurer tout le cluster. Sauvegarde et restauration sont au programme." },
+{ id:"c-scheduler", level:1, d:"arch", dom:"Control plane", type:"input",
+  q:"Quel composant choisit sur quel nœud placer un pod nouvellement créé, sans le démarrer lui-même ?",
+  accept:["kube-scheduler","scheduler"],
+  explain:"kube-scheduler filtre (predicates) puis note (priorities) les nœuds, et écrit le nodeName. C'est ensuite le kubelet du nœud élu qui démarre le pod." },
+{ id:"c-cm", level:1, d:"arch", dom:"Control plane", type:"input",
+  q:"Quel composant exécute les boucles de réconciliation (node controller, replicaset controller, endpoints…) ?",
+  accept:["kube-controller-manager","controller-manager","controller manager"],
+  explain:"kube-controller-manager regroupe tous les contrôleurs dans un seul binaire. Chacun compare l'état désiré à l'état réel et agit pour les réconcilier." },
+{ id:"c-kubelet", level:1, d:"arch", dom:"Nœuds", type:"input",
+  q:"Quel agent tourne sur CHAQUE nœud, démarre les conteneurs et remonte l'état des pods à l'API server ?",
+  accept:["kubelet"],
+  explain:"Le kubelet. S'il est arrêté, le nœud passe NotReady. Il gère aussi les static pods du dossier /etc/kubernetes/manifests." },
+{ id:"c-kubeproxy", level:1, d:"net", dom:"Nœuds", type:"input",
+  q:"Quel composant programme les règles réseau (iptables/IPVS) qui rendent les Services joignables depuis chaque nœud ?",
+  accept:["kube-proxy","kubeproxy"],
+  explain:"kube-proxy traduit les Services en règles de routage. S'il est HS sur un nœud, les pods de ce nœud ne joignent plus les ClusterIP." },
+{ id:"c-staticpod", level:1, d:"arch", dom:"Nœuds", type:"input",
+  q:"Comment appelle-t-on un pod géré directement par le kubelet à partir d'un fichier local, sans passer par l'API server (2 mots) ?",
+  accept:["static pod","static pods","pod statique"],
+  explain:"Static pod : le kubelet surveille /etc/kubernetes/manifests. C'est ainsi que tournent apiserver, etcd, scheduler et controller-manager sur un cluster kubeadm. Modifier le fichier redémarre le pod." },
+{ id:"c-staticpath", level:1, d:"arch", dom:"Nœuds", type:"input",
+  q:"Quel est le chemin par défaut du dossier des static pods sur un cluster kubeadm ?",
+  accept:["/etc/kubernetes/manifests","etc kubernetes manifests"],
+  explain:"/etc/kubernetes/manifests. Réflexe de troubleshooting : si l'API server ne répond plus, c'est là qu'on va lire et corriger son manifeste." },
+{ id:"c-kubeconfig", level:1, d:"arch", dom:"Accès", type:"input",
+  q:"Quel est le chemin du kubeconfig administrateur généré par kubeadm sur le control plane ?",
+  accept:["/etc/kubernetes/admin.conf","etc kubernetes admin conf"],
+  explain:"/etc/kubernetes/admin.conf. On le copie dans ~/.kube/config. Les autres : kubelet.conf, controller-manager.conf, scheduler.conf." },
+{ id:"c-context", level:1, d:"arch", dom:"Accès", type:"qcm",
+  q:"Que contient un « context » dans un fichier kubeconfig ?",
+  choices:["Un triplet cluster + utilisateur + namespace par défaut","Uniquement l'adresse du cluster","Le token d'authentification","La liste des namespaces"],
+  answer:0,
+  explain:"À l'examen, CHAQUE tâche commence par la commande de bascule de contexte : la lancer systématiquement évite de travailler sur le mauvais cluster." },
+{ id:"c-ns", level:1, d:"arch", dom:"Objets", type:"qcm",
+  q:"Quelles ressources ne sont PAS namespacées ?",
+  choices:["Node, PersistentVolume, StorageClass, ClusterRole, ClusterRoleBinding, Namespace lui-même","Pod et Service","ConfigMap et Secret","Deployment et ReplicaSet"],
+  answer:0,
+  explain:"kubectl api-resources --namespaced=false donne la liste exacte. Piège classique : chercher un PV dans un namespace." },
+{ id:"c-rs", level:1, d:"wl", dom:"Objets", type:"qcm",
+  q:"Quelle est la relation entre Deployment, ReplicaSet et Pod ?",
+  choices:["Le Deployment gère des ReplicaSets (un par version), qui gèrent les Pods — c'est ce qui permet le rollback","Le Pod gère le ReplicaSet","Ils sont indépendants","Le ReplicaSet gère des Deployments"],
+  answer:0,
+  explain:"Chaque mise à jour crée un nouveau ReplicaSet ; les anciens sont conservés (revisionHistoryLimit) pour permettre kubectl rollout undo." },
+{ id:"c-ds", level:1, d:"wl", dom:"Objets", type:"input",
+  q:"Quel objet garantit qu'une copie d'un pod tourne sur CHAQUE nœud (agents de logs, CNI, monitoring) ?",
+  accept:["daemonset"],
+  explain:"DaemonSet. Il place automatiquement un pod sur chaque nouveau nœud, et tolère souvent les taints du control plane pour y tourner aussi." },
+{ id:"c-sts", level:1, d:"wl", dom:"Objets", type:"input",
+  q:"Quel objet fournit une identité réseau stable et un stockage persistant dédié à chaque réplique (bases de données) ?",
+  accept:["statefulset"],
+  explain:"StatefulSet : noms ordonnés (app-0, app-1), PVC par réplique via volumeClaimTemplates, et un headless Service pour l'identité DNS." },
+{ id:"c-job", level:1, d:"wl", dom:"Objets", type:"qcm",
+  q:"Quelle différence entre un Job et un CronJob ?",
+  choices:["Le Job exécute une tâche jusqu'à complétion ; le CronJob crée des Jobs selon une planification","Le CronJob est plus rapide","Le Job est planifié","Aucune différence"],
+  answer:0,
+  explain:"Job : completions, parallelism, backoffLimit. CronJob : schedule, concurrencyPolicy, successfulJobsHistoryLimit." },
+{ id:"c-svc-types", level:1, d:"net", dom:"Services", type:"qcm",
+  q:"Quels sont les types de Service et leur portée ?",
+  choices:["ClusterIP (interne), NodePort (port sur chaque nœud, 30000-32767), LoadBalancer (LB externe), ExternalName (alias DNS)","Internal, External, Hybrid","Public et Private","HTTP et TCP"],
+  answer:0,
+  explain:"Chaque type inclut le précédent : un NodePort a aussi une ClusterIP, un LoadBalancer a aussi un NodePort." },
+{ id:"c-nodeport-range", level:1, d:"net", dom:"Services", type:"input",
+  q:"Quelle est la plage de ports par défaut d'un Service NodePort ?",
+  accept:["30000-32767","30000 32767"],
+  explain:"30000-32767. Modifiable par --service-node-port-range sur l'API server, mais la valeur par défaut est demandée." },
+{ id:"c-headless", level:1, d:"net", dom:"Services", type:"qcm",
+  q:"Qu'est-ce qu'un Service « headless » et à quoi sert-il ?",
+  choices:["Un Service avec clusterIP: None : le DNS renvoie les IP des pods individuellement, ce qui permet l'identité par réplique d'un StatefulSet","Un Service sans sélecteur","Un Service externe","Un Service sans port"],
+  answer:0,
+  explain:"clusterIP: None supprime le load balancing : app-0.monsvc.ns.svc.cluster.local pointe directement sur le pod. Base des StatefulSets." },
+{ id:"c-endpoints", level:1, d:"net", dom:"Services", type:"qcm",
+  q:"Comment un Service sait-il vers quels pods envoyer le trafic ?",
+  choices:["Par son selector, qui alimente automatiquement les EndpointSlices avec les IP des pods correspondants et prêts","Par une liste d'IP statique","Par le nom des pods","Par le namespace"],
+  answer:0,
+  explain:"Un Service dont les Endpoints sont VIDES = selector qui ne correspond à aucun pod prêt. C'est LE premier réflexe de diagnostic réseau." },
+{ id:"c-ingress", level:1, d:"net", dom:"Ingress", type:"qcm",
+  q:"Un objet Ingress suffit-il à exposer une application en HTTP ?",
+  choices:["Non — il faut aussi un Ingress Controller (nginx, traefik…) déployé dans le cluster pour appliquer les règles","Oui, c'est autonome","Oui, si le Service est en NodePort","Non, il faut un LoadBalancer cloud"],
+  answer:0,
+  explain:"L'Ingress n'est qu'une déclaration de règles. Sans contrôleur, rien ne se passe. Depuis peu, la Gateway API est l'évolution de ce modèle (et sa doc est autorisée à l'examen)." },
+{ id:"c-cni", level:1, d:"net", dom:"Réseau", type:"input",
+  q:"Quel type de plugin fournit le réseau des pods (Calico, Flannel, Cilium…) — sigle ?",
+  accept:["cni","container network interface"],
+  explain:"CNI. Sans plugin CNI installé, les nœuds restent NotReady et CoreDNS reste en Pending — symptôme classique après un kubeadm init." },
+{ id:"c-coredns", level:1, d:"net", dom:"Réseau", type:"input",
+  q:"Quel composant assure la résolution DNS interne du cluster (nom de Service → ClusterIP) ?",
+  accept:["coredns","core dns"],
+  explain:"CoreDNS, déployé en Deployment dans kube-system avec le Service kube-dns. Si la résolution échoue, on vérifie ses pods et sa ConfigMap." },
+{ id:"c-dns-format", level:1, d:"net", dom:"Réseau", type:"qcm",
+  q:"Quel est le FQDN d'un Service « web » dans le namespace « prod » ?",
+  choices:["web.prod.svc.cluster.local","prod.web.svc.cluster.local","web.svc.prod.cluster.local","cluster.local.prod.web"],
+  answer:0,
+  explain:"<service>.<namespace>.svc.cluster.local. Depuis le même namespace, « web » suffit ; depuis un autre, « web.prod »." },
+{ id:"c-netpol-default", level:1, d:"net", dom:"NetworkPolicy", type:"qcm",
+  q:"Que se passe-t-il pour un pod dès qu'une NetworkPolicy le sélectionne ?",
+  choices:["Il passe en mode « deny par défaut » pour les directions concernées : seul ce qui est explicitement autorisé passe","Rien ne change tant qu'on n'ajoute pas de deny","Tout le trafic est bloqué définitivement","Seul l'egress est affecté"],
+  answer:0,
+  explain:"Sans policy, tout est autorisé. Dès qu'une policy cible un pod, la direction concernée (Ingress et/ou Egress) devient restrictive. Il faut aussi un CNI qui les supporte (Calico, Cilium — pas Flannel seul)." },
+{ id:"c-pv-pvc", level:1, d:"stor", dom:"Storage", type:"qcm",
+  q:"Quelle est la relation entre PV, PVC et StorageClass ?",
+  choices:["Le PVC est la demande de l'utilisateur, le PV la ressource de stockage réelle, la StorageClass permet le provisionnement dynamique du PV","Le PV demande, le PVC fournit","La StorageClass remplace le PV","Ils sont interchangeables"],
+  answer:0,
+  explain:"Statique : un admin crée le PV, le PVC s'y lie. Dynamique : le PVC référence une StorageClass qui crée le PV automatiquement." },
+{ id:"c-accessmodes", level:1, d:"stor", dom:"Storage", type:"qcm",
+  q:"Que signifient les access modes RWO, ROX et RWX ?",
+  choices:["ReadWriteOnce (un nœud en lecture-écriture), ReadOnlyMany (plusieurs nœuds en lecture), ReadWriteMany (plusieurs nœuds en lecture-écriture)","Read Write Original, Read Only eXtended, Read Write eXtended","Trois niveaux de performance","Trois classes de chiffrement"],
+  answer:0,
+  explain:"RWO = un NŒUD (pas un pod) — plusieurs pods du même nœud peuvent partager. RWX exige un stockage réseau (NFS, CephFS)." },
+{ id:"c-reclaim", level:1, d:"stor", dom:"Storage", type:"qcm",
+  q:"Que fait la reclaim policy « Retain » d'un PersistentVolume ?",
+  choices:["À la suppression du PVC, le PV et ses données sont CONSERVÉS (statut Released) et doivent être récupérés manuellement","Le PV est supprimé","Le PV est recyclé automatiquement","Le PV est archivé"],
+  answer:0,
+  explain:"Retain protège les données mais laisse le PV en Released, non réutilisable tel quel. Delete supprime le volume sous-jacent (défaut du provisionnement dynamique)." },
+{ id:"c-probes", level:1, d:"wl", dom:"Pods", type:"qcm",
+  q:"Quelle différence entre liveness, readiness et startup probe ?",
+  choices:["Liveness : redémarre le conteneur s'il échoue. Readiness : retire le pod des Endpoints du Service. Startup : laisse le temps au démarrage avant d'activer les autres sondes","Elles sont équivalentes","Readiness redémarre le pod","Liveness retire du Service"],
+  answer:0,
+  explain:"Confusion classique : un pod qui échoue sa readiness reste vivant mais ne reçoit plus de trafic. Une liveness mal réglée provoque des redémarrages en boucle." },
+{ id:"c-requests-limits", level:1, d:"wl", dom:"Pods", type:"qcm",
+  q:"Quelle est la différence entre requests et limits ?",
+  choices:["requests = ce qui est RÉSERVÉ et sert au scheduling ; limits = le plafond maximal consommable","requests est le maximum","limits sert au scheduling","Ce sont des synonymes"],
+  answer:0,
+  explain:"Le scheduler ne regarde que les requests. Dépasser la limite mémoire → OOMKilled ; dépasser la limite CPU → throttling (pas de kill)." },
+{ id:"c-qos", level:1, d:"wl", dom:"Pods", type:"qcm",
+  q:"Quelle classe de QoS reçoit un pod dont requests == limits pour CPU ET mémoire sur tous ses conteneurs ?",
+  choices:["Guaranteed","Burstable","BestEffort","Reserved"],
+  answer:0,
+  explain:"Guaranteed (dernier évincé), Burstable (requests < limits ou partiels), BestEffort (rien de défini, premier évincé en cas de pression mémoire)." },
+{ id:"c-taint-toleration", level:1, d:"wl", dom:"Scheduling", type:"qcm",
+  q:"Quelle est la logique taint / toleration ?",
+  choices:["Le taint sur un NŒUD repousse les pods ; la toleration sur un POD lui permet d'y être placé — sans garantir qu'il y aille","Le taint attire les pods","La toleration force le placement","C'est équivalent à nodeSelector"],
+  answer:0,
+  explain:"Taint = répulsion (côté nœud), toleration = permission (côté pod). Pour ATTIRER un pod sur un nœud précis : nodeSelector ou nodeAffinity." },
+{ id:"c-taint-effects", level:1, d:"wl", dom:"Scheduling", type:"qcm",
+  q:"Quels sont les 3 effets possibles d'un taint ?",
+  choices:["NoSchedule, PreferNoSchedule, NoExecute","Block, Warn, Allow","Hard, Soft, Never","Deny, Prefer, Force"],
+  answer:0,
+  explain:"NoExecute est le plus radical : il EXPULSE aussi les pods déjà en cours qui ne tolèrent pas le taint." },
+{ id:"c-affinity", level:1, d:"wl", dom:"Scheduling", type:"qcm",
+  q:"Quelle différence entre requiredDuringScheduling et preferredDuringScheduling en node affinity ?",
+  choices:["required = règle stricte (pod Pending si non satisfaite) ; preferred = préférence pondérée, le pod est placé quand même","preferred est plus strict","required n'existe pas","Les deux sont équivalents"],
+  answer:0,
+  explain:"Un pod Pending avec un message d'affinité non satisfaite vient presque toujours d'une règle « required » trop restrictive." },
+{ id:"c-sa", level:1, d:"arch", dom:"RBAC", type:"input",
+  q:"Quel objet fournit une identité aux PODS (par opposition aux utilisateurs humains) — 2 mots ?",
+  accept:["service account","serviceaccount","compte de service"],
+  explain:"Le ServiceAccount. Chaque namespace en a un « default » monté automatiquement. On le lie à des droits via RoleBinding/ClusterRoleBinding." },
+{ id:"c-role-vs-clusterrole", level:1, d:"arch", dom:"RBAC", type:"qcm",
+  q:"Quelle est la différence entre Role et ClusterRole ?",
+  choices:["Le Role est limité à un namespace ; le ClusterRole est global et couvre aussi les ressources non namespacées (nodes, PV)","Le Role est plus puissant","Le ClusterRole est déprécié","Aucune différence"],
+  answer:0,
+  explain:"Astuce : un ClusterRole lié par un RoleBinding n'accorde ses droits que DANS ce namespace — utile pour réutiliser un rôle standard." },
+{ id:"c-cri", level:1, d:"arch", dom:"Runtime", type:"input",
+  q:"Quel outil en ligne de commande permet d'inspecter conteneurs et images directement sur un nœud, quand kubectl ne répond plus ?",
+  accept:["crictl"],
+  explain:"crictl ps, crictl logs, crictl inspect. Indispensable quand l'API server est HS : c'est le seul moyen de voir les conteneurs des static pods." },
+{ id:"c-drain-cordon", level:1, d:"arch", dom:"Nœuds", type:"qcm",
+  q:"Quelle différence entre cordon et drain ?",
+  choices:["cordon marque le nœud unschedulable (les pods existants restent) ; drain fait cordon PUIS évince les pods existants","drain est plus doux","cordon supprime les pods","Ce sont des synonymes"],
+  answer:0,
+  explain:"Séquence de maintenance : drain → intervention → uncordon. drain exige souvent --ignore-daemonsets et --delete-emptydir-data." },
+{ id:"c-pdb", level:1, d:"wl", dom:"Disponibilité", type:"input",
+  q:"Quel objet garantit qu'un nombre minimal de répliques reste disponible pendant une éviction volontaire (drain) — sigle ?",
+  accept:["pdb","poddisruptionbudget","pod disruption budget"],
+  explain:"PodDisruptionBudget (minAvailable ou maxUnavailable). Un drain qui reste bloqué indéfiniment est souvent dû à un PDB trop strict." },
+/* ================= DRILLS DE COMMANDES ================= */
+/* --- Base & navigation --- */
+{ id:"k-ctx-use", level:1, d:"arch", dom:"Contexte", type:"cmd",
+  q:"Bascule sur le contexte « k8s-c1 ». (À faire au début de CHAQUE tâche de l'examen.)",
+  accept:["kubectl config use-context k8s-c1"],
+  explain:"L'examen fournit cette commande en tête de chaque tâche. La lancer systématiquement évite de perdre des points en travaillant sur le mauvais cluster.",
+  doc:"kubernetes.io/docs → Tasks → Configure Access to Multiple Clusters" },
+{ id:"k-ctx-current", level:1, d:"arch", dom:"Contexte", type:"cmd",
+  q:"Affiche le contexte actuellement actif.",
+  accept:["kubectl config current-context"],
+  explain:"Réflexe de vérification en 1 seconde avant toute action destructrice." },
+{ id:"k-ctx-list", level:1, d:"arch", dom:"Contexte", type:"cmd",
+  q:"Liste tous les contextes disponibles dans le kubeconfig.",
+  accept:["kubectl config get-contexts"],
+  explain:"La colonne CURRENT marque d'un astérisque le contexte actif." },
+{ id:"k-ns-default", level:1, d:"arch", dom:"Contexte", type:"cmd",
+  q:"Change le namespace par défaut du contexte courant pour « prod ».",
+  accept:["kubectl config set-context --current --namespace=prod"],
+  explain:"Gain de temps énorme sur une tâche multi-commandes : évite de répéter -n prod partout." },
+{ id:"k-get-wide", level:1, d:"wl", dom:"Inspection", type:"cmd",
+  q:"Liste les pods du namespace courant en affichant l'IP et le nœud d'exécution.",
+  accept:["kubectl get pods -o wide","kubectl get pod -o wide","kubectl get po -o wide"],
+  explain:"-o wide ajoute IP, NODE, NOMINATED NODE. Première commande de tout diagnostic de placement." },
+{ id:"k-get-all-ns", level:1, d:"wl", dom:"Inspection", type:"cmd",
+  q:"Liste les pods de TOUS les namespaces.",
+  accept:["kubectl get pods -A","kubectl get pods --all-namespaces","kubectl get po -A","kubectl get pod -A"],
+  explain:"-A est le raccourci de --all-namespaces. À utiliser dès qu'on cherche un pod sans savoir où il vit." },
+{ id:"k-get-label", level:2, d:"wl", dom:"Inspection", type:"cmd",
+  q:"Liste les pods portant le label « app=web ».",
+  accept:["kubectl get pods -l app=web","kubectl get pods --selector=app=web","kubectl get po -l app=web"],
+  explain:"-l accepte aussi les négations (app!=web), les ensembles (env in (dev,prod)) et le cumul (-l app=web,tier=front)." },
+{ id:"k-show-labels", level:2, d:"wl", dom:"Inspection", type:"cmd",
+  q:"Liste les pods en affichant tous leurs labels.",
+  accept:["kubectl get pods --show-labels","kubectl get po --show-labels"],
+  explain:"Indispensable quand un Service ne trouve pas ses pods : on compare le selector aux labels réels." },
+{ id:"k-sort", level:2, d:"tshoot", dom:"Inspection", type:"cmd",
+  q:"Liste les pods de tous les namespaces triés par nombre de redémarrages.",
+  accept:["kubectl get pods -A --sort-by=.status.containerStatuses[0].restartCount","kubectl get pods --all-namespaces --sort-by=.status.containerStatuses[0].restartCount"],
+  explain:"--sort-by prend un JSONPath. Autre tri utile : --sort-by=.metadata.creationTimestamp pour retrouver le dernier objet créé." },
+{ id:"k-events", level:2, d:"tshoot", dom:"Inspection", type:"cmd",
+  q:"Affiche les événements du namespace courant triés par date de création.",
+  accept:["kubectl get events --sort-by=.metadata.creationTimestamp","kubectl get ev --sort-by=.metadata.creationTimestamp"],
+  explain:"Les events expliquent 80 % des pods Pending ou en échec. Par défaut ils ne sont PAS triés chronologiquement — d'où le --sort-by." },
+{ id:"k-describe", level:1, d:"tshoot", dom:"Inspection", type:"cmd",
+  q:"Affiche le détail complet du pod « web-1 », y compris ses événements.",
+  accept:["kubectl describe pod web-1","kubectl describe po web-1"],
+  explain:"La section Events en bas de describe est la première chose à lire sur un pod qui ne démarre pas." },
+{ id:"k-logs", level:1, d:"tshoot", dom:"Logs", type:"cmd",
+  q:"Affiche les logs du pod « web-1 ».",
+  accept:["kubectl logs web-1"],
+  explain:"Base du diagnostic applicatif. Ajoute -f pour suivre en direct." },
+{ id:"k-logs-prev", level:2, d:"tshoot", dom:"Logs", type:"cmd",
+  q:"Affiche les logs de l'instance PRÉCÉDENTE du pod « web-1 », qui vient de redémarrer.",
+  accept:["kubectl logs web-1 --previous","kubectl logs web-1 -p"],
+  explain:"LA commande du CrashLoopBackOff : le conteneur actuel vient de démarrer, la cause du crash est dans les logs précédents." },
+{ id:"k-logs-container", level:2, d:"tshoot", dom:"Logs", type:"cmd",
+  q:"Affiche les logs du conteneur « sidecar » dans le pod multi-conteneurs « web-1 ».",
+  accept:["kubectl logs web-1 -c sidecar","kubectl logs web-1 --container=sidecar"],
+  explain:"Sans -c sur un pod multi-conteneurs, kubectl refuse et liste les conteneurs disponibles." },
+{ id:"k-logs-label", level:2, d:"tshoot", dom:"Logs", type:"cmd",
+  q:"Affiche les logs de tous les pods portant le label « app=web ».",
+  accept:["kubectl logs -l app=web","kubectl logs --selector=app=web"],
+  explain:"Pratique pour un Deployment multi-répliques. Ajoute --prefix pour savoir quel pod a écrit quoi." },
+{ id:"k-exec", level:1, d:"tshoot", dom:"Debug", type:"cmd",
+  q:"Ouvre un shell interactif bash dans le pod « web-1 ».",
+  accept:["kubectl exec -it web-1 -- bash","kubectl exec -it web-1 -- /bin/bash","kubectl exec -it web-1 -- sh","kubectl exec -it web-1 -- /bin/sh"],
+  explain:"Ne pas oublier le double tiret « -- » qui sépare les options kubectl de la commande à exécuter dans le conteneur." },
+{ id:"k-run-tmp", level:2, d:"tshoot", dom:"Debug", type:"cmd",
+  q:"Lance un pod temporaire « tmp » basé sur busybox, interactif, supprimé à la sortie, pour tester le réseau.",
+  accept:["kubectl run tmp --image=busybox -it --rm -- sh","kubectl run tmp --image=busybox --rm -it -- sh","kubectl run tmp -it --rm --image=busybox -- sh"],
+  explain:"Le couteau suisse du diagnostic réseau : depuis ce pod on teste nslookup, wget, ping. --rm nettoie automatiquement." },
+{ id:"k-top-nodes", level:2, d:"tshoot", dom:"Ressources", type:"cmd",
+  q:"Affiche la consommation CPU et mémoire des nœuds.",
+  accept:["kubectl top nodes","kubectl top node"],
+  explain:"Exige le metrics-server. S'il renvoie une erreur, c'est souvent qu'il n'est pas installé — pas que la commande est fausse." },
+{ id:"k-top-pods", level:2, d:"tshoot", dom:"Ressources", type:"cmd",
+  q:"Affiche la consommation des pods du namespace « prod », triés par CPU décroissant.",
+  accept:["kubectl top pods -n prod --sort-by=cpu","kubectl top pod -n prod --sort-by=cpu"],
+  explain:"--sort-by=cpu ou =memory. Typique d'une tâche « trouve le pod qui consomme le plus »." },
+/* --- Création rapide (dry-run) --- */
+{ id:"k-dryrun", level:2, d:"wl", dom:"Génération YAML", type:"cmd",
+  q:"Génère (sans créer) le YAML d'un pod « nginx » basé sur l'image nginx, dans un fichier pod.yaml.",
+  accept:["kubectl run nginx --image=nginx --dry-run=client -o yaml > pod.yaml"],
+  explain:"LA technique qui fait gagner l'examen : jamais écrire un manifeste de zéro. Générer puis éditer avec vim." },
+{ id:"k-create-deploy", level:2, d:"wl", dom:"Génération YAML", type:"cmd",
+  q:"Crée un Deployment « web » avec l'image nginx et 3 répliques.",
+  accept:["kubectl create deployment web --image=nginx --replicas=3"],
+  explain:"Ajoute --dry-run=client -o yaml pour obtenir le manifeste si la tâche demande des champs non couverts par la commande." },
+{ id:"k-expose", level:2, d:"net", dom:"Services", type:"cmd",
+  q:"Expose le Deployment « web » via un Service ClusterIP sur le port 80 vers le port cible 8080.",
+  accept:["kubectl expose deployment web --port=80 --target-port=8080","kubectl expose deploy web --port=80 --target-port=8080"],
+  explain:"expose reprend automatiquement les labels du Deployment comme selector — c'est plus fiable que d'écrire le Service à la main." },
+{ id:"k-expose-nodeport", level:2, d:"net", dom:"Services", type:"cmd",
+  q:"Expose le pod « web » en NodePort sur le port 80, avec un Service nommé « web-svc ».",
+  accept:["kubectl expose pod web --port=80 --type=NodePort --name=web-svc","kubectl expose po web --port=80 --type=NodePort --name=web-svc"],
+  explain:"Le NodePort exact (30000-32767) est attribué automatiquement, sauf à éditer le YAML pour le fixer." },
+{ id:"k-create-cm", level:2, d:"wl", dom:"Config", type:"cmd",
+  q:"Crée une ConfigMap « app-config » avec la clé APP_ENV valant « prod ».",
+  accept:["kubectl create configmap app-config --from-literal=APP_ENV=prod","kubectl create cm app-config --from-literal=APP_ENV=prod"],
+  explain:"Autres sources : --from-file=chemin, --from-env-file=fichier.env. Plusieurs --from-literal peuvent être cumulés." },
+{ id:"k-create-secret", level:2, d:"wl", dom:"Config", type:"cmd",
+  q:"Crée un Secret générique « db-cred » avec la clé password valant « S3cret ».",
+  accept:["kubectl create secret generic db-cred --from-literal=password=S3cret"],
+  explain:"Les types : generic, docker-registry (pour imagePullSecrets), tls. Le contenu est encodé en base64, PAS chiffré." },
+{ id:"k-create-sa", level:2, d:"arch", dom:"RBAC", type:"cmd",
+  q:"Crée un ServiceAccount nommé « deployer » dans le namespace « prod ».",
+  accept:["kubectl create serviceaccount deployer -n prod","kubectl create sa deployer -n prod"],
+  explain:"Depuis Kubernetes 1.24, aucun token n'est généré automatiquement : il faut créer un Secret de type kubernetes.io/service-account-token si un token statique est demandé." },
+{ id:"k-create-role", level:2, d:"arch", dom:"RBAC", type:"cmd",
+  q:"Crée un Role « pod-reader » autorisant get, list et watch sur les pods, dans le namespace « dev ».",
+  accept:["kubectl create role pod-reader --verb=get,list,watch --resource=pods -n dev","kubectl create role pod-reader --verb=get --verb=list --verb=watch --resource=pods -n dev"],
+  explain:"--resource accepte aussi les sous-ressources (pods/log) et --resource-name pour cibler un objet précis." },
+{ id:"k-create-rb", level:2, d:"arch", dom:"RBAC", type:"cmd",
+  q:"Lie le Role « pod-reader » au ServiceAccount « dev:deployer » via un RoleBinding « read-pods » dans le namespace dev.",
+  accept:["kubectl create rolebinding read-pods --role=pod-reader --serviceaccount=dev:deployer -n dev"],
+  explain:"Syntaxe --serviceaccount=<namespace>:<nom>. Pour un utilisateur : --user=nom ; pour un groupe : --group=nom." },
+{ id:"k-auth-can-i", level:2, d:"arch", dom:"RBAC", type:"cmd",
+  q:"Vérifie si le ServiceAccount « deployer » du namespace dev peut créer des deployments dans ce namespace.",
+  accept:["kubectl auth can-i create deployments --as=system:serviceaccount:dev:deployer -n dev"],
+  explain:"LA commande de validation RBAC. Le format d'usurpation est system:serviceaccount:<ns>:<nom>. Réponse : yes ou no." },
+{ id:"k-create-ns", level:1, d:"arch", dom:"Namespaces", type:"cmd",
+  q:"Crée un namespace nommé « staging ».",
+  accept:["kubectl create namespace staging","kubectl create ns staging"],
+  explain:"Simple, mais souvent la première étape d'une tâche en plusieurs actes." },
+{ id:"k-create-job", level:2, d:"wl", dom:"Jobs", type:"cmd",
+  q:"Crée un Job « compte » exécutant l'image busybox avec la commande « echo hello ».",
+  accept:["kubectl create job compte --image=busybox -- echo hello"],
+  explain:"Pour un CronJob : kubectl create cronjob nom --image=busybox --schedule=\"*/1 * * * *\" -- echo hello." },
+{ id:"k-create-cj", level:2, d:"wl", dom:"Jobs", type:"cmd",
+  q:"Crée un CronJob « backup » (image busybox) s'exécutant toutes les 5 minutes avec la commande « echo save ».",
+  accept:["kubectl create cronjob backup --image=busybox --schedule=*/5 * * * * -- echo save","kubectl create cronjob backup --image=busybox --schedule=\"*/5 * * * *\" -- echo save"],
+  explain:"Le schedule cron a 5 champs (min heure jour mois jour-semaine) — pas 6 comme NCRONTAB d'Azure Functions." },
+/* --- Modification --- */
+{ id:"k-scale", level:1, d:"wl", dom:"Deployments", type:"cmd",
+  q:"Passe le Deployment « web » à 5 répliques.",
+  accept:["kubectl scale deployment web --replicas=5","kubectl scale deploy web --replicas=5"],
+  explain:"Fonctionne aussi sur ReplicaSet et StatefulSet. Option --current-replicas pour un scale conditionnel." },
+{ id:"k-set-image", level:2, d:"wl", dom:"Deployments", type:"cmd",
+  q:"Met à jour l'image du conteneur « nginx » du Deployment « web » vers nginx:1.27.",
+  accept:["kubectl set image deployment/web nginx=nginx:1.27","kubectl set image deploy/web nginx=nginx:1.27"],
+  explain:"Syntaxe <nom-conteneur>=<image>. C'est ce qui déclenche un rolling update et crée une nouvelle révision." },
+{ id:"k-rollout-status", level:2, d:"wl", dom:"Deployments", type:"cmd",
+  q:"Suis l'avancement du déploiement en cours du Deployment « web ».",
+  accept:["kubectl rollout status deployment/web","kubectl rollout status deploy/web","kubectl rollout status deployment web"],
+  explain:"Bloque jusqu'à la fin du rollout — pratique pour vérifier qu'une mise à jour aboutit vraiment." },
+{ id:"k-rollout-undo", level:2, d:"wl", dom:"Deployments", type:"cmd",
+  q:"Annule le dernier déploiement du Deployment « web » et reviens à la version précédente.",
+  accept:["kubectl rollout undo deployment/web","kubectl rollout undo deploy/web","kubectl rollout undo deployment web"],
+  explain:"Ajoute --to-revision=N pour revenir à une révision précise, listée par kubectl rollout history." },
+{ id:"k-rollout-history", level:2, d:"wl", dom:"Deployments", type:"cmd",
+  q:"Affiche l'historique des révisions du Deployment « web ».",
+  accept:["kubectl rollout history deployment/web","kubectl rollout history deploy/web","kubectl rollout history deployment web"],
+  explain:"Le CHANGE-CAUSE n'est rempli que si l'annotation kubernetes.io/change-cause a été posée." },
+{ id:"k-rollout-restart", level:2, d:"wl", dom:"Deployments", type:"cmd",
+  q:"Force le redémarrage progressif de tous les pods du Deployment « web » sans changer l'image.",
+  accept:["kubectl rollout restart deployment/web","kubectl rollout restart deploy/web","kubectl rollout restart deployment web"],
+  explain:"Utile après modification d'une ConfigMap ou d'un Secret monté : les pods ne les rechargent pas automatiquement." },
+{ id:"k-label", level:2, d:"wl", dom:"Labels", type:"cmd",
+  q:"Ajoute le label « env=prod » au pod « web-1 ».",
+  accept:["kubectl label pod web-1 env=prod","kubectl label po web-1 env=prod"],
+  explain:"Ajoute --overwrite pour écraser un label existant, ou suffixe le nom d'un tiret (env-) pour le supprimer." },
+{ id:"k-annotate", level:2, d:"wl", dom:"Labels", type:"cmd",
+  q:"Ajoute l'annotation « owner=osama » au deployment « web ».",
+  accept:["kubectl annotate deployment web owner=osama","kubectl annotate deploy web owner=osama"],
+  explain:"Les annotations portent des métadonnées non sélectionnables (contrairement aux labels)." },
+{ id:"k-edit", level:1, d:"wl", dom:"Modification", type:"cmd",
+  q:"Édite en direct le Deployment « web » dans l'éditeur.",
+  accept:["kubectl edit deployment web","kubectl edit deploy web"],
+  explain:"Rapide, mais certains champs sont immuables (selector d'un Deployment) : kubectl proposera alors de sauvegarder dans un fichier temporaire." },
+{ id:"k-apply", level:1, d:"wl", dom:"Modification", type:"cmd",
+  q:"Applique le manifeste contenu dans le fichier app.yaml.",
+  accept:["kubectl apply -f app.yaml"],
+  explain:"apply est idempotent (create ou update). replace --force recrée l'objet quand un champ immuable doit changer." },
+{ id:"k-delete-now", level:2, d:"wl", dom:"Modification", type:"cmd",
+  q:"Supprime immédiatement le pod « web-1 » sans attendre le délai de grâce.",
+  accept:["kubectl delete pod web-1 --grace-period=0 --force","kubectl delete po web-1 --force --grace-period=0"],
+  explain:"À réserver aux pods bloqués en Terminating. En temps normal, une suppression propre respecte le preStop et le grace period." },
+/* --- Nœuds & maintenance --- */
+{ id:"k-drain", level:2, d:"arch", dom:"Maintenance", type:"cmd",
+  q:"Vide le nœud « node01 » de ses pods pour maintenance, en ignorant les DaemonSets.",
+  accept:["kubectl drain node01 --ignore-daemonsets","kubectl drain node01 --ignore-daemonsets --delete-emptydir-data"],
+  explain:"Sans --ignore-daemonsets, drain échoue systématiquement (les pods de DaemonSet ne peuvent pas être évincés). Ajoute --delete-emptydir-data si des pods ont des volumes emptyDir." },
+{ id:"k-uncordon", level:2, d:"arch", dom:"Maintenance", type:"cmd",
+  q:"Remets le nœud « node01 » en service après maintenance.",
+  accept:["kubectl uncordon node01"],
+  explain:"Étape systématiquement oubliée : sans uncordon, le nœud reste SchedulingDisabled et le cluster tourne en capacité réduite." },
+{ id:"k-cordon", level:2, d:"arch", dom:"Maintenance", type:"cmd",
+  q:"Empêche la planification de nouveaux pods sur « node01 », sans toucher aux pods existants.",
+  accept:["kubectl cordon node01"],
+  explain:"cordon seul = préparation en douceur. C'est drain qui expulse réellement les pods." },
+{ id:"k-taint", level:2, d:"wl", dom:"Scheduling", type:"cmd",
+  q:"Ajoute au nœud « node01 » le taint « gpu=true » avec l'effet NoSchedule.",
+  accept:["kubectl taint node node01 gpu=true:NoSchedule","kubectl taint nodes node01 gpu=true:NoSchedule"],
+  explain:"Pour retirer un taint, on répète la commande en suffixant d'un tiret : kubectl taint node node01 gpu=true:NoSchedule-" },
+{ id:"k-taint-remove", level:2, d:"wl", dom:"Scheduling", type:"cmd",
+  q:"Retire du nœud « node01 » le taint « gpu=true:NoSchedule ».",
+  accept:["kubectl taint node node01 gpu=true:NoSchedule-","kubectl taint nodes node01 gpu=true:NoSchedule-"],
+  explain:"Le tiret final signifie « supprimer ». Même logique pour les labels : kubectl label node node01 env-" },
+{ id:"k-node-labels", level:2, d:"wl", dom:"Scheduling", type:"cmd",
+  q:"Ajoute le label « disktype=ssd » au nœud « node01 ».",
+  accept:["kubectl label node node01 disktype=ssd","kubectl label nodes node01 disktype=ssd"],
+  explain:"Prérequis du nodeSelector : le pod ne sera placé que sur les nœuds portant ce label." },
+/* --- Inspection avancée --- */
+{ id:"k-jsonpath", level:3, d:"arch", dom:"JSONPath", type:"cmd",
+  q:"Affiche uniquement les noms de tous les nœuds, un par ligne, via JSONPath.",
+  accept:["kubectl get nodes -o jsonpath={.items[*].metadata.name}","kubectl get nodes -o jsonpath='{.items[*].metadata.name}'"],
+  explain:"Ajoute {\"\\n\"} pour le retour à la ligne. Les tâches d'examen demandent souvent d'écrire un résultat filtré dans un fichier." },
+{ id:"k-custom-columns", level:3, d:"arch", dom:"JSONPath", type:"cmd",
+  q:"Affiche les pods avec deux colonnes personnalisées : NAME et l'image du premier conteneur.",
+  accept:["kubectl get pods -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image"],
+  explain:"custom-columns est souvent plus lisible que jsonpath pour produire un tableau demandé par l'énoncé." },
+{ id:"k-explain", level:2, d:"arch", dom:"Doc intégrée", type:"cmd",
+  q:"Affiche la documentation des champs de spec d'un Pod, récursivement, sans quitter le terminal.",
+  accept:["kubectl explain pod.spec --recursive","kubectl explain pods.spec --recursive"],
+  explain:"kubectl explain est ta doc HORS onglet navigateur : plus rapide qu'une recherche web pour retrouver un nom de champ exact." },
+{ id:"k-api-resources", level:2, d:"arch", dom:"Objets", type:"cmd",
+  q:"Liste toutes les ressources de l'API qui ne sont PAS namespacées.",
+  accept:["kubectl api-resources --namespaced=false"],
+  explain:"Donne aussi les abréviations (po, deploy, svc) et l'apiVersion de chaque ressource — utile pour écrire un manifeste juste." },
+{ id:"k-get-yaml", level:2, d:"arch", dom:"Inspection", type:"cmd",
+  q:"Exporte le YAML complet du deployment « web » dans un fichier web.yaml.",
+  accept:["kubectl get deployment web -o yaml > web.yaml","kubectl get deploy web -o yaml > web.yaml"],
+  explain:"Pratique pour repartir d'un objet existant. Le YAML contient des champs générés (status, uid) à nettoyer avant réapplication." },
+/* --- etcd & cluster --- */
+{ id:"k-etcd-snapshot", level:3, d:"arch", dom:"etcd", type:"cmd",
+  q:"Prends un snapshot etcd dans /opt/backup.db (certificats kubeadm standards, endpoint local).",
+  accept:["ETCDCTL_API=3 etcdctl snapshot save /opt/backup.db --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key","etcdctl snapshot save /opt/backup.db --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key"],
+  explain:"Les 3 chemins de certificats sont TOUJOURS les mêmes sur kubeadm. Apprends-les par cœur : c'est une tâche quasi garantie et chronophage si tu dois les chercher.",
+  doc:"kubernetes.io/docs → Tasks → Administer a Cluster → Operating etcd clusters" },
+{ id:"k-etcd-restore", level:3, d:"arch", dom:"etcd", type:"cmd",
+  q:"Restaure le snapshot /opt/backup.db dans le répertoire de données /var/lib/etcd-restore.",
+  accept:["ETCDCTL_API=3 etcdctl snapshot restore /opt/backup.db --data-dir=/var/lib/etcd-restore","etcdctl snapshot restore /opt/backup.db --data-dir=/var/lib/etcd-restore"],
+  explain:"Après la restauration, il faut MODIFIER le static pod /etc/kubernetes/manifests/etcd.yaml pour pointer le volume hostPath sur le nouveau data-dir." },
+{ id:"k-etcd-members", level:3, d:"arch", dom:"etcd", type:"cmd",
+  q:"Liste les membres du cluster etcd (avec les certificats kubeadm).",
+  accept:["ETCDCTL_API=3 etcdctl member list --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key","etcdctl member list --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key"],
+  explain:"Ajoute -w table pour un affichage lisible. Permet de vérifier le quorum d'un etcd multi-nœuds." },
+{ id:"k-kubeadm-upgrade-plan", level:3, d:"arch", dom:"kubeadm", type:"cmd",
+  q:"Affiche les versions vers lesquelles le cluster peut être mis à niveau.",
+  accept:["kubeadm upgrade plan"],
+  explain:"Ordre d'une montée de version : upgrade plan → upgrade apply sur le control plane → drain → upgrade node → kubelet → uncordon, nœud par nœud." },
+{ id:"k-kubeadm-upgrade-apply", level:3, d:"arch", dom:"kubeadm", type:"cmd",
+  q:"Applique la montée de version du control plane vers la v1.31.1.",
+  accept:["kubeadm upgrade apply v1.31.1"],
+  explain:"Sur les nœuds workers c'est « kubeadm upgrade node », puis mise à jour du paquet kubelet et systemctl restart kubelet." },
+{ id:"k-kubeadm-token", level:3, d:"arch", dom:"kubeadm", type:"cmd",
+  q:"Régénère la commande complète permettant à un nouveau nœud de rejoindre le cluster.",
+  accept:["kubeadm token create --print-join-command"],
+  explain:"Les tokens kubeadm expirent au bout de 24 h : c'est la commande à connaître quand un join échoue avec « token invalide »." },
+{ id:"k-csr-approve", level:3, d:"arch", dom:"Certificats", type:"cmd",
+  q:"Approuve la demande de signature de certificat nommée « john-csr ».",
+  accept:["kubectl certificate approve john-csr"],
+  explain:"Workflow : créer la CSR (base64 du .csr dans le manifeste) → kubectl get csr → approve → récupérer le certificat signé dans .status.certificate." },
+{ id:"k-cert-check", level:3, d:"arch", dom:"Certificats", type:"cmd",
+  q:"Vérifie les dates d'expiration de tous les certificats du control plane gérés par kubeadm.",
+  accept:["kubeadm certs check-expiration"],
+  explain:"Un cluster qui refuse soudain toute connexion après un an = certificats expirés. On les renouvelle avec kubeadm certs renew all." },
+{ id:"k-kubelet-status", level:2, d:"tshoot", dom:"Nœuds", type:"cmd",
+  q:"Vérifie l'état du service kubelet sur un nœud (systemd).",
+  accept:["systemctl status kubelet"],
+  explain:"Réflexe n°1 sur un nœud NotReady. Puis journalctl -u kubelet pour les logs détaillés." },
+{ id:"k-kubelet-logs", level:2, d:"tshoot", dom:"Nœuds", type:"cmd",
+  q:"Affiche les logs du kubelet en suivant les nouvelles lignes en direct.",
+  accept:["journalctl -u kubelet -f"],
+  explain:"Ajoute --no-pager et -n 50 pour un extrait rapide. C'est là qu'apparaissent les erreurs de configuration ou de certificat." },
+{ id:"k-crictl-ps", level:3, d:"tshoot", dom:"Runtime", type:"cmd",
+  q:"Liste les conteneurs en cours sur un nœud via le runtime, quand kubectl ne répond plus.",
+  accept:["crictl ps"],
+  explain:"crictl ps -a inclut les conteneurs arrêtés. Puis crictl logs <id> pour lire les logs d'un composant du control plane en panne." },
+/* --- Réseau --- */
+{ id:"k-get-ep", level:2, d:"net", dom:"Services", type:"cmd",
+  q:"Vérifie quelles adresses de pods sont derrière le Service « web ».",
+  accept:["kubectl get endpoints web","kubectl get ep web","kubectl get endpointslices -l kubernetes.io/service-name=web"],
+  explain:"Endpoints vide = le selector du Service ne correspond à aucun pod prêt. Diagnostic n°1 d'un Service injoignable." },
+{ id:"k-port-forward", level:2, d:"net", dom:"Debug réseau", type:"cmd",
+  q:"Redirige le port local 8080 vers le port 80 du Service « web ».",
+  accept:["kubectl port-forward service/web 8080:80","kubectl port-forward svc/web 8080:80"],
+  explain:"Permet de tester un Service sans l'exposer. Fonctionne aussi sur un pod : kubectl port-forward pod/web-1 8080:80." },
+{ id:"k-dns-test", level:3, d:"net", dom:"Debug réseau", type:"cmd",
+  q:"Depuis un pod jetable, résous le nom du Service « web » du namespace « prod » pour tester le DNS.",
+  accept:["kubectl run tmp --image=busybox -it --rm -- nslookup web.prod.svc.cluster.local","kubectl run tmp --image=busybox --rm -it -- nslookup web.prod"],
+  explain:"Si nslookup échoue pour tous les services, le problème est CoreDNS. S'il échoue pour un seul, c'est le Service ou son selector." },
+{ id:"k-netpol-get", level:2, d:"net", dom:"NetworkPolicy", type:"cmd",
+  q:"Liste les NetworkPolicies du namespace « prod ».",
+  accept:["kubectl get networkpolicies -n prod","kubectl get netpol -n prod"],
+  explain:"Quand un pod ne joint plus un autre sans raison apparente, vérifier les NetworkPolicies est un réflexe à avoir tôt." },
+/* --- Storage --- */
+{ id:"k-get-pv", level:2, d:"stor", dom:"Storage", type:"cmd",
+  q:"Liste les PersistentVolumes du cluster.",
+  accept:["kubectl get pv","kubectl get persistentvolumes"],
+  explain:"Les PV ne sont pas namespacés. Statuts : Available, Bound, Released, Failed." },
+{ id:"k-get-pvc", level:2, d:"stor", dom:"Storage", type:"cmd",
+  q:"Liste les PersistentVolumeClaims de tous les namespaces.",
+  accept:["kubectl get pvc -A","kubectl get pvc --all-namespaces"],
+  explain:"Un PVC bloqué en Pending = pas de PV correspondant, ou StorageClass absente/incorrecte." },
+{ id:"k-sc", level:2, d:"stor", dom:"Storage", type:"cmd",
+  q:"Liste les StorageClasses et repère celle marquée par défaut.",
+  accept:["kubectl get storageclass","kubectl get sc"],
+  explain:"La classe par défaut porte l'annotation storageclass.kubernetes.io/is-default-class=true et apparaît avec « (default) »." },
+/* ================= MANIFESTS YAML À COMPLÉTER ================= */
+{ id:"y-pod-resources", level:2, d:"wl", dom:"YAML — ressources", type:"input",
+  code:"spec:\n  containers:\n  - name: app\n    image: nginx\n    ____:\n      requests: { cpu: \"100m\", memory: \"128Mi\" }\n      limits:   { cpu: \"500m\", memory: \"256Mi\" }",
+  q:"Complète le champ qui encadre requests et limits :",
+  accept:["resources"],
+  explain:"resources: requests (réservé, utilisé par le scheduler) et limits (plafond). Dépasser la limite mémoire → OOMKilled." },
+{ id:"y-probe-http", level:2, d:"wl", dom:"YAML — sondes", type:"input",
+  code:"    ____:\n      httpGet:\n        path: /healthz\n        port: 8080\n      initialDelaySeconds: 10\n      periodSeconds: 5\n    # objectif : REDEMARRER le conteneur s'il ne repond plus",
+  q:"Quelle sonde redémarre le conteneur en cas d'échec ?",
+  accept:["livenessProbe","liveness probe"],
+  explain:"livenessProbe redémarre ; readinessProbe retire seulement le pod des Endpoints ; startupProbe protège les démarrages lents." },
+{ id:"y-probe-ready", level:2, d:"wl", dom:"YAML — sondes", type:"input",
+  code:"    ____:\n      httpGet: { path: /ready, port: 8080 }\n    # objectif : ne pas envoyer de trafic tant que l'app n'est pas prete",
+  q:"Quelle sonde contrôle l'entrée du pod dans les Endpoints du Service ?",
+  accept:["readinessProbe","readiness probe"],
+  explain:"Un pod Running mais 0/1 READY échoue sa readinessProbe : il tourne mais ne reçoit aucun trafic." },
+{ id:"y-nodeselector", level:2, d:"wl", dom:"YAML — scheduling", type:"input",
+  code:"spec:\n  ____:\n    disktype: ssd\n  containers:\n  - name: app\n    image: nginx",
+  q:"Complète le champ le plus simple pour forcer le placement sur les nœuds portant ce label :",
+  accept:["nodeSelector","node selector"],
+  explain:"nodeSelector = égalité stricte. Pour des règles plus riches (OR, opérateurs, préférences), il faut nodeAffinity." },
+{ id:"y-toleration", level:3, d:"wl", dom:"YAML — scheduling", type:"input",
+  code:"spec:\n  ____:\n  - key: gpu\n    operator: Equal\n    value: \"true\"\n    effect: NoSchedule",
+  q:"Complète le champ qui permet au pod d'être placé sur un nœud portant ce taint :",
+  accept:["tolerations","toleration"],
+  explain:"Attention au pluriel : « tolerations » (liste) côté pod, alors que le taint se pose sur le nœud avec kubectl taint." },
+{ id:"y-affinity-key", level:3, d:"wl", dom:"YAML — scheduling", type:"qcm",
+  code:"  affinity:\n    nodeAffinity:\n      ____:\n        nodeSelectorTerms:\n        - matchExpressions:\n          - key: disktype\n            operator: In\n            values: [ ssd ]",
+  q:"Complète pour une règle OBLIGATOIRE (pod Pending si aucun nœud ne correspond) :",
+  choices:["requiredDuringSchedulingIgnoredDuringExecution","preferredDuringSchedulingIgnoredDuringExecution","requiredDuringExecution","mandatoryScheduling"],
+  answer:0,
+  explain:"Le suffixe IgnoredDuringExecution signifie que si le label du nœud change APRÈS le placement, le pod n'est pas expulsé." },
+{ id:"y-topologyspread", level:3, d:"wl", dom:"YAML — scheduling", type:"qcm",
+  code:"  topologySpreadConstraints:\n  - maxSkew: 1\n    topologyKey: kubernetes.io/hostname\n    ____: DoNotSchedule\n    labelSelector:\n      matchLabels: { app: web }",
+  q:"Complète le champ qui décide du comportement si la contrainte de répartition ne peut être respectée :",
+  choices:["whenUnsatisfiable","onViolation","ifUnsatisfied","fallbackPolicy"],
+  answer:0,
+  explain:"whenUnsatisfiable: DoNotSchedule (strict, pod Pending) ou ScheduleAnyway (préférence). Sert à répartir les répliques entre nœuds ou zones." },
+{ id:"y-initcontainer", level:2, d:"wl", dom:"YAML — pods", type:"input",
+  code:"spec:\n  ____:\n  - name: attente-db\n    image: busybox\n    command: ['sh','-c','until nc -z db 5432; do sleep 2; done']\n  containers:\n  - name: app\n    image: monapp",
+  q:"Complète le champ des conteneurs qui doivent se terminer AVANT le démarrage de l'application :",
+  accept:["initContainers","init containers","initcontainer"],
+  explain:"Les initContainers s'exécutent séquentiellement jusqu'à complétion. Un pod bloqué en « Init:0/1 » attend un initContainer." },
+{ id:"y-env-cm", level:2, d:"wl", dom:"YAML — config", type:"qcm",
+  code:"    env:\n    - name: APP_ENV\n      valueFrom:\n        ____:\n          name: app-config\n          key: APP_ENV",
+  q:"Complète pour lire cette valeur depuis une ConfigMap :",
+  choices:["configMapKeyRef","configMapRef","configMap","fromConfigMap"],
+  answer:0,
+  explain:"configMapKeyRef pour UNE clé ; envFrom + configMapRef pour importer TOUTES les clés d'un coup. Équivalent Secret : secretKeyRef." },
+{ id:"y-envfrom", level:2, d:"wl", dom:"YAML — config", type:"input",
+  code:"    ____:\n    - configMapRef:\n        name: app-config\n    - secretRef:\n        name: db-cred",
+  q:"Complète le champ qui importe TOUTES les clés en variables d'environnement :",
+  accept:["envFrom","env from"],
+  explain:"envFrom évite de lister chaque clé. Les noms de clés deviennent directement les noms de variables." },
+{ id:"y-secret-mount", level:3, d:"wl", dom:"YAML — config", type:"qcm",
+  code:"  volumes:\n  - name: creds\n    ____:\n      secretName: db-cred",
+  q:"Complète le type de volume pour monter un Secret en fichiers :",
+  choices:["secret","secretRef","fromSecret","secretVolume"],
+  answer:0,
+  explain:"Un Secret monté en volume se met à jour automatiquement (contrairement aux variables d'environnement, figées au démarrage du pod)." },
+{ id:"y-emptydir", level:2, d:"stor", dom:"YAML — volumes", type:"input",
+  code:"  volumes:\n  - name: cache\n    ____: {}\n    # volume temporaire, partage entre conteneurs du meme pod",
+  q:"Complète le type de volume éphémère lié au cycle de vie du pod :",
+  accept:["emptyDir","empty dir"],
+  explain:"emptyDir est créé au démarrage du pod et détruit avec lui. emptyDir: { medium: Memory } le place en RAM (tmpfs)." },
+{ id:"y-pvc-mount", level:2, d:"stor", dom:"YAML — volumes", type:"qcm",
+  code:"  volumes:\n  - name: data\n    ____:\n      claimName: data-pvc",
+  q:"Complète pour monter un PersistentVolumeClaim :",
+  choices:["persistentVolumeClaim","pvc","persistentVolume","volumeClaim"],
+  answer:0,
+  explain:"Le pod référence toujours un PVC, jamais directement un PV. Le nom complet du champ est demandé — pas d'abréviation en YAML." },
+{ id:"y-pv-hostpath", level:3, d:"stor", dom:"YAML — PV", type:"qcm",
+  code:"apiVersion: v1\nkind: PersistentVolume\nspec:\n  capacity: { storage: 1Gi }\n  accessModes: [ ____ ]\n  hostPath: { path: /data }\n  persistentVolumeReclaimPolicy: Retain",
+  q:"Quel access mode pour un volume monté en lecture-écriture par un SEUL nœud ?",
+  choices:["ReadWriteOnce","ReadWriteMany","ReadOnlyMany","ReadWriteOncePod"],
+  answer:0,
+  explain:"RWO = un NŒUD (plusieurs pods du même nœud peuvent l'utiliser). ReadWriteOncePod, plus récent, restreint à UN SEUL pod." },
+{ id:"y-sc-binding", level:3, d:"stor", dom:"YAML — StorageClass", type:"qcm",
+  code:"apiVersion: storage.k8s.io/v1\nkind: StorageClass\nmetadata:\n  name: lente\nprovisioner: kubernetes.io/no-provisioner\n____: WaitForFirstConsumer",
+  q:"Complète le champ qui retarde la création du volume jusqu'à la planification du pod :",
+  choices:["volumeBindingMode","bindingMode","volumeMode","provisioningMode"],
+  answer:0,
+  explain:"WaitForFirstConsumer évite qu'un volume soit créé dans une zone où le pod ne sera jamais placé. L'autre valeur est Immediate." },
+{ id:"y-svc-selector", level:2, d:"net", dom:"YAML — Service", type:"input",
+  code:"apiVersion: v1\nkind: Service\nspec:\n  ____:\n    app: web\n  ports:\n  - port: 80\n    targetPort: 8080",
+  q:"Complète le champ qui désigne les pods à servir :",
+  accept:["selector"],
+  explain:"Le selector DOIT correspondre aux labels des pods (pas à ceux du Deployment). Une erreur ici = Endpoints vide = Service muet." },
+{ id:"y-svc-ports", level:2, d:"net", dom:"YAML — Service", type:"qcm",
+  code:"  ports:\n  - port: 80          # ?\n    targetPort: 8080  # ?\n    nodePort: 30080   # ?",
+  q:"Que représente « targetPort » ?",
+  choices:["Le port sur lequel le CONTENEUR écoute","Le port exposé par le Service","Le port ouvert sur chaque nœud","Le port du load balancer"],
+  answer:0,
+  explain:"port = le Service, targetPort = le conteneur, nodePort = le port ouvert sur chaque nœud. Confondre port et targetPort est l'erreur la plus fréquente." },
+{ id:"y-ingress-path", level:3, d:"net", dom:"YAML — Ingress", type:"qcm",
+  code:"  rules:\n  - host: app.exemple.fr\n    http:\n      paths:\n      - path: /api\n        ____: Prefix\n        backend:\n          service:\n            name: api-svc\n            port: { number: 80 }",
+  q:"Complète le champ obligatoire qui définit comment le chemin est comparé :",
+  choices:["pathType","matchType","pathMode","rule"],
+  answer:0,
+  explain:"pathType est OBLIGATOIRE depuis networking.k8s.io/v1 : Prefix, Exact ou ImplementationSpecific. L'oublier fait échouer la création." },
+{ id:"y-netpol-deny", level:3, d:"net", dom:"YAML — NetworkPolicy", type:"qcm",
+  code:"apiVersion: networking.k8s.io/v1\nkind: NetworkPolicy\nspec:\n  podSelector: {}\n  policyTypes:\n  - Ingress",
+  q:"Que fait cette policy avec un podSelector vide et aucune règle ingress ?",
+  choices:["Elle bloque TOUT le trafic entrant vers TOUS les pods du namespace (deny-all ingress)","Elle autorise tout","Elle ne fait rien","Elle bloque uniquement l'egress"],
+  answer:0,
+  explain:"podSelector: {} = tous les pods du namespace. Aucune règle ingress = rien n'est autorisé. C'est le manifeste deny-all de référence." },
+{ id:"y-netpol-from", level:3, d:"net", dom:"YAML — NetworkPolicy", type:"qcm",
+  code:"  ingress:\n  - from:\n    - ____:\n        matchLabels:\n          projet: interne\n    # autoriser depuis tous les pods des namespaces portant ce label",
+  q:"Complète le sélecteur ciblant des NAMESPACES entiers :",
+  choices:["namespaceSelector","podSelector","ipBlock","nsSelector"],
+  answer:0,
+  explain:"Piège majeur : namespaceSelector et podSelector dans le MÊME élément de liste = ET logique ; dans deux éléments séparés (deux tirets) = OU logique." },
+{ id:"y-rbac-rule", level:2, d:"arch", dom:"YAML — RBAC", type:"qcm",
+  code:"kind: Role\nrules:\n- ____: [\"\"]\n  resources: [\"pods\"]\n  verbs: [\"get\",\"list\"]",
+  q:"Complète le champ qui vaut chaîne vide pour les ressources du groupe core (pods, services…) :",
+  choices:["apiGroups","apiVersion","groups","api"],
+  answer:0,
+  explain:"apiGroups: [\"\"] = groupe core (v1). Pour les Deployments : apiGroups: [\"apps\"]. Se tromper de groupe est une cause d'échec fréquente." },
+{ id:"y-sa-pod", level:2, d:"arch", dom:"YAML — RBAC", type:"input",
+  code:"spec:\n  ____: deployer\n  containers:\n  - name: app\n    image: nginx",
+  q:"Complète le champ qui attache un ServiceAccount précis au pod :",
+  accept:["serviceAccountName","service account name"],
+  explain:"Attention : le champ est serviceAccountName (l'ancien « serviceAccount » est déprécié). Sans lui, le pod utilise le SA « default »." },
+{ id:"y-sts-volumeclaim", level:3, d:"stor", dom:"YAML — StatefulSet", type:"qcm",
+  code:"kind: StatefulSet\nspec:\n  serviceName: web-headless\n  ____:\n  - metadata: { name: data }\n    spec:\n      accessModes: [ ReadWriteOnce ]\n      resources: { requests: { storage: 1Gi } }",
+  q:"Complète le champ qui crée un PVC dédié par réplique :",
+  choices:["volumeClaimTemplates","volumeClaims","persistentVolumeClaims","claimTemplates"],
+  answer:0,
+  explain:"Chaque réplique obtient son propre PVC (data-web-0, data-web-1…), conservé même si le pod est supprimé — d'où la persistance." },
+{ id:"y-deploy-strategy", level:2, d:"wl", dom:"YAML — Deployment", type:"qcm",
+  code:"spec:\n  strategy:\n    type: RollingUpdate\n    rollingUpdate:\n      maxSurge: 1\n      ____: 0",
+  q:"Complète le champ garantissant qu'aucune réplique n'est indisponible pendant la mise à jour :",
+  choices:["maxUnavailable","minAvailable","maxDown","minReady"],
+  answer:0,
+  explain:"maxUnavailable: 0 + maxSurge: 1 = on crée d'abord, on supprime ensuite : zéro perte de capacité. L'autre type de stratégie est Recreate." },
+{ id:"y-securitycontext", level:3, d:"wl", dom:"YAML — sécurité", type:"qcm",
+  code:"spec:\n  securityContext:\n    runAsUser: 1000\n    ____: true\n    # interdire toute execution en tant que root",
+  q:"Complète le champ qui refuse le démarrage si l'image tente de tourner en root :",
+  choices:["runAsNonRoot","noRoot","denyRoot","privileged: false"],
+  answer:0,
+  explain:"runAsNonRoot: true fait échouer le conteneur au démarrage si l'UID est 0. À placer au niveau du pod ou du conteneur." },
+{ id:"y-resourcequota", level:3, d:"arch", dom:"YAML — quotas", type:"qcm",
+  code:"kind: ____\nspec:\n  hard:\n    requests.cpu: \"4\"\n    requests.memory: 8Gi\n    pods: \"10\"",
+  q:"Quel objet plafonne la consommation totale d'un NAMESPACE ?",
+  choices:["ResourceQuota","LimitRange","PodDisruptionBudget","PriorityClass"],
+  answer:0,
+  explain:"ResourceQuota = plafond global du namespace. LimitRange = valeurs par défaut et bornes par POD/conteneur. Les deux sont complémentaires." },
+{ id:"y-limitrange", level:3, d:"arch", dom:"YAML — quotas", type:"qcm",
+  code:"kind: LimitRange\nspec:\n  limits:\n  - ____:\n      cpu: 200m\n    type: Container",
+  q:"Complète le champ qui attribue des requests par DÉFAUT aux conteneurs qui n'en déclarent pas :",
+  choices:["defaultRequest","default","min","defaultLimit"],
+  answer:0,
+  explain:"« default » fixe les limits par défaut, « defaultRequest » les requests. Utile quand un ResourceQuota exige que tout pod déclare ses ressources." },
+{ id:"y-cronjob-concurrency", level:3, d:"wl", dom:"YAML — CronJob", type:"qcm",
+  code:"kind: CronJob\nspec:\n  schedule: \"*/5 * * * *\"\n  ____: Forbid\n  jobTemplate: { ... }",
+  q:"Complète le champ empêchant qu'une nouvelle exécution démarre si la précédente tourne encore :",
+  choices:["concurrencyPolicy","parallelism","suspend","backoffLimit"],
+  answer:0,
+  explain:"concurrencyPolicy : Allow (défaut), Forbid (saute l'exécution), Replace (tue l'ancienne). Question classique sur les jobs qui se chevauchent." },
+{ id:"y-static-pod-check", level:3, d:"arch", dom:"YAML — static pod", type:"qcm",
+  code:"# /etc/kubernetes/manifests/kube-apiserver.yaml\nspec:\n  containers:\n  - command:\n    - kube-apiserver\n    - --etcd-servers=https://127.0.0.1:2379",
+  q:"Comment appliquer une modification de ce fichier ?",
+  choices:["Il suffit de sauvegarder : le kubelet détecte le changement et recrée le pod automatiquement","Lancer kubectl apply -f","Redémarrer le nœud","Exécuter systemctl restart kube-apiserver"],
+  answer:0,
+  explain:"Le kubelet surveille ce dossier en permanence. Une ERREUR de syntaxe fait disparaître le pod : d'où l'importance de sauvegarder une copie AVANT de modifier." },
+/* ================= OÙ CHERCHER DANS LA DOC ================= */
+{ id:"d-netpol", level:2, d:"net", dom:"Doc", type:"qcm",
+  q:"Tu dois écrire une NetworkPolicy complexe. Quelle est la page de doc la plus rentable ?",
+  choices:["Concepts → Services, Load Balancing, and Networking → Network Policies (elle contient des exemples complets copiables)","La page Ingress","La référence de l'API","Le blog Kubernetes"],
+  answer:0,
+  explain:"Cette page contient un manifeste complet avec ingress ET egress, podSelector, namespaceSelector et ipBlock : il suffit d'adapter. À repérer AVANT l'examen." },
+{ id:"d-etcd", level:2, d:"arch", dom:"Doc", type:"qcm",
+  q:"Où trouver rapidement la commande exacte de snapshot etcd avec ses certificats ?",
+  choices:["Tasks → Administer a Cluster → Operating etcd clusters for Kubernetes","Concepts → Cluster Architecture","Reference → kubectl","Setup → Production environment"],
+  answer:0,
+  explain:"Mieux encore : apprends les 3 chemins de certificats par cœur. Chercher cette page coûte 2 minutes que tu n'as pas." },
+{ id:"d-upgrade", level:2, d:"arch", dom:"Doc", type:"qcm",
+  q:"Où trouver la procédure complète de montée de version d'un cluster kubeadm ?",
+  choices:["Tasks → Administer a Cluster → Upgrading kubeadm clusters","Setup → Installing kubeadm","Concepts → Overview","Reference → kubeadm init"],
+  answer:0,
+  explain:"Cette page donne les commandes exactes dans l'ordre, control plane puis workers. Un signet mental indispensable." },
+{ id:"d-pv", level:2, d:"stor", dom:"Doc", type:"qcm",
+  q:"Où trouver un exemple de PersistentVolume et de PersistentVolumeClaim à copier ?",
+  choices:["Concepts → Storage → Persistent Volumes, ou le tutoriel « Configure a Pod to Use a PersistentVolume »","Reference → API Overview","Tasks → Manage Secrets","Concepts → Workloads"],
+  answer:0,
+  explain:"Le tutoriel contient les trois manifestes complets (PV, PVC, Pod) : c'est le plus rapide à adapter en conditions d'examen." },
+{ id:"d-rbac", level:2, d:"arch", dom:"Doc", type:"qcm",
+  q:"Où trouver des exemples de Role et RoleBinding prêts à copier ?",
+  choices:["Reference → Access Authn Authz → RBAC Authorization","Concepts → Security","Tasks → Configure Pods","Setup → Best practices"],
+  answer:0,
+  explain:"La page RBAC contient une longue série d'exemples commentés. Mais kubectl create role/rolebinding --dry-run=client -o yaml reste plus rapide." },
+{ id:"d-search", level:2, d:"arch", dom:"Doc", type:"qcm",
+  q:"Quelle est la règle exacte concernant la recherche pendant l'examen ?",
+  choices:["La recherche du site kubernetes.io est autorisée, mais il est interdit d'ouvrir un résultat pointant vers un site externe","Toute recherche est interdite","Google est autorisé","On peut ouvrir 3 onglets"],
+  answer:0,
+  explain:"Un seul onglet supplémentaire, et uniquement kubernetes.io/docs, /blog, helm.sh/docs et gateway-api.sigs.k8s.io. Ouvrir un lien StackOverflow depuis la recherche = infraction." },
+{ id:"d-explain", level:2, d:"arch", dom:"Doc", type:"qcm",
+  q:"Tu as oublié le nom exact d'un champ YAML. Quel est le moyen le PLUS rapide de le retrouver ?",
+  choices:["kubectl explain <ressource>.spec --recursive directement dans le terminal","Chercher dans la doc en ligne","Regarder un exemple sur le blog","Deviner puis tester"],
+  answer:0,
+  explain:"Zéro changement de fenêtre, zéro latence réseau. kubectl explain pod.spec.containers.livenessProbe donne la structure exacte et les types." },
+/* ================= TROUBLESHOOTING (30 %) ================= */
+{ id:"t-pending", level:2, d:"tshoot", dom:"Pods", type:"qcm",
+  q:"Un pod reste indéfiniment en état « Pending ». Quelles sont les causes les plus probables ?",
+  choices:["Ressources insuffisantes sur les nœuds, taint non toléré, nodeSelector/affinité non satisfaits, ou PVC non lié","L'image est introuvable","L'application plante au démarrage","Le Service est mal configuré"],
+  answer:0,
+  explain:"Pending = le SCHEDULER n'a trouvé aucun nœud. La réponse est toujours dans kubectl describe pod, section Events." },
+{ id:"t-pending-cmd", level:2, d:"tshoot", dom:"Pods", type:"cmd",
+  q:"Le pod « web-1 » est Pending. Quelle commande te donne la raison exacte ?",
+  accept:["kubectl describe pod web-1","kubectl describe po web-1"],
+  explain:"Le message des Events est explicite : « Insufficient cpu », « node(s) had untolerated taint », « pod has unbound immediate PersistentVolumeClaims »…" },
+{ id:"t-imagepull", level:2, d:"tshoot", dom:"Pods", type:"qcm",
+  q:"Un pod affiche « ImagePullBackOff ». Quelles causes envisager ?",
+  choices:["Nom ou tag d'image erroné, registre privé sans imagePullSecret, ou pas d'accès réseau au registre","Manque de mémoire","Sonde liveness en échec","Le nœud est cordonné"],
+  answer:0,
+  explain:"ErrImagePull puis ImagePullBackOff (backoff exponentiel). describe donne le message exact du runtime : « not found » vs « unauthorized »." },
+{ id:"t-crashloop", level:2, d:"tshoot", dom:"Pods", type:"qcm",
+  q:"Un pod est en « CrashLoopBackOff ». Quelle est la première commande à lancer ?",
+  choices:["kubectl logs <pod> --previous, pour voir pourquoi l'instance précédente est morte","kubectl delete pod","kubectl describe node","kubectl top pod"],
+  answer:0,
+  explain:"Le conteneur actuel vient de redémarrer : ses logs sont vides. --previous donne la vraie cause. Autre piste : une livenessProbe trop agressive." },
+{ id:"t-oomkilled", level:2, d:"tshoot", dom:"Pods", type:"qcm",
+  q:"Le describe d'un pod indique « Last State: Terminated, Reason: OOMKilled ». Que s'est-il passé ?",
+  choices:["Le conteneur a dépassé sa limite mémoire et a été tué par le noyau — il faut augmenter limits.memory ou corriger la fuite","Le nœud a redémarré","L'image est corrompue","Le disque est plein"],
+  answer:0,
+  explain:"Dépasser la limite MÉMOIRE tue le conteneur ; dépasser la limite CPU ne fait que le ralentir (throttling). Distinction souvent testée." },
+{ id:"t-init-error", level:2, d:"tshoot", dom:"Pods", type:"qcm",
+  q:"Un pod reste bloqué en « Init:0/1 ». Que se passe-t-il ?",
+  choices:["Le premier initContainer ne s'est pas terminé avec succès — il faut lire ses logs avec kubectl logs <pod> -c <init-container>","Le pod manque de mémoire","L'image principale est introuvable","Le Service n'a pas d'Endpoints"],
+  answer:0,
+  explain:"Les conteneurs principaux ne démarrent JAMAIS tant que tous les initContainers ne se sont pas terminés en succès." },
+{ id:"t-evicted", level:3, d:"tshoot", dom:"Pods", type:"qcm",
+  q:"Plusieurs pods passent en état « Evicted ». Quelle est la cause typique ?",
+  choices:["Le kubelet a expulsé des pods à cause d'une pression sur les ressources du nœud (disque plein, mémoire) — les BestEffort partent en premier","Une NetworkPolicy les bloque","Le Deployment a été supprimé","Le Service est mal configuré"],
+  answer:0,
+  explain:"Vérifier les conditions du nœud : DiskPressure, MemoryPressure. La classe de QoS détermine l'ordre d'éviction : BestEffort, puis Burstable, puis Guaranteed." },
+{ id:"t-node-notready", level:3, d:"tshoot", dom:"Nœuds", type:"order",
+  q:"Un nœud est passé NotReady. Remets le diagnostic dans l'ordre.",
+  steps:["kubectl describe node <nom> pour lire les Conditions et Events","Se connecter au nœud en SSH","systemctl status kubelet pour vérifier le service","journalctl -u kubelet pour lire l'erreur précise","Corriger (config, certificat, disque) puis systemctl restart kubelet"],
+  explain:"On part toujours du cluster (describe) avant de se connecter au nœud. Les causes fréquentes : kubelet arrêté, disque plein, CNI absent, certificat expiré." },
+{ id:"t-node-cmd", level:2, d:"tshoot", dom:"Nœuds", type:"cmd",
+  q:"Affiche les conditions détaillées et les événements du nœud « node01 ».",
+  accept:["kubectl describe node node01"],
+  explain:"Les Conditions (Ready, MemoryPressure, DiskPressure, PIDPressure) et les Events pointent la cause dans la majorité des cas." },
+{ id:"t-apiserver-down", level:3, d:"tshoot", dom:"Control plane", type:"order",
+  q:"kubectl ne répond plus du tout (« connection refused »). Remets le diagnostic dans l'ordre.",
+  steps:["Se connecter en SSH au nœud du control plane","crictl ps pour voir si le conteneur kube-apiserver tourne","crictl logs <id> ou /var/log/pods pour lire l'erreur de démarrage","Vérifier et corriger /etc/kubernetes/manifests/kube-apiserver.yaml","Attendre que le kubelet recrée automatiquement le static pod"],
+  explain:"Sans API server, kubectl est inutilisable : crictl devient ton seul outil. Une faute de frappe dans le manifeste est la cause n°1." },
+{ id:"t-svc-noendpoint", level:2, d:"tshoot", dom:"Réseau", type:"qcm",
+  q:"Un Service ne répond pas et « kubectl get endpoints » renvoie une liste vide. Que vérifier ?",
+  choices:["Que le selector du Service correspond exactement aux labels des pods, et que les pods sont READY (readinessProbe)","La configuration DNS","Le NodePort","Les règles iptables"],
+  answer:0,
+  explain:"Endpoints vide = aucun pod prêt ne correspond au selector. Comparer avec kubectl get pods --show-labels. Un pod 0/1 READY n'est jamais dans les Endpoints." },
+{ id:"t-svc-order", level:3, d:"tshoot", dom:"Réseau", type:"order",
+  q:"Une application ne joint pas le Service « api ». Remets le diagnostic dans l'ordre.",
+  steps:["Vérifier que les pods cibles sont Running et READY","kubectl get endpoints api — la liste est-elle vide ?","Comparer le selector du Service aux labels réels des pods","Vérifier la correspondance port / targetPort","Tester le DNS depuis un pod jetable (nslookup api)","Vérifier qu'aucune NetworkPolicy ne bloque le trafic"],
+  explain:"Du plus proche au plus lointain : pods → endpoints → selector → ports → DNS → policies. Suivre cet ordre évite de partir dans tous les sens." },
+{ id:"t-dns-fail", level:3, d:"tshoot", dom:"Réseau", type:"qcm",
+  q:"AUCUN pod du cluster n'arrive à résoudre les noms de services. Où regarder en priorité ?",
+  choices:["Les pods CoreDNS dans kube-system (Running ? logs ?) et le Service kube-dns","Les NetworkPolicies de chaque namespace","Le fichier /etc/hosts des nœuds","Les certificats de l'API server"],
+  answer:0,
+  explain:"Panne DNS GLOBALE = CoreDNS. Panne sur un seul service = selector ou Endpoints. Le périmètre du symptôme oriente le diagnostic." },
+{ id:"t-netpol-block", level:3, d:"tshoot", dom:"Réseau", type:"qcm",
+  q:"Deux pods communiquaient, puis plus rien — sans changement applicatif. Quelle piste vérifier tôt ?",
+  choices:["Une NetworkPolicy récemment ajoutée qui sélectionne l'un des deux pods et bloque implicitement le reste","Les limites de ressources","Le nombre de répliques","Les labels du nœud"],
+  answer:0,
+  explain:"Dès qu'une policy cible un pod, tout ce qui n'est pas explicitement autorisé est refusé. Oublier la règle egress DNS (port 53) est un piège très courant." },
+{ id:"t-netpol-dns", level:3, d:"tshoot", dom:"Réseau", type:"qcm",
+  q:"Après ajout d'une NetworkPolicy egress restrictive, les pods ne résolvent plus aucun nom. Pourquoi ?",
+  choices:["La policy bloque le trafic DNS sortant : il faut autoriser explicitement le port 53 (UDP et TCP) vers CoreDNS","CoreDNS est tombé","Le CNI ne supporte pas l'egress","Les pods ont perdu leur IP"],
+  answer:0,
+  explain:"Piège classique. Toujours ajouter une règle egress vers kube-system/CoreDNS sur le port 53 UDP+TCP dans une policy egress restrictive." },
+{ id:"t-pvc-pending", level:2, d:"tshoot", dom:"Storage", type:"qcm",
+  q:"Un PVC reste en « Pending ». Quelles causes envisager ?",
+  choices:["Aucun PV disponible correspondant (taille, accessModes, storageClassName), ou StorageClass inexistante / pas de provisionneur","Le pod n'existe pas encore","Le namespace est plein","Le nœud est cordonné"],
+  answer:0,
+  explain:"Comparer minutieusement PVC et PV : capacité demandée ≤ capacité offerte, accessModes identiques, storageClassName identique (une chaîne vide n'égale pas « standard »)." },
+{ id:"t-pod-pvc", level:3, d:"tshoot", dom:"Storage", type:"qcm",
+  q:"Un pod reste Pending avec « pod has unbound immediate PersistentVolumeClaims ». Que faire ?",
+  choices:["Diagnostiquer le PVC (kubectl describe pvc) : c'est lui qui bloque, pas le pod","Supprimer et recréer le pod","Augmenter les ressources du nœud","Ajouter une toleration"],
+  answer:0,
+  explain:"Le scheduler refuse de placer un pod dont le volume n'est pas lié. La cause est toujours en amont, côté PVC/PV/StorageClass." },
+{ id:"t-rbac-forbidden", level:3, d:"tshoot", dom:"RBAC", type:"qcm",
+  q:"Une application reçoit « Error from server (Forbidden) » en interrogeant l'API. Comment diagnostiquer ?",
+  choices:["Identifier le ServiceAccount du pod, puis tester avec kubectl auth can-i <verbe> <ressource> --as=system:serviceaccount:<ns>:<sa>","Redémarrer le pod","Vérifier le DNS","Recréer le namespace"],
+  answer:0,
+  explain:"Forbidden = authentifié mais pas autorisé (RBAC). Unauthorized (401) = problème d'authentification. Nuance testée à l'examen." },
+{ id:"t-certs-expired", level:3, d:"tshoot", dom:"Certificats", type:"qcm",
+  q:"Après un an sans maintenance, kubectl renvoie une erreur de certificat expiré. Que fais-tu ?",
+  choices:["kubeadm certs check-expiration puis kubeadm certs renew all, et régénérer /etc/kubernetes/admin.conf","Réinstaller le cluster","Redémarrer les nœuds","Désactiver TLS"],
+  answer:0,
+  explain:"Les certificats kubeadm durent 1 an et sont renouvelés automatiquement à chaque upgrade — d'où les pannes sur les clusters jamais mis à jour." },
+{ id:"t-scheduler-down", level:3, d:"tshoot", dom:"Control plane", type:"qcm",
+  q:"Les nouveaux pods restent Pending, aucun n'est placé, mais les pods existants fonctionnent. Quelle hypothèse ?",
+  choices:["kube-scheduler est arrêté ou en erreur — vérifier son static pod et ses logs","Le CNI est tombé","etcd est plein","Les nœuds sont NotReady"],
+  answer:0,
+  explain:"Un pod Pending SANS événement de scheduling (aucun message « FailedScheduling ») évoque un scheduler absent, pas un manque de ressources." },
+{ id:"t-disk-pressure", level:3, d:"tshoot", dom:"Nœuds", type:"qcm",
+  q:"Un nœud a la condition DiskPressure=True. Quelles conséquences et quelle action ?",
+  choices:["Le kubelet expulse des pods et refuse d'en placer de nouveaux ; il faut libérer de l'espace (images inutilisées, logs) sur le nœud","Rien de particulier","Le nœud passe automatiquement en Ready","Les pods sont migrés sans impact"],
+  answer:0,
+  explain:"Le garbage collector du kubelet supprime les images inutilisées, mais des logs volumineux ou un /var plein exigent une intervention manuelle." },
+{ id:"t-multi-container", level:2, d:"tshoot", dom:"Pods", type:"cmd",
+  q:"Le pod « web-1 » a 3 conteneurs et n'en démarre qu'un. Quelle commande liste précisément l'état de chacun ?",
+  accept:["kubectl describe pod web-1","kubectl get pod web-1 -o yaml","kubectl describe po web-1"],
+  explain:"describe montre pour chaque conteneur son State, Last State, Reason et Exit Code — l'information décisive." },
+{ id:"t-exit-code", level:3, d:"tshoot", dom:"Pods", type:"qcm",
+  q:"Un conteneur se termine avec le code de sortie 137. Que signifie-t-il ?",
+  choices:["128 + 9 (SIGKILL) : le conteneur a été tué de force, typiquement par OOM ou par un timeout d'arrêt","Erreur applicative","Image introuvable","Problème réseau"],
+  answer:0,
+  explain:"Exit 0 = succès, 1 = erreur applicative, 137 = SIGKILL (souvent OOMKilled), 143 = SIGTERM (arrêt propre)." },
+{ id:"t-cluster-info", level:2, d:"tshoot", dom:"Cluster", type:"cmd",
+  q:"Affiche les adresses des composants du control plane pour vérifier que le cluster répond.",
+  accept:["kubectl cluster-info"],
+  explain:"kubectl cluster-info dump donne une trace exhaustive, très utile pour un diagnostic profond (mais très verbeuse)." },
+{ id:"t-componentstatus", level:2, d:"tshoot", dom:"Cluster", type:"cmd",
+  q:"Vérifie l'état de santé des composants du control plane via l'API de santé.",
+  accept:["kubectl get --raw /healthz","kubectl get --raw='/healthz'","kubectl get componentstatuses","kubectl get cs"],
+  explain:"componentstatuses est déprécié : préférer kubectl get --raw /healthz (ou /livez, /readyz) qui interroge directement les endpoints de santé." },
+/* ================= TÂCHES D'EXAMEN (séquences) ================= */
+{ id:"x-upgrade", level:3, d:"arch", dom:"Tâche — upgrade", type:"order",
+  q:"Mets à niveau un cluster kubeadm. Remets les étapes dans l'ordre.",
+  steps:["Sur le control plane : mettre à jour le paquet kubeadm","kubeadm upgrade plan puis kubeadm upgrade apply vX.Y.Z","kubectl drain <control-plane> --ignore-daemonsets","Mettre à jour kubelet et kubectl, puis systemctl restart kubelet","kubectl uncordon <control-plane>","Répéter sur chaque worker : drain → kubeadm upgrade node → kubelet → uncordon"],
+  explain:"Ordre à connaître par cœur. Piège fréquent : oublier le uncordon, ou drainer AVANT d'avoir mis à jour le paquet kubeadm." },
+{ id:"x-etcd-restore", level:3, d:"arch", dom:"Tâche — etcd", type:"order",
+  q:"Restaure etcd depuis un snapshot sur un cluster kubeadm. Remets les étapes dans l'ordre.",
+  steps:["etcdctl snapshot restore <snapshot> --data-dir=/var/lib/etcd-restore","Modifier /etc/kubernetes/manifests/etcd.yaml : hostPath → /var/lib/etcd-restore","Le kubelet détecte le changement et recrée le pod etcd","Vérifier que l'API server répond et que les objets sont revenus"],
+  explain:"L'erreur classique est de restaurer sans repointer le volume : etcd redémarre alors sur l'ancien data-dir et rien ne change." },
+{ id:"x-newnode", level:3, d:"arch", dom:"Tâche — join", type:"order",
+  q:"Ajoute un nouveau worker au cluster. Remets les étapes dans l'ordre.",
+  steps:["Sur le control plane : kubeadm token create --print-join-command","Sur le nouveau nœud : installer container runtime, kubeadm, kubelet","Exécuter la commande kubeadm join fournie","Vérifier depuis le control plane : kubectl get nodes"],
+  explain:"Si le nœud reste NotReady après le join, c'est presque toujours le CNI qui manque ou le kubelet qui n'a pas démarré." },
+{ id:"x-csr", level:3, d:"arch", dom:"Tâche — certificats", type:"order",
+  q:"Crée un accès kubectl pour un nouvel utilisateur via une CSR. Remets les étapes dans l'ordre.",
+  steps:["Générer une clé privée et une CSR openssl pour l'utilisateur","Créer l'objet CertificateSigningRequest (champ request = CSR en base64)","kubectl certificate approve <nom-csr>","Extraire le certificat signé depuis .status.certificate","Créer un Role/RoleBinding et configurer le kubeconfig de l'utilisateur"],
+  explain:"L'approbation ne donne AUCUN droit : sans RoleBinding, l'utilisateur est authentifié mais reçoit des erreurs Forbidden." },
+{ id:"x-maintenance", level:2, d:"arch", dom:"Tâche — maintenance", type:"order",
+  q:"Effectue la maintenance matérielle d'un nœud sans interrompre le service. Remets dans l'ordre.",
+  steps:["kubectl drain node01 --ignore-daemonsets --delete-emptydir-data","Vérifier que les pods ont bien été replanifiés ailleurs","Effectuer la maintenance sur le nœud","kubectl uncordon node01","Vérifier que le nœud est Ready et reçoit de nouveaux pods"],
+  explain:"Si drain reste bloqué, suspecter un PodDisruptionBudget trop strict ou un pod non géré par un contrôleur." },
+{ id:"x-expose-app", level:2, d:"net", dom:"Tâche — exposition", type:"order",
+  q:"Expose une nouvelle application en HTTP depuis l'extérieur. Remets dans l'ordre.",
+  steps:["Créer le Deployment avec les bons labels","Créer le Service dont le selector correspond à ces labels","Vérifier que les Endpoints sont bien peuplés","Créer l'Ingress pointant vers ce Service (avec pathType)","Tester la résolution et l'accès HTTP"],
+  explain:"Vérifier les Endpoints AVANT de créer l'Ingress : inutile de déboguer l'Ingress si le Service ne trouve déjà aucun pod." },
+{ id:"x-storage", level:2, d:"stor", dom:"Tâche — stockage", type:"order",
+  q:"Fournis un stockage persistant à une application. Remets dans l'ordre.",
+  steps:["Créer le PersistentVolume (ou vérifier la StorageClass pour le dynamique)","Créer le PVC avec taille, accessModes et storageClassName compatibles","Vérifier que le PVC passe en Bound","Référencer le PVC dans le pod via volumes + volumeMounts","Vérifier l'écriture réelle dans le volume depuis le conteneur"],
+  explain:"Le PVC doit être Bound AVANT de créer le pod, sinon celui-ci reste Pending avec « unbound immediate PersistentVolumeClaims »." },
+{ id:"x-rbac", level:3, d:"arch", dom:"Tâche — RBAC", type:"order",
+  q:"Donne à une application le droit de lister les pods de son namespace. Remets dans l'ordre.",
+  steps:["Créer le ServiceAccount dans le namespace","Créer le Role avec apiGroups, resources et verbs adéquats","Créer le RoleBinding liant le Role au ServiceAccount","Référencer le ServiceAccount dans le pod (serviceAccountName)","Valider avec kubectl auth can-i --as=system:serviceaccount:<ns>:<sa>"],
+  explain:"La validation par auth can-i est l'étape que tout le monde saute — et c'est celle qui prouve que la tâche est réussie." },
+/* ================= FIN DE LA BANQUE ================= */
+];
+
+/* ---------- Labs sur cluster réel ---------- */
+const LABS = [
+  { id:"lab0", title:"Lab 0 · Monter ton cluster d'entraînement", time:"≈ 40 min",
+    obj:"Disposer d'un cluster utilisable pour tous les autres labs, et d'un environnement de travail configuré comme à l'examen.",
+    steps:[
+      "Option rapide (95 % des labs) : installe Docker puis kind, et crée un cluster multi-nœuds avec le fichier de config ci-dessous.",
+      "Option complète (labs kubeadm, etcd, kubelet) : 3 VM Ubuntu (Multipass en local, ou 3 VM Azure B1s que tu supprimes après) et un kubeadm init.",
+      "Configure ton shell EXACTEMENT comme tu le feras à l'examen : alias k, autocomplétion, variables do et now.",
+      "Configure vim pour le YAML (indentation 2 espaces) — sans ça, tu perdras du temps sur chaque manifeste.",
+      "Vérifie : kubectl get nodes doit lister tous les nœuds en Ready.",
+      "Entraîne-toi à taper « k get po -A » sans réfléchir : c'est ton réflexe de départ." ],
+    cli:"# --- kind : cluster 1 control-plane + 2 workers ---\ncat <<EOF | kind create cluster --name cka --config -\nkind: Cluster\napiVersion: kind.x-k8s.io/v1alpha4\nnodes:\n- role: control-plane\n- role: worker\n- role: worker\nEOF\n\n# --- setup shell (a mettre dans ~/.bashrc) ---\nalias k=kubectl\ncomplete -o default -F __start_kubectl k\nexport do=\"--dry-run=client -o yaml\"\nexport now=\"--force --grace-period=0\"\n\n# --- setup vim (~/.vimrc) ---\nset expandtab tabstop=2 shiftwidth=2 number\n\n# usage : k run nginx --image=nginx $do > pod.yaml",
+    verif:"tu tapes « k get no » et vois tes nœuds Ready, et « k run x --image=nginx $do » génère bien du YAML sans rien créer." },
+  { id:"lab1", title:"Lab 1 · Workloads & scheduling (15 %)", time:"≈ 45 min · vise 6 min/tâche",
+    obj:"Créer et manipuler des workloads à la vitesse de l'examen, sans jamais écrire un manifeste de zéro.",
+    steps:[
+      "Crée un Deployment « web » (nginx, 3 répliques) puis passe-le à 5, en une commande à chaque fois.",
+      "Mets à jour son image vers nginx:1.27, suis le rollout, puis annule-le et vérifie le retour à la version précédente.",
+      "Génère un pod avec requests 100m/128Mi et limits 500m/256Mi — en partant de --dry-run puis en éditant.",
+      "Ajoute une livenessProbe HTTP sur /healthz et une readinessProbe. Casse volontairement le path de la liveness et OBSERVE les redémarrages.",
+      "Taint un nœud avec « gpu=true:NoSchedule », crée un pod sans toleration (Pending), puis ajoute la toleration.",
+      "Crée un pod avec nodeSelector sur un label que tu poses toi-même sur un nœud.",
+      "Crée un CronJob toutes les minutes, laisse-le tourner 3 minutes, observe les Jobs créés puis suspends-le.",
+      "Chronomètre-toi : l'ensemble doit tenir en moins de 45 minutes." ],
+    cli:"k create deploy web --image=nginx --replicas=3\nk scale deploy web --replicas=5\nk set image deploy/web nginx=nginx:1.27\nk rollout status deploy/web\nk rollout undo deploy/web\nk run app --image=nginx $do > pod.yaml   # puis vim pod.yaml\nk taint node <node> gpu=true:NoSchedule\nk create cronjob tick --image=busybox --schedule=\"*/1 * * * *\" -- echo hello\nk patch cronjob tick -p '{\"spec\":{\"suspend\":true}}'",
+    verif:"tu as vu un pod rester Pending à cause d'un taint, puis démarrer après ajout de la toleration — et tu sais expliquer pourquoi." },
+  { id:"lab2", title:"Lab 2 · Services & networking (20 %)", time:"≈ 50 min",
+    obj:"Maîtriser la chaîne Service → Endpoints → DNS → NetworkPolicy, qui est la source n°1 des tâches réseau.",
+    steps:[
+      "Crée un Deployment et expose-le en ClusterIP. Vérifie les Endpoints.",
+      "CASSE volontairement le selector du Service (change un label). Constate que les Endpoints se vident et que le Service ne répond plus. Répare.",
+      "Change targetPort pour une valeur erronée : le Service a des Endpoints mais ne répond pas. Comprends la différence avec le cas précédent.",
+      "Expose en NodePort et teste depuis l'extérieur du cluster.",
+      "Depuis un pod busybox jetable, teste nslookup sur le nom court, puis sur le FQDN complet.",
+      "Applique une NetworkPolicy deny-all ingress sur le namespace, vérifie que tout est coupé, puis autorise uniquement les pods portant un label précis.",
+      "Ajoute une policy egress restrictive SANS autoriser le port 53 : constate la panne DNS. Corrige en autorisant CoreDNS.",
+      "Installe un Ingress Controller (ingress-nginx sur kind) et expose l'app via un Ingress avec pathType." ],
+    cli:"k create deploy web --image=nginx\nk expose deploy web --port=80 --target-port=80\nk get ep web\nk get po --show-labels\nk run tmp --image=busybox -it --rm -- sh\n  # dans le pod : nslookup web / wget -qO- web\nk get netpol\n# ingress-nginx sur kind :\nk apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml",
+    verif:"tu sais distinguer en 30 secondes « Endpoints vides » (selector) de « Endpoints présents mais pas de réponse » (ports ou application)." },
+  { id:"lab3", title:"Lab 3 · Storage (10 %)", time:"≈ 35 min",
+    obj:"Enchaîner PV, PVC et montage sans hésiter, et diagnostiquer un PVC bloqué.",
+    steps:[
+      "Crée un PV hostPath de 1Gi en RWO avec reclaimPolicy Retain.",
+      "Crée un PVC de 1Gi qui s'y lie. Vérifie le passage en Bound.",
+      "Monte le PVC dans un pod, écris un fichier dedans, supprime le pod, recrée-le et vérifie que le fichier est toujours là.",
+      "Provoque une panne : crée un PVC demandant 5Gi alors que le PV n'en offre que 1. Observe le Pending et lis le describe.",
+      "Autre panne : demande un accessMode RWX sur un PV RWO. Même exercice.",
+      "Supprime le PVC et observe le PV passer en Released (à cause de Retain) — comprends pourquoi il n'est pas réutilisable tel quel.",
+      "Liste les StorageClasses et identifie celle par défaut. Crée un PVC sans storageClassName et observe le provisionnement dynamique." ],
+    cli:"k get pv,pvc\nk describe pvc <nom>     # la raison du Pending est ici\nk get sc\nk exec -it <pod> -- sh -c 'echo bonjour > /data/test.txt'\nk delete pod <pod> && k apply -f pod.yaml\nk exec -it <pod> -- cat /data/test.txt",
+    verif:"le fichier survit à la suppression du pod, et tu sais lire dans un describe pourquoi un PVC reste Pending." },
+  { id:"lab4", title:"Lab 4 · RBAC & sécurité", time:"≈ 40 min",
+    obj:"Construire une chaîne SA → Role → RoleBinding et savoir la valider.",
+    steps:[
+      "Crée un namespace « dev » et un ServiceAccount « lecteur » dedans.",
+      "Crée un Role autorisant get/list/watch sur les pods du namespace dev.",
+      "Lie-les avec un RoleBinding.",
+      "Valide avec kubectl auth can-i, en usurpant le ServiceAccount.",
+      "Vérifie aussi ce qui doit ÊTRE REFUSÉ : create deployments, ou list pods dans un autre namespace.",
+      "Lance un pod avec ce ServiceAccount et interroge l'API depuis l'intérieur (curl avec le token monté dans /var/run/secrets/...).",
+      "Bonus : crée un ClusterRole et lie-le avec un RoleBinding — vérifie que les droits ne s'appliquent QUE dans le namespace du binding.",
+      "Bonus : ajoute un securityContext runAsNonRoot et observe l'échec avec une image qui exige root." ],
+    cli:"k create ns dev\nk create sa lecteur -n dev\nk create role pod-reader --verb=get,list,watch --resource=pods -n dev\nk create rolebinding rb --role=pod-reader --serviceaccount=dev:lecteur -n dev\nk auth can-i list pods --as=system:serviceaccount:dev:lecteur -n dev      # yes\nk auth can-i create deploy --as=system:serviceaccount:dev:lecteur -n dev  # no",
+    verif:"auth can-i renvoie « yes » sur ce qui est autorisé ET « no » sur ce qui ne l'est pas — les deux comptent." },
+  { id:"lab5", title:"Lab 5 · Troubleshooting (30 % — le plus important)", time:"≈ 60 min",
+    obj:"Casser volontairement ton cluster de toutes les façons possibles, puis réparer. C'est LE lab qui fait passer l'examen.",
+    steps:[
+      "Panne 1 — image : crée un pod avec l'image « nginx:inexistant ». Diagnostique jusqu'au message exact, corrige.",
+      "Panne 2 — crash : lance un pod dont la commande sort en erreur. Trouve la cause avec logs --previous.",
+      "Panne 3 — OOM : mets une limite mémoire de 10Mi sur une app gourmande. Identifie OOMKilled et l'exit code 137.",
+      "Panne 4 — scheduling : taint tous les nœuds sans toleration. Explique le Pending puis répare.",
+      "Panne 5 — Service : casse le selector d'un Service. Diagnostique par les Endpoints.",
+      "Panne 6 — kubelet : arrête le kubelet d'un worker (systemctl stop kubelet). Observe le NotReady, diagnostique, redémarre.",
+      "Panne 7 — control plane : renomme /etc/kubernetes/manifests/kube-apiserver.yaml. kubectl meurt. Répare avec crictl et le fichier.",
+      "Panne 8 — RBAC : retire un droit à un ServiceAccount utilisé par un pod, observe le Forbidden dans ses logs.",
+      "Pour CHAQUE panne, chronomètre : objectif < 5 minutes du symptôme à la réparation." ],
+    cli:"# Provoquer et observer\nk run cassé --image=nginx:inexistant\nk describe po cassé | tail -20\nk logs <pod> --previous\nk get po -o wide --sort-by=.status.containerStatuses[0].restartCount\n\n# Sur un noeud (SSH ou docker exec pour kind)\nsystemctl status kubelet\njournalctl -u kubelet -n 50 --no-pager\ncrictl ps -a\ncrictl logs <id>",
+    verif:"tu diagnostiques chacune des 8 pannes en moins de 5 minutes, sans chercher dans la doc." },
+  { id:"lab6", title:"Lab 6 · etcd : sauvegarde et restauration", time:"≈ 45 min · VM requises",
+    obj:"Réussir la tâche etcd, quasi garantie à l'examen et très coûteuse en temps si on ne l'a jamais faite.",
+    steps:[
+      "Sur un cluster kubeadm (pas kind), installe etcd-client pour disposer d'etcdctl.",
+      "Prends un snapshot avec les 3 certificats. Vérifie-le : etcdctl snapshot status.",
+      "Crée un objet témoin (un namespace « avant-restore ») APRÈS le snapshot.",
+      "Restaure le snapshot dans un nouveau data-dir.",
+      "Modifie /etc/kubernetes/manifests/etcd.yaml pour pointer le hostPath sur le nouveau data-dir.",
+      "Attends que le kubelet recrée le pod etcd, puis vérifie : le namespace témoin doit avoir DISPARU (preuve que la restauration a fonctionné).",
+      "Refais l'exercice entièrement, chronomètre : objectif moins de 8 minutes.",
+      "Apprends les 3 chemins de certificats par cœur — c'est ce qui te fera gagner le plus de temps." ],
+    cli:"apt-get install -y etcd-client\n\nETCDCTL_API=3 etcdctl snapshot save /opt/snap.db \\\n  --endpoints=https://127.0.0.1:2379 \\\n  --cacert=/etc/kubernetes/pki/etcd/ca.crt \\\n  --cert=/etc/kubernetes/pki/etcd/server.crt \\\n  --key=/etc/kubernetes/pki/etcd/server.key\n\nETCDCTL_API=3 etcdctl snapshot status /opt/snap.db -w table\n\nETCDCTL_API=3 etcdctl snapshot restore /opt/snap.db \\\n  --data-dir=/var/lib/etcd-restore\n\nvim /etc/kubernetes/manifests/etcd.yaml   # hostPath -> /var/lib/etcd-restore",
+    verif:"après restauration, l'objet créé APRÈS le snapshot a bien disparu — sinon la restauration n'a pas été prise en compte." },
+  { id:"lab7", title:"Lab 7 · Upgrade kubeadm", time:"≈ 50 min · VM requises",
+    obj:"Dérouler une montée de version complète, control plane puis workers, sans interruption.",
+    steps:[
+      "Installe un cluster kubeadm sur une version N-1 (ex : 1.30 si la dernière est 1.31).",
+      "Sur le control plane : mets à jour le paquet kubeadm uniquement.",
+      "kubeadm upgrade plan : lis attentivement les versions proposées.",
+      "kubeadm upgrade apply <version>.",
+      "Drain le control plane, mets à jour kubelet et kubectl, redémarre le kubelet, uncordon.",
+      "Sur chaque worker : drain (depuis le control plane), kubeadm upgrade node, mise à jour kubelet, restart, uncordon.",
+      "Vérifie kubectl get nodes : toutes les versions doivent être alignées.",
+      "Note le temps total. À l'examen, la tâche ne porte souvent que sur UN nœud — mais il faut connaître l'ordre." ],
+    cli:"apt-mark unhold kubeadm && apt-get update && apt-get install -y kubeadm=1.31.1-1.1 && apt-mark hold kubeadm\nkubeadm upgrade plan\nkubeadm upgrade apply v1.31.1\nk drain <node> --ignore-daemonsets\napt-mark unhold kubelet kubectl && apt-get install -y kubelet=1.31.1-1.1 kubectl=1.31.1-1.1 && apt-mark hold kubelet kubectl\nsystemctl daemon-reload && systemctl restart kubelet\nk uncordon <node>",
+    verif:"kubectl get nodes affiche la nouvelle version sur tous les nœuds, et aucun n'est resté SchedulingDisabled." },
+  { id:"lab8", title:"Lab 8 · Simulation d'examen chronométrée", time:"2 h — conditions réelles",
+    obj:"Se mettre en conditions réelles : 17 tâches, 2 heures, un seul onglet de doc.",
+    steps:[
+      "Prépare 17 tâches en piochant dans les labs précédents, réparties selon les pondérations : 5 troubleshooting, 4 architecture, 3 réseau, 3 workloads, 2 storage.",
+      "Règle un minuteur sur 2 heures. Ferme tout sauf le terminal et UN onglet kubernetes.io.",
+      "Applique la règle d'or : si une tâche te bloque plus de 8 minutes, note-la et PASSE à la suivante.",
+      "Fais un premier passage complet, puis reviens sur les tâches sautées avec le temps restant.",
+      "À la fin, calcule ton score : il te faut 66 %, soit environ 11 tâches sur 17 pleinement réussies.",
+      "Analyse : quelles tâches t'ont coûté le plus de temps ? Ce sont celles à re-drilller.",
+      "Refais cette simulation une deuxième fois une semaine plus tard, avec des tâches différentes.",
+      "Quand tu es prêt : fais les 2 sessions du simulateur killer.sh incluses avec ton inscription — il est plus dur que l'examen, c'est normal." ],
+    cli:"# Chronometre simple dans le terminal\ndate -d '+2 hours'\n\n# Verification rapide de ton travail en fin de session\nk get all -A\nk get pv,pvc,netpol,ingress -A",
+    verif:"tu termines les 17 tâches dans le temps imparti avec au moins 12 pleinement réussies — et tu n'as jamais dépassé 8 min sur une seule tâche." }
+];
+
+/* ---------- Playbook du jour J ---------- */
+const PLAYBOOK = `
+<div class="crit"><b>La règle qui fait passer l'examen :</b> si une tâche te bloque plus de <b>8 minutes</b>, note son numéro et PASSE à la suivante. Tu as 15 à 20 tâches et 120 minutes, soit ~7 minutes par tâche. Il te faut 66 %, pas 100 % : sacrifier deux tâches difficiles pour en sécuriser cinq faciles est la bonne stratégie. Le drapeau « flag for review » existe pour ça.</div>
+
+<h3>Les 5 premières minutes</h3>
+<ol>
+<li>Configure ton shell AVANT de commencer la première tâche — ces 60 secondes t'en feront gagner 15 :
+<span class="sol">alias k=kubectl
+complete -o default -F __start_kubectl k
+export do="--dry-run=client -o yaml"
+export now="--force --grace-period=0"</span></li>
+<li>Configure vim pour le YAML (sinon l'indentation te fera perdre des points sur chaque manifeste) :
+<span class="sol">cat &gt;&gt; ~/.vimrc &lt;&lt;'EOF'
+set expandtab tabstop=2 shiftwidth=2 number
+EOF</span></li>
+<li>Ouvre ton unique onglet sur <code>kubernetes.io/docs</code> et laisse-le là.</li>
+</ol>
+
+<h3>Le rituel de chaque tâche</h3>
+<ol>
+<li><b>Copie-colle la commande de contexte</b> fournie par l'énoncé. Toujours. Une tâche parfaite sur le mauvais cluster vaut zéro.</li>
+<li><b>Lis l'énoncé en entier</b>, surtout le namespace demandé. Beaucoup d'échecs viennent d'un objet créé dans <code>default</code> au lieu du namespace exigé.</li>
+<li><b>Génère, n'écris pas.</b> <code>k run/create ... $do &gt; f.yaml</code> puis <code>vim f.yaml</code>. Écrire un manifeste de zéro est la première cause de perte de temps.</li>
+<li><b>Vérifie ton travail</b> : <code>k get</code> pour confirmer que l'objet existe et est dans l'état attendu. Une tâche « faite » mais dont le pod est en CrashLoop n'est pas validée.</li>
+</ol>
+
+<h3>Les commandes à connaître par cœur (aucune recherche possible)</h3>
+<p>Ces trois chemins de certificats etcd reviennent à chaque examen :</p>
+<span class="sol">--cacert=/etc/kubernetes/pki/etcd/ca.crt
+--cert=/etc/kubernetes/pki/etcd/server.crt
+--key=/etc/kubernetes/pki/etcd/server.key</span>
+<p>Et ces emplacements :</p>
+<ul>
+<li><code>/etc/kubernetes/manifests/</code> — les static pods du control plane</li>
+<li><code>/etc/kubernetes/admin.conf</code> — le kubeconfig administrateur</li>
+<li><code>/var/lib/etcd</code> — le data-dir etcd par défaut</li>
+<li><code>/var/log/pods/</code> — les logs quand l'API server est mort</li>
+</ul>
+
+<h3>Gagner du temps sur les manifestes</h3>
+<div class="tip">
+<b>Ne cherche jamais un exemple dans la doc si <code>kubectl explain</code> suffit.</b> <code>k explain pod.spec.containers.livenessProbe --recursive</code> te donne la structure exacte sans quitter le terminal.<br><br>
+Pour les objets qu'aucune commande ne génère (PV, NetworkPolicy, Ingress), repère AVANT l'examen la page de doc qui contient un exemple complet copiable. Tu dois savoir y aller en deux clics.
+</div>
+
+<h3>Pièges qui coûtent des points</h3>
+<ul>
+<li><b>Le namespace.</b> Relis l'énoncé : combien de tâches exigent <code>-n</code> ? Utilise <code>k config set-context --current --namespace=X</code> si la tâche en a plusieurs.</li>
+<li><b>Oublier <code>uncordon</code></b> après une maintenance de nœud.</li>
+<li><b>Oublier <code>--ignore-daemonsets</code></b> sur un drain : il échoue systématiquement sans.</li>
+<li><b>Modifier un static pod sans copie de sauvegarde.</b> Fais <code>cp fichier.yaml /tmp/</code> avant toute édition du control plane.</li>
+<li><b>Confondre <code>port</code> et <code>targetPort</code></b> dans un Service.</li>
+<li><b>Oublier <code>pathType</code></b> dans un Ingress : la création échoue.</li>
+<li><b>Oublier le port 53</b> dans une NetworkPolicy egress restrictive : plus aucune résolution DNS.</li>
+<li><b>Ne pas vérifier.</b> Un <code>k get po</code> de contrôle après chaque tâche coûte 5 secondes.</li>
+</ul>
+
+<h3>Logistique</h3>
+<ul>
+<li><b>Pièce d'identité officielle</b> en cours de validité, nom identique à celui de l'inscription.</li>
+<li><b>Bureau totalement vide</b>, pièce fermée, personne d'autre. Le surveillant fait un scan complet de la pièce par webcam.</li>
+<li><b>Aucune note</b>, aucun second écran. Un seul onglet navigateur en plus du terminal.</li>
+<li><b>Connexion filaire</b> si possible. Teste ton matériel avec le vérificateur système la veille, pas le jour même.</li>
+<li><b>Arrive 15 minutes en avance</b> : le check-in prend du temps et empiète sinon sur tes 2 heures.</li>
+<li><b>1 retake gratuit</b> est inclus. Le savoir enlève une bonne partie de la pression.</li>
+</ul>
+
+<h3>La semaine précédant l'examen</h3>
+<ol>
+<li>Les <b>2 sessions killer.sh</b> incluses avec ton inscription (elles restent actives 36 h chacune une fois démarrées). Il est plus difficile que l'examen réel — un score moyen y est rassurant, pas inquiétant.</li>
+<li>Refais le <b>lab 5 (troubleshooting)</b> en entier : c'est 30 % de l'examen.</li>
+<li>Refais <b>etcd et l'upgrade</b> jusqu'à les dérouler sans hésiter.</li>
+<li>La veille : relis ce playbook, drille les commandes, et <b>ne découvre aucun sujet nouveau</b>.</li>
+</ol>
+`;
+
+/* =====================================================================
+   MOTEUR
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const LS_ERRORS = "cka-errors", LS_LABS = "cka-labs";
+const DOM_LABEL = { arch:"Architecture", net:"Réseau", wl:"Workloads", stor:"Storage", tshoot:"Troubleshooting" };
+
+const getErrors = () => { try { return JSON.parse(localStorage.getItem(LS_ERRORS)) || []; } catch { return []; } };
+const setErrors = a => localStorage.setItem(LS_ERRORS, JSON.stringify([...new Set(a)]));
+const getLabsDone = () => { try { return JSON.parse(localStorage.getItem(LS_LABS)) || []; } catch { return []; } };
+const setLabsDone = a => localStorage.setItem(LS_LABS, JSON.stringify([...new Set(a)]));
+
+/* =====================================================================
+   MOTEUR DE MAÎTRISE — répétition espacée pilotée par la confiance
+   ===================================================================== */
+const LS_SRS = "cka-srs";
+const BOX_DAYS = [0, 1, 2, 4, 8, 16, 30];
+const NEW_CAP = 8;
+const DAY = 86400000;
+
+const getSrs = () => { try { return JSON.parse(localStorage.getItem(LS_SRS)) || {}; } catch { return {}; } };
+const setSrs = o => localStorage.setItem(LS_SRS, JSON.stringify(o));
+const srsOf = (srs, id) => srs[id] || { box: 0, due: 0, seen: 0, lapses: 0, danger: false, reco: false, lastMs: 0 };
+
+function minReasonMs(q) {
+  const len = (q.q || "").length + (q.code || "").length;
+  return Math.max(2000, Math.min(6000, 1200 + 20 * len));
+}
+
+function srsApply(q, ok, conf, ms, isReveal) {
+  const srs = getSrs();
+  const s = { ...srsOf(srs, q.id) };
+  const before = s.box;
+  s.seen++;
+  s.lastMs = ms;
+  s.reco = !!(ok && !isReveal && s.seen >= 2 && ms < minReasonMs(q));
+  if (isReveal || !ok) {
+    if (before >= 3) s.lapses++;
+    s.box = 0;
+    s.danger = !isReveal && conf === 3;
+  } else {
+    const gain = conf === 3 ? 2 : conf === 2 ? 1 : 0;
+    s.box = Math.min(6, s.box + (s.reco ? Math.min(gain, 1) : gain));
+    if (conf === 3) s.danger = false;
+  }
+  s.due = Date.now() + BOX_DAYS[s.box] * DAY;
+  srs[q.id] = s;
+  setSrs(srs);
+  return s;
+}
+
+function buildMaitrise(n) {
+  const srs = getSrs(), now = Date.now();
+  const danger = [], due = [], fresh = [], future = [];
+  QUESTIONS.forEach(q => {
+    const s = srs[q.id];
+    if (!s) { fresh.push(q); return; }
+    if (s.danger) danger.push(q);
+    else if (s.due <= now) due.push(q);
+    else future.push({ q, due: s.due });
+  });
+  const out = [...shuffle(danger), ...shuffle(due)];
+  if (out.length < n) out.push(...shuffle(fresh).slice(0, Math.min(NEW_CAP, n - out.length)));
+  if (out.length < n) {
+    future.sort((a, b) => a.due - b.due);
+    out.push(...future.slice(0, n - out.length).map(x => x.q));
+  }
+  return out.slice(0, n);
+}
+
+function srsStats() {
+  const srs = getSrs(), now = Date.now();
+  let croyances = 0, due = 0, mastered = 0, reco = 0, vus = 0;
+  Object.values(srs).forEach(s => {
+    vus++;
+    if (s.danger) croyances++;
+    else if (s.due <= now) due++;
+    if (s.box >= 5) mastered++;
+    if (s.reco) reco++;
+  });
+  return { croyances, due, mastered, reco, nouveaux: QUESTIONS.length - vus };
+}
+
+function refreshDash() {
+  const s = srsStats();
+  $("dCroyances").textContent = s.croyances;
+  $("dDue").textContent = s.due;
+  $("dMastered").textContent = s.mastered;
+  $("dReco").textContent = s.reco;
+  $("dNew").textContent = s.nouveaux;
+  $("nmaitrise").textContent = (s.croyances + s.due) > 0
+    ? (s.croyances + s.due) + " en attente"
+    : (s.nouveaux > 0 ? "nouveau" : "à jour");
+  let note;
+  if (s.croyances > 0)
+    note = "🚨 " + s.croyances + " question(s) où tu étais SÛR et tu t'es trompé — c'est le plus urgent à corriger.";
+  else if (s.due > 0)
+    note = "🔁 " + s.due + " question(s) arrivent à échéance. Le bon moment pour les revoir est maintenant.";
+  else if (s.nouveaux > 0)
+    note = "✅ Rien à réviser : la prochaine session introduira jusqu'à " + Math.min(NEW_CAP, s.nouveaux) + " nouvelles questions.";
+  else
+    note = "🏆 Toute la banque est planifiée. Reviens quand des questions arriveront à échéance.";
+  $("dNote").textContent = note;
+}
+
+function recordAndFlag(q, ok, conf, isReveal) {
+  const ms = Date.now() - (session.startedAt || Date.now());
+  const key = isReveal ? "reveal" : conf + (ok ? "-ok" : "-ko");
+  if (session.matrix && key in session.matrix) session.matrix[key]++;
+  const s = srsApply(q, ok, conf, ms, isReveal);
+
+  let html = "";
+  if (s.danger) {
+    html += '<div class="srs-flag danger">🚨 Tu étais SÛR et c\'est faux — c\'est une croyance fausse installée, ' +
+            'le type d\'erreur qui coûte des points sans prévenir. Elle repassera en priorité jusqu\'à ce que tu la réussisses en étant sûr.</div>';
+  }
+  if (s.reco) {
+    html += '<div class="srs-flag reco">⏱️ Répondu en ' + (ms / 1000).toFixed(1) + ' s : trop vite pour avoir raisonné. ' +
+            'Tu as probablement reconnu la question plutôt que raisonné — la progression est volontairement freinée.</div>';
+  }
+  const j = BOX_DAYS[s.box];
+  html += '<p class="srs-next">📅 Prochaine révision : ' +
+          (j === 0 ? "dès la prochaine session" : j === 1 ? "demain" : "dans " + j + " jours") +
+          " · palier " + s.box + "/6</p>";
+  return html;
+}
+
+const escapeReg = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const norm = s => (s || "").toLowerCase()
+  .normalize("NFD").replace(/[̀-ͯ]/g, "")
+  .replace(/[^a-z0-9]+/g, " ").trim();
+
+function isCorrect(user, accepts) {
+  const u = norm(user);
+  if (!u) return false;
+  return accepts.some(a => {
+    const v = norm(a);
+    if (!v) return false;
+    if (u === v) return true;
+    return new RegExp("(^| )" + escapeReg(v) + "( |$)").test(u);
+  });
+}
+
+/* --- Comparaison de commandes : tolérante à l'ordre des options --- */
+const VALUE_FLAGS = new Set(["-o","--output","-n","--namespace","-c","--container","-l","--selector",
+  "-f","--filename","--image","--replicas","--port","--target-port","--type","--name","--schedule",
+  "--verb","--resource","--serviceaccount","--role","--clusterrole","--user","--group","--as",
+  "--grace-period","--to-revision","--data-dir","--endpoints","--cacert","--cert","--key",
+  "--sort-by","--current-replicas","--dry-run","--template","--from-literal","--from-file","--revision"]);
+
+function parseCmd(s) {
+  let t = (s || "").trim().toLowerCase()
+    .replace(/["']/g, "")
+    .replace(/>/g, " > ")
+    .replace(/\s+/g, " ").trim();
+  if (!t) return null;
+  const toks = t.split(" ");
+  if (toks[0] === "k") toks[0] = "kubectl";
+  const pos = [], flags = [];
+  let afterSep = false;
+  for (let i = 0; i < toks.length; i++) {
+    let tk = toks[i];
+    if (tk === "--") { afterSep = true; pos.push("--"); continue; }
+    if (afterSep) { pos.push(tk); continue; }
+    if (tk.startsWith("-")) {
+      let m = tk.match(/^-o(?!=)(.+)$/);           // -oyaml -> -o=yaml
+      if (m) tk = "-o=" + m[1];
+      if (!tk.includes("=") && VALUE_FLAGS.has(tk) &&
+          i + 1 < toks.length && toks[i + 1] !== "--" && !toks[i + 1].startsWith("-")) {
+        tk = tk + "=" + toks[i + 1];
+        i++;
+      }
+      flags.push(tk);
+    } else pos.push(tk);
+  }
+  return { pos, flags: flags.sort() };
+}
+
+function sameCommand(user, expected) {
+  const a = parseCmd(user), b = parseCmd(expected);
+  if (!a || !b) return false;
+  if (a.pos.length !== b.pos.length || a.flags.length !== b.flags.length) return false;
+  return a.pos.every((v, i) => v === b.pos[i]) && a.flags.every((v, i) => v === b.flags[i]);
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let session = null, pickCount = 20, domFilter = "all";
+
+$("countSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  pickCount = parseInt(b.dataset.n, 10);
+  [...$("countSeg").children].forEach(x => x.classList.toggle("on", x === b));
+});
+$("domSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  domFilter = b.dataset.d;
+  [...$("domSeg").children].forEach(x => x.classList.toggle("on", x === b));
+  refreshCounts();
+});
+
+const byDom = qs => domFilter === "all" ? qs : qs.filter(q => q.d === domFilter);
+
+function poolFor(mode) {
+  if (mode === "err") { const e = getErrors(); return byDom(QUESTIONS.filter(q => e.includes(q.id))); }
+  if (mode === "mix") return byDom(QUESTIONS);
+  if (mode === "cmd") return byDom(QUESTIONS.filter(q => q.type === "cmd"));
+  if (mode === "yaml") return byDom(QUESTIONS.filter(q => q.code));
+  if (mode === "tshoot") return byDom(QUESTIONS.filter(q => q.d === "tshoot"));
+  if (mode === "docs") return byDom(QUESTIONS.filter(q => q.dom === "Doc"));
+  if (mode === "task") return byDom(QUESTIONS.filter(q => q.type === "order"));
+  return byDom(QUESTIONS.filter(q => q.level === Number(mode)));
+}
+
+function refreshCounts() {
+  $("ncmd").textContent = poolFor("cmd").length + " q";
+  $("ntshoot").textContent = poolFor("tshoot").length + " q";
+  $("nyaml").textContent = poolFor("yaml").length + " q";
+  $("n1").textContent = poolFor("1").length + " q";
+  $("ndocs").textContent = poolFor("docs").length + " q";
+  $("ntask").textContent = poolFor("task").length + " q";
+  $("nmix").textContent = poolFor("mix").length + " q";
+  $("nerr").textContent = poolFor("err").length + " q";
+  $("nlabs").textContent = getLabsDone().length + " / " + LABS.length;
+  refreshDash();
+}
+
+document.querySelectorAll(".mode-btn").forEach(b => b.addEventListener("click", () => {
+  const mode = b.dataset.mode;
+  if (mode === "labs") { renderLabs(); show("labs"); return; }
+  if (mode === "maitrise") {
+    const list = buildMaitrise(pickCount === 0 ? QUESTIONS.length : pickCount);
+    if (!list.length) { alert("Rien à réviser pour le moment — reviens plus tard !"); return; }
+    session = { mode, list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false, perDom: {},
+                matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 } };
+    show("quiz"); renderQuestion(); return;
+  }
+  if (mode === "playbook") { $("pbContent").innerHTML = PLAYBOOK; show("playbook"); return; }
+  const pool = poolFor(mode);
+  if (!pool.length) {
+    alert(mode === "err"
+      ? "Aucune erreur enregistrée pour ce filtre — joue d'abord une session !"
+      : "Aucune question pour ce domaine dans ce mode. Change le filtre de domaine.");
+    return;
+  }
+  const list = shuffle(pool).slice(0, pickCount === 0 ? pool.length : pickCount);
+  session = { list, idx: 0, score: 0, streak: 0, selectedChoice: null, answered: false, perDom: {} };
+  show("quiz"); renderQuestion();
+}));
+
+function show(name) {
+  ["home", "quiz", "end", "labs", "playbook"].forEach(n =>
+    $("screen-" + n).classList.toggle("hidden", n !== name));
+  if (name === "home") refreshCounts();
+}
+
+function renderLabs() {
+  const done = getLabsDone();
+  const list = $("labsList");
+  list.innerHTML = "";
+  LABS.forEach(l => {
+    const d = document.createElement("details");
+    d.className = "lab" + (done.includes(l.id) ? " done" : "");
+    const cliSafe = l.cli.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    d.innerHTML =
+      "<summary>" + (done.includes(l.id) ? "✅ " : "⬜ ") + l.title +
+      ' <span class="lab-time">' + l.time + "</span></summary>" +
+      '<p class="lab-obj"><b>Objectif :</b> ' + l.obj + "</p>" +
+      "<ol>" + l.steps.map(s => "<li>" + s + "</li>").join("") + "</ol>" +
+      '<pre class="qcode">' + cliSafe + "</pre>" +
+      '<p class="lab-verif"><b>Lab réussi si :</b> ' + l.verif + "</p>" +
+      '<button class="btn ghost lab-toggle">' + (done.includes(l.id) ? "Marquer non terminé" : "✅ Marquer terminé") + "</button>";
+    d.querySelector(".lab-toggle").addEventListener("click", () => {
+      const cur = getLabsDone();
+      setLabsDone(cur.includes(l.id) ? cur.filter(x => x !== l.id) : [...cur, l.id]);
+      renderLabs();
+    });
+    list.appendChild(d);
+  });
+}
+
+function renderQuestion() {
+  const q = session.list[session.idx];
+  session.answered = false; session.selectedChoice = null;
+  $("qLevel").textContent = q.type === "cmd" ? "Commande" : "Niveau " + q.level;
+  $("qLevel").className = "pill lv" + q.level;
+  $("qDom").textContent = DOM_LABEL[q.d] + " · " + q.dom;
+  $("qCount").textContent = (session.idx + 1) + " / " + session.list.length;
+  $("qBar").style.width = (session.idx / session.list.length * 100) + "%";
+  $("qText").textContent = q.q;
+  $("qFeedback").innerHTML = "";
+  $("btnReveal").classList.remove("hidden");
+  $("btnNext").classList.add("hidden");
+
+  const maitrise = session.mode === "maitrise";
+  $("confRow").classList.toggle("hidden", !maitrise);
+  $("btnValidate").classList.toggle("hidden", maitrise);
+  session.startedAt = Date.now();
+
+  const zone = $("qInputZone");
+  zone.innerHTML = "";
+  if (q.code) {
+    const pre = document.createElement("pre");
+    pre.className = "qcode";
+    pre.textContent = q.code;
+    zone.appendChild(pre);
+  }
+  if (q.type === "cmd") {
+    const wrap = document.createElement("div");
+    wrap.className = "term-input";
+    wrap.innerHTML = '<span class="prompt">$</span>';
+    const inp = document.createElement("input");
+    inp.type = "text"; inp.id = "answerInput"; inp.className = "cmd";
+    inp.placeholder = "tape la commande…";
+    inp.autocomplete = "off"; inp.spellcheck = false;
+    wrap.appendChild(inp);
+    zone.appendChild(wrap);
+    inp.focus();
+  } else if (q.type === "input") {
+    const inp = document.createElement("input");
+    inp.type = "text"; inp.id = "answerInput";
+    inp.placeholder = "Écris ta réponse…";
+    inp.autocomplete = "off"; inp.spellcheck = false;
+    zone.appendChild(inp);
+    inp.focus();
+  } else if (q.type === "order") {
+    session.orderPick = [];
+    session.orderShuffled = shuffle(q.steps);
+    const wrap = document.createElement("div");
+    wrap.innerHTML = '<p class="order-hint">Clique les étapes dans le bon ordre (re-clique pour retirer) :</p>' +
+      '<div class="order-list" id="orderPicked"></div><div class="order-list" id="orderAvail"></div>';
+    zone.appendChild(wrap);
+    renderOrder(q);
+  } else {
+    const div = document.createElement("div");
+    div.className = "choices";
+    shuffle(q.choices.map((c, i) => ({ c, i }))).forEach(({ c, i }) => {
+      const btn = document.createElement("button");
+      btn.className = "choice"; btn.textContent = c; btn.dataset.orig = i;
+      btn.addEventListener("click", () => {
+        if (session.answered) return;
+        session.selectedChoice = i;
+        div.querySelectorAll(".choice").forEach(x => x.classList.toggle("sel", x === btn));
+      });
+      div.appendChild(btn);
+    });
+    zone.appendChild(div);
+  }
+}
+
+function renderOrder(q) {
+  const picked = $("orderPicked"), avail = $("orderAvail");
+  picked.innerHTML = ""; avail.innerHTML = "";
+  session.orderPick.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "order-item picked";
+    b.textContent = (i + 1) + ". " + s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick = session.orderPick.filter(x => x !== s);
+      renderOrder(q);
+    });
+    picked.appendChild(b);
+  });
+  session.orderShuffled.filter(s => !session.orderPick.includes(s)).forEach(s => {
+    const b = document.createElement("button");
+    b.className = "order-item";
+    b.textContent = s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick.push(s);
+      renderOrder(q);
+    });
+    avail.appendChild(b);
+  });
+}
+
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+function goodAnswerHtml(q) {
+  if (q.type === "cmd") {
+    let h = '<span class="sol">' + esc(q.accept[0]) + "</span>";
+    if (q.accept.length > 1) h += '<p class="alt">' + (q.accept.length - 1) + " autre(s) formulation(s) acceptée(s).</p>";
+    return h;
+  }
+  if (q.type === "order") return "<br>" + q.steps.map((s, i) => (i + 1) + ". " + esc(s)).join("<br>");
+  if (q.type === "input") return "<b>" + esc(q.accept[0]) + "</b>";
+  return "<b>" + esc(q.choices[q.answer]) + "</b>";
+}
+
+function finishQuestion(q, ok, isReveal, conf) {
+  session.answered = true;
+  const srsHtml = recordAndFlag(q, ok, conf || (isReveal ? 1 : 2), isReveal);
+  const s = session.perDom[q.d] || (session.perDom[q.d] = { ok: 0, total: 0 });
+  s.total++; if (ok) s.ok++;
+
+  const errs = getErrors();
+  if (ok) { session.score++; session.streak++; setErrors(errs.filter(id => id !== q.id)); }
+  else { session.streak = 0; setErrors([...errs, q.id]); }
+  $("score").textContent = session.score;
+  $("streak").textContent = session.streak;
+
+  const fb = document.createElement("div");
+  fb.className = "feedback " + (isReveal ? "info" : ok ? "ok" : "ko");
+  fb.innerHTML =
+    '<div class="verdict">' + (isReveal ? "💡 Correction" : ok ? "✅ Correct !" : "❌ Raté") + "</div>" +
+    (ok && !isReveal ? "" : '<div class="rep">' + (isReveal ? "Réponse" : "Attendu") + " : " + goodAnswerHtml(q) + "</div>") +
+    '<p class="exp">' + q.explain + "</p>" +
+    (q.doc ? '<span class="doclink">📚 ' + esc(q.doc) + "</span>" : "") + srsHtml;
+  $("qFeedback").innerHTML = "";
+  $("qFeedback").appendChild(fb);
+
+  $("confRow").classList.add("hidden");
+  $("btnValidate").classList.add("hidden");
+  $("btnReveal").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+  $("qBar").style.width = ((session.idx + 1) / session.list.length * 100) + "%";
+}
+
+function validate(conf) {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  let ok;
+  if (q.type === "cmd") {
+    const val = $("answerInput").value;
+    if (!val.trim()) { $("answerInput").focus(); return; }
+    ok = q.accept.some(a => sameCommand(val, a));
+    $("answerInput").disabled = true;
+  } else if (q.type === "input") {
+    const val = $("answerInput").value;
+    if (!val.trim()) { $("answerInput").focus(); return; }
+    ok = isCorrect(val, q.accept);
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    if (session.orderPick.length !== q.steps.length) return;
+    ok = q.steps.every((s, i) => session.orderPick[i] === s);
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    if (session.selectedChoice === null) return;
+    ok = session.selectedChoice === q.answer;
+    document.querySelectorAll(".choice").forEach(btn => {
+      const i = Number(btn.dataset.orig);
+      btn.disabled = true;
+      if (i === q.answer) btn.classList.add("good");
+      else if (i === session.selectedChoice) btn.classList.add("bad");
+    });
+  }
+  finishQuestion(q, ok, false, conf);
+}
+
+function reveal() {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  if (q.type === "cmd" || q.type === "input") $("answerInput").disabled = true;
+  else if (q.type === "order") document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  else document.querySelectorAll(".choice").forEach(btn => {
+    btn.disabled = true;
+    if (Number(btn.dataset.orig) === q.answer) btn.classList.add("good");
+  });
+  finishQuestion(q, false, true, 1);
+}
+
+function next() {
+  if (session.idx + 1 < session.list.length) { session.idx++; renderQuestion(); }
+  else endSession();
+}
+
+function endSession() {
+  const total = session.list.length, s = session.score;
+  const pct = Math.round(s / total * 100);
+  $("endScore").textContent = s + " / " + total;
+  let v;
+  if (pct >= 90) v = "🏆 Réflexes d'administrateur — tu es prêt !";
+  else if (pct >= 66) v = "💪 Au-dessus de la barre des 66 % — consolide la vitesse.";
+  else if (pct >= 45) v = "📚 En bonne voie — cible tes domaines faibles ci-dessous.";
+  else v = "🌱 Rejoue tes erreurs et passe du temps sur les labs.";
+  $("endVerdict").textContent = v;
+
+  const mm = session.matrix;
+  const enMaitrise = session.mode === "maitrise";
+  $("endMatrix").classList.toggle("hidden", !enMaitrise);
+  if (enMaitrise && mm) {
+    $("endMatrix").innerHTML =
+      "<table><tr><th></th><th>Correct</th><th>Faux</th></tr>" +
+      '<tr><th>💪 Sûr</th><td class="n good">' + mm["3-ok"] + '</td><td class="n danger">' + mm["3-ko"] + "</td></tr>" +
+      '<tr><th>🤔 Hésitant</th><td class="n">' + mm["2-ok"] + '</td><td class="n">' + mm["2-ko"] + "</td></tr>" +
+      '<tr><th>✋ Au hasard</th><td class="n">' + mm["1-ok"] + '</td><td class="n">' + mm["1-ko"] + "</td></tr>" +
+      "</table><caption>" +
+      (mm["3-ko"] > 0
+        ? "🚨 " + mm["3-ko"] + " croyance(s) fausse(s) détectée(s) — la case la plus importante du tableau. Elles reviendront en priorité."
+        : "✅ Aucune croyance fausse cette session. " +
+          (mm["1-ok"] > 0 ? "En revanche " + mm["1-ok"] + " bonne(s) réponse(s) au hasard : elles ne comptent pas comme acquises." : "")) +
+      "</caption>";
+  }
+
+  $("endByDom").innerHTML = Object.entries(session.perDom)
+    .sort((a, b) => (a[1].ok / a[1].total) - (b[1].ok / b[1].total))
+    .map(([k, o]) => {
+      const p = Math.round(o.ok / o.total * 100);
+      const icon = p >= 75 ? "✅" : p >= 50 ? "⚠️" : "❌";
+      return '<span class="dl">' + icon + " " + DOM_LABEL[k] + '</span><span class="dv">' +
+             o.ok + "/" + o.total + " · " + p + "%</span>";
+    }).join("");
+
+  $("endDetail").textContent = pct + " % de bonnes réponses · seuil de l'examen : 66 % · " +
+    (total - s) + " erreur(s) ajoutée(s) au mode « Rejouer mes erreurs » (" + getErrors().length + " au total)";
+  $("btnReplayErrors").style.display = getErrors().length ? "" : "none";
+  show("end");
+}
+
+$("btnValidate").addEventListener("click", () => validate(2));
+document.querySelectorAll(".conf").forEach(b =>
+  b.addEventListener("click", () => validate(Number(b.dataset.conf))));
+$("btnReveal").addEventListener("click", reveal);
+$("btnNext").addEventListener("click", next);
+$("btnQuit").addEventListener("click", () => show("home"));
+$("btnHome").addEventListener("click", () => show("home"));
+$("btnLabsHome").addEventListener("click", () => show("home"));
+$("btnPbHome").addEventListener("click", () => show("home"));
+$("btnReplayErrors").addEventListener("click", () => {
+  const pool = poolFor("err");
+  if (!pool.length) { show("home"); return; }
+  session = { list: shuffle(pool), idx: 0, score: 0, streak: 0, selectedChoice: null, answered: false, perDom: {} };
+  show("quiz"); renderQuestion();
+});
+document.addEventListener("keydown", e => {
+  if ($("screen-quiz").classList.contains("hidden")) return;
+  if (session && !session.answered && session.mode === "maitrise" && ["1", "2", "3"].includes(e.key)) {
+    const el = document.activeElement;
+    const dansUnChamp = el && el.tagName === "INPUT" && el.type === "text";
+    if (!dansUnChamp) { e.preventDefault(); validate(Number(e.key)); return; }
+  }
+  if (e.key !== "Enter") return;
+  if (session && session.answered) next(); else validate(2);
+});
+
+refreshCounts();
+show("home");
+</script>
+</body>
+</html>

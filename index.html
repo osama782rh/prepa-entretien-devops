@@ -25,7 +25,14 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
   h1{font-size:30px;margin:0 0 6px}
   h1 span{color:var(--accent)}
   .sub{color:var(--muted);margin:0 0 30px}
+  .nav{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 26px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+  .nav a{flex:0 0 auto;border:1px solid var(--border);background:var(--surface);color:var(--ink);
+    font-size:14px;font-weight:650;padding:.5rem 1rem;border-radius:20px;text-decoration:none;transition:.15s}
+  .nav a:hover{border-color:var(--accent);color:var(--accent)}
+  .nav a.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
   .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  a.card.large{grid-column:1 / -1;border-color:var(--accent)}
+  a.card.large b{color:var(--accent)}
   @media(max-width:640px){.cards{grid-template-columns:1fr}}
   a.card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;text-decoration:none;color:inherit;transition:.15s}
   a.card:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -45,7 +52,18 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
   <h1>Préparation <span>entretien BNP</span></h1>
   <p class="sub">Terraform · Kubernetes · Azure · AWS · Linux · Réseau · CI/CD · Sécurité · SRE · SQL</p>
 
+  <nav class="nav">
+    <a class="on" href="index.html">Entretien DevOps</a>
+    <a href="certifications.html">Certifications</a>
+    <a href="formations.html">Réviser par bloc</a>
+    <a href="etude.html">Fiches d'étude</a>
+  </nav>
+
   <div class="cards">
+    <a class="card large" href="certifications.html">
+      <b>🎓 S'entraîner par certification →</b>
+      <span>8 simulateurs d'examen, 1657 questions et 45 labs : AZ-104 (créneau réservé), AZ-204, AZ-400, DOP-C02, CKA, Terraform, AZ-900, CLF-C02. Examen blanc pondéré sur les vrais pourcentages.</span>
+    </a>
     <a class="card" href="qcm.html">
       <b>1 · Choix multiples →</b>
       <span>Commence ici. 1152 questions sur 10 niveaux, explication à chaque fois. Pour construire les bases sans se décourager.</span>

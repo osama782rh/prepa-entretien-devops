@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certifications — Entraînement</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone.svg">
+<meta name="theme-color" content="#0d111a">
+<script>
+if("serviceWorker" in navigator && (location.protocol==="https:" || location.hostname==="localhost")){
+  window.addEventListener("load", ()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+<style>
+  :root{
+    --bg:#0d111a; --surface:#151b27; --surface2:#1d2432; --ink:#dde4f0; --muted:#8d9ab2;
+    --accent:#3ecf8e; --accent-soft:#12291f; --border:#26303f;
+    --azure:#4a9bff; --azure-soft:#132239;
+    --aws:#f0932b; --aws-soft:#2c2113;
+    --hashi:#a67cff; --hashi-soft:#221a35;
+    --k8s:#4ecdc4; --k8s-soft:#122b29;
+    --warn:#edaa5f; --warn-soft:#2a2013;
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f5f7fb; --surface:#fff; --surface2:#f0f3f9; --ink:#161d2b; --muted:#5c687d;
+      --accent:#128054; --accent-soft:#e3f6ed; --border:#dce2ee;
+      --azure:#1a63c4; --azure-soft:#e6effc;
+      --aws:#9c5a00; --aws-soft:#fdf0dd;
+      --hashi:#6a3fc0; --hashi-soft:#f0e9fd;
+      --k8s:#0d7c74; --k8s-soft:#dff5f3;
+      --warn:#8a5a00; --warn-soft:#fdf3e3;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;line-height:1.55}
+  .wrap{max-width:1000px;margin:0 auto;padding:26px 16px 80px}
+  a{color:var(--accent)}
+
+  header.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  header.top h1{font-size:24px;margin:0;font-weight:700}
+  header.top h1 span{color:var(--accent)}
+  header.top .retour{font-size:14px;text-decoration:none;color:var(--muted)}
+  header.top .retour:hover{color:var(--accent)}
+  .sub{color:var(--muted);font-size:14.5px;margin:0 0 20px;max-width:70ch}
+
+  /* --- Menu de choix --- */
+  .menu{display:flex;gap:7px;overflow-x:auto;padding:4px 0 14px;margin-bottom:18px;border-bottom:1px solid var(--border)}
+  .menu button{flex:0 0 auto;white-space:nowrap;border:1px solid var(--border);background:var(--surface);
+    color:var(--ink);font:inherit;font-size:14px;padding:.5rem 1rem;border-radius:20px;cursor:pointer;transition:.15s}
+  .menu button:hover{border-color:var(--accent)}
+  .menu button.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+  .menu button .n{opacity:.6;font-size:12.5px;margin-left:6px;font-variant-numeric:tabular-nums}
+
+  /* --- Carte « prochaine échéance » --- */
+  .focus{background:var(--surface);border:1px solid var(--azure);border-radius:16px;padding:22px;margin-bottom:20px;
+         display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+  @media(max-width:640px){.focus{grid-template-columns:1fr}}
+  .focus .lab{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--azure)}
+  .focus h2{margin:4px 0 6px;font-size:21px}
+  .focus p{margin:0;color:var(--muted);font-size:14.5px;max-width:60ch}
+  .focus .cta{display:inline-block;background:var(--azure);color:#fff;text-decoration:none;font-weight:700;
+              padding:.7rem 1.4rem;border-radius:11px;white-space:nowrap}
+  .focus .cta:hover{filter:brightness(1.1)}
+
+  /* --- Grille des certifications --- */
+  .grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+  .cert{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;
+        display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;transition:.15s}
+  .cert:hover{transform:translateY(-2px)}
+  .cert.azure:hover{border-color:var(--azure)}
+  .cert.aws:hover{border-color:var(--aws)}
+  .cert.hashi:hover{border-color:var(--hashi)}
+  .cert.k8s:hover{border-color:var(--k8s)}
+  .cert .haut{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .cert .code{font-size:12px;font-weight:700;letter-spacing:.05em;padding:.2rem .55rem;border-radius:6px}
+  .cert.azure .code{background:var(--azure-soft);color:var(--azure)}
+  .cert.aws .code{background:var(--aws-soft);color:var(--aws)}
+  .cert.hashi .code{background:var(--hashi-soft);color:var(--hashi)}
+  .cert.k8s .code{background:var(--k8s-soft);color:var(--k8s)}
+  .cert .etat{font-size:11.5px;color:var(--muted);margin-left:auto}
+  .cert .etat.obtenue{color:var(--accent);font-weight:650}
+  .cert .etat.focus2{color:var(--warn);font-weight:650}
+  .cert .titre{font-weight:650;font-size:16px;line-height:1.3}
+  .cert .desc{font-size:13.5px;color:var(--muted);flex:1}
+  .cert .chiffres{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);
+                  font-variant-numeric:tabular-nums;border-top:1px solid var(--border);padding-top:10px}
+  .cert .chiffres b{color:var(--ink);font-size:15px;display:block;line-height:1.2}
+  .cert .examen{font-size:12px;color:var(--muted)}
+  .cert .aller{font-size:13.5px;font-weight:650}
+  .cert.azure .aller{color:var(--azure)}
+  .cert.aws .aller{color:var(--aws)}
+  .cert.hashi .aller{color:var(--hashi)}
+  .cert.k8s .aller{color:var(--k8s)}
+
+  .bilan{display:flex;gap:26px;flex-wrap:wrap;margin:22px 0 0;font-size:13.5px;color:var(--muted)}
+  .bilan b{display:block;font-size:23px;color:var(--ink);font-variant-numeric:tabular-nums}
+
+  .box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-top:22px;font-size:14px}
+  .box h3{margin:0 0 10px;font-size:15px;color:var(--accent)}
+  .box ul{margin:8px 0 0;padding-left:20px}
+  .box li{margin:6px 0;color:var(--muted)}
+  .box li b{color:var(--ink)}
+  code{font-family:"Cascadia Code",Consolas,monospace;background:var(--surface2);padding:1px 5px;
+       border-radius:5px;border:1px solid var(--border);font-size:.88em}
+  .vide{color:var(--muted);font-size:14px;padding:30px 0;text-align:center;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>S'entraîner par <span>certification</span></h1>
+    <a class="retour" href="index.html">← Entretien DevOps</a>
+  </header>
+  <p class="sub">Un simulateur complet par examen, tous construits sur le même moteur : trois niveaux de difficulté,
+     réponses à taper, code à compléter, études de cas, examen blanc pondéré sur les vrais pourcentages,
+     et répétition espacée pilotée par ta confiance. Choisis ta certification.</p>
+
+  <div class="menu" id="menu"></div>
+
+  <div id="focus"></div>
+  <div class="grille" id="grille"></div>
+  <p class="vide" id="vide">Aucune certification dans cette catégorie.</p>
+
+  <div class="bilan" id="bilan"></div>
+
+  <div class="box">
+    <h3>Comment utiliser ces simulateurs</h3>
+    <ul>
+      <li><b>Au quotidien : Session Maîtrise.</b> Elle sort d'abord les questions où tu étais <em>sûr</em> et où tu t'es trompé — les croyances fausses coûtent plus cher qu'un trou de connaissance.</li>
+      <li><b>Niveau 1 → 2 → 3.</b> Vocabulaire, puis chiffres et valeurs par défaut, puis scénarios et diagnostics. Ne saute pas le niveau 2 : c'est là que se joue la moitié de l'examen.</li>
+      <li><b>Examen blanc.</b> Il respecte les pourcentages officiels de chaque examen et groupe l'étude de cas en fin, comme le jour J.</li>
+      <li><b>Labs guidés.</b> Chaque lab se termine par <code>az group delete</code> ou l'équivalent : rien ne reste facturé.</li>
+      <li>La progression est stockée dans le navigateur, séparément pour chaque certification — reste sur le même appareil.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+/*__CERTIFS__*/
+
+const FAMILLES = [
+  { id:"tous",  label:"Toutes" },
+  { id:"azure", label:"Azure" },
+  { id:"aws",   label:"AWS" },
+  { id:"hashi", label:"HashiCorp" },
+  { id:"k8s",   label:"Kubernetes" }
+];
+
+const $ = id => document.getElementById(id);
+let famille = "tous";
+
+function carte(c){
+  const a = document.createElement("a");
+  a.className = "cert " + c.famille;
+  a.href = c.url;
+  const etat = c.etat === "obtenue" ? '<span class="etat obtenue">✓ obtenue</span>'
+             : c.etat === "focus"   ? '<span class="etat focus2">● en cours</span>'
+             : '<span class="etat">' + (c.etatTexte || "à venir") + "</span>";
+  a.innerHTML =
+    '<div class="haut"><span class="code">' + c.code + "</span>" + etat + "</div>" +
+    '<div class="titre">' + c.titre + "</div>" +
+    '<div class="desc">' + c.desc + "</div>" +
+    '<div class="chiffres">' +
+      "<div><b>" + c.questions + "</b>questions</div>" +
+      (c.labs ? "<div><b>" + c.labs + "</b>labs</div>" : "") +
+      "<div><b>" + c.domaines + "</b>domaines</div>" +
+    "</div>" +
+    '<div class="examen">' + c.examen + "</div>" +
+    '<div class="aller">S\'entraîner →</div>';
+  return a;
+}
+
+function rendre(){
+  const liste = CERTIFS.filter(c => famille === "tous" || c.famille === famille);
+
+  // Carte mise en avant : la prochaine échéance, uniquement dans la vue « Toutes »
+  const enCours = famille === "tous" ? CERTIFS.find(c => c.etat === "focus") : null;
+  $("focus").innerHTML = enCours
+    ? '<div class="focus"><div><div class="lab">Prochaine échéance</div>' +
+      "<h2>" + enCours.code + " · " + enCours.titre + "</h2>" +
+      "<p>" + enCours.miseEnAvant + "</p></div>" +
+      '<a class="cta" href="' + enCours.url + '">Commencer l\'entraînement →</a></div>'
+    : "";
+
+  const g = $("grille");
+  g.innerHTML = "";
+  liste.forEach(c => g.appendChild(carte(c)));
+  $("vide").style.display = liste.length ? "none" : "block";
+
+  const q = liste.reduce((s,c) => s + c.questions, 0);
+  const l = liste.reduce((s,c) => s + c.labs, 0);
+  $("bilan").innerHTML =
+    "<div><b>" + liste.length + "</b>certifications</div>" +
+    "<div><b>" + q + "</b>questions</div>" +
+    "<div><b>" + l + "</b>labs guidés</div>";
+}
+
+FAMILLES.forEach(f => {
+  const n = f.id === "tous" ? CERTIFS.length : CERTIFS.filter(c => c.famille === f.id).length;
+  if (!n) return;
+  const b = document.createElement("button");
+  b.dataset.f = f.id;
+  b.innerHTML = f.label + '<span class="n">' + n + "</span>";
+  if (f.id === famille) b.classList.add("on");
+  b.addEventListener("click", () => {
+    famille = f.id;
+    [...$("menu").children].forEach(x => x.classList.toggle("on", x === b));
+    rendre();
+  });
+  $("menu").appendChild(b);
+});
+
+rendre();
+</script>
+</body>
+</html>

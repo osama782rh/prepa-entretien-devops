@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZ-900 Azure Fundamentals — Révision en français</title>
+<style>
+  :root {
+    --ground: #F3F7FC;
+    --surface: #FFFFFF;
+    --ink: #14202E;
+    --muted: #5A6B80;
+    --accent: #0078D4;
+    --accent-deep: #005A9E;
+    --accent-soft: #E5F1FB;
+    --good: #1E7A46;
+    --good-soft: #E7F5EC;
+    --bad: #B3352B;
+    --bad-soft: #FBEAE8;
+    --warn: #9A4E00;
+    --warn-soft: #FCF1E4;
+    --border: #D7E2EF;
+    --shadow: 0 2px 8px rgba(20,32,46,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0C131C; --surface: #151E2A; --ink: #DCE6F2; --muted: #8FA1B8;
+      --accent: #4DA3E8; --accent-deep: #7FBCEF; --accent-soft: #12283C;
+      --good: #5BC98A; --good-soft: #12291B; --bad: #F08578; --bad-soft: #2E1512;
+      --warn: #EDAA5F; --warn-soft: #2A2013; --border: #233245; --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    font-size: 16px; line-height: 1.5; min-height: 100vh;
+  }
+  code { font-family: "Cascadia Code", Consolas, monospace; background: var(--accent-soft); color: var(--accent-deep); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 40px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+  header.top h1 { font-size: 20px; margin: 0; font-weight: 700; }
+  header.top h1 .az { color: var(--accent); }
+  .stats { display: flex; gap: 14px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stats b { color: var(--ink); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); }
+
+  .home h2 { margin: 0 0 4px; font-size: 24px; }
+  .home p.sub { color: var(--muted); margin: 0 0 12px; }
+  .exam-banner { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin-bottom: 8px; }
+  .weights { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; font-size: 12.5px; margin: 8px 0 0; }
+  .weights .wl { color: var(--muted); }
+  .weights .wv { font-weight: 700; color: var(--accent-deep); font-variant-numeric: tabular-nums; text-align: right; }
+
+  .dash { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  .dash h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-deep); }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  .dash-cell { background: var(--surface); border-radius: 9px; padding: 8px 10px; text-align: center; }
+  .dash-cell .v { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .dash-cell .k { font-size: 11px; color: var(--muted); line-height: 1.25; }
+  .dash-cell.danger .v { color: var(--bad); }
+  .dash-cell.due .v { color: var(--accent); }
+  .dash-cell.mastered .v { color: var(--good); }
+  .dash-cell.reco .v { color: var(--warn); }
+  .dash-note { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+
+  .filters { margin: 14px 0 10px; display: grid; gap: 8px; }
+  .frow { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+  .seg { display: flex; gap: 4px; flex-wrap: wrap; }
+  .seg button { border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 13.5px; }
+  .seg button.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .seg button:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 1px; }
+
+  .modes { display: grid; gap: 10px; }
+  .mode-btn {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; cursor: pointer; text-align: left; color: var(--ink);
+    font-family: inherit; font-size: 15px; transition: border-color .15s, transform .1s;
+  }
+  .mode-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .mode-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mode-btn.hero { border-color: var(--accent); background: var(--accent-soft); }
+  .mode-btn .ico { font-size: 24px; width: 34px; text-align: center; }
+  .mode-btn .t { font-weight: 650; }
+  .mode-btn .d { font-size: 13px; color: var(--muted); }
+  .mode-btn .n { margin-left: auto; font-size: 12.5px; color: var(--accent); background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 2px 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .qmeta { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .pill { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; border-radius: 20px; padding: 3px 11px; }
+  .pill.lv1 { background: var(--good-soft); color: var(--good); }
+  .pill.lv2 { background: var(--accent-soft); color: var(--accent); }
+  .pill.lv3 { background: var(--bad-soft); color: var(--bad); }
+  .pill.dom { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+  .progressbar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+  .progressbar div { height: 100%; background: var(--accent); border-radius: 3px; transition: width .25s; }
+  .question { font-size: 19px; font-weight: 650; margin: 0 0 18px; line-height: 1.4; text-wrap: balance; }
+
+  input[type=text] {
+    width: 100%; padding: 12px 14px; font-size: 16px; font-family: inherit;
+    border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink);
+  }
+  input[type=text]:focus { outline: none; border-color: var(--accent); }
+  .choices { display: grid; gap: 8px; }
+  .choice {
+    text-align: left; padding: 11px 14px; border: 2px solid var(--border); border-radius: 10px;
+    background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 15px;
+    transition: border-color .12s;
+  }
+  .choice:hover { border-color: var(--accent); }
+  .choice.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .choice.good { border-color: var(--good); background: var(--good-soft); font-weight: 600; }
+  .choice.bad { border-color: var(--bad); background: var(--bad-soft); }
+  .choice:disabled { cursor: default; opacity: .85; }
+
+  .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .btn { padding: 11px 22px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 650; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-deep); }
+  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+
+  .conf-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .conf-label { width: 100%; font-size: 12.5px; color: var(--muted); margin-bottom: 2px; }
+  .conf {
+    flex: 1 1 30%; min-width: 120px; padding: 11px 12px; border-radius: 10px; cursor: pointer;
+    font-family: inherit; font-size: 14.5px; font-weight: 650; border: 2px solid var(--border);
+    background: var(--surface); color: var(--ink); text-align: center; line-height: 1.25;
+  }
+  .conf small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
+  .conf:hover { border-color: var(--accent); }
+  .conf:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+  .conf.c3 { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+  .conf.c3:hover { border-color: var(--good); background: var(--good-soft); }
+  .conf.c1 { border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .conf.c1:hover { border-color: var(--warn); background: var(--warn-soft); }
+
+  .feedback { margin-top: 18px; border-radius: 12px; padding: 14px 16px; font-size: 15px; }
+  .feedback.ok { background: var(--good-soft); border: 1px solid var(--good); }
+  .feedback.ko { background: var(--bad-soft); border: 1px solid var(--bad); }
+  .feedback.info { background: var(--accent-soft); border: 1px solid var(--accent); }
+  .feedback .verdict { font-weight: 750; font-size: 16px; }
+  .feedback.ok .verdict { color: var(--good); }
+  .feedback.ko .verdict { color: var(--bad); }
+  .feedback.info .verdict { color: var(--accent-deep); }
+  .feedback .rep { margin: 6px 0 0; }
+  .feedback .exp { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+  .srs-flag { font-size: 12.5px; border-radius: 8px; padding: 7px 11px; margin-top: 10px; }
+  .srs-flag.danger { background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad); font-weight: 600; }
+  .srs-flag.reco { background: var(--warn-soft); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
+  .srs-next { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+  .order-hint { font-size: 13.5px; color: var(--muted); margin: 0 0 8px; }
+  .order-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .order-list:empty { display: none; }
+  .order-item { text-align: left; padding: 10px 13px; border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 14.5px; }
+  .order-item:hover { border-color: var(--accent); }
+  .order-item.picked { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .order-item:disabled { cursor: default; opacity: .85; }
+
+  .end { text-align: center; }
+  .end .big { font-size: 52px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin: 10px 0 0; }
+  .end .verdict { font-size: 18px; font-weight: 650; margin: 6px 0 18px; }
+  .end .detail { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .matrix { max-width: 420px; margin: 0 auto 18px; }
+  .matrix table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .matrix th, .matrix td { padding: 7px 9px; border: 1px solid var(--border); text-align: center; }
+  .matrix th { background: var(--accent-soft); color: var(--accent-deep); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .matrix td.n { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; }
+  .matrix td.danger { background: var(--bad-soft); color: var(--bad); }
+  .matrix td.good { background: var(--good-soft); color: var(--good); }
+  .matrix caption { caption-side: bottom; font-size: 12px; color: var(--muted); padding-top: 8px; text-align: left; }
+  .bydom { text-align: left; font-size: 13.5px; margin: 0 auto 18px; max-width: 440px; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; }
+  .bydom .dl { color: var(--muted); }
+  .bydom .dv { font-variant-numeric: tabular-nums; font-weight: 650; }
+
+  .kbd-hint { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 14px; }
+  .hidden { display: none; }
+  footer.legal { text-align: center; font-size: 11.5px; color: var(--muted); margin-top: 26px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1><span class="az">AZ-900</span> · Azure Fundamentals</h1>
+    <div class="stats">
+      <span>Série : <b id="streak">0</b> 🔥</span>
+      <span>Score : <b id="score">0</b></span>
+    </div>
+  </header>
+
+  <!-- Accueil -->
+  <div id="screen-home" class="card home">
+    <h2>Révise en français, retiens pour de bon</h2>
+    <p class="sub">Des questions originales calées sur le programme officiel — et un mode Maîtrise qui t'empêche d'apprendre par cœur.</p>
+    <div class="exam-banner">
+      <b>≈ 45 min · 40 à 50 questions · 700/1000 requis · ≈ 99 € · certification SANS expiration.</b>
+      Pas d'accès à la documentation pendant l'examen (contrairement aux certifications role-based). Aucune pénalité pour une mauvaise réponse : ne laisse jamais une question vide.
+      <div class="weights">
+        <span class="wl">Concepts du cloud</span><span class="wv">25–30 %</span>
+        <span class="wl">Architecture et services Azure</span><span class="wv">35–40 %</span>
+        <span class="wl">Gestion et gouvernance</span><span class="wv">30–35 %</span>
+      </div>
+    </div>
+    <div class="dash">
+      <h3>🧠 Ta progression</h3>
+      <div class="dash-grid">
+        <div class="dash-cell danger"><div class="v" id="dCroyances">0</div><div class="k">croyances fausses</div></div>
+        <div class="dash-cell due"><div class="v" id="dDue">0</div><div class="k">à réviser</div></div>
+        <div class="dash-cell mastered"><div class="v" id="dMastered">0</div><div class="k">ancrés</div></div>
+        <div class="dash-cell reco"><div class="v" id="dReco">0</div><div class="k">reconnaissance ?</div></div>
+        <div class="dash-cell"><div class="v" id="dNew">0</div><div class="k">jamais vus</div></div>
+      </div>
+      <p class="dash-note" id="dNote"></p>
+    </div>
+    <div class="filters">
+      <div class="frow">
+        Questions :
+        <div class="seg" id="countSeg">
+          <button data-n="10">10</button>
+          <button data-n="20" class="on">20</button>
+          <button data-n="0">Toutes</button>
+        </div>
+      </div>
+      <div class="frow">
+        Domaine officiel :
+        <div class="seg" id="domSeg">
+          <button data-d="all" class="on">Tous</button>
+          <button data-d="cloud">Concepts cloud</button>
+          <button data-d="arch">Architecture &amp; services</button>
+          <button data-d="gov">Gestion &amp; gouvernance</button>
+        </div>
+      </div>
+    </div>
+    <div class="modes">
+      <button class="mode-btn hero" data-mode="maitrise">
+        <span class="ico">🧠</span>
+        <span><span class="t">Session Maîtrise (recommandé au quotidien)</span><br><span class="d">Répétition espacée pilotée par ta confiance — corrige d'abord ce que tu crois savoir à tort</span></span>
+        <span class="n" id="nmaitrise"></span>
+      </button>
+      <button class="mode-btn" data-mode="1">
+        <span class="ico">🌱</span>
+        <span><span class="t">Niveau 1 — Vocabulaire &amp; définitions</span><br><span class="d">IaaS, PaaS, régions, sigles — les fondations</span></span>
+        <span class="n" id="n1"></span>
+      </button>
+      <button class="mode-btn" data-mode="2">
+        <span class="ico">⚙️</span>
+        <span><span class="t">Niveau 2 — Les faits d'examen</span><br><span class="d">Responsabilité partagée, redondances, tiers, outils — le par-cœur utile</span></span>
+        <span class="n" id="n2"></span>
+      </button>
+      <button class="mode-btn" data-mode="3">
+        <span class="ico">🎯</span>
+        <span><span class="t">Niveau 3 — Scénarios</span><br><span class="d">« Quelle option choisir ? » — comme les vraies questions</span></span>
+        <span class="n" id="n3"></span>
+      </button>
+      <button class="mode-btn" data-mode="seq">
+        <span class="ico">🧩</span>
+        <span><span class="t">Séquences à ordonner</span><br><span class="d">Hiérarchies et démarches à remettre dans l'ordre</span></span>
+        <span class="n" id="nseq"></span>
+      </button>
+      <button class="mode-btn" data-mode="blanc">
+        <span class="ico">🎓</span>
+        <span><span class="t">Examen blanc pondéré</span><br><span class="d">42 questions réparties selon les vrais pourcentages officiels</span></span>
+        <span class="n" id="nblanc"></span>
+      </button>
+      <button class="mode-btn" data-mode="mix">
+        <span class="ico">🎲</span>
+        <span><span class="t">Tout mélanger</span><br><span class="d">Toute la banque aléatoirement</span></span>
+        <span class="n" id="nmix"></span>
+      </button>
+      <button class="mode-btn" data-mode="err">
+        <span class="ico">🩹</span>
+        <span><span class="t">Rejouer mes erreurs</span><br><span class="d">Uniquement les questions déjà ratées</span></span>
+        <span class="n" id="nerr"></span>
+      </button>
+    </div>
+    <footer class="legal">Application indépendante, non affiliée à Microsoft. « Microsoft », « Azure » et « AZ-900 » sont des marques de Microsoft Corporation, citées à des fins descriptives. Toutes les questions sont originales.</footer>
+  </div>
+
+  <!-- Quiz -->
+  <div id="screen-quiz" class="card hidden">
+    <div class="qmeta">
+      <span class="pill" id="qLevel"></span>
+      <span class="pill dom" id="qDom"></span>
+      <span style="margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums" id="qCount"></span>
+    </div>
+    <div class="progressbar"><div id="qBar" style="width:0%"></div></div>
+    <p class="question" id="qText"></p>
+    <div id="qInputZone"></div>
+    <div class="conf-row hidden" id="confRow">
+      <span class="conf-label">Valide en déclarant ta confiance — c'est ce qui pilote ta prochaine révision :</span>
+      <button class="conf c1" data-conf="1" id="conf1">✋ Au hasard<small>touche 1</small></button>
+      <button class="conf c2" data-conf="2" id="conf2">🤔 Hésitant<small>touche 2 ou Entrée</small></button>
+      <button class="conf c3" data-conf="3" id="conf3">💪 Sûr<small>touche 3</small></button>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnValidate">Valider</button>
+      <button class="btn primary hidden" id="btnNext">Question suivante →</button>
+      <button class="btn ghost" id="btnReveal">💡 Je ne sais pas</button>
+      <button class="btn ghost" id="btnQuit">Quitter</button>
+    </div>
+    <div id="qFeedback"></div>
+    <p class="kbd-hint">Entrée = valider / question suivante</p>
+  </div>
+
+  <!-- Fin -->
+  <div id="screen-end" class="card end hidden">
+    <h2>Session terminée !</h2>
+    <p class="big" id="endScore"></p>
+    <p class="verdict" id="endVerdict"></p>
+    <div class="matrix hidden" id="endMatrix"></div>
+    <div class="bydom" id="endByDom"></div>
+    <p class="detail" id="endDetail"></p>
+    <div class="actions" style="justify-content:center">
+      <button class="btn primary" id="btnReplayErrors">🩹 Rejouer mes erreurs</button>
+      <button class="btn ghost" id="btnHome">← Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   BANQUE — AZ-900 Azure Fundamentals (programme officiel)
+   d : cloud (25-30 %) | arch (35-40 %) | gov (30-35 %)
+   ===================================================================== */
+const QUESTIONS = [
+/* ================= CONCEPTS DU CLOUD ================= */
+{ id:"cl-def", level:1, d:"cloud", dom:"Définitions", type:"qcm",
+  q:"Qu'est-ce que le cloud computing ?",
+  choices:["La fourniture de services informatiques (serveurs, stockage, bases, réseau…) via Internet, avec paiement à l'usage","L'achat de serveurs pour son propre datacenter","Un logiciel installé sur ton PC","Un réseau privé d'entreprise"],
+  answer:0,
+  explain:"Deux idées clés : les ressources sont fournies à la demande via Internet, et tu paies ce que tu consommes au lieu d'investir dans du matériel." },
+{ id:"cl-iaas", level:1, d:"cloud", dom:"Modèles de service", type:"input",
+  q:"Modèle de service où le fournisseur gère le matériel (serveurs, réseau) mais où TU gères le système d'exploitation et tout ce qui est au-dessus. Quel sigle ?",
+  accept:["IaaS","infrastructure as a service"],
+  explain:"IaaS = Infrastructure as a Service. Exemple type : les machines virtuelles Azure. Le plus de contrôle, mais le plus de responsabilité." },
+{ id:"cl-paas", level:1, d:"cloud", dom:"Modèles de service", type:"input",
+  q:"Modèle de service où tu ne gères QUE ton application et tes données — le fournisseur gère l'OS, le runtime et l'infrastructure. Quel sigle ?",
+  accept:["PaaS","platform as a service"],
+  explain:"PaaS = Platform as a Service. Exemples : Azure App Service, Azure SQL Database. Idéal pour les développeurs qui veulent juste déployer leur code." },
+{ id:"cl-saas", level:1, d:"cloud", dom:"Modèles de service", type:"input",
+  q:"Modèle où tu utilises un logiciel prêt à l'emploi via Internet, sans rien gérer du tout (ex : Microsoft 365, Outlook.com). Quel sigle ?",
+  accept:["SaaS","software as a service"],
+  explain:"SaaS = Software as a Service. Tu n'es responsable que de tes données, de tes comptes et de tes appareils." },
+{ id:"cl-serverless", level:1, d:"cloud", dom:"Modèles de service", type:"input",
+  q:"Modèle d'exécution où tu écris juste du code, sans jamais voir de serveur, facturé à l'exécution (ex : Azure Functions). Quel terme ?",
+  accept:["serverless","sans serveur"],
+  explain:"Serverless : les serveurs existent bien sûr, mais leur gestion est totalement invisible pour toi. Tu paies à l'exécution, et ça descend à zéro sans trafic." },
+{ id:"cl-public", level:1, d:"cloud", dom:"Modèles de déploiement", type:"qcm",
+  q:"Qu'est-ce qu'un cloud public ?",
+  choices:["Des ressources détenues par un fournisseur (Microsoft, AWS…), mutualisées entre clients et accessibles via Internet","Un cloud accessible sans mot de passe","Un cloud réservé aux administrations publiques","Un cloud gratuit"],
+  answer:0,
+  explain:"« Public » signifie que l'infrastructure est partagée entre de nombreux clients — pas que tes données sont publiques : elles restent isolées et privées." },
+{ id:"cl-private", level:1, d:"cloud", dom:"Modèles de déploiement", type:"input",
+  q:"Modèle de déploiement où l'infrastructure cloud est réservée à UNE seule organisation (sur site ou hébergée). Quel nom ?",
+  accept:["cloud prive","prive","private cloud"],
+  explain:"Le cloud privé : contrôle maximal et conformité facilitée, mais c'est toi qui portes le coût et la maintenance du matériel." },
+{ id:"cl-hybrid", level:1, d:"cloud", dom:"Modèles de déploiement", type:"input",
+  q:"Modèle qui combine un environnement sur site (ou cloud privé) ET le cloud public, reliés entre eux. Quel nom ?",
+  accept:["cloud hybride","hybride","hybrid cloud"],
+  explain:"Le cloud hybride : garder certaines données sur site (réglementation, existant) tout en profitant du cloud public pour le reste. Le modèle le plus répandu en entreprise." },
+{ id:"cl-capex", level:1, d:"cloud", dom:"Modèle économique", type:"input",
+  q:"Dépense d'INVESTISSEMENT initiale (acheter des serveurs, construire un datacenter), amortie dans le temps. Quel sigle anglais ?",
+  accept:["CapEx","capital expenditure"],
+  explain:"CapEx = Capital Expenditure. Le cloud remplace ce modèle par l'OpEx : payer au fil de l'usage, sans capital initial." },
+{ id:"cl-opex", level:1, d:"cloud", dom:"Modèle économique", type:"input",
+  q:"Dépense de FONCTIONNEMENT payée au fil de la consommation (l'abonnement cloud, l'électricité). Quel sigle anglais ?",
+  accept:["OpEx","operational expenditure"],
+  explain:"OpEx = Operational Expenditure. C'est LE modèle économique du cloud : pas d'investissement initial, on paie ce qu'on consomme." },
+{ id:"cl-consumption", level:1, d:"cloud", dom:"Modèle économique", type:"qcm",
+  q:"Que signifie le « modèle basé sur la consommation » ?",
+  choices:["Tu paies uniquement les ressources que tu utilises réellement, sans coût initial — et tu arrêtes de payer quand tu arrêtes d'utiliser","Un forfait mensuel fixe","Un paiement unique à l'installation","Une facturation à l'utilisateur"],
+  answer:0,
+  explain:"Pay-as-you-go : aucune avance, facturation à l'usage réel. C'est ce qui rend le cloud accessible à une startup comme à un grand groupe." },
+{ id:"cl-ha", level:1, d:"cloud", dom:"Bénéfices", type:"input",
+  q:"Capacité d'un système à rester DISPONIBLE et opérationnel malgré les pannes, souvent mesurée en % de temps de fonctionnement. Quel terme ?",
+  accept:["haute disponibilite","high availability","disponibilite"],
+  explain:"La haute disponibilité (high availability) : obtenue par la redondance — plusieurs instances, plusieurs zones. Mesurée en « nines » : 99,9 %, 99,99 %…" },
+{ id:"cl-scalability", level:1, d:"cloud", dom:"Bénéfices", type:"qcm",
+  q:"Qu'est-ce que la scalabilité (mise à l'échelle) ?",
+  choices:["La capacité à ajuster les ressources à la demande — en ajoutant des instances (horizontal) ou en les agrandissant (vertical)","La capacité à chiffrer les données","La vitesse du réseau","La taille maximale d'un disque"],
+  answer:0,
+  explain:"Scale out/in = ajouter/retirer des instances (horizontal). Scale up/down = augmenter/réduire la puissance d'une instance (vertical)." },
+{ id:"cl-elasticity", level:1, d:"cloud", dom:"Bénéfices", type:"input",
+  q:"Capacité d'un système à ajuster AUTOMATIQUEMENT ses ressources quand la demande monte ou descend. Quel terme ?",
+  accept:["elasticite","elasticity","elastique"],
+  explain:"L'élasticité = la scalabilité rendue automatique (autoscaling). Le site e-commerce absorbe le Black Friday puis redescend tout seul — et la facture aussi." },
+{ id:"cl-vertical", level:2, d:"cloud", dom:"Bénéfices", type:"qcm",
+  q:"Quelle est la différence entre la mise à l'échelle verticale et horizontale ?",
+  choices:["Verticale = augmenter la puissance d'UNE instance (CPU/RAM) ; horizontale = ajouter DES instances supplémentaires","Verticale = ajouter des instances ; horizontale = agrandir l'instance","Ce sont deux synonymes","Verticale concerne le stockage, horizontale le calcul"],
+  answer:0,
+  explain:"Scale up (vertical) a une limite physique et impose souvent un redémarrage ; scale out (horizontal) est le modèle cloud par excellence — quasi illimité." },
+{ id:"cl-agility", level:1, d:"cloud", dom:"Bénéfices", type:"qcm",
+  q:"Que désigne l'« agilité » comme bénéfice du cloud ?",
+  choices:["Déployer et adapter des ressources en quelques minutes, au lieu de semaines d'achat et d'installation de matériel","La vitesse du processeur","La flexibilité des contrats","La possibilité de changer de fournisseur"],
+  answer:0,
+  explain:"Provisionner un serveur = quelques clics et 2 minutes, contre des semaines en datacenter classique. C'est ce qui permet de tester des idées vite et à peu de frais." },
+{ id:"cl-dr", level:1, d:"cloud", dom:"Bénéfices", type:"input",
+  q:"Capacité à restaurer les systèmes et les données après un incident majeur (incendie, panne régionale). Quel terme (français ou anglais) ?",
+  accept:["reprise apres sinistre","disaster recovery","reprise d activite","dr"],
+  explain:"La reprise après sinistre (disaster recovery) : sauvegardes, réplication géographique, plans de bascule. Le cloud la rend abordable grâce à ses régions multiples." },
+{ id:"cl-reliability", level:2, d:"cloud", dom:"Bénéfices", type:"qcm",
+  q:"Qu'est-ce que la fiabilité (reliability) d'un système cloud ?",
+  choices:["Sa capacité à RÉCUPÉRER après une panne et à continuer de fonctionner — grâce à la redondance et à la décentralisation","L'absence totale de pannes, garantie par contrat","La précision des factures","La vitesse de calcul"],
+  answer:0,
+  explain:"Aucun système n'est infaillible : la fiabilité, c'est concevoir pour que les pannes ne soient pas fatales. Le cloud aide par sa redondance native multi-zones et multi-régions." },
+{ id:"cl-predictability", level:2, d:"cloud", dom:"Bénéfices", type:"qcm",
+  q:"Que recouvre la « prévisibilité » comme bénéfice du cloud ?",
+  choices:["Prévoir les COÛTS (outils d'analyse, budgets) et les PERFORMANCES (autoscaling, load balancing)","Savoir à l'avance quand Azure tombera en panne","Connaître la date des mises à jour","Prédire la demande des clients"],
+  answer:0,
+  explain:"Prévisibilité des coûts (Cost Management, calculatrices) et des performances (les ressources s'ajustent à la charge). Les deux rassurent une direction." },
+{ id:"cl-scale-econ", level:2, d:"cloud", dom:"Modèle économique", type:"qcm",
+  q:"Que sont les « économies d'échelle » dont bénéficie le cloud ?",
+  choices:["Un fournisseur géant achète et exploite le matériel bien moins cher par unité que n'importe quelle entreprise seule, et répercute ce coût réduit","Une réduction accordée aux grandes entreprises","Des économies sur la climatisation","Un tarif dégressif la nuit"],
+  answer:0,
+  explain:"Microsoft achète des serveurs par millions : le coût unitaire s'effondre. C'est pour ça qu'une VM louée coûte moins cher que le même serveur acheté et exploité soi-même." },
+{ id:"cl-shared", level:1, d:"cloud", dom:"Responsabilité partagée", type:"input",
+  q:"Modèle qui définit ce qui relève du FOURNISSEUR cloud et ce qui reste À TA CHARGE selon le type de service (IaaS/PaaS/SaaS). Quel nom (3 mots) ?",
+  accept:["responsabilite partagee","modele de responsabilite partagee","shared responsibility"],
+  explain:"Le modèle de responsabilité partagée — un incontournable de l'examen. Plus tu montes vers le SaaS, plus le fournisseur prend en charge." },
+{ id:"cl-shared-iaas", level:2, d:"cloud", dom:"Responsabilité partagée", type:"qcm",
+  q:"En IaaS (machine virtuelle), qui est responsable des mises à jour du système d'exploitation ?",
+  choices:["Le CLIENT — en IaaS, tout ce qui est au-dessus du matériel t'appartient (OS, patchs, applis, données)","Microsoft, comme pour tout le reste","Personne, l'OS se met à jour seul","L'éditeur de l'OS"],
+  answer:0,
+  explain:"IaaS : Microsoft gère le datacenter, le matériel, le réseau physique. TOI : l'OS, les correctifs, les applications, les données, les accès." },
+{ id:"cl-shared-saas", level:2, d:"cloud", dom:"Responsabilité partagée", type:"qcm",
+  q:"En SaaS (ex : Microsoft 365), de quoi le client reste-t-il TOUJOURS responsable ?",
+  choices:["Ses données, ses comptes et identités, et ses appareils","Plus rien, tout est géré","Le système d'exploitation des serveurs","Le réseau du datacenter"],
+  answer:0,
+  explain:"Quel que soit le modèle — même en SaaS — les données, les identités et les appareils restent TOUJOURS ta responsabilité. Question quasi garantie à l'examen." },
+{ id:"cl-shared-ms", level:2, d:"cloud", dom:"Responsabilité partagée", type:"qcm",
+  q:"Qu'est-ce qui relève TOUJOURS de Microsoft, quel que soit le modèle de service ?",
+  choices:["Le datacenter physique, le réseau physique et les hôtes physiques","Les comptes utilisateurs","Les données du client","Les appareils des employés"],
+  answer:0,
+  explain:"Le physique est toujours au fournisseur ; les données/identités/appareils toujours au client ; entre les deux, ça dépend du modèle (IaaS/PaaS/SaaS)." },
+{ id:"cl-paas-ex", level:2, d:"cloud", dom:"Modèles de service", type:"qcm",
+  q:"Lequel de ces services Azure est un exemple de PaaS ?",
+  choices:["Azure App Service","Les machines virtuelles Azure","Microsoft 365","ExpressRoute"],
+  answer:0,
+  explain:"App Service = tu déploies ton code, Azure gère l'OS et le runtime → PaaS. VM = IaaS ; Microsoft 365 = SaaS." },
+{ id:"cl-iaas-ex", level:2, d:"cloud", dom:"Modèles de service", type:"qcm",
+  q:"Lequel de ces services est un exemple d'IaaS ?",
+  choices:["Les machines virtuelles Azure","Azure Functions","Microsoft 365","Azure SQL Database"],
+  answer:0,
+  explain:"La VM est l'exemple canonique d'IaaS : tu loues l'infrastructure et tu gères l'OS. Functions = serverless/PaaS ; SQL Database = PaaS." },
+{ id:"cl-saas-ex", level:2, d:"cloud", dom:"Modèles de service", type:"qcm",
+  q:"Lequel est un exemple de SaaS ?",
+  choices:["Microsoft 365 (Outlook, Teams, Word en ligne)","Azure App Service","Une machine virtuelle Linux","Azure Kubernetes Service"],
+  answer:0,
+  explain:"Logiciel fini, utilisable immédiatement dans le navigateur, rien à administrer → SaaS." },
+{ id:"cl-private-why", level:2, d:"cloud", dom:"Modèles de déploiement", type:"qcm",
+  q:"Quelle est la principale raison de choisir un cloud PRIVÉ malgré son coût ?",
+  choices:["Le contrôle total sur les données et le matériel, souvent exigé par la réglementation ou des besoins de conformité stricts","C'est toujours moins cher","C'est plus rapide à déployer","Il n'y a pas de maintenance"],
+  answer:0,
+  explain:"Le cloud privé se paie cher (matériel, personnel, maintenance) : on le choisit pour le contrôle et la conformité, pas pour l'économie." },
+{ id:"cl-hybrid-why", level:3, d:"cloud", dom:"Modèles de déploiement", type:"qcm",
+  q:"Une banque doit garder ses données clients dans son datacenter (réglementation) mais veut héberger son site vitrine dans Azure. Quel modèle de déploiement ?",
+  choices:["Le cloud hybride","Le cloud public uniquement","Le cloud privé uniquement","Le multi-cloud"],
+  answer:0,
+  explain:"Données sensibles sur site + services publics dans le cloud, reliés entre eux = la définition même du cloud hybride." },
+{ id:"cl-s-lift", level:3, d:"cloud", dom:"Scénarios", type:"qcm",
+  q:"Tu migres 20 serveurs existants vers Azure SANS modifier les applications, en gardant le contrôle des OS. Quel modèle de service ?",
+  choices:["IaaS (machines virtuelles)","PaaS","SaaS","Serverless"],
+  answer:0,
+  explain:"Le « lift-and-shift » : on déplace tel quel → IaaS. On garde le contrôle (et la responsabilité) des systèmes d'exploitation." },
+{ id:"cl-s-webapp", level:3, d:"cloud", dom:"Scénarios", type:"qcm",
+  q:"Ton équipe veut déployer une application web SANS jamais gérer de système d'exploitation ni de serveurs. Quel modèle de service ?",
+  choices:["PaaS (ex : Azure App Service)","IaaS","SaaS","Cloud privé"],
+  answer:0,
+  explain:"« Juste déployer le code » = PaaS. Le SaaS ne conviendrait pas : c'est TON application, pas un logiciel prêt à l'emploi." },
+{ id:"cl-s-mail", level:3, d:"cloud", dom:"Scénarios", type:"qcm",
+  q:"Une PME veut une messagerie professionnelle sans rien administrer du tout. Quel modèle de service ?",
+  choices:["SaaS (ex : Microsoft 365)","IaaS avec un serveur mail","PaaS","Un cloud privé"],
+  answer:0,
+  explain:"Zéro administration = SaaS. Monter son propre serveur mail en IaaS serait l'exact opposé du besoin." },
+{ id:"cl-s-startup", level:3, d:"cloud", dom:"Scénarios", type:"qcm",
+  q:"Une startup sans capital veut lancer son produit sans acheter de matériel. Quel avantage du cloud répond EXACTEMENT à ce besoin ?",
+  choices:["Le modèle OpEx : payer à l'usage, sans investissement initial (CapEx)","La haute disponibilité","Les régions souveraines","Le cloud privé"],
+  answer:0,
+  explain:"Pas de capital → pas de CapEx possible. Le cloud transforme l'investissement en dépense de fonctionnement au fil de l'usage." },
+{ id:"cl-s-peak", level:3, d:"cloud", dom:"Scénarios", type:"qcm",
+  q:"Un site e-commerce subit des pics de trafic imprévisibles pendant les soldes puis retombe. Quel bénéfice du cloud est LE plus pertinent ?",
+  choices:["L'élasticité : les ressources s'ajustent automatiquement à la demande, la facture aussi","La reprise après sinistre","Le cloud privé","Les économies d'échelle"],
+  answer:0,
+  explain:"Pics imprévisibles = élasticité (ajustement AUTOMATIQUE). Dimensionner pour le pic en permanence coûterait une fortune pour rien." },
+{ id:"cl-s-region-down", level:3, d:"cloud", dom:"Scénarios", type:"qcm",
+  q:"Ton application doit survivre à la panne complète d'une région Azure. Que mets-tu en place ?",
+  choices:["Un déploiement multi-régions avec réplication géographique des données","Plus de RAM sur les serveurs","Un cloud privé","Un verrou sur les ressources"],
+  answer:0,
+  explain:"Contre une panne RÉGIONALE, la seule parade est une autre région : déploiement multi-régions + géo-réplication (ex : stockage GRS)." },
+{ id:"cl-s-consumption", level:3, d:"cloud", dom:"Scénarios", type:"qcm",
+  q:"Un traitement ne tourne que 2 heures par mois. Quel modèle de facturation est le plus économique ?",
+  choices:["Le modèle à la consommation (serverless) : payer uniquement les exécutions","Une VM réservée 3 ans","Un serveur dédié","Un forfait mensuel"],
+  answer:0,
+  explain:"2 h/mois = 0,3 % du temps. Toute ressource permanente serait payée à 99,7 % pour rien. Serverless/consommation gagne haut la main." },
+{ id:"cl-multicloud", level:2, d:"cloud", dom:"Modèles de déploiement", type:"qcm",
+  q:"Qu'est-ce qu'une stratégie « multi-cloud » ?",
+  choices:["Utiliser plusieurs fournisseurs de cloud public (ex : Azure ET AWS) pour éviter la dépendance ou combiner leurs forces","Avoir plusieurs abonnements Azure","Combiner cloud public et privé","Utiliser plusieurs régions Azure"],
+  answer:0,
+  explain:"Multi-cloud = plusieurs FOURNISSEURS. À ne pas confondre avec hybride (privé + public). Azure Arc sert justement à gérer ces environnements mixtes." },
+/* ================= ARCHITECTURE & SERVICES AZURE ================= */
+/* --- Infrastructure physique --- */
+{ id:"ar-region", level:1, d:"arch", dom:"Infrastructure", type:"input",
+  q:"Zone géographique contenant un ou plusieurs datacenters Azure reliés entre eux (ex : France Centre, West Europe). Quel terme ?",
+  accept:["region","une region"],
+  explain:"La région : l'unité géographique de base d'Azure (60+ dans le monde). Tu choisis une région pour la latence, la conformité et le prix — qui varient de l'une à l'autre." },
+{ id:"ar-az", level:1, d:"arch", dom:"Infrastructure", type:"input",
+  q:"À l'intérieur d'une région : datacenter(s) physiquement séparé(s), avec alimentation, refroidissement et réseau indépendants. Quel terme (français ou anglais) ?",
+  accept:["zone de disponibilite","availability zone","zones de disponibilite"],
+  explain:"La zone de disponibilité protège d'une panne de datacenter ENTIER. Les régions qui les proposent en ont au moins 3." },
+{ id:"ar-az-min", level:2, d:"arch", dom:"Infrastructure", type:"input",
+  q:"Combien de zones de disponibilité au MINIMUM dans une région qui les prend en charge ?",
+  accept:["3","trois"],
+  explain:"Au moins 3 zones, pour permettre un quorum et survivre à la perte d'une zone. Toutes les régions ne les proposent pas." },
+{ id:"ar-paired", level:2, d:"arch", dom:"Infrastructure", type:"qcm",
+  q:"Qu'est-ce qu'une paire de régions (region pair) ?",
+  choices:["Deux régions de la même zone géographique, distantes d'au moins ~500 km, appairées pour la réplication et jamais mises à jour en même temps","Deux régions au même endroit","Deux datacenters d'une même région","Deux abonnements liés"],
+  answer:0,
+  explain:"Ex : France Centre ↔ France Sud. La réplication GRS s'appuie dessus, et Microsoft n'applique jamais une maintenance majeure aux deux en même temps." },
+{ id:"ar-sovereign", level:2, d:"arch", dom:"Infrastructure", type:"qcm",
+  q:"Que sont les régions « souveraines » d'Azure ?",
+  choices:["Des instances isolées d'Azure pour des besoins spécifiques (Azure Government pour les USA, Azure China opéré par 21Vianet)","Les régions européennes","Des régions réservées aux gouvernements français","Des régions sans datacenter"],
+  answer:0,
+  explain:"Isolées physiquement et logiquement du cloud Azure global, avec des opérateurs et des conformités spécifiques." },
+{ id:"ar-s-az", level:3, d:"arch", dom:"Infrastructure", type:"qcm",
+  q:"Ton application doit survivre à la panne d'un DATACENTER complet, tout en restant dans la même région. Que choisis-tu ?",
+  choices:["Déployer sur plusieurs zones de disponibilité","Déployer sur plusieurs régions","Un plus gros serveur","Un resource group par datacenter"],
+  answer:0,
+  explain:"Panne de datacenter → zones de disponibilité (même région). Panne de région → multi-régions/paires. Bien distinguer les deux périmètres." },
+/* --- Hiérarchie des ressources --- */
+{ id:"ar-rg", level:1, d:"arch", dom:"Organisation", type:"input",
+  q:"Conteneur logique qui regroupe des ressources Azure partageant le même cycle de vie. Quel nom (français ou anglais) ?",
+  accept:["groupe de ressources","resource group"],
+  explain:"Le groupe de ressources. Supprimer le groupe supprime tout son contenu — pratique pour les environnements de test." },
+{ id:"ar-sub", level:1, d:"arch", dom:"Organisation", type:"input",
+  q:"Unité de FACTURATION et de gestion à laquelle toutes les ressources sont rattachées. Quel nom ?",
+  accept:["abonnement","subscription","souscription"],
+  explain:"L'abonnement : la frontière de facturation et de quotas. Une organisation en a souvent plusieurs (prod, dev, par département…)." },
+{ id:"ar-mg", level:1, d:"arch", dom:"Organisation", type:"input",
+  q:"Niveau AU-DESSUS des abonnements, qui permet d'appliquer des politiques et des accès à plusieurs abonnements d'un coup. Quel nom ?",
+  accept:["groupe d administration","management group","groupes d administration"],
+  explain:"Le management group. Hiérarchie complète : management group → abonnement → groupe de ressources → ressource." },
+{ id:"ar-hierarchy", level:2, d:"arch", dom:"Organisation", type:"order",
+  q:"Remets la hiérarchie Azure dans l'ordre, du plus englobant au plus petit.",
+  steps:["Groupe d'administration (management group)","Abonnement (subscription)","Groupe de ressources (resource group)","Ressource (VM, stockage…)"],
+  explain:"Management group → abonnement → resource group → ressource. Les policies et les rôles RBAC appliqués en haut héritent vers le bas." },
+{ id:"ar-rg-rules", level:2, d:"arch", dom:"Organisation", type:"qcm",
+  q:"Laquelle de ces affirmations sur les groupes de ressources est VRAIE ?",
+  choices:["Une ressource appartient à UN seul groupe à la fois, et les groupes ne peuvent pas être imbriqués","Une ressource peut être dans plusieurs groupes","On peut imbriquer des groupes dans des groupes","Un groupe est limité à 10 ressources"],
+  answer:0,
+  explain:"1 ressource = 1 groupe, pas d'imbrication. On peut en revanche déplacer une ressource d'un groupe à un autre." },
+{ id:"ar-rg-region", level:2, d:"arch", dom:"Organisation", type:"qcm",
+  q:"Un groupe de ressources créé en « France Centre » peut-il contenir une VM déployée en « West Europe » ?",
+  choices:["Oui — la localisation du groupe ne stocke que ses métadonnées, les ressources peuvent être dans d'autres régions","Non, jamais","Oui, mais seulement des ressources de stockage","Uniquement avec une autorisation Microsoft"],
+  answer:0,
+  explain:"Piège classique : la région du resource group n'impose RIEN aux ressources qu'il contient." },
+{ id:"ar-s-subs", level:3, d:"arch", dom:"Organisation", type:"qcm",
+  q:"Une entreprise veut des factures séparées pour le département Marketing et le département IT. Quelle structure ?",
+  choices:["Un abonnement par département","Un groupe de ressources par département","Un tag par département","Deux comptes Microsoft"],
+  answer:0,
+  explain:"La frontière de FACTURATION est l'abonnement. Les tags permettent de ventiler les coûts au sein d'un abonnement, mais pour des factures séparées → abonnements distincts." },
+/* --- Compute --- */
+{ id:"ar-vm", level:1, d:"arch", dom:"Compute", type:"input",
+  q:"Service Azure qui fournit un serveur virtualisé dont TU contrôles le système d'exploitation (IaaS). Quel nom ?",
+  accept:["machine virtuelle","virtual machine","vm","machines virtuelles"],
+  explain:"La machine virtuelle : l'IaaS de base. Contrôle total de l'OS — et responsabilité totale des patchs et de la sécurité de l'OS." },
+{ id:"ar-vmss", level:2, d:"arch", dom:"Compute", type:"input",
+  q:"Service qui gère un GROUPE de VM identiques avec équilibrage de charge et mise à l'échelle automatique. Quel nom (anglais accepté) ?",
+  accept:["vm scale set","virtual machine scale sets","scale set","groupes de machines virtuelles identiques"],
+  explain:"Les VM Scale Sets : ajouter/retirer automatiquement des VM identiques selon la charge. La brique IaaS de l'élasticité." },
+{ id:"ar-availset", level:2, d:"arch", dom:"Compute", type:"qcm",
+  q:"À quoi sert un « availability set » pour des VM ?",
+  choices:["Répartir les VM sur des racks (fault domains) et des groupes de maintenance (update domains) différents, dans UN datacenter","Répliquer les VM entre régions","Sauvegarder les VM chaque nuit","Chiffrer les disques"],
+  answer:0,
+  explain:"L'availability set protège d'une panne de rack et des redémarrages de maintenance simultanés. Pour une panne de datacenter entier → zones de disponibilité." },
+{ id:"ar-appservice", level:1, d:"arch", dom:"Compute", type:"input",
+  q:"Service PaaS pour héberger des applications web et des API sans gérer de serveurs. Quel nom ?",
+  accept:["app service","azure app service"],
+  explain:"App Service : tu déploies ton code, Azure gère l'infrastructure, l'OS et la montée en charge." },
+{ id:"ar-aci", level:2, d:"arch", dom:"Compute", type:"input",
+  q:"Service qui exécute UN conteneur rapidement, sans orchestrateur ni VM à gérer, facturé à la seconde. Quel nom ?",
+  accept:["container instances","azure container instances","aci"],
+  explain:"Azure Container Instances : le moyen le plus simple de lancer un conteneur dans Azure." },
+{ id:"ar-aks", level:1, d:"arch", dom:"Compute", type:"input",
+  q:"Service Azure d'ORCHESTRATION de conteneurs basé sur Kubernetes. Quel sigle ?",
+  accept:["aks","azure kubernetes service"],
+  explain:"AKS = Azure Kubernetes Service : pour gérer des flottes de conteneurs (déploiement, scaling, réseau) — quand ACI ne suffit plus." },
+{ id:"ar-functions", level:1, d:"arch", dom:"Compute", type:"input",
+  q:"Service SERVERLESS qui exécute du code en réponse à des événements, facturé à l'exécution. Quel nom ?",
+  accept:["functions","azure functions"],
+  explain:"Azure Functions : du code déclenché par un événement (requête HTTP, minuteur, message), sans aucun serveur à gérer." },
+{ id:"ar-avd", level:2, d:"arch", dom:"Compute", type:"qcm",
+  q:"Qu'est-ce qu'Azure Virtual Desktop ?",
+  choices:["Un service de bureaux et d'applications Windows accessibles à distance depuis le cloud, sur n'importe quel appareil","Un logiciel de visioconférence","Une VM Linux","Un émulateur de téléphone"],
+  answer:0,
+  explain:"AVD fournit des postes de travail Windows virtualisés — le télétravail sécurisé sans distribuer de machines physiques." },
+{ id:"ar-container-vs-vm", level:2, d:"arch", dom:"Compute", type:"qcm",
+  q:"Quel est l'avantage principal d'un conteneur par rapport à une machine virtuelle ?",
+  choices:["Il est plus léger et démarre en secondes, car il partage l'OS de l'hôte au lieu d'en embarquer un complet","Il est plus sécurisé dans tous les cas","Il ne tombe jamais en panne","Il est toujours gratuit"],
+  answer:0,
+  explain:"VM = OS complet par instance (lourdes, minutes). Conteneur = partage du noyau de l'hôte (légers, secondes, densité supérieure)." },
+{ id:"ar-s-event", level:3, d:"arch", dom:"Compute", type:"qcm",
+  q:"Tu dois exécuter un petit traitement à chaque fois qu'un fichier est déposé, sans payer quand il ne se passe rien. Quel service ?",
+  choices:["Azure Functions","Une machine virtuelle allumée en permanence","AKS","Azure Virtual Desktop"],
+  answer:0,
+  explain:"Événementiel + facturation à l'exécution + zéro serveur = Functions. Une VM permanente serait payée à 99 % pour attendre." },
+{ id:"ar-s-aks", level:3, d:"arch", dom:"Compute", type:"qcm",
+  q:"Ton entreprise déploie 40 microservices conteneurisés qu'il faut orchestrer, mettre à l'échelle et mettre à jour. Quel service ?",
+  choices:["Azure Kubernetes Service (AKS)","Azure Container Instances","App Service","Une grosse VM"],
+  answer:0,
+  explain:"Beaucoup de conteneurs + orchestration = AKS. ACI est parfait pour UN conteneur ponctuel, pas pour une flotte." },
+/* --- Réseau --- */
+{ id:"ar-vnet", level:1, d:"arch", dom:"Réseau", type:"input",
+  q:"Réseau privé dans Azure où tes ressources communiquent de façon isolée. Quel nom (sigle accepté) ?",
+  accept:["reseau virtuel","virtual network","vnet"],
+  explain:"Le réseau virtuel (VNet) : l'équivalent cloud de ton réseau d'entreprise, découpé en sous-réseaux (subnets)." },
+{ id:"ar-peering", level:2, d:"arch", dom:"Réseau", type:"input",
+  q:"Mécanisme qui relie DEUX réseaux virtuels pour qu'ils communiquent via le réseau privé de Microsoft (jamais par Internet). Quel terme anglais ?",
+  accept:["peering","vnet peering","appairage"],
+  explain:"Le peering fonctionne aussi entre régions différentes (global peering). Le trafic reste sur le backbone Microsoft." },
+{ id:"ar-vpngw", level:2, d:"arch", dom:"Réseau", type:"qcm",
+  q:"Qu'est-ce qu'une passerelle VPN (VPN Gateway) ?",
+  choices:["Un tunnel CHIFFRÉ entre ton réseau sur site et un VNet Azure, qui transite par Internet public","Une connexion physique privée vers Azure","Un pare-feu","Un équilibreur de charge"],
+  answer:0,
+  explain:"Le VPN chiffre le trafic mais passe par Internet (latence variable). Pour une liaison privée garantie sans Internet → ExpressRoute." },
+{ id:"ar-er", level:1, d:"arch", dom:"Réseau", type:"input",
+  q:"Connexion PRIVÉE et dédiée entre ton datacenter et Azure, qui ne transite JAMAIS par Internet public. Quel nom ?",
+  accept:["expressroute","express route"],
+  explain:"ExpressRoute : bande passante garantie, latence stable, sécurité maximale — et coût bien supérieur au VPN." },
+{ id:"ar-er-fact", level:2, d:"arch", dom:"Réseau", type:"qcm",
+  q:"Quelle est LA différence fondamentale entre un VPN site-à-site et ExpressRoute ?",
+  choices:["Le VPN passe par Internet public (chiffré) ; ExpressRoute est une liaison privée dédiée qui n'emprunte pas Internet","ExpressRoute est gratuit","Le VPN est plus rapide","ExpressRoute ne fonctionne qu'en France"],
+  answer:0,
+  explain:"Question d'examen très fréquente. Les mots-clés « sans transiter par Internet public » = ExpressRoute." },
+{ id:"ar-dns", level:2, d:"arch", dom:"Réseau", type:"qcm",
+  q:"À quoi sert Azure DNS ?",
+  choices:["Héberger tes zones DNS et résoudre tes noms de domaine avec l'infrastructure mondiale d'Azure","Attribuer des adresses IP aux VM","Bloquer les sites malveillants","Acheter des noms de domaine uniquement"],
+  answer:0,
+  explain:"Azure DNS héberge et sert tes enregistrements DNS. (App Service Domains permet l'achat, mais l'hébergement de zones est le rôle d'Azure DNS.)" },
+{ id:"ar-nsg", level:1, d:"arch", dom:"Réseau", type:"input",
+  q:"Filtre de trafic réseau par règles (autoriser/refuser, port, source, destination) appliqué à un sous-réseau ou une carte réseau. Quel sigle ?",
+  accept:["nsg","network security group","groupe de securite reseau"],
+  explain:"Le NSG : le pare-feu de base, gratuit, par règles à 5 éléments. Ex : bloquer le port 3389 (RDP) depuis Internet." },
+{ id:"ar-fw", level:2, d:"arch", dom:"Réseau", type:"qcm",
+  q:"Quelle est la différence entre un NSG et Azure Firewall ?",
+  choices:["Le NSG filtre par règles simples au niveau subnet/carte réseau ; Azure Firewall est un service managé CENTRALISÉ, intelligent et payant, pour tout le réseau","Ce sont deux noms du même service","Le NSG est payant, le Firewall gratuit","Azure Firewall ne filtre que le trafic entrant"],
+  answer:0,
+  explain:"NSG = filtre local basique et gratuit. Azure Firewall = pare-feu d'entreprise centralisé (filtrage par nom de domaine, inspection, journalisation)." },
+{ id:"ar-ddos", level:2, d:"arch", dom:"Réseau", type:"qcm",
+  q:"Contre quel type d'attaque Azure DDoS Protection protège-t-il ?",
+  choices:["Les attaques par déni de service distribué, qui saturent un service de trafic pour le rendre indisponible","Le vol de mots de passe","Les virus dans les VM","Le phishing"],
+  answer:0,
+  explain:"DDoS = submerger de requêtes. Une protection de base est incluse gratuitement pour tout Azure ; le tier payant ajoute des protections adaptées à TES applications." },
+{ id:"ar-endpoint", level:2, d:"arch", dom:"Réseau", type:"qcm",
+  q:"Qu'apporte un « private endpoint » à un service PaaS comme un compte de stockage ?",
+  choices:["Une adresse IP PRIVÉE dans ton VNet : le service n'est plus accessible que par ton réseau, plus du tout par Internet","Une adresse IP publique supplémentaire","Un cache plus rapide","Un certificat TLS gratuit"],
+  answer:0,
+  explain:"Le private endpoint sort le service PaaS d'Internet et le fait apparaître DANS ton réseau privé — exigence de sécurité courante en entreprise." },
+{ id:"ar-s-vpn-er", level:3, d:"arch", dom:"Réseau", type:"qcm",
+  q:"Un hôpital exige que les données médicales échangées avec Azure ne transitent JAMAIS par Internet public. Quelle connexion ?",
+  choices:["ExpressRoute","Un VPN site-à-site","Le peering de VNets","Une IP publique dédiée"],
+  answer:0,
+  explain:"« Jamais par Internet public » = ExpressRoute, mot pour mot. Le VPN chiffre mais emprunte Internet." },
+{ id:"ar-s-p2s", level:3, d:"arch", dom:"Réseau", type:"qcm",
+  q:"Un développeur en télétravail doit se connecter de façon sécurisée au VNet de l'entreprise depuis son portable. Quelle solution ?",
+  choices:["Un VPN point-à-site (P2S)","ExpressRoute chez lui","Un VPN site-à-site","Un peering"],
+  answer:0,
+  explain:"Point-à-site = UN appareil vers le VNet. Site-à-site = un RÉSEAU entier (bureau) vers le VNet. ExpressRoute chez un particulier n'a pas de sens." },
+{ id:"ar-s-nsg", level:3, d:"arch", dom:"Réseau", type:"qcm",
+  q:"Tu dois bloquer l'accès RDP (port 3389) à tes VM depuis Internet, au moindre coût. Quelle solution ?",
+  choices:["Une règle de refus dans le NSG du sous-réseau","Acheter Azure Firewall","Supprimer les IP publiques et ne plus travailler","Un private endpoint"],
+  answer:0,
+  explain:"Un simple NSG (gratuit) suffit pour bloquer un port. Azure Firewall serait surdimensionné pour ce seul besoin." },
+/* --- Stockage --- */
+{ id:"ar-storacct", level:1, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Qu'est-ce qu'un compte de stockage Azure ?",
+  choices:["Le conteneur de base des services de stockage (blobs, fichiers, files, tables), avec un nom unique au monde","Un compte bancaire pour payer Azure","Un disque dur physique","Un abonnement"],
+  answer:0,
+  explain:"Le compte de stockage regroupe les services de données. Son nom doit être unique mondialement car il fait partie de l'URL d'accès." },
+{ id:"ar-blob", level:1, d:"arch", dom:"Stockage", type:"input",
+  q:"Service de stockage d'OBJETS pour données non structurées : images, vidéos, sauvegardes, documents. Quel nom ?",
+  accept:["blob","blob storage","stockage blob"],
+  explain:"Le stockage Blob (Binary Large Object) : des fichiers de toute taille accessibles par URL, avec des niveaux d'accès pour optimiser les coûts." },
+{ id:"ar-files", level:1, d:"arch", dom:"Stockage", type:"input",
+  q:"Service de PARTAGES de fichiers réseau (SMB) dans le cloud, montables comme un lecteur réseau classique. Quel nom ?",
+  accept:["azure files","files","fichiers azure"],
+  explain:"Azure Files remplace le serveur de fichiers d'entreprise : le lecteur Z: de tes utilisateurs, mais hébergé dans Azure." },
+{ id:"ar-disks", level:2, d:"arch", dom:"Stockage", type:"qcm",
+  q:"À quoi servent les disques managés (managed disks) ?",
+  choices:["Ce sont les disques virtuels des machines virtuelles, gérés par Azure (réplication et fiabilité incluses)","À stocker des sites web statiques","À échanger des messages","À héberger des bases NoSQL"],
+  answer:0,
+  explain:"Chaque VM a un disque OS et éventuellement des disques de données — ce sont des managed disks." },
+{ id:"ar-queues-tables", level:2, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Quelle est la différence entre le stockage File d'attente (Queue) et Table ?",
+  choices:["Queue = messages échangés entre composants d'application ; Table = données NoSQL clé/valeur semi-structurées","Queue = fichiers, Table = images","Ce sont deux noms du même service","Queue = SQL, Table = fichiers"],
+  answer:0,
+  explain:"Queue Storage découple les composants (messages) ; Table Storage stocke des données NoSQL simples et massives à faible coût." },
+{ id:"ar-tiers", level:2, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Quels sont les niveaux d'accès (tiers) du stockage Blob, du plus cher en stockage au moins cher ?",
+  choices:["Hot → Cool → Cold → Archive (le stockage coûte de moins en moins cher, l'accès de plus en plus)","Archive → Cool → Hot","Premium → Standard → Basic","Gold → Silver → Bronze"],
+  answer:0,
+  explain:"Hot = accès fréquent. Cool/Cold = accès rare (min 30/90 jours). Archive = quasi jamais (min 180 jours), stockage très bon marché mais données HORS LIGNE." },
+{ id:"ar-archive", level:2, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Quelle est la particularité CRITIQUE du tier Archive ?",
+  choices:["Les données sont HORS LIGNE : il faut les « réhydrater » (jusqu'à plusieurs heures) avant de pouvoir les lire","Il est plus rapide que Hot","Il est réservé aux vidéos","Les données y sont publiques"],
+  answer:0,
+  explain:"Archive = le moins cher au Go, mais lecture impossible sans réhydratation préalable. À réserver aux archives légales et sauvegardes anciennes." },
+{ id:"ar-lrs", level:2, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Que garantit la redondance LRS (Locally Redundant Storage) ?",
+  choices:["3 copies de tes données dans UN même datacenter","3 copies réparties sur 3 zones","6 copies sur 2 régions","1 copie avec sauvegarde quotidienne"],
+  answer:0,
+  explain:"LRS : la moins chère, protège d'une panne de disque/rack — mais pas d'une panne du datacenter." },
+{ id:"ar-zrs", level:2, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Que garantit la redondance ZRS (Zone-Redundant Storage) ?",
+  choices:["3 copies réparties sur 3 zones de disponibilité de la région","3 copies dans un seul datacenter","Une copie dans une autre région","Un chiffrement renforcé"],
+  answer:0,
+  explain:"ZRS survit à la perte d'un datacenter entier (une zone). Pour survivre à la perte de la RÉGION, il faut GRS/GZRS." },
+{ id:"ar-grs", level:2, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Qu'ajoute la redondance GRS par rapport à LRS ?",
+  choices:["3 copies supplémentaires dans la RÉGION APPAIRÉE (6 copies au total) — protection contre une panne régionale","Rien, c'est identique","Un accès plus rapide","Des copies sur 3 zones de la même région"],
+  answer:0,
+  explain:"GRS = LRS local + LRS répliqué dans la région partenaire. La variante RA-GRS permet en plus la LECTURE sur le secondaire." },
+{ id:"ar-s-redundancy", level:3, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Des sauvegardes critiques doivent survivre à une catastrophe RÉGIONALE, au meilleur coût. Quelle redondance ?",
+  choices:["GRS (géo-redondant)","LRS","ZRS","Un deuxième disque dans la même VM"],
+  answer:0,
+  explain:"Survivre à la perte d'une région = réplication vers la région appairée = GRS (ou GZRS si l'on veut aussi la résilience zonale en local)." },
+{ id:"ar-azcopy", level:2, d:"arch", dom:"Stockage", type:"input",
+  q:"Outil en LIGNE DE COMMANDE optimisé pour copier des fichiers vers/depuis le stockage Azure. Quel nom ?",
+  accept:["azcopy","az copy"],
+  explain:"AzCopy : transferts massifs scriptables. Son pendant graphique est Azure Storage Explorer." },
+{ id:"ar-storexplorer", level:2, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Qu'est-ce qu'Azure Storage Explorer ?",
+  choices:["Une application GRAPHIQUE (Windows/Mac/Linux) pour parcourir et gérer le contenu de tes comptes de stockage","Un service de sauvegarde","Une commande CLI","Un explorateur de coûts"],
+  answer:0,
+  explain:"L'interface visuelle du stockage : glisser-déposer des blobs, parcourir tables et files. AzCopy est son équivalent en ligne de commande." },
+{ id:"ar-filesync", level:2, d:"arch", dom:"Stockage", type:"qcm",
+  q:"Que permet Azure File Sync ?",
+  choices:["Synchroniser un serveur de fichiers Windows LOCAL avec Azure Files — le cloud centralise, le serveur local sert de cache rapide","Synchroniser deux téléphones","Copier des VM entre régions","Partager des fichiers par e-mail"],
+  answer:0,
+  explain:"File Sync = le meilleur des deux mondes : accès local rapide dans chaque agence + source de vérité centralisée dans Azure." },
+{ id:"ar-migrate", level:2, d:"arch", dom:"Migration", type:"input",
+  q:"Service Azure qui ÉVALUE et orchestre la migration de tes serveurs, bases et applications sur site vers Azure. Quel nom ?",
+  accept:["azure migrate","migrate"],
+  explain:"Azure Migrate : découverte du parc, estimation des coûts, compatibilité, puis pilotage de la migration. Le point de départ de tout projet de migration." },
+{ id:"ar-databox", level:2, d:"arch", dom:"Migration", type:"input",
+  q:"Appareil PHYSIQUE que Microsoft t'expédie pour transférer des dizaines de téraoctets vers Azure quand le réseau est trop lent. Quel nom ?",
+  accept:["data box","azure data box","databox"],
+  explain:"Data Box : on copie les données localement sur l'appareil, on le renvoie, Microsoft les charge dans ton compte de stockage." },
+{ id:"ar-s-databox", level:3, d:"arch", dom:"Migration", type:"qcm",
+  q:"Tu dois envoyer 120 To de données vers Azure, mais ta liaison Internet est limitée à 50 Mbit/s (≈ 6 mois de transfert). Quelle solution ?",
+  choices:["Azure Data Box : le transfert physique sera plus rapide et plus fiable","Attendre 6 mois","AzCopy en tâche de fond","Compresser les fichiers"],
+  answer:0,
+  explain:"Ordre de grandeur à retenir : au-delà de quelques dizaines de To sur un lien lent, le camion bat la fibre. C'est le cas d'usage de Data Box." },
+/* --- Identité & sécurité --- */
+{ id:"ar-entra", level:1, d:"arch", dom:"Identité", type:"input",
+  q:"Service d'identité et d'annuaire cloud de Microsoft (anciennement Azure Active Directory). Quel nom actuel ?",
+  accept:["microsoft entra id","entra id","entra"],
+  explain:"Microsoft Entra ID : les comptes, l'authentification et les accès de tout l'écosystème Microsoft (Azure, M365)." },
+{ id:"ar-authn", level:2, d:"arch", dom:"Identité", type:"qcm",
+  q:"Quelle est la différence entre AUTHENTIFICATION et AUTORISATION ?",
+  choices:["Authentification = prouver QUI tu es (mot de passe, MFA) ; autorisation = déterminer CE QUE tu as le droit de faire","Ce sont deux synonymes","L'autorisation vient toujours avant l'authentification","L'authentification concerne les applications uniquement"],
+  answer:0,
+  explain:"AuthN = identité (qui ?). AuthZ = permissions (quoi ?). Dans Azure : Entra ID authentifie, RBAC autorise." },
+{ id:"ar-mfa", level:1, d:"arch", dom:"Identité", type:"input",
+  q:"Mécanisme qui exige AU MOINS DEUX preuves d'identité (mot de passe + code sur téléphone, par exemple). Quel sigle ?",
+  accept:["mfa","multifactor authentication","authentification multifacteur","multi factor authentication"],
+  explain:"La MFA bloque l'immense majorité des compromissions de comptes : voler un mot de passe ne suffit plus." },
+{ id:"ar-sso", level:1, d:"arch", dom:"Identité", type:"input",
+  q:"Se connecter UNE seule fois et accéder à toutes ses applications sans retaper de mot de passe. Quel sigle ?",
+  accept:["sso","single sign on","authentification unique"],
+  explain:"Le SSO : moins de mots de passe = moins de risques et moins de friction. Fourni par Entra ID pour des milliers d'applications." },
+{ id:"ar-passwordless", level:2, d:"arch", dom:"Identité", type:"qcm",
+  q:"Quelles méthodes d'authentification SANS mot de passe Azure propose-t-il ?",
+  choices:["Windows Hello, l'application Microsoft Authenticator et les clés de sécurité FIDO2","Le SMS uniquement","Une question secrète","Un mot de passe plus long"],
+  answer:0,
+  explain:"Le « passwordless » remplace le mot de passe par la biométrie ou une clé physique — plus sûr ET plus pratique." },
+{ id:"ar-b2b", level:2, d:"arch", dom:"Identité", type:"qcm",
+  q:"Comment inviter un partenaire EXTERNE à collaborer sur tes ressources sans lui créer un compte interne ?",
+  choices:["Avec Microsoft Entra External ID (invités B2B) : il utilise sa propre identité, tu contrôles ses accès","Lui prêter le compte d'un collègue","Créer un compte admin partagé","C'est impossible"],
+  answer:0,
+  explain:"Les identités externes (B2B) : l'invité garde SON compte, ton organisation garde le contrôle et la traçabilité." },
+{ id:"ar-condaccess", level:2, d:"arch", dom:"Identité", type:"input",
+  q:"Fonctionnalité d'Entra ID qui applique des règles « SI… ALORS » sur les connexions (si hors du réseau → exiger MFA ; si appareil inconnu → bloquer). Quel nom (2 mots) ?",
+  accept:["acces conditionnel","conditional access"],
+  explain:"L'accès conditionnel évalue des signaux (lieu, appareil, risque) et impose la réponse adaptée. Le cœur du contrôle d'accès moderne." },
+{ id:"ar-s-condaccess", level:3, d:"arch", dom:"Identité", type:"qcm",
+  q:"L'entreprise veut exiger la MFA UNIQUEMENT quand un employé se connecte depuis l'extérieur du réseau. Quelle fonctionnalité ?",
+  choices:["L'accès conditionnel (Conditional Access)","Activer la MFA pour tout le monde en permanence","Un NSG","Un verrou de ressource"],
+  answer:0,
+  explain:"« Selon le contexte de connexion » = accès conditionnel : la MFA devient contextuelle au lieu d'être systématique." },
+{ id:"ar-rbac", level:1, d:"arch", dom:"Identité", type:"input",
+  q:"Système Azure qui attribue des RÔLES (Lecteur, Contributeur, Propriétaire…) à des utilisateurs sur un périmètre donné. Quel sigle ?",
+  accept:["rbac","role based access control","controle d acces en fonction du role"],
+  explain:"Le RBAC : QUI (identité) peut faire QUOI (rôle) sur QUEL périmètre (scope). Toujours donner le minimum nécessaire." },
+{ id:"ar-rbac-scope", level:2, d:"arch", dom:"Identité", type:"qcm",
+  q:"Un rôle RBAC attribué sur un groupe de ressources s'applique-t-il aux ressources qu'il contient ?",
+  choices:["Oui — les attributions héritent vers le bas : management group → abonnement → groupe → ressource","Non, il faut l'attribuer ressource par ressource","Seulement pour le rôle Propriétaire","Seulement si on l'active"],
+  answer:0,
+  explain:"L'héritage descendant du RBAC : attribuer au bon NIVEAU évite des dizaines d'attributions individuelles." },
+{ id:"ar-zerotrust", level:2, d:"arch", dom:"Sécurité", type:"qcm",
+  q:"Quel est le principe central du modèle Zero Trust ?",
+  choices:["« Ne jamais faire confiance, toujours vérifier » : chaque accès est authentifié et contrôlé, même depuis le réseau interne","Faire confiance au réseau interne de l'entreprise","Bloquer tout Internet","Utiliser uniquement des mots de passe forts"],
+  answer:0,
+  explain:"Zero Trust : vérifier explicitement, accorder le moindre privilège, supposer la compromission. Le périmètre réseau n'est plus une garantie." },
+{ id:"ar-did", level:2, d:"arch", dom:"Sécurité", type:"input",
+  q:"Stratégie de sécurité en COUCHES successives (physique, identité, périmètre, réseau, calcul, application, données) pour qu'aucune défense seule ne soit critique. Quel nom ?",
+  accept:["defense en profondeur","defense in depth"],
+  explain:"La défense en profondeur : si une couche cède, les suivantes tiennent. L'attaquant doit toutes les franchir." },
+{ id:"ar-defender", level:2, d:"arch", dom:"Sécurité", type:"input",
+  q:"Service Azure qui évalue en continu ta POSTURE de sécurité (score, recommandations) et protège tes charges de travail. Quel nom ?",
+  accept:["defender for cloud","microsoft defender for cloud","defender"],
+  explain:"Microsoft Defender for Cloud : le « secure score », des recommandations concrètes et la protection des workloads (serveurs, stockage, conteneurs)." },
+{ id:"ar-s-rbac", level:3, d:"arch", dom:"Identité", type:"qcm",
+  q:"Un auditeur externe doit pouvoir CONSULTER toutes les ressources d'un abonnement sans RIEN modifier. Quel rôle RBAC ?",
+  choices:["Lecteur (Reader) sur l'abonnement","Contributeur (Contributor)","Propriétaire (Owner)","Administrateur général"],
+  answer:0,
+  explain:"Lecture seule = Reader. Contributor peut modifier, Owner peut en plus gérer les accès. Toujours le moindre privilège." },
+{ id:"ar-s-rbac2", level:3, d:"arch", dom:"Identité", type:"qcm",
+  q:"Un prestataire doit créer et gérer des VM dans UN groupe de ressources, sans pouvoir donner d'accès à d'autres personnes. Quel rôle, quel périmètre ?",
+  choices:["Contributeur sur le groupe de ressources concerné","Propriétaire sur l'abonnement","Lecteur sur le groupe","Contributeur sur tout l'abonnement"],
+  answer:0,
+  explain:"Contributor = gérer les ressources SANS gérer les accès (ça, c'est Owner). Et on limite le périmètre au seul groupe nécessaire." },
+{ id:"ar-order-rbac", level:2, d:"arch", dom:"Identité", type:"order",
+  q:"Remets dans l'ordre les étapes d'une attribution de rôle RBAC.",
+  steps:["Identifier le besoin réel (moindre privilège)","Choisir le rôle adapté (Lecteur, Contributeur…)","Choisir le principal (utilisateur, groupe, identité)","Choisir le périmètre (abonnement, groupe, ressource)","Vérifier l'accès obtenu"],
+  explain:"Besoin → rôle → qui → où → vérifier. Attribuer à des GROUPES plutôt qu'à des individus reste la bonne pratique." },
+{ id:"ar-order-migrate", level:3, d:"arch", dom:"Migration", type:"order",
+  q:"Remets dans l'ordre une migration de serveurs vers Azure.",
+  steps:["Découvrir et évaluer le parc avec Azure Migrate","Estimer les coûts cibles (calculatrice TCO/prix)","Répliquer et tester les serveurs dans Azure","Basculer la production","Optimiser ensuite (tailles, réservations, Advisor)"],
+  explain:"On évalue AVANT de migrer, on teste AVANT de basculer, et on optimise APRÈS — la migration n'est pas la fin du projet." },
+/* ================= GESTION & GOUVERNANCE ================= */
+/* --- Coûts --- */
+{ id:"go-costfactors", level:2, d:"gov", dom:"Coûts", type:"qcm",
+  q:"Quels facteurs influencent le coût d'une ressource Azure ?",
+  choices:["Le type de ressource, sa taille, sa région, sa durée d'utilisation et le trafic réseau SORTANT","Uniquement la taille","Uniquement la durée","Le nombre d'utilisateurs de l'entreprise"],
+  answer:0,
+  explain:"Les 5 facteurs classiques. Le même service peut coûter plus cher dans une région que dans une autre — d'où l'intérêt de comparer avant de déployer." },
+{ id:"go-egress", level:2, d:"gov", dom:"Coûts", type:"qcm",
+  q:"Concernant le trafic réseau, que facture Azure ?",
+  choices:["Le trafic SORTANT d'Azure (egress) — le trafic entrant est gratuit","Le trafic entrant uniquement","Tout le trafic dans les deux sens","Rien, le réseau est toujours gratuit"],
+  answer:0,
+  explain:"Entrer dans Azure est gratuit, en sortir se paie. Rapatrier de gros volumes vers ton datacenter a un coût — à anticiper dans les scénarios hybrides." },
+{ id:"go-pricingcalc", level:1, d:"gov", dom:"Coûts", type:"input",
+  q:"Outil en ligne gratuit qui ESTIME le coût mensuel futur des ressources Azure que tu prévois de déployer. Quel nom (2-3 mots) ?",
+  accept:["calculatrice de prix","pricing calculator","calculateur de prix"],
+  explain:"La calculatrice de prix : tu composes ton architecture, elle chiffre. À ne pas confondre avec la calculatrice TCO (comparaison avec l'existant)." },
+{ id:"go-tco", level:1, d:"gov", dom:"Coûts", type:"input",
+  q:"Outil qui COMPARE le coût de ton datacenter actuel avec le coût équivalent dans Azure (matériel, électricité, personnel inclus). Quel sigle ?",
+  accept:["tco","calculatrice tco","total cost of ownership","tco calculator"],
+  explain:"La calculatrice TCO (Total Cost of Ownership) : l'outil pour convaincre une direction en chiffrant les économies d'une migration." },
+{ id:"go-s-calc", level:3, d:"gov", dom:"Coûts", type:"qcm",
+  q:"Ta direction demande : « combien économiserait-on en migrant notre datacenter vers Azure ? ». Quel outil utilises-tu ?",
+  choices:["La calculatrice TCO","La calculatrice de prix","Azure Advisor","Cost Management"],
+  answer:0,
+  explain:"Comparaison existant vs Azure = TCO. La calculatrice de prix estime un déploiement futur ; Cost Management analyse les dépenses déjà engagées. Trio piège favori de l'examen." },
+{ id:"go-costmgmt", level:1, d:"gov", dom:"Coûts", type:"input",
+  q:"Service Azure qui ANALYSE tes dépenses réelles, crée des budgets et envoie des alertes de dépassement. Quel nom ?",
+  accept:["cost management","gestion des couts","microsoft cost management"],
+  explain:"Cost Management : la vigie des dépenses EN COURS. Calculatrice de prix = avant ; Cost Management = pendant." },
+{ id:"go-budget", level:2, d:"gov", dom:"Coûts", type:"qcm",
+  q:"Que se passe-t-il quand un budget Cost Management est dépassé ?",
+  choices:["Une ALERTE est envoyée — mais les ressources continuent de tourner et de facturer (le budget ne bloque rien par défaut)","Toutes les ressources s'arrêtent immédiatement","L'abonnement est suspendu","Microsoft offre le dépassement"],
+  answer:0,
+  explain:"Piège d'examen : un budget alerte, il ne coupe pas. Pour agir automatiquement, il faut brancher des actions supplémentaires soi-même." },
+{ id:"go-tags", level:1, d:"gov", dom:"Coûts", type:"input",
+  q:"Étiquettes clé/valeur (ex : « departement = marketing ») posées sur les ressources pour les organiser et ventiler les coûts. Quel terme ?",
+  accept:["tags","tag","balises","etiquettes"],
+  explain:"Les tags : LE mécanisme de ventilation des coûts et d'organisation transverse (par projet, environnement, propriétaire…)." },
+{ id:"go-s-tags", level:3, d:"gov", dom:"Coûts", type:"qcm",
+  q:"La direction financière veut savoir combien coûte CHAQUE département dans un abonnement partagé. Quelle solution ?",
+  choices:["Taguer chaque ressource avec son département, puis filtrer dans Cost Management","Créer 50 abonnements","Regarder les factures PDF","Demander à chaque équipe"],
+  answer:0,
+  explain:"Tags + Cost Management = ventilation fine sans multiplier les abonnements. (Pour des factures séparées, là il faudrait des abonnements distincts.)" },
+{ id:"go-reservations", level:2, d:"gov", dom:"Coûts", type:"qcm",
+  q:"Comment réduire fortement le coût d'une VM qui tournera 24h/24 pendant des années ?",
+  choices:["Une réservation d'1 ou 3 ans (jusqu'à ~72 % de réduction par rapport au paiement à l'usage)","La passer en tier Archive","La redémarrer chaque nuit","Utiliser un budget"],
+  answer:0,
+  explain:"Les réservations récompensent l'engagement de durée. À combiner avec Azure Hybrid Benefit si tu as déjà des licences Windows/SQL Server." },
+{ id:"go-hybridbenefit", level:2, d:"gov", dom:"Coûts", type:"qcm",
+  q:"Qu'est-ce qu'Azure Hybrid Benefit ?",
+  choices:["Réutiliser ses licences Windows Server / SQL Server existantes pour réduire le prix des VM Azure","Un avantage pour le cloud hybride","Une remise sur ExpressRoute","La gratuité du support"],
+  answer:0,
+  explain:"Tes licences on-premises avec Software Assurance valent une réduction dans Azure — souvent combinée aux réservations pour un cumul maximal." },
+{ id:"go-spot", level:2, d:"gov", dom:"Coûts", type:"qcm",
+  q:"Qu'est-ce qu'une VM Spot ?",
+  choices:["Une VM à prix TRÈS réduit utilisant la capacité inutilisée d'Azure — mais qu'Azure peut interrompre à tout moment","Une VM plus rapide","Une VM gratuite pour les tests","Une VM réservée"],
+  answer:0,
+  explain:"Spot = jusqu'à ~90 % de réduction, contre le risque d'éviction. Parfait pour le batch interruptible, exclu pour la production critique." },
+{ id:"go-vm-stopped", level:2, d:"gov", dom:"Coûts", type:"qcm",
+  q:"Une VM arrêtée-désallouée (stopped deallocated) génère-t-elle encore des coûts ?",
+  choices:["Oui — le calcul n'est plus facturé, mais les DISQUES et l'éventuelle IP publique réservée continuent de l'être","Non, plus aucun coût","Oui, exactement le même prix","Seulement si elle redémarre"],
+  answer:0,
+  explain:"Piège récurrent : arrêter une VM ne coupe pas tout — le stockage persiste et se paie. Pour ne plus rien payer, il faut supprimer les ressources." },
+/* --- Gouvernance --- */
+{ id:"go-policy", level:1, d:"gov", dom:"Gouvernance", type:"input",
+  q:"Service qui impose des RÈGLES sur les ressources (régions autorisées, tailles interdites, tags obligatoires) et audite la conformité. Quel nom ?",
+  accept:["azure policy","policy"],
+  explain:"Azure Policy définit ce qui a le DROIT d'exister dans ton environnement. Complémentaire du RBAC (qui définit qui peut agir)." },
+{ id:"go-policy-effect", level:2, d:"gov", dom:"Gouvernance", type:"qcm",
+  q:"Que peut faire Azure Policy face à une ressource non conforme ?",
+  choices:["Refuser sa création, l'auditer (la signaler), ou parfois la corriger — et évaluer aussi les ressources DÉJÀ existantes","Uniquement envoyer un e-mail","Supprimer la ressource immédiatement","Bloquer l'utilisateur"],
+  answer:0,
+  explain:"Effets principaux : Deny (bloquer), Audit (signaler), Append/Modify (corriger). Les ressources existantes sont marquées non conformes, pas supprimées." },
+{ id:"go-s-policy", level:3, d:"gov", dom:"Gouvernance", type:"qcm",
+  q:"L'entreprise exige que TOUTES les ressources soient créées uniquement dans les régions françaises. Quel outil l'impose techniquement ?",
+  choices:["Azure Policy (règle sur les localisations autorisées)","RBAC","Un e-mail à toutes les équipes","Un verrou de ressource"],
+  answer:0,
+  explain:"Contraindre le CONTENU des déploiements = Policy. RBAC contrôle les personnes, pas les propriétés des ressources. Distinction très testée." },
+{ id:"go-initiative", level:2, d:"gov", dom:"Gouvernance", type:"qcm",
+  q:"Qu'est-ce qu'une « initiative » Azure Policy ?",
+  choices:["Un GROUPE de policies assignées ensemble pour couvrir un objectif global (ex : conformité RGPD)","Une policy en période d'essai","Un projet de gouvernance","Une exception à une policy"],
+  answer:0,
+  explain:"L'initiative regroupe des dizaines de règles en un seul assignement — la façon standard d'appliquer un standard de conformité complet." },
+{ id:"go-lock", level:1, d:"gov", dom:"Gouvernance", type:"input",
+  q:"Mécanisme qui empêche la SUPPRESSION ou la MODIFICATION accidentelle d'une ressource, même par son propriétaire. Quel nom (français ou anglais) ?",
+  accept:["verrou","resource lock","lock","verrous de ressources"],
+  explain:"Le verrou de ressource : il s'applique à TOUT le monde, y compris les propriétaires, tant qu'il n'est pas retiré explicitement." },
+{ id:"go-lock-types", level:2, d:"gov", dom:"Gouvernance", type:"qcm",
+  q:"Quels sont les deux types de verrous de ressources ?",
+  choices:["CannotDelete (suppression interdite, modification permise) et ReadOnly (aucune modification possible)","Soft et Hard","Public et Privé","Temporaire et Permanent"],
+  answer:0,
+  explain:"CannotDelete laisse travailler mais empêche la suppression ; ReadOnly fige tout. Le verrou prime sur les permissions RBAC." },
+{ id:"go-s-lock", level:3, d:"gov", dom:"Gouvernance", type:"qcm",
+  q:"Un stagiaire a supprimé par erreur une base de production le mois dernier. Comment empêcher que ça se reproduise, même pour un administrateur pressé ?",
+  choices:["Poser un verrou CannotDelete sur les ressources critiques","Retirer tous les accès à tout le monde","Faire une sauvegarde","Envoyer une note de service"],
+  answer:0,
+  explain:"Le verrou ajoute une friction volontaire : pour supprimer, il faut d'abord CONSCIEMMENT retirer le verrou. La sauvegarde répare, le verrou prévient." },
+{ id:"go-purview", level:2, d:"gov", dom:"Gouvernance", type:"qcm",
+  q:"À quoi sert Microsoft Purview ?",
+  choices:["Gouverner les DONNÉES : les découvrir, les cataloguer, les classifier (sensibles, personnelles…) dans tout l'environnement","Surveiller les performances des VM","Gérer les mots de passe","Héberger des sites web"],
+  answer:0,
+  explain:"Purview répond à « quelles données avons-nous, où, et lesquelles sont sensibles ? » — la base de la conformité data (RGPD…)." },
+{ id:"go-stp", level:2, d:"gov", dom:"Gouvernance", type:"qcm",
+  q:"Où trouver les certifications de conformité de Microsoft (ISO, RGPD, HDS…) et les rapports d'audit ?",
+  choices:["Sur le Service Trust Portal","Dans le portail Azure","Dans Cost Management","Sur le blog Azure"],
+  answer:0,
+  explain:"Le Service Trust Portal centralise les preuves de conformité de Microsoft — ce que ton RSSI ou un auditeur demandera." },
+/* --- Outils de gestion --- */
+{ id:"go-portal", level:1, d:"gov", dom:"Outils", type:"qcm",
+  q:"Qu'est-ce que le portail Azure ?",
+  choices:["L'interface WEB graphique pour créer et gérer toutes les ressources Azure","Un logiciel à installer","Une API REST","Un centre d'appels"],
+  answer:0,
+  explain:"portal.azure.com : l'interface visuelle. Idéale pour découvrir et administrer ponctuellement ; pour répéter et automatiser → CLI, PowerShell, templates." },
+{ id:"go-cloudshell", level:1, d:"gov", dom:"Outils", type:"input",
+  q:"Terminal accessible directement DANS LE NAVIGATEUR depuis le portail, avec Azure CLI et PowerShell préinstallés, sans rien installer. Quel nom ?",
+  accept:["cloud shell","azure cloud shell","cloudshell"],
+  explain:"Cloud Shell : un shell prêt à l'emploi (Bash ou PowerShell) depuis n'importe quel navigateur, déjà authentifié." },
+{ id:"go-cli", level:2, d:"gov", dom:"Outils", type:"qcm",
+  q:"Qu'est-ce que l'Azure CLI ?",
+  choices:["L'outil en ligne de commande multiplateforme (Windows/Mac/Linux) dont les commandes commencent par « az »","Un outil réservé à Windows","L'interface graphique","Un langage de programmation"],
+  answer:0,
+  explain:"az group create, az vm create… Multiplateforme et scriptable. Son alternative Microsoft : Azure PowerShell (cmdlets Verbe-Nom comme New-AzVM)." },
+{ id:"go-pwsh", level:2, d:"gov", dom:"Outils", type:"qcm",
+  q:"Qu'est-ce qu'Azure PowerShell ?",
+  choices:["Un module PowerShell avec des cmdlets Azure (New-AzVM, Get-AzResource…), multiplateforme","L'ancien nom du portail","Un OS de serveur","Un service de facturation"],
+  answer:0,
+  explain:"Même rôle que la CLI, syntaxe PowerShell. Le choix entre les deux est affaire d'habitude d'équipe — les deux sont dans Cloud Shell." },
+{ id:"go-mobile", level:2, d:"gov", dom:"Outils", type:"qcm",
+  q:"Peut-on gérer Azure depuis un téléphone ?",
+  choices:["Oui — l'application mobile Azure permet de surveiller, recevoir des alertes et exécuter des actions de base (redémarrer une VM, Cloud Shell)","Non, uniquement depuis un PC","Oui, mais en lecture seule","Uniquement pour payer les factures"],
+  answer:0,
+  explain:"L'app mobile Azure : dépanner depuis n'importe où — consulter l'état, redémarrer une ressource, lancer Cloud Shell." },
+{ id:"go-arc", level:2, d:"gov", dom:"Outils", type:"input",
+  q:"Service qui ÉTEND la gestion Azure (policies, RBAC, inventaire) à des serveurs situés HORS d'Azure — sur site ou chez d'autres clouds. Quel nom ?",
+  accept:["azure arc","arc"],
+  explain:"Azure Arc projette tes serveurs on-premises et multi-cloud DANS le portail Azure : une gouvernance unique pour tout le parc." },
+{ id:"go-s-arc", level:3, d:"gov", dom:"Outils", type:"qcm",
+  q:"Une entreprise a 200 serveurs dans son datacenter et 50 VM chez AWS. Elle veut leur appliquer les MÊMES policies et la même gestion que ses ressources Azure. Quel service ?",
+  choices:["Azure Arc","Azure Migrate","ExpressRoute","Azure Virtual Desktop"],
+  answer:0,
+  explain:"Gérer SANS migrer = Arc. (Migrate sert à déplacer vers Azure ; ExpressRoute est une connexion réseau.)" },
+{ id:"go-arm", level:2, d:"gov", dom:"Outils", type:"qcm",
+  q:"Qu'est-ce qu'Azure Resource Manager (ARM) ?",
+  choices:["La couche de déploiement et de gestion d'Azure : TOUTES les requêtes (portail, CLI, PowerShell) passent par lui","Un gestionnaire de mots de passe","Le service de facturation","Un type de VM"],
+  answer:0,
+  explain:"ARM est le chef d'orchestre unique : quel que soit l'outil utilisé, c'est lui qui reçoit, vérifie (RBAC, Policy, locks) et exécute." },
+{ id:"go-armtemplate", level:2, d:"gov", dom:"Outils", type:"qcm",
+  q:"Que sont les templates ARM et Bicep ?",
+  choices:["Des fichiers DÉCLARATIFS (Infrastructure as Code) qui décrivent les ressources à déployer, de façon répétable et versionnable","Des modèles de facturation","Des thèmes pour le portail","Des sauvegardes de VM"],
+  answer:0,
+  explain:"L'IaC : décrire l'état voulu dans un fichier plutôt que cliquer. Bicep est le langage moderne qui se compile en template ARM JSON." },
+{ id:"go-s-template", level:3, d:"gov", dom:"Outils", type:"qcm",
+  q:"Ton équipe doit déployer 30 fois le MÊME environnement (VM + réseau + stockage), à l'identique et sans erreur humaine. Quelle approche ?",
+  choices:["Un template ARM/Bicep déployé 30 fois (Infrastructure as Code)","30 sessions de clics dans le portail","Un e-mail avec la procédure","Faire des captures d'écran de la config"],
+  answer:0,
+  explain:"Répétable + identique + auditable = IaC. Le portail est parfait pour UNE fois, désastreux pour trente." },
+/* --- Surveillance --- */
+{ id:"go-advisor", level:1, d:"gov", dom:"Surveillance", type:"input",
+  q:"Service GRATUIT qui analyse tes ressources et te donne des RECOMMANDATIONS personnalisées (coûts, sécurité, fiabilité, performance). Quel nom ?",
+  accept:["advisor","azure advisor"],
+  explain:"Azure Advisor : ton consultant intégré. Ses 5 catégories : fiabilité, sécurité, performances, coûts, excellence opérationnelle." },
+{ id:"go-advisor-cat", level:2, d:"gov", dom:"Surveillance", type:"qcm",
+  q:"Quelles sont les 5 catégories de recommandations d'Azure Advisor ?",
+  choices:["Fiabilité, Sécurité, Performances, Coûts, Excellence opérationnelle","CPU, RAM, Disque, Réseau, Prix","Bronze, Argent, Or, Platine, Diamant","Compute, Storage, Network, Identity, Web"],
+  answer:0,
+  explain:"Les 5 piliers d'Advisor — alignés sur le Well-Architected Framework. « VM sous-utilisée à redimensionner » = catégorie Coûts." },
+{ id:"go-s-advisor", level:3, d:"gov", dom:"Surveillance", type:"qcm",
+  q:"Tu veux une liste de VM SOUS-UTILISÉES à redimensionner pour économiser, sans rien installer ni configurer. Quel service ?",
+  choices:["Azure Advisor (recommandations de coûts)","La calculatrice TCO","Azure Policy","Service Health"],
+  answer:0,
+  explain:"Advisor observe l'usage réel et propose des économies concrètes — gratuitement et sans configuration." },
+{ id:"go-servicehealth", level:1, d:"gov", dom:"Surveillance", type:"input",
+  q:"Service qui t'informe des INCIDENTS de la plateforme Azure et des MAINTENANCES planifiées qui concernent TES régions et services. Quel nom (2 mots) ?",
+  accept:["service health","azure service health"],
+  explain:"Service Health : « est-ce qu'AZURE a un problème ? ». Personnalisé selon tes abonnements, avec alertes configurables." },
+{ id:"go-resourcehealth", level:2, d:"gov", dom:"Surveillance", type:"qcm",
+  q:"Quelle est la différence entre Service Health et Resource Health ?",
+  choices:["Service Health = l'état de la PLATEFORME Azure (incidents, maintenances) ; Resource Health = l'état de TES ressources individuelles","Ce sont deux noms du même service","Resource Health est payant","Service Health surveille tes VM"],
+  answer:0,
+  explain:"« Azure va bien ? » → Service Health. « MA VM va bien ? » → Resource Health. La question d'examen joue sur cette nuance." },
+{ id:"go-s-maintenance", level:3, d:"gov", dom:"Surveillance", type:"qcm",
+  q:"Tu veux être prévenu par e-mail AVANT toute maintenance planifiée qui touchera tes services Azure. Que configures-tu ?",
+  choices:["Une alerte Service Health","Un budget Cost Management","Une policy","Un verrou ReadOnly"],
+  answer:0,
+  explain:"Les alertes Service Health notifient incidents, maintenances planifiées et avis de santé — par e-mail, SMS ou webhook." },
+{ id:"go-monitor", level:1, d:"gov", dom:"Surveillance", type:"input",
+  q:"Plateforme centrale qui collecte MÉTRIQUES et JOURNAUX de toutes tes ressources, avec tableaux de bord et alertes. Quel nom ?",
+  accept:["azure monitor","monitor"],
+  explain:"Azure Monitor : le socle de l'observabilité. Log Analytics (requêtes KQL) et Application Insights (performance applicative) en font partie." },
+{ id:"go-loganalytics", level:2, d:"gov", dom:"Surveillance", type:"qcm",
+  q:"À quoi sert un espace de travail Log Analytics ?",
+  choices:["Stocker et INTERROGER les journaux collectés par Azure Monitor (avec le langage de requête KQL)","Héberger des sites web","Stocker des sauvegardes","Analyser les coûts"],
+  answer:0,
+  explain:"Log Analytics = la base de données des logs + son langage de requête. C'est là qu'on enquête après un incident." },
+{ id:"go-appinsights", level:2, d:"gov", dom:"Surveillance", type:"qcm",
+  q:"Que surveille Application Insights ?",
+  choices:["Les PERFORMANCES de tes applications : requêtes, temps de réponse, erreurs, dépendances","La santé des datacenters Azure","Les coûts de l'abonnement","Les connexions des employés"],
+  answer:0,
+  explain:"App Insights = le monitoring APPLICATIF (ton code), quand Azure Monitor couvre l'infrastructure. « Mon site est lent, pourquoi ? » → App Insights." },
+{ id:"go-alerts", level:2, d:"gov", dom:"Surveillance", type:"qcm",
+  q:"Comment être averti automatiquement quand le CPU d'une VM dépasse 90 % pendant 10 minutes ?",
+  choices:["Une règle d'alerte Azure Monitor sur la métrique CPU, reliée à une notification (e-mail, SMS…)","Regarder le portail toutes les heures","Un budget","Azure Policy"],
+  answer:0,
+  explain:"Alerte = condition sur une métrique/un log + groupe d'actions (qui prévenir, quoi déclencher). Le duo de base de la supervision." },
+{ id:"go-s-slow", level:3, d:"gov", dom:"Surveillance", type:"qcm",
+  q:"Les utilisateurs disent que ton application web « rame » par moments. Quel service te montre les requêtes lentes et leurs causes ?",
+  choices:["Application Insights","Service Health","Cost Management","Azure Policy"],
+  answer:0,
+  explain:"Performance applicative détaillée = App Insights : chaque requête, sa durée, ses appels aux dépendances (base de données, API…)." },
+{ id:"go-order-cost", level:2, d:"gov", dom:"Coûts", type:"order",
+  q:"Remets dans l'ordre une démarche saine de maîtrise des coûts Azure.",
+  steps:["Estimer AVANT de déployer (calculatrice de prix / TCO)","Taguer les ressources dès leur création","Créer des budgets avec alertes","Suivre les dépenses réelles dans Cost Management","Appliquer les recommandations d'économie d'Advisor"],
+  explain:"Estimer → organiser → encadrer → suivre → optimiser. La maîtrise des coûts est un cycle continu, pas une action ponctuelle." },
+{ id:"go-order-policy", level:3, d:"gov", dom:"Gouvernance", type:"order",
+  q:"Remets dans l'ordre la mise en place d'une gouvernance par Azure Policy.",
+  steps:["Définir les règles de l'entreprise (régions, tags, tailles autorisées)","Choisir ou créer les policies (ou une initiative)","Les assigner au bon niveau (management group ou abonnement)","Consulter le tableau de conformité","Traiter les ressources non conformes"],
+  explain:"Assigner au niveau management group fait hériter la règle par tous les abonnements — la gouvernance se pense par le haut." },
+];
+
+/* =====================================================================
+   MOTEUR — répétition espacée + confiance (mode Maîtrise) et modes libres
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const LS_ERRORS = "az900-errors", LS_SRS = "az900-srs";
+const DOM_LABEL = { cloud:"Concepts cloud", arch:"Architecture & services", gov:"Gestion & gouvernance" };
+/* Examen blanc : 42 questions pondérées comme l'examen (25-30 / 35-40 / 30-35 %) */
+const BLANC_WEIGHTS = { cloud: 12, arch: 16, gov: 14 };
+const BOX_DAYS = [0, 1, 2, 4, 8, 16, 30];
+const NEW_CAP = 8;
+const DAY = 86400000;
+
+const getErrors = () => { try { return JSON.parse(localStorage.getItem(LS_ERRORS)) || []; } catch { return []; } };
+const setErrors = a => localStorage.setItem(LS_ERRORS, JSON.stringify([...new Set(a)]));
+const getSrs = () => { try { return JSON.parse(localStorage.getItem(LS_SRS)) || {}; } catch { return {}; } };
+const setSrs = o => localStorage.setItem(LS_SRS, JSON.stringify(o));
+const srsOf = (srs, id) => srs[id] || { box: 0, due: 0, seen: 0, lapses: 0, danger: false, reco: false, lastMs: 0 };
+
+const escapeReg = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const norm = s => (s || "").toLowerCase()
+  .normalize("NFD").replace(/[̀-ͯ]/g, "")
+  .replace(/[^a-z0-9]+/g, " ").trim();
+
+function isCorrect(user, accepts) {
+  const u = norm(user);
+  if (!u) return false;
+  return accepts.some(a => {
+    const v = norm(a);
+    if (!v) return false;
+    if (u === v) return true;
+    return new RegExp("(^| )" + escapeReg(v) + "( |$)").test(u);
+  });
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ---------- Planificateur de maîtrise ---------- */
+function minReasonMs(q) {
+  const len = (q.q || "").length + (q.code || "").length;
+  return Math.max(2000, Math.min(6000, 1200 + 20 * len));
+}
+
+function srsApply(q, ok, conf, ms, isReveal) {
+  const srs = getSrs();
+  const s = { ...srsOf(srs, q.id) };
+  const before = s.box;
+  s.seen++;
+  s.lastMs = ms;
+  s.reco = !!(ok && !isReveal && s.seen >= 2 && ms < minReasonMs(q));
+  if (isReveal || !ok) {
+    if (before >= 3) s.lapses++;
+    s.box = 0;
+    s.danger = !isReveal && conf === 3;
+  } else {
+    const gain = conf === 3 ? 2 : conf === 2 ? 1 : 0;
+    s.box = Math.min(6, s.box + (s.reco ? Math.min(gain, 1) : gain));
+    if (conf === 3) s.danger = false;
+  }
+  s.due = Date.now() + BOX_DAYS[s.box] * DAY;
+  srs[q.id] = s;
+  setSrs(srs);
+  return s;
+}
+
+function buildMaitrise(n) {
+  const srs = getSrs(), now = Date.now();
+  const danger = [], due = [], fresh = [], future = [];
+  QUESTIONS.forEach(q => {
+    const s = srs[q.id];
+    if (!s) { fresh.push(q); return; }
+    if (s.danger) danger.push(q);
+    else if (s.due <= now) due.push(q);
+    else future.push({ q, due: s.due });
+  });
+  const out = [...shuffle(danger), ...shuffle(due)];
+  if (out.length < n) out.push(...shuffle(fresh).slice(0, Math.min(NEW_CAP, n - out.length)));
+  if (out.length < n) {
+    future.sort((a, b) => a.due - b.due);
+    out.push(...future.slice(0, n - out.length).map(x => x.q));
+  }
+  return out.slice(0, n);
+}
+
+function srsStats() {
+  const srs = getSrs(), now = Date.now();
+  let croyances = 0, due = 0, mastered = 0, reco = 0, vus = 0;
+  Object.values(srs).forEach(s => {
+    vus++;
+    if (s.danger) croyances++;
+    else if (s.due <= now) due++;
+    if (s.box >= 5) mastered++;
+    if (s.reco) reco++;
+  });
+  return { croyances, due, mastered, reco, nouveaux: QUESTIONS.length - vus };
+}
+
+function refreshDash() {
+  const s = srsStats();
+  $("dCroyances").textContent = s.croyances;
+  $("dDue").textContent = s.due;
+  $("dMastered").textContent = s.mastered;
+  $("dReco").textContent = s.reco;
+  $("dNew").textContent = s.nouveaux;
+  $("nmaitrise").textContent = (s.croyances + s.due) > 0
+    ? (s.croyances + s.due) + " en attente"
+    : (s.nouveaux > 0 ? "nouveau" : "à jour");
+  let note;
+  if (s.croyances > 0)
+    note = "🚨 " + s.croyances + " question(s) où tu étais SÛR et tu t'es trompé — c'est le plus urgent à corriger.";
+  else if (s.due > 0)
+    note = "🔁 " + s.due + " question(s) arrivent à échéance. Le bon moment pour les revoir est maintenant.";
+  else if (s.nouveaux > 0)
+    note = "✅ Rien à réviser : la prochaine session introduira jusqu'à " + Math.min(NEW_CAP, s.nouveaux) + " nouvelles questions.";
+  else
+    note = "🏆 Toute la banque est planifiée. Reviens quand des questions arriveront à échéance.";
+  $("dNote").textContent = note;
+}
+
+function recordAndFlag(q, ok, conf, isReveal) {
+  const ms = Date.now() - (session.startedAt || Date.now());
+  const key = isReveal ? "reveal" : conf + (ok ? "-ok" : "-ko");
+  if (session.matrix && key in session.matrix) session.matrix[key]++;
+  const pd = session.perDom || (session.perDom = {});
+  const pe = pd[q.d] || (pd[q.d] = { ok: 0, total: 0 });
+  pe.total++; if (ok) pe.ok++;
+  const s = srsApply(q, ok, conf, ms, isReveal);
+
+  let html = "";
+  if (s.danger) {
+    html += '<div class="srs-flag danger">🚨 Tu étais SÛR et c\'est faux — c\'est une croyance fausse installée, ' +
+            'le type d\'erreur qui coûte des points sans prévenir. Elle repassera en priorité jusqu\'à ce que tu la réussisses en étant sûr.</div>';
+  }
+  if (s.reco) {
+    html += '<div class="srs-flag reco">⏱️ Répondu en ' + (ms / 1000).toFixed(1) + ' s : trop vite pour avoir raisonné. ' +
+            'Tu as probablement reconnu la question plutôt que raisonné — la progression est volontairement freinée.</div>';
+  }
+  const j = BOX_DAYS[s.box];
+  html += '<p class="srs-next">📅 Prochaine révision : ' +
+          (j === 0 ? "dès la prochaine session" : j === 1 ? "demain" : "dans " + j + " jours") +
+          " · palier " + s.box + "/6</p>";
+  return html;
+}
+
+/* ---------- Accueil ---------- */
+let session = null, pickCount = 20, domFilter = "all";
+
+$("countSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  pickCount = parseInt(b.dataset.n, 10);
+  [...$("countSeg").children].forEach(x => x.classList.toggle("on", x === b));
+});
+$("domSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  domFilter = b.dataset.d;
+  [...$("domSeg").children].forEach(x => x.classList.toggle("on", x === b));
+  refreshCounts();
+});
+const byDom = qs => domFilter === "all" ? qs : qs.filter(q => q.d === domFilter);
+
+function poolFor(mode) {
+  if (mode === "mix") return byDom(QUESTIONS);
+  if (mode === "err") { const errs = getErrors(); return byDom(QUESTIONS.filter(q => errs.includes(q.id))); }
+  if (mode === "seq") return byDom(QUESTIONS.filter(q => q.type === "order"));
+  return byDom(QUESTIONS.filter(q => q.level === Number(mode)));
+}
+
+function buildExamBlanc() {
+  const list = [];
+  Object.entries(BLANC_WEIGHTS).forEach(([dk, n]) => {
+    list.push(...shuffle(QUESTIONS.filter(q => q.d === dk)).slice(0, n));
+  });
+  return shuffle(list);
+}
+
+function refreshCounts() {
+  [1, 2, 3].forEach(l => $("n" + l).textContent = poolFor(String(l)).length + " q");
+  $("nseq").textContent = poolFor("seq").length + " q";
+  $("nblanc").textContent = Object.values(BLANC_WEIGHTS).reduce((a, b) => a + b, 0) + " q";
+  $("nmix").textContent = poolFor("mix").length + " q";
+  $("nerr").textContent = poolFor("err").length + " q";
+  refreshDash();
+}
+
+document.querySelectorAll(".mode-btn").forEach(b => b.addEventListener("click", () => {
+  const mode = b.dataset.mode;
+  let list;
+  if (mode === "maitrise") {
+    list = buildMaitrise(pickCount === 0 ? QUESTIONS.length : pickCount);
+    if (!list.length) { alert("Rien à réviser pour le moment — reviens plus tard !"); return; }
+  } else if (mode === "blanc") {
+    list = buildExamBlanc();
+  } else {
+    const pool = poolFor(mode);
+    if (!pool.length) { alert("Aucune question pour ce filtre — change de domaine ou joue d'abord une session !"); return; }
+    list = shuffle(pool).slice(0, pickCount === 0 ? pool.length : pickCount);
+  }
+  session = { mode, list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false,
+              matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 }, perDom: {} };
+  show("quiz"); renderQuestion();
+}));
+
+function show(name) {
+  ["home", "quiz", "end"].forEach(n => $("screen-" + n).classList.toggle("hidden", n !== name));
+  if (name === "home") refreshCounts();
+}
+
+/* ---------- Question ---------- */
+function renderQuestion() {
+  const q = session.list[session.idx];
+  session.answered = false; session.selectedChoice = null;
+  $("qLevel").textContent = "Niveau " + q.level;
+  $("qLevel").className = "pill lv" + q.level;
+  $("qDom").textContent = DOM_LABEL[q.d] + " · " + q.dom;
+  $("qCount").textContent = (session.idx + 1) + " / " + session.list.length;
+  $("qBar").style.width = (session.idx / session.list.length * 100) + "%";
+  $("qText").textContent = q.q;
+  $("qFeedback").innerHTML = "";
+  $("btnReveal").classList.remove("hidden");
+  $("btnNext").classList.add("hidden");
+
+  const maitrise = session.mode === "maitrise";
+  $("confRow").classList.toggle("hidden", !maitrise);
+  $("btnValidate").classList.toggle("hidden", maitrise);
+  session.startedAt = Date.now();
+
+  const zone = $("qInputZone");
+  zone.innerHTML = "";
+  if (q.type === "input") {
+    const inp = document.createElement("input");
+    inp.type = "text"; inp.id = "answerInput";
+    inp.placeholder = "Écris ta réponse…";
+    inp.autocomplete = "off"; inp.spellcheck = false;
+    zone.appendChild(inp);
+    inp.focus();
+  } else if (q.type === "order") {
+    session.orderPick = [];
+    session.orderShuffled = shuffle(q.steps);
+    const wrap = document.createElement("div");
+    wrap.innerHTML = '<p class="order-hint">Clique les étapes dans le bon ordre (re-clique une étape choisie pour la retirer) :</p>' +
+      '<div class="order-list" id="orderPicked"></div><div class="order-list" id="orderAvail"></div>';
+    zone.appendChild(wrap);
+    renderOrder(q);
+  } else {
+    const div = document.createElement("div");
+    div.className = "choices";
+    shuffle(q.choices.map((c, i) => ({ c, i }))).forEach(({ c, i }) => {
+      const btn = document.createElement("button");
+      btn.className = "choice"; btn.textContent = c; btn.dataset.orig = i;
+      btn.addEventListener("click", () => {
+        if (session.answered) return;
+        session.selectedChoice = i;
+        div.querySelectorAll(".choice").forEach(x => x.classList.toggle("sel", x === btn));
+      });
+      div.appendChild(btn);
+    });
+    zone.appendChild(div);
+  }
+}
+
+function renderOrder(q) {
+  const picked = $("orderPicked"), avail = $("orderAvail");
+  picked.innerHTML = ""; avail.innerHTML = "";
+  session.orderPick.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "order-item picked";
+    b.textContent = (i + 1) + ". " + s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick = session.orderPick.filter(x => x !== s);
+      renderOrder(q);
+    });
+    picked.appendChild(b);
+  });
+  session.orderShuffled.filter(s => !session.orderPick.includes(s)).forEach(s => {
+    const b = document.createElement("button");
+    b.className = "order-item";
+    b.textContent = s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick.push(s);
+      renderOrder(q);
+    });
+    avail.appendChild(b);
+  });
+}
+
+function goodAnswerOf(q) {
+  return q.type === "input" ? q.accept[0]
+    : q.type === "order" ? q.steps.map((s, i) => (i + 1) + ". " + s).join("<br>")
+    : q.choices[q.answer];
+}
+
+/* ---------- Validation ---------- */
+function validate(conf) {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  let ok;
+  if (q.type === "input") {
+    const val = $("answerInput").value;
+    if (!val.trim()) { $("answerInput").focus(); return; }
+    ok = isCorrect(val, q.accept);
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    if (session.orderPick.length !== q.steps.length) return;
+    ok = q.steps.every((s, i) => session.orderPick[i] === s);
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    if (session.selectedChoice === null) return;
+    ok = session.selectedChoice === q.answer;
+    document.querySelectorAll(".choice").forEach(btn => {
+      const i = Number(btn.dataset.orig);
+      btn.disabled = true;
+      if (i === q.answer) btn.classList.add("good");
+      else if (i === session.selectedChoice) btn.classList.add("bad");
+    });
+  }
+  session.answered = true;
+  const srsHtml = recordAndFlag(q, ok, conf || 2, false);
+
+  const errs = getErrors();
+  if (ok) {
+    session.score++; session.streak++;
+    setErrors(errs.filter(id => id !== q.id));
+  } else {
+    session.streak = 0;
+    session.wrongIds.push(q.id);
+    setErrors([...errs, q.id]);
+  }
+  $("score").textContent = session.score;
+  $("streak").textContent = session.streak;
+
+  const fb = document.createElement("div");
+  fb.className = "feedback " + (ok ? "ok" : "ko");
+  fb.innerHTML =
+    '<div class="verdict">' + (ok ? "✅ Bonne réponse !" : "❌ Raté") + "</div>" +
+    (ok ? "" : '<p class="rep">Réponse attendue : <b>' + goodAnswerOf(q) + "</b></p>") +
+    '<p class="exp">' + q.explain + "</p>" + srsHtml;
+  $("qFeedback").innerHTML = "";
+  $("qFeedback").appendChild(fb);
+
+  $("confRow").classList.add("hidden");
+  $("btnValidate").classList.add("hidden");
+  $("btnReveal").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+  $("qBar").style.width = ((session.idx + 1) / session.list.length * 100) + "%";
+}
+
+function reveal() {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  session.answered = true;
+  const srsHtml = recordAndFlag(q, false, 1, true);
+
+  if (q.type === "input") {
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    document.querySelectorAll(".choice").forEach(btn => {
+      btn.disabled = true;
+      if (Number(btn.dataset.orig) === q.answer) btn.classList.add("good");
+    });
+  }
+
+  session.streak = 0;
+  session.wrongIds.push(q.id);
+  setErrors([...getErrors(), q.id]);
+  $("streak").textContent = session.streak;
+
+  const fb = document.createElement("div");
+  fb.className = "feedback info";
+  fb.innerHTML =
+    '<div class="verdict">💡 Correction</div>' +
+    '<p class="rep">La bonne réponse était : <b>' + goodAnswerOf(q) + "</b></p>" +
+    '<p class="exp">' + q.explain + "</p>" + srsHtml;
+  $("qFeedback").innerHTML = "";
+  $("qFeedback").appendChild(fb);
+
+  $("confRow").classList.add("hidden");
+  $("btnValidate").classList.add("hidden");
+  $("btnReveal").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+  $("qBar").style.width = ((session.idx + 1) / session.list.length * 100) + "%";
+}
+
+function next() {
+  if (session.idx + 1 < session.list.length) { session.idx++; renderQuestion(); }
+  else endSession();
+}
+
+/* ---------- Fin ---------- */
+function endSession() {
+  const total = session.list.length, s = session.score;
+  const pct = Math.round(s / total * 100);
+  $("endScore").textContent = s + " / " + total;
+  let v;
+  if (pct >= 90) v = "🏆 Niveau certification — continue comme ça !";
+  else if (pct >= 70) v = "💪 Solide ! Tu serais au-dessus des 700 points.";
+  else if (pct >= 50) v = "📚 En bonne voie — regarde tes domaines faibles ci-dessous.";
+  else v = "🌱 C'est en forgeant… rejoue tes erreurs !";
+  $("endVerdict").textContent = v;
+
+  const m = session.matrix;
+  const enMaitrise = session.mode === "maitrise";
+  $("endMatrix").classList.toggle("hidden", !enMaitrise);
+  if (enMaitrise && m) {
+    $("endMatrix").innerHTML =
+      "<table><tr><th></th><th>Correct</th><th>Faux</th></tr>" +
+      '<tr><th>💪 Sûr</th><td class="n good">' + m["3-ok"] + '</td><td class="n danger">' + m["3-ko"] + "</td></tr>" +
+      '<tr><th>🤔 Hésitant</th><td class="n">' + m["2-ok"] + '</td><td class="n">' + m["2-ko"] + "</td></tr>" +
+      '<tr><th>✋ Au hasard</th><td class="n">' + m["1-ok"] + '</td><td class="n">' + m["1-ko"] + "</td></tr>" +
+      "</table><caption>" +
+      (m["3-ko"] > 0
+        ? "🚨 " + m["3-ko"] + " croyance(s) fausse(s) détectée(s) — la case la plus importante du tableau. Elles reviendront en priorité."
+        : "✅ Aucune croyance fausse cette session. " +
+          (m["1-ok"] > 0 ? "En revanche " + m["1-ok"] + " bonne(s) réponse(s) au hasard : elles ne comptent pas comme acquises." : "")) +
+      "</caption>";
+  }
+
+  $("endByDom").innerHTML = Object.entries(session.perDom || {})
+    .sort((a, b) => (a[1].ok / a[1].total) - (b[1].ok / b[1].total))
+    .map(([k, o]) => {
+      const p = Math.round(o.ok / o.total * 100);
+      const icon = p >= 75 ? "✅" : p >= 50 ? "⚠️" : "❌";
+      return '<span class="dl">' + icon + " " + (DOM_LABEL[k] || k) + '</span><span class="dv">' +
+             o.ok + "/" + o.total + " · " + p + "%</span>";
+    }).join("");
+
+  $("endDetail").textContent = pct + " % de bonnes réponses · " +
+    (total - s) + " erreur(s) ajoutée(s) au mode « Rejouer mes erreurs » (" + getErrors().length + " au total)";
+  $("btnReplayErrors").style.display = getErrors().length ? "" : "none";
+  show("end");
+}
+
+/* ---------- Boutons & clavier ---------- */
+$("btnValidate").addEventListener("click", () => validate(2));
+$("btnReveal").addEventListener("click", reveal);
+$("btnNext").addEventListener("click", next);
+$("btnQuit").addEventListener("click", () => show("home"));
+$("btnHome").addEventListener("click", () => show("home"));
+document.querySelectorAll(".conf").forEach(b =>
+  b.addEventListener("click", () => validate(Number(b.dataset.conf))));
+$("btnReplayErrors").addEventListener("click", () => {
+  const pool = poolFor("err");
+  if (!pool.length) { show("home"); return; }
+  session = { mode: "err", list: shuffle(pool), idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false,
+              matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 }, perDom: {} };
+  show("quiz"); renderQuestion();
+});
+document.addEventListener("keydown", e => {
+  if ($("screen-quiz").classList.contains("hidden")) return;
+  if (session && !session.answered && session.mode === "maitrise" && ["1", "2", "3"].includes(e.key)) {
+    const el = document.activeElement;
+    const dansUnChamp = el && el.tagName === "INPUT" && el.type === "text";
+    if (!dansUnChamp) { e.preventDefault(); validate(Number(e.key)); return; }
+  }
+  if (e.key !== "Enter") return;
+  if (session && session.answered) next(); else validate(2);
+});
+
+refreshCounts();
+show("home");
+</script>
+</body>
+</html>

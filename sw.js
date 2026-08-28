@@ -1,15 +1,18 @@
 /**
- * Service worker : met tout en cache au premier chargement,
+ * Service worker : met les pages du socle en cache au premier chargement,
  * puis sert depuis le cache — l'application fonctionne sans réseau.
+ * Les simulateurs de certifs/ ne sont PAS préchargés (plus d'1 Mo au total) :
+ * chacun est mis en cache automatiquement à sa première visite.
  *
  * Incrémenter VERSION à chaque nouvelle mise en ligne pour forcer la mise à jour.
  */
-const VERSION = "prepa-bnp-v8";
+const VERSION = "prepa-bnp-v9";
 
 const FICHIERS = [
   "./",
   "./index.html",
   "./formations.html",
+  "./certifications.html",
   "./qcm.html",
   "./quiz.html",
   "./etude.html",

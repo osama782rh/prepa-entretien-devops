@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terraform Associate 004 — Quiz</title>
+<style>
+  :root {
+    --ground: #F8F7FB;
+    --surface: #FFFFFF;
+    --ink: #1D1929;
+    --muted: #665E78;
+    --accent: #7B42BC;
+    --accent-deep: #5C2D91;
+    --accent-soft: #F0E9FA;
+    --good: #1E7A46;
+    --good-soft: #E7F5EC;
+    --bad: #B3352B;
+    --bad-soft: #FBEAE8;
+    --warn: #9A4E00;
+    --border: #E2DCEC;
+    --shadow: 0 2px 8px rgba(29,25,41,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #131019; --surface: #1C1726; --ink: #E6E0F0; --muted: #A399B8;
+      --accent: #B78FE0; --accent-deep: #CBA9EC; --accent-soft: #2A2138;
+      --good: #5BC98A; --good-soft: #12291B; --bad: #F08578; --bad-soft: #2E1512;
+      --warn: #EDAA5F; --border: #2E2740; --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    font-size: 16px; line-height: 1.5; min-height: 100vh;
+  }
+  code { font-family: "Cascadia Code", Consolas, monospace; background: var(--accent-soft); color: var(--accent-deep); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+  header.top h1 { font-size: 20px; margin: 0; font-weight: 700; }
+  header.top h1 .tf { color: var(--accent); }
+  .stats { display: flex; gap: 14px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stats b { color: var(--ink); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); }
+
+  .home h2 { margin: 0 0 4px; font-size: 24px; }
+  .home p.sub { color: var(--muted); margin: 0 0 8px; }
+  .exam-banner { background: color-mix(in srgb, var(--warn) 12%, transparent); color: var(--warn); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin-bottom: 16px; }
+  .modes { display: grid; gap: 10px; }
+  .mode-btn {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; cursor: pointer; text-align: left; color: var(--ink);
+    font-family: inherit; font-size: 15px; transition: border-color .15s, transform .1s;
+  }
+  .mode-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .mode-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mode-btn .ico { font-size: 24px; width: 34px; text-align: center; }
+  .mode-btn .t { font-weight: 650; }
+  .mode-btn .d { font-size: 13px; color: var(--muted); }
+  .mode-btn .n { margin-left: auto; font-size: 12.5px; color: var(--accent); background: var(--accent-soft); border-radius: 20px; padding: 2px 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .count-row { display: flex; gap: 8px; align-items: center; margin: 14px 0 8px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+  .seg { display: flex; gap: 4px; }
+  .seg button { border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 5px 14px; cursor: pointer; font-family: inherit; font-size: 14px; }
+  .seg button.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+  .qmeta { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .pill { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; border-radius: 20px; padding: 3px 11px; }
+  .pill.lv1 { background: var(--good-soft); color: var(--good); }
+  .pill.lv2 { background: var(--accent-soft); color: var(--accent); }
+  .pill.lv3 { background: var(--bad-soft); color: var(--bad); }
+  .pill.dom { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+  .progressbar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+  .progressbar div { height: 100%; background: var(--accent); border-radius: 3px; transition: width .25s; }
+  .question { font-size: 19px; font-weight: 650; margin: 0 0 18px; line-height: 1.4; text-wrap: balance; }
+
+  input[type=text] {
+    width: 100%; padding: 12px 14px; font-size: 16px; font-family: inherit;
+    border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink);
+  }
+  input[type=text]:focus { outline: none; border-color: var(--accent); }
+  .choices { display: grid; gap: 8px; }
+  .choice {
+    text-align: left; padding: 11px 14px; border: 2px solid var(--border); border-radius: 10px;
+    background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 15px;
+    transition: border-color .12s;
+  }
+  .choice:hover { border-color: var(--accent); }
+  .choice.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .choice.good { border-color: var(--good); background: var(--good-soft); font-weight: 600; }
+  .choice.bad { border-color: var(--bad); background: var(--bad-soft); }
+  .choice:disabled { cursor: default; opacity: .85; }
+
+  .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .btn { padding: 11px 22px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 650; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-deep); }
+  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+
+  .feedback { margin-top: 18px; border-radius: 12px; padding: 14px 16px; font-size: 15px; }
+  .feedback.ok { background: var(--good-soft); border: 1px solid var(--good); }
+  .feedback.ko { background: var(--bad-soft); border: 1px solid var(--bad); }
+  .feedback.info { background: var(--accent-soft); border: 1px solid var(--accent); }
+  .feedback .verdict { font-weight: 750; font-size: 16px; }
+  .feedback.ok .verdict { color: var(--good); }
+  .feedback.ko .verdict { color: var(--bad); }
+  .feedback.info .verdict { color: var(--accent-deep); }
+  .feedback .rep { margin: 6px 0 0; }
+  .feedback .exp { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+  pre.qcode {
+    background: #17141F; color: #E4DCF2; border-radius: 10px;
+    padding: 12px 14px; overflow-x: auto; font-size: 13px; line-height: 1.5;
+    font-family: "Cascadia Code", Consolas, monospace; margin: 0 0 14px; text-align: left;
+  }
+  .scenario { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 10px 14px; margin: 0 0 14px; font-size: 14px; }
+  .scenario .sc-title { font-weight: 700; color: var(--accent-deep); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .scenario p { margin: 0; }
+  .order-hint { font-size: 13.5px; color: var(--muted); margin: 0 0 8px; }
+  .order-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .order-list:empty { display: none; }
+  .order-item { text-align: left; padding: 10px 13px; border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 14.5px; }
+  .order-item:hover { border-color: var(--accent); }
+  .order-item.picked { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .order-item:disabled { cursor: default; opacity: .85; }
+
+  .lab { background: var(--ground); border: 1px solid var(--border); border-radius: 12px; padding: 4px 16px 12px; margin-bottom: 10px; }
+  .lab summary { cursor: pointer; font-weight: 650; padding: 10px 0; font-size: 15.5px; }
+  .lab.done summary { color: var(--good); }
+  .lab .lab-time { color: var(--muted); font-weight: 400; font-size: 13px; }
+  .lab ol { padding-left: 20px; font-size: 14.5px; }
+  .lab li { margin: 4px 0; }
+  .lab .lab-obj, .lab .lab-verif { font-size: 14px; }
+  .lab .lab-verif { background: var(--good-soft); border-radius: 8px; padding: 8px 12px; }
+  .labs-note { background: color-mix(in srgb, var(--warn) 12%, transparent); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; color: var(--warn); margin-bottom: 14px; }
+
+  .end { text-align: center; }
+  .end .big { font-size: 52px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin: 10px 0 0; }
+  .end .verdict { font-size: 18px; font-weight: 650; margin: 6px 0 18px; }
+  .end .detail { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .kbd-hint { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 14px; }
+  .hidden { display: none; }
+
+  /* ---- Mode Maîtrise ---- */
+  .dash { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  .dash h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-deep); }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  .dash-cell { background: var(--surface); border-radius: 9px; padding: 8px 10px; text-align: center; }
+  .dash-cell .v { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .dash-cell .k { font-size: 11px; color: var(--muted); line-height: 1.25; }
+  .dash-cell.danger .v { color: var(--bad); }
+  .dash-cell.due .v { color: var(--accent); }
+  .dash-cell.mastered .v { color: var(--good); }
+  .dash-cell.reco .v { color: var(--warn); }
+  .dash-note { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+
+  .conf-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .conf-label { width: 100%; font-size: 12.5px; color: var(--muted); margin-bottom: 2px; }
+  .conf {
+    flex: 1 1 30%; min-width: 120px; padding: 11px 12px; border-radius: 10px; cursor: pointer;
+    font-family: inherit; font-size: 14.5px; font-weight: 650; border: 2px solid var(--border);
+    background: var(--surface); color: var(--ink); text-align: center; line-height: 1.25;
+  }
+  .conf small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
+  .conf:hover { border-color: var(--accent); }
+  .conf:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+  .conf.c3 { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+  .conf.c3:hover { border-color: var(--good); background: var(--good-soft); }
+  .conf.c1 { border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .conf.c1:hover { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+
+  .srs-flag { font-size: 12.5px; border-radius: 8px; padding: 7px 11px; margin-top: 10px; }
+  .srs-flag.danger { background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad); font-weight: 600; }
+  .srs-flag.reco { background: color-mix(in srgb, var(--warn) 12%, transparent); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
+  .srs-next { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+  .matrix { max-width: 420px; margin: 0 auto 18px; }
+  .matrix table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .matrix th, .matrix td { padding: 7px 9px; border: 1px solid var(--border); text-align: center; }
+  .matrix th { background: var(--accent-soft); color: var(--accent-deep); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .matrix td.n { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; }
+  .matrix td.danger { background: var(--bad-soft); color: var(--bad); }
+  .matrix td.good { background: var(--good-soft); color: var(--good); }
+  .matrix caption { caption-side: bottom; font-size: 12px; color: var(--muted); padding-top: 8px; text-align: left; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1><span class="tf">Terraform</span> Associate 004 · Quiz</h1>
+    <div class="stats">
+      <span>Série : <b id="streak">0</b> 🔥</span>
+      <span>Score : <b id="score">0</b></span>
+    </div>
+  </header>
+
+  <!-- Accueil -->
+  <div id="screen-home" class="card home">
+    <h2>Choisis ton mode</h2>
+    <p class="sub">Certification obtenue le 27 juillet 2026 🎉 — entretiens le savoir : le state, l'IaC et le workflow reviennent dans l'AZ-400 et le DOP-C02.</p>
+    <div class="exam-banner">⚠️ L'examen HCTA-004 est <b>closed book</b> : aucun accès à la doc, contrairement à l'AZ-204. 57 questions / 60 min / ≈ 70 % requis / valable 2 ans. Formats : QCM, choix multiples, vrai-faux, texte à compléter.</div>
+    <div class="count-row">
+      Nombre de questions :
+      <div class="seg" id="countSeg">
+        <button data-n="10">10</button>
+        <button data-n="20" class="on">20</button>
+        <button data-n="0">Toutes</button>
+      </div>
+    </div>
+    <div class="dash">
+      <h3>🧠 Ta progression</h3>
+      <div class="dash-grid">
+        <div class="dash-cell danger"><div class="v" id="dCroyances">0</div><div class="k">croyances fausses</div></div>
+        <div class="dash-cell due"><div class="v" id="dDue">0</div><div class="k">à réviser</div></div>
+        <div class="dash-cell mastered"><div class="v" id="dMastered">0</div><div class="k">ancrés</div></div>
+        <div class="dash-cell reco"><div class="v" id="dReco">0</div><div class="k">reconnaissance ?</div></div>
+        <div class="dash-cell"><div class="v" id="dNew">0</div><div class="k">jamais vus</div></div>
+      </div>
+      <p class="dash-note" id="dNote"></p>
+    </div>
+    <div class="modes">
+      <button class="mode-btn" data-mode="maitrise" style="border-color:var(--accent);background:var(--accent-soft)">
+        <span class="ico">🧠</span>
+        <span><span class="t">Session Maîtrise (recommandé)</span><br><span class="d">Répétition espacée pilotée par ta confiance — corrige d'abord ce que tu crois savoir à tort</span></span>
+        <span class="n" id="nmaitrise"></span>
+      </button>
+      <button class="mode-btn" data-mode="1">
+        <span class="ico">🌱</span>
+        <span><span class="t">Niveau 1 — Concepts &amp; vocabulaire</span><br><span class="d">IaC, HCL, provider, state, backend, workflow de base</span></span>
+        <span class="n" id="n1"></span>
+      </button>
+      <button class="mode-btn" data-mode="2">
+        <span class="ico">⚙️</span>
+        <span><span class="t">Niveau 2 — Commandes &amp; faits d'examen</span><br><span class="d">CLI, variables, state, lifecycle, modules — le par-cœur</span></span>
+        <span class="n" id="n2"></span>
+      </button>
+      <button class="mode-btn" data-mode="3">
+        <span class="ico">🎯</span>
+        <span><span class="t">Niveau 3 — Scénarios &amp; pièges</span><br><span class="d">« Que fais-tu quand… » — comme les vraies questions</span></span>
+        <span class="n" id="n3"></span>
+      </button>
+      <button class="mode-btn" data-mode="code">
+        <span class="ico">💻</span>
+        <span><span class="t">HCL à compléter</span><br><span class="d">Blocs resource, module, lifecycle, import… avec des trous</span></span>
+        <span class="n" id="ncode"></span>
+      </button>
+      <button class="mode-btn" data-mode="cas">
+        <span class="ico">🧩</span>
+        <span><span class="t">Études de cas &amp; séquences</span><br><span class="d">Scénarios d'équipe + workflows à remettre dans l'ordre</span></span>
+        <span class="n" id="ncas"></span>
+      </button>
+      <button class="mode-btn" data-mode="blanc">
+        <span class="ico">🎓</span>
+        <span><span class="t">Examen blanc</span><br><span class="d">≈ 40 questions, tous formats mélangés — vise 85 %+</span></span>
+        <span class="n" id="nblanc"></span>
+      </button>
+      <button class="mode-btn" data-mode="mix">
+        <span class="ico">🎲</span>
+        <span><span class="t">Tout mélanger</span><br><span class="d">Toute la banque aléatoirement</span></span>
+        <span class="n" id="nmix"></span>
+      </button>
+      <button class="mode-btn" data-mode="err">
+        <span class="ico">🩹</span>
+        <span><span class="t">Rejouer mes erreurs</span><br><span class="d">Uniquement les questions déjà ratées</span></span>
+        <span class="n" id="nerr"></span>
+      </button>
+      <button class="mode-btn" data-mode="labs">
+        <span class="ico">🧪</span>
+        <span><span class="t">Labs express</span><br><span class="d">Terraform en local (gratuit) + ton abonnement Azure</span></span>
+        <span class="n" id="nlabs"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div id="screen-quiz" class="card hidden">
+    <div class="qmeta">
+      <span class="pill" id="qLevel"></span>
+      <span class="pill dom" id="qDom"></span>
+      <span style="margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums" id="qCount"></span>
+    </div>
+    <div class="progressbar"><div id="qBar" style="width:0%"></div></div>
+    <div id="qScenario"></div>
+    <p class="question" id="qText"></p>
+    <div id="qInputZone"></div>
+    <div class="conf-row hidden" id="confRow">
+      <span class="conf-label">Valide en déclarant ta confiance — c'est ce qui pilote ta prochaine révision :</span>
+      <button class="conf c1" data-conf="1" id="conf1">✋ Au hasard<small>touche 1</small></button>
+      <button class="conf c2" data-conf="2" id="conf2">🤔 Hésitant<small>touche 2 ou Entrée</small></button>
+      <button class="conf c3" data-conf="3" id="conf3">💪 Sûr<small>touche 3</small></button>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnValidate">Valider</button>
+      <button class="btn primary hidden" id="btnNext">Question suivante →</button>
+      <button class="btn ghost" id="btnReveal">💡 Je ne sais pas</button>
+      <button class="btn ghost" id="btnQuit">Quitter</button>
+    </div>
+    <div id="qFeedback"></div>
+    <p class="kbd-hint">Entrée = valider / question suivante</p>
+  </div>
+
+  <!-- Fin -->
+  <div id="screen-end" class="card end hidden">
+    <h2>Session terminée !</h2>
+    <p class="big" id="endScore"></p>
+    <p class="verdict" id="endVerdict"></p>
+    <div class="matrix hidden" id="endMatrix"></div>
+    <p class="detail" id="endDetail"></p>
+    <div class="actions" style="justify-content:center">
+      <button class="btn primary" id="btnReplayErrors">🩹 Rejouer mes erreurs</button>
+      <button class="btn ghost" id="btnHome">← Menu</button>
+    </div>
+  </div>
+
+  <!-- Labs -->
+  <div id="screen-labs" class="card hidden">
+    <h2>🧪 Labs express — Terraform en local</h2>
+    <p class="labs-note">Terraform tourne gratuitement sur ta machine (télécharge le binaire ou <code>winget install Hashicorp.Terraform</code>). Les labs utilisent le provider azurerm avec ton abonnement — termine toujours par <code>terraform destroy</code> pour ne rien payer.</p>
+    <div id="labsList"></div>
+    <div class="actions">
+      <button class="btn ghost" id="btnLabsHome">← Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   BANQUE DE QUESTIONS — Terraform Associate 004
+   ===================================================================== */
+const QUESTIONS = [
+/* ---------- NIVEAU 1 — CONCEPTS & VOCABULAIRE ---------- */
+{ id:"v-iac", level:1, dom:"Concepts", type:"input",
+  q:"Pratique consistant à décrire l'infrastructure dans des fichiers versionnés plutôt que de la créer à la main. Quel terme (ou sigle) ?",
+  accept:["iac","infrastructure as code"],
+  explain:"Infrastructure as Code : reproductible, versionnable, revuable. Terraform en est l'outil le plus répandu." },
+{ id:"v-hcl", level:1, dom:"Concepts", type:"input",
+  q:"Langage de configuration de Terraform (blocs, arguments, expressions). Quel sigle ?",
+  accept:["hcl","hashicorp configuration language"],
+  explain:"HCL = HashiCorp Configuration Language. Une syntaxe JSON alternative existe aussi (fichiers .tf.json)." },
+{ id:"v-declaratif", level:1, dom:"Concepts", type:"qcm",
+  q:"Terraform est déclaratif. Qu'est-ce que ça veut dire ?",
+  choices:["Tu décris l'état FINAL désiré, Terraform calcule les actions pour l'atteindre","Tu écris chaque commande à exécuter dans l'ordre","Le code s'exécute ligne par ligne comme un script","Tu déclares les variables avant les ressources"],
+  answer:0,
+  explain:"Déclaratif = le QUOI (état cible), pas le COMMENT. Terraform compare état désiré vs état connu et en déduit le plan. Un script bash est impératif." },
+{ id:"v-provider", level:1, dom:"Concepts", type:"input",
+  q:"Plugin qui permet à Terraform de parler à l'API d'une plateforme (azurerm, aws, google…). Quel nom ?",
+  accept:["provider","fournisseur"],
+  explain:"Le provider. Téléchargé par terraform init depuis le registry, déclaré dans required_providers." },
+{ id:"v-resource", level:1, dom:"Concepts", type:"qcm",
+  q:"Quelle est la différence entre un bloc « resource » et un bloc « data » ?",
+  choices:["resource crée et gère un objet ; data lit un objet existant SANS le gérer","data crée, resource lit","Aucune, ce sont des synonymes","data est réservé aux bases de données"],
+  answer:0,
+  explain:"data source = lecture seule (ex : récupérer l'ID d'une image existante). resource = cycle de vie complet géré par Terraform." },
+{ id:"v-module", level:1, dom:"Modules", type:"input",
+  q:"Ensemble réutilisable de fichiers .tf appelé avec des variables d'entrée et exposant des outputs. Quel nom ?",
+  accept:["module","un module"],
+  explain:"Le module. Tout dossier de config est un module ; le dossier où tu lances terraform est le root module." },
+{ id:"v-state", level:1, dom:"State", type:"input",
+  q:"Fichier où Terraform mémorise la correspondance entre ta config et les ressources réelles (par défaut terraform.tfstate). Quel nom (en anglais) ?",
+  accept:["state","le state","state file","etat"],
+  explain:"Le state. C'est LA pièce maîtresse : sans lui, Terraform ne sait plus ce qu'il gère. Il peut contenir des secrets en clair !" },
+{ id:"v-backend", level:1, dom:"State", type:"input",
+  q:"Configuration qui détermine OÙ le state est stocké (local, azurerm, s3, HCP…). Quel nom ?",
+  accept:["backend","le backend"],
+  explain:"Le backend. Par défaut : local (terraform.tfstate sur disque). En équipe : backend distant avec verrouillage (locking)." },
+{ id:"v-plan", level:1, dom:"Workflow", type:"qcm",
+  q:"Que fait « terraform plan » exactement ?",
+  choices:["Il calcule et affiche les actions nécessaires SANS rien modifier","Il applique les changements","Il formate le code","Il supprime l'infrastructure"],
+  answer:0,
+  explain:"plan = prévisualisation (dry run) : + créer, - détruire, ~ modifier, -/+ remplacer. Seul apply modifie l'infrastructure." },
+{ id:"v-registry", level:1, dom:"Modules", type:"input",
+  q:"Plateforme publique HashiCorp où sont publiés providers et modules (registry.terraform.io). Quel nom ?",
+  accept:["registry","terraform registry","le registry","registre"],
+  explain:"Le Terraform Registry. HCP Terraform offre aussi un private registry pour les modules internes d'une organisation." },
+{ id:"v-output", level:1, dom:"Config", type:"qcm",
+  q:"À quoi sert un bloc « output » ?",
+  choices:["Exposer une valeur après apply (affichée en CLI, consommable par d'autres configs/modules)","Écrire des logs","Définir une variable d'entrée","Exporter le state"],
+  answer:0,
+  explain:"output = valeur de sortie : IP créée, nom généré… Un module parent lit module.nom.output ; terraform output les affiche." },
+{ id:"v-locals", level:1, dom:"Config", type:"input",
+  q:"Bloc qui définit des valeurs intermédiaires calculées, référencées ensuite avec local.nom. Quel mot-clé ?",
+  accept:["locals","local"],
+  explain:"locals { prefix = \"app-${var.env}\" } — évite la répétition. Déclaré « locals », référencé « local.prefix » (sans s)." },
+{ id:"v-drift", level:1, dom:"State", type:"input",
+  q:"Écart entre l'infrastructure RÉELLE et ce que le state/la config croient (ex : modification manuelle dans le portail). Quel terme anglais ?",
+  accept:["drift","derive","configuration drift"],
+  explain:"Le drift. Détecté par terraform plan (ou plan -refresh-only) : Terraform propose alors de re-aligner le réel sur la config." },
+{ id:"v-dag", level:1, dom:"Concepts", type:"qcm",
+  q:"Comment Terraform détermine-t-il l'ordre de création des ressources ?",
+  choices:["Il construit un graphe de dépendances (DAG) à partir des références entre ressources","Dans l'ordre d'écriture du fichier","Par ordre alphabétique","Au hasard, en parallèle total"],
+  answer:0,
+  explain:"Les références implicites (resource_a.id utilisé par resource_b) construisent le graphe ; ce qui est indépendant part en parallèle. depends_on force une dépendance explicite." },
+{ id:"v-provisioner", level:1, dom:"Config", type:"qcm",
+  q:"Quelle est la position officielle de HashiCorp sur les provisioners (remote-exec, local-exec) ?",
+  choices:["Dernier recours uniquement — préférer cloud-init, Packer ou des outils de config management","La méthode recommandée pour configurer les VMs","Obligatoires pour chaque resource","Dépréciés et supprimés"],
+  answer:0,
+  explain:"« Provisioners are a last resort » — question d'examen quasi garantie. Ils cassent le modèle déclaratif et ne sont pas dans le state." },
+{ id:"v-workspace", level:1, dom:"State", type:"input",
+  q:"Mécanisme CLI qui permet d'avoir PLUSIEURS states isolés pour une même configuration (ex : dev / prod). Quel nom ?",
+  accept:["workspace","workspaces","espace de travail"],
+  explain:"Les workspaces CLI : terraform workspace new/select/list. Chaque workspace a son propre state. Celui de départ s'appelle « default »." },
+{ id:"v-init", level:1, dom:"Workflow", type:"qcm",
+  q:"Que fait « terraform init » ?",
+  choices:["Télécharge providers et modules, initialise le backend — obligatoire avant tout plan/apply","Crée les ressources","Initialise les variables","Réinitialise le state à zéro"],
+  answer:0,
+  explain:"init prépare le dossier : plugins dans .terraform/, lock file, backend. À relancer après ajout de provider/module ou changement de backend." },
+{ id:"v-destroy", level:1, dom:"Workflow", type:"input",
+  q:"Quelle commande détruit TOUTES les ressources gérées par la configuration ?",
+  accept:["terraform destroy","destroy"],
+  explain:"terraform destroy (= apply -destroy). À la fin de chaque lab pour ne pas payer ! prevent_destroy peut bloquer une ressource critique." },
+{ id:"v-fmt", level:1, dom:"Workflow", type:"input",
+  q:"Quelle commande reformate automatiquement les fichiers .tf selon les conventions ?",
+  accept:["terraform fmt","fmt"],
+  explain:"terraform fmt (-recursive pour les sous-dossiers, -check en CI pour vérifier sans modifier)." },
+{ id:"v-validate", level:1, dom:"Workflow", type:"qcm",
+  q:"Que vérifie « terraform validate » ?",
+  choices:["La syntaxe et la cohérence interne de la config — SANS contacter les APIs ni le state distant","Que l'infrastructure réelle correspond au state","Les credentials du provider","Le coût du déploiement"],
+  answer:0,
+  explain:"validate = contrôle statique local (après init). Il ne détecte pas le drift ni les erreurs d'API — c'est le rôle de plan/apply." },
+{ id:"v-tfvars", level:1, dom:"Variables", type:"input",
+  q:"Extension des fichiers qui assignent des VALEURS aux variables d'entrée (chargé automatiquement s'il s'appelle terraform.____ ) ?",
+  accept:["tfvars","terraform tfvars",".tfvars"],
+  explain:"terraform.tfvars (et *.auto.tfvars) sont chargés automatiquement ; les autres se passent avec -var-file=prod.tfvars." },
+{ id:"v-tfvar-env", level:1, dom:"Variables", type:"input",
+  q:"Quel préfixe de variable d'ENVIRONNEMENT permet de passer une valeur à une variable Terraform (ex : pour « region ») ?",
+  accept:["tf var","tf_var_","tf var region","tfvar"],
+  explain:"TF_VAR_region=westeurope — pratique en CI pour ne rien écrire dans les fichiers." },
+{ id:"v-pessimistic", level:1, dom:"Versions", type:"qcm",
+  q:"Que signifie la contrainte de version « ~> 4.10 » ?",
+  choices:["Autorise 4.10, 4.11, 4.x… mais JAMAIS 5.0 (pessimistic constraint)","Exactement 4.10","N'importe quelle version au-dessus de 4.10, y compris 5.x","En dessous de 4.10"],
+  answer:0,
+  explain:"~> incrémente seulement le DERNIER chiffre indiqué. ~> 4.10 = >= 4.10 et < 5.0. LA question de version classique." },
+{ id:"v-hcp", level:1, dom:"HCP Terraform", type:"qcm",
+  q:"Qu'apporte HCP Terraform (ex-Terraform Cloud) par rapport à la CLI open source ?",
+  choices:["State distant managé, runs à distance, intégration VCS, private registry, policies Sentinel, gestion d'équipe","Uniquement une interface graphique","Un langage différent de HCL","Rien, c'est identique"],
+  answer:0,
+  explain:"HCP Terraform = la plateforme SaaS : collaboration, state sécurisé, speculative plans sur PR, Sentinel, RBAC d'équipe." },
+{ id:"v-sentinel", level:1, dom:"HCP Terraform", type:"input",
+  q:"Framework « policy as code » de HashiCorp qui autorise ou bloque les runs selon des règles (ex : interdire une région). Quel nom ?",
+  accept:["sentinel"],
+  explain:"Sentinel — s'exécute entre plan et apply dans HCP Terraform. Niveaux : advisory, soft-mandatory, hard-mandatory." },
+{ id:"v-console", level:1, dom:"Workflow", type:"qcm",
+  q:"À quoi sert « terraform console » ?",
+  choices:["Tester interactivement des expressions et fonctions HCL (avec les valeurs du state)","Ouvrir un shell sur les VMs créées","Voir les logs du provider","Administrer HCP Terraform"],
+  answer:0,
+  explain:"Un REPL pour expérimenter : lookup(), for expressions, références aux resources… Idéal pour déboguer une expression." },
+{ id:"v-lockfile", level:1, dom:"Versions", type:"qcm",
+  q:"Quel est le rôle du fichier .terraform.lock.hcl et que faut-il en faire ?",
+  choices:["Il fige les versions exactes des providers ; il faut le COMMITTER dans Git","Il verrouille le state ; ne pas le committer","Il contient les secrets ; à mettre dans .gitignore","Il est temporaire et peut être supprimé à chaque run"],
+  answer:0,
+  explain:"Le dependency lock file garantit les mêmes versions de providers pour toute l'équipe. À committer — contrairement à .terraform/ et *.tfstate." },
+{ id:"v-immutable", level:1, dom:"Concepts", type:"qcm",
+  q:"Certains changements affichent « -/+ destroy and then create replacement » dans le plan. Pourquoi ?",
+  choices:["L'argument modifié ne peut pas être changé en place : la ressource doit être détruite puis recréée","C'est un bug de Terraform","Le provider est obsolète","Le state est corrompu"],
+  answer:0,
+  explain:"Exemple : renommer une VM Azure force un remplacement (~ = modif en place ; -/+ = remplacement). create_before_destroy inverse l'ordre." },
+{ id:"v-secrets-state", level:1, dom:"State", type:"qcm",
+  q:"Les mots de passe et secrets présents dans la config se retrouvent-ils dans le state ?",
+  choices:["Oui, EN CLAIR — le state doit être traité comme une donnée sensible","Non, ils sont toujours chiffrés","Non, ils ne sont jamais stockés","Seulement si sensitive = false"],
+  answer:0,
+  explain:"sensitive = true masque l'AFFICHAGE (CLI), mais le state contient la valeur en clair. D'où : backend chiffré + accès restreint." },
+{ id:"v-parallel", level:1, dom:"Concepts", type:"qcm",
+  q:"Terraform crée-t-il les ressources une par une ?",
+  choices:["Non — les ressources indépendantes sont créées en parallèle (10 par défaut)","Oui, toujours séquentiellement","Oui, sauf avec -parallel","Seulement en HCP Terraform"],
+  answer:0,
+  explain:"Le graphe de dépendances permet le parallélisme (réglable avec -parallelism=n). Seules les dépendances imposent un ordre." },
+{ id:"v-multicloud", level:1, dom:"Concepts", type:"qcm",
+  q:"Pourquoi dit-on que Terraform est « cloud-agnostic » ?",
+  choices:["Un même outil/langage pilote des centaines de providers (Azure, AWS, GitHub, Datadog…) — mais chaque config reste spécifique à son provider","Le même code .tf se déploie tel quel sur Azure ET AWS","Il ne fonctionne que sur le cloud","Il traduit automatiquement azurerm en aws"],
+  answer:0,
+  explain:"Piège classique : Terraform est multi-cloud par son écosystème, mais un bloc azurerm_* ne devient pas magiquement un bloc aws_*." },
+{ id:"v-binary", level:1, dom:"Concepts", type:"qcm",
+  q:"Comment Terraform s'installe-t-il ?",
+  choices:["Un binaire unique à mettre dans le PATH (ou gestionnaire de paquets)","Un serveur à déployer","Une extension de navigateur","Uniquement via Docker"],
+  answer:0,
+  explain:"Un seul exécutable écrit en Go. Les providers sont téléchargés séparément par terraform init." },
+{ id:"v-apply-approve", level:1, dom:"Workflow", type:"qcm",
+  q:"Que se passe-t-il quand tu lances « terraform apply » sans fichier de plan ?",
+  choices:["Il exécute un plan, l'affiche, et attend ta confirmation « yes »","Il applique immédiatement sans rien montrer","Il refuse de s'exécuter","Il ne fait qu'afficher le plan"],
+  answer:0,
+  explain:"apply = plan + confirmation interactive + exécution. -auto-approve saute la confirmation (CI). apply monplan.tfplan exécute un plan sauvegardé sans demander." },
+{ id:"v-gitignore", level:1, dom:"State", type:"qcm",
+  q:"Que faut-il mettre dans le .gitignore d'un projet Terraform ?",
+  choices:[".terraform/ et *.tfstate (mais PAS .terraform.lock.hcl)","Tous les fichiers .tf","Le lock file uniquement","Rien, tout se commit"],
+  answer:0,
+  explain:"Le state (secrets !) et le dossier des plugins ne se versionnent pas. Le lock file, si. Les .tfvars avec secrets non plus." },
+/* ---------- NIVEAU 2 — COMMANDES & FAITS D'EXAMEN ---------- */
+{ id:"f-var-prec", level:2, dom:"Variables", type:"qcm",
+  q:"Plusieurs sources définissent la même variable. Laquelle GAGNE (priorité la plus haute) ?",
+  choices:["-var / -var-file en ligne de commande","La variable d'environnement TF_VAR_x","terraform.tfvars","La valeur default du bloc variable"],
+  answer:0,
+  explain:"Ordre croissant : default < TF_VAR_ < terraform.tfvars < *.auto.tfvars (alphabétique) < -var/-var-file (le dernier passé gagne). La ligne de commande écrase tout." },
+{ id:"f-var-types", level:2, dom:"Variables", type:"qcm",
+  q:"Quels sont les types de variables Terraform valides ?",
+  choices:["string, number, bool, list, set, map, object, tuple, any","string, int, float, array, dict","varchar, boolean, json","Seulement string et number"],
+  answer:0,
+  explain:"Types primitifs : string/number/bool. Collections : list/set/map. Structurels : object/tuple. any = non contraint." },
+{ id:"f-var-validation", level:2, dom:"Variables", type:"qcm",
+  q:"Comment imposer qu'une variable respecte une règle (ex : longueur < 10) ?",
+  choices:["Un bloc validation { condition = ..., error_message = \"...\" } dans le bloc variable","Un if dans le resource","Ce n'est pas possible","Un provisioner de vérification"],
+  answer:0,
+  explain:"validation { condition = length(var.name) < 10, error_message = \"...\" } — l'erreur sort dès le plan." },
+{ id:"f-sensitive", level:2, dom:"Variables", type:"qcm",
+  q:"Que fait « sensitive = true » sur une variable ou un output ?",
+  choices:["Masque la valeur dans les sorties CLI/plan — mais elle reste EN CLAIR dans le state","Chiffre la valeur dans le state","Empêche son utilisation","La supprime après apply"],
+  answer:0,
+  explain:"sensitive = masquage d'affichage uniquement. Pour lire un output sensible : terraform output nom (ou -json)." },
+{ id:"f-init-upgrade", level:2, dom:"CLI", type:"input",
+  q:"Quelle option de terraform init met à jour les providers vers les dernières versions autorisées par les contraintes ?",
+  accept:["upgrade","-upgrade","init -upgrade","terraform init -upgrade"],
+  explain:"terraform init -upgrade réévalue les contraintes et met à jour le lock file. Sans elle, init respecte le lock file existant." },
+{ id:"f-plan-out", level:2, dom:"CLI", type:"qcm",
+  q:"Comment garantir en CI que l'apply exécute EXACTEMENT ce que le plan a montré ?",
+  choices:["terraform plan -out=monplan puis terraform apply monplan","terraform apply -auto-approve directement","Copier-coller la sortie du plan","Lancer plan et apply en même temps"],
+  answer:0,
+  explain:"Le fichier de plan sauvegardé est ré-exécuté tel quel (sans re-confirmation). Si l'infra a changé entre-temps, l'apply échoue — c'est voulu." },
+{ id:"f-replace", level:2, dom:"CLI", type:"input",
+  q:"terraform taint est déprécié. Quelle option moderne force le REMPLACEMENT d'une ressource au prochain apply ? terraform apply ____=adresse",
+  accept:["-replace","replace","apply -replace"],
+  explain:"terraform apply -replace=azurerm_linux_vm.web — planifie destroy+create de cette ressource précise." },
+{ id:"f-refreshonly", level:2, dom:"CLI", type:"input",
+  q:"terraform refresh est déprécié. Quelle option de plan met à jour le state depuis le réel SANS proposer de changements de config ? terraform plan ____",
+  accept:["-refresh-only","refresh only","refresh-only"],
+  explain:"terraform plan/apply -refresh-only — détecte le drift et synchronise le state, sans toucher à l'infra." },
+{ id:"f-state-list", level:2, dom:"State", type:"input",
+  q:"Quelle commande liste toutes les ressources présentes dans le state ?",
+  accept:["terraform state list","state list"],
+  explain:"terraform state list. Pour le détail d'une ressource : terraform state show <adresse>." },
+{ id:"f-state-mv", level:2, dom:"State", type:"input",
+  q:"Quelle commande renomme/déplace une ressource DANS le state sans la détruire (ancêtre du bloc moved) ?",
+  accept:["terraform state mv","state mv"],
+  explain:"terraform state mv ancienne.adresse nouvelle.adresse. L'alternative déclarative moderne : le bloc moved {}." },
+{ id:"f-state-rm", level:2, dom:"State", type:"input",
+  q:"Quelle commande retire une ressource du state SANS la détruire (Terraform cesse de la gérer) ?",
+  accept:["terraform state rm","state rm"],
+  explain:"terraform state rm adresse — la ressource réelle survit mais devient « unmanaged ». L'inverse d'un import." },
+{ id:"f-import", level:2, dom:"State", type:"qcm",
+  q:"Comment adopter une ressource créée à la main dans Terraform (v1.5+) ?",
+  choices:["Un bloc import { to = ..., id = \"...\" } + plan/apply — ou la commande terraform import","terraform adopt","Elle est détectée automatiquement au plan","Impossible, il faut la recréer"],
+  answer:0,
+  explain:"Le bloc import (déclaratif, peut même générer la config avec plan -generate-config-out). L'ancienne méthode : terraform import adresse id." },
+{ id:"f-moved", level:2, dom:"State", type:"qcm",
+  q:"À quoi sert le bloc « moved { from = ..., to = ... } » ?",
+  choices:["Refactorer/renommer une ressource ou la déplacer dans un module SANS destroy/recreate","Déplacer une VM entre régions","Migrer le backend","Déplacer un fichier .tf"],
+  answer:0,
+  explain:"moved = renommage déclaratif et versionné dans le code, appliqué au prochain apply. Remplace state mv pour les refactorings." },
+{ id:"f-forceunlock", level:2, dom:"State", type:"input",
+  q:"Un crash a laissé le state verrouillé. Quelle commande libère le verrou (avec l'ID du lock) ?",
+  accept:["terraform force-unlock","force-unlock","force unlock"],
+  explain:"terraform force-unlock <LOCK_ID> — uniquement après avoir vérifié qu'aucun run n'est réellement en cours." },
+{ id:"f-ws-cmd", level:2, dom:"Workspaces", type:"input",
+  q:"Quelle commande crée un nouveau workspace CLI nommé « prod » ?",
+  accept:["terraform workspace new prod","workspace new prod","terraform workspace new"],
+  explain:"terraform workspace new prod (puis select/list/show/delete). Le workspace initial s'appelle « default » et ne peut pas être supprimé." },
+{ id:"f-ws-interp", level:2, dom:"Workspaces", type:"input",
+  q:"Quelle expression HCL donne le nom du workspace courant (ex : pour suffixer des noms de ressources) ?",
+  accept:["terraform.workspace","terraform workspace"],
+  explain:"name = \"app-${terraform.workspace}\" — permet une config unique déclinée par workspace." },
+{ id:"f-tflog", level:2, dom:"Debug", type:"input",
+  q:"Quelle variable d'environnement active les logs détaillés de Terraform (TRACE, DEBUG, INFO, WARN, ERROR) ?",
+  accept:["tf log","tf_log"],
+  explain:"TF_LOG=TRACE (le plus verbeux) + TF_LOG_PATH=fichier.log pour écrire dans un fichier. TF_LOG_CORE / TF_LOG_PROVIDER pour cibler." },
+{ id:"f-detailed-exit", level:2, dom:"CLI", type:"qcm",
+  q:"Avec terraform plan -detailed-exitcode, que signifie le code de sortie 2 ?",
+  choices:["Le plan a réussi ET des changements sont à appliquer","Erreur fatale","Aucun changement","State verrouillé"],
+  answer:0,
+  explain:"0 = succès sans changement, 1 = erreur, 2 = succès avec changements. Très utilisé en CI pour détecter le drift." },
+{ id:"f-backend-lock", level:2, dom:"State", type:"qcm",
+  q:"Pourquoi le verrouillage (locking) du state est-il crucial en équipe ?",
+  choices:["Empêcher deux applies simultanés de corrompre le state","Chiffrer le state","Empêcher la lecture du state","Accélérer les plans"],
+  answer:0,
+  explain:"Deux writes concurrents = state corrompu. Le backend azurerm verrouille via lease sur le blob ; HCP Terraform verrouille nativement." },
+{ id:"f-migrate", level:2, dom:"State", type:"input",
+  q:"Tu ajoutes un bloc backend distant à une config qui a déjà un state local. Quelle commande copie le state vers le nouveau backend ? terraform init ____",
+  accept:["-migrate-state","migrate state","migrate-state","init -migrate-state"],
+  explain:"terraform init -migrate-state propose de copier l'état existant. -reconfigure ignore au contraire l'ancien backend sans migrer." },
+{ id:"f-count-foreach", level:2, dom:"Meta-arguments", type:"qcm",
+  q:"Quelle différence entre count et for_each ?",
+  choices:["count indexe par numéro (risque de recréation si la liste change) ; for_each par clé de map/set (stable)","for_each est déprécié","count crée des modules, for_each des resources","Aucune"],
+  answer:0,
+  explain:"Supprimer l'élément 0 d'un count décale tous les index → recréations en cascade. for_each = adressage par clé, stable. Ils sont mutuellement exclusifs sur un même bloc." },
+{ id:"f-foreach-types", level:2, dom:"Meta-arguments", type:"qcm",
+  q:"Quels types de valeurs accepte for_each ?",
+  choices:["Une map ou un set de strings (une liste doit passer par toset())","N'importe quelle liste","Un number","Uniquement une map"],
+  answer:0,
+  explain:"for_each = var.ma_map ou toset(var.ma_liste). Dans le bloc : each.key et each.value." },
+{ id:"f-lifecycle", level:2, dom:"Meta-arguments", type:"qcm",
+  q:"Quels sont les principaux arguments du bloc lifecycle ?",
+  choices:["create_before_destroy, prevent_destroy, ignore_changes, replace_triggered_by","retry, timeout, backoff","depends_on, count, for_each","pre_apply, post_apply"],
+  answer:0,
+  explain:"lifecycle contrôle le cycle de vie : remplacer sans coupure, interdire la destruction, ignorer des attributs, forcer un remplacement lié." },
+{ id:"f-dependson", level:2, dom:"Meta-arguments", type:"qcm",
+  q:"Quand utiliser depends_on ?",
+  choices:["Quand une dépendance existe mais n'apparaît PAS via une référence (dépendance cachée)","Sur chaque ressource, par sécurité","Pour accélérer le graphe","Jamais, c'est déprécié"],
+  answer:0,
+  explain:"Les références (a.id dans b) créent déjà les dépendances implicites. depends_on = uniquement pour les liens invisibles (ex : rôle IAM requis avant une action)." },
+{ id:"f-dynamic", level:2, dom:"Config", type:"qcm",
+  q:"À quoi sert un bloc « dynamic » ?",
+  choices:["Générer plusieurs blocs imbriqués répétitifs (ex : ip_restriction) à partir d'une collection","Charger des variables au runtime","Créer des ressources conditionnelles","Rendre le state dynamique"],
+  answer:0,
+  explain:"dynamic \"ip_restriction\" { for_each = var.rules  content { ... } } — le for_each des blocs internes, pas des ressources." },
+{ id:"f-splat", level:2, dom:"Expressions", type:"qcm",
+  q:"Que renvoie l'expression azurerm_subnet.subnets[*].id ?",
+  choices:["La liste des ids de toutes les instances créées avec count","L'id de la première instance","Une erreur","Un objet unique"],
+  answer:0,
+  explain:"L'opérateur splat [*] collecte un attribut sur toutes les instances. Avec for_each : values(azurerm_subnet.subnets)[*].id." },
+{ id:"f-conditional", level:2, dom:"Expressions", type:"qcm",
+  q:"Comment créer une ressource SEULEMENT si var.enabled est vrai ?",
+  choices:["count = var.enabled ? 1 : 0","if var.enabled { resource ... }","enabled = true dans le bloc","when = var.enabled"],
+  answer:0,
+  explain:"HCL n'a pas de « if » de bloc : le ternaire sur count (ou for_each sur collection vide) est LE pattern conditionnel." },
+{ id:"f-functions", level:2, dom:"Expressions", type:"qcm",
+  q:"Quelle fonction lit le contenu d'un fichier et y injecte des variables (ex : script cloud-init) ?",
+  choices:["templatefile(\"script.tpl\", { port = 8080 })","file_template()","render()","include()"],
+  answer:0,
+  explain:"templatefile = file() + interpolation ${port} dans le template. file() lit brut, sans variables." },
+{ id:"f-lookup", level:2, dom:"Expressions", type:"input",
+  q:"Quelle fonction récupère une valeur dans une map avec une valeur PAR DÉFAUT si la clé n'existe pas ?",
+  accept:["lookup"],
+  explain:"lookup(var.sizes, var.env, \"Standard_B1s\"). Sans défaut, var.sizes[var.env] suffit (mais plante si absent)." },
+{ id:"f-reqprov", level:2, dom:"Versions", type:"qcm",
+  q:"Où déclare-t-on la source et la contrainte de version d'un provider ?",
+  choices:["Dans terraform { required_providers { azurerm = { source = \"hashicorp/azurerm\", version = \"~> 4.0\" } } }","Dans le bloc provider \"azurerm\" {}","Dans terraform.tfvars","Dans le state"],
+  answer:0,
+  explain:"required_providers (source + version) dans le bloc terraform. Le bloc provider ne porte que la configuration (features, region…)." },
+{ id:"f-reqversion", level:2, dom:"Versions", type:"input",
+  q:"Quel argument du bloc terraform {} impose une version minimale de Terraform LUI-MÊME ?",
+  accept:["required_version","required version"],
+  explain:"terraform { required_version = \">= 1.5.0\" } — à ne pas confondre avec required_providers." },
+{ id:"f-module-source", level:2, dom:"Modules", type:"qcm",
+  q:"Quel format de source référence un module du registry PUBLIC ?",
+  choices:["namespace/nom/provider (ex : Azure/vnet/azurerm) + argument version","Une URL http obligatoire","Un chemin absolu","Le nom du module seul"],
+  answer:0,
+  explain:"source = \"Azure/vnet/azurerm\", version = \"~> 4.0\". L'argument version ne marche QUE pour les registries (pas git/local)." },
+{ id:"f-module-out", level:2, dom:"Modules", type:"input",
+  q:"Comment référencer l'output « vnet_id » du module « network » ? (tape l'expression)",
+  accept:["module.network.vnet_id","module network vnet id"],
+  explain:"module.<nom>.<output>. Les valeurs d'un module enfant ne sont visibles que via ses outputs." },
+{ id:"f-module-naming", level:2, dom:"Modules", type:"qcm",
+  q:"Convention de nommage OBLIGATOIRE d'un repo pour publier un module sur le registry ?",
+  choices:["terraform-<PROVIDER>-<NAME> (ex : terraform-azurerm-vnet) + tags semver","module-<NAME>","tf-<NAME>","N'importe quel nom"],
+  answer:0,
+  explain:"terraform-<PROVIDER>-<NAME>, repo public (ou private registry), releases taguées x.y.z. Question récurrente." },
+{ id:"f-provider-alias", level:2, dom:"Config", type:"qcm",
+  q:"Comment utiliser le MÊME provider avec deux configurations (ex : deux régions/subscriptions) ?",
+  choices:["Deux blocs provider dont un avec alias = \"west\", puis provider = azurerm.west dans la ressource","Deux dossiers séparés obligatoirement","provider2 = ...","C'est impossible"],
+  answer:0,
+  explain:"provider \"azurerm\" { alias = \"west\" ... } et dans la ressource : provider = azurerm.west. Les modules reçoivent les providers via l'argument providers = {}." },
+{ id:"f-output-cmd", level:2, dom:"CLI", type:"input",
+  q:"Quelle commande affiche les outputs du state (option -json pour l'intégration) ?",
+  accept:["terraform output","output"],
+  explain:"terraform output [nom] [-json] [-raw]. Pratique en script : terraform output -raw ip_publique." },
+{ id:"f-show", level:2, dom:"CLI", type:"qcm",
+  q:"Que fait « terraform show » ?",
+  choices:["Affiche le contenu lisible du state ou d'un fichier de plan (-json pour machine)","Montre la doc d'un provider","Ouvre l'interface web","Liste les workspaces"],
+  answer:0,
+  explain:"terraform show [monplan.tfplan] — inspection humaine ou JSON (pour outils d'analyse de plan)." },
+{ id:"f-graph", level:2, dom:"CLI", type:"input",
+  q:"Quelle commande exporte le graphe de dépendances (format DOT/Graphviz) ?",
+  accept:["terraform graph","graph"],
+  explain:"terraform graph | dot -Tpng > graph.png — visualise l'ordre de création calculé." },
+{ id:"f-state-pull", level:2, dom:"State", type:"input",
+  q:"Quelle commande télécharge et affiche le state DISTANT en JSON sur la sortie standard ?",
+  accept:["terraform state pull","state pull"],
+  explain:"terraform state pull (et state push pour l'inverse — dangereux). Utile pour sauvegarder ou inspecter un backend distant." },
+{ id:"f-cloud-block", level:2, dom:"HCP Terraform", type:"qcm",
+  q:"Comment connecter une configuration CLI à HCP Terraform ?",
+  choices:["Un bloc cloud { organization = \"...\" workspaces { name = \"...\" } } dans terraform {} + terraform login","Un provider hcp","Copier le state à la main","Ce n'est pas possible depuis la CLI"],
+  answer:0,
+  explain:"terraform login stocke le token API ; le bloc cloud rattache la config à l'organisation/workspace. Les runs peuvent alors s'exécuter à distance." },
+{ id:"f-hcp-state", level:2, dom:"HCP Terraform", type:"qcm",
+  q:"Où est stocké le state quand on utilise HCP Terraform ?",
+  choices:["Dans le workspace HCP, chiffré, versionné, avec verrouillage automatique","Toujours en local","Dans un blob Azure obligatoirement","Dans le repo Git"],
+  answer:0,
+  explain:"Chaque workspace HCP porte son state : historique des versions, locking natif, contrôle d'accès par équipe." },
+{ id:"f-sentinel-levels", level:2, dom:"HCP Terraform", type:"qcm",
+  q:"Quels sont les 3 niveaux d'application (enforcement) d'une policy Sentinel ?",
+  choices:["advisory, soft-mandatory, hard-mandatory","info, warn, error","low, medium, high","allow, deny, audit"],
+  answer:0,
+  explain:"advisory = avertit ; soft-mandatory = bloque mais un admin peut outrepasser ; hard-mandatory = bloque toujours." },
+{ id:"f-plan-symbols", level:2, dom:"Workflow", type:"qcm",
+  q:"Dans la sortie d'un plan, que signifie le symbole « -/+ » devant une ressource ?",
+  choices:["Destruction PUIS recréation (remplacement)","Modification en place","Suppression simple","Lecture seule"],
+  answer:0,
+  explain:"+ créer, - détruire, ~ modifier en place, -/+ remplacer, <= lire (data). Savoir lire un plan = plusieurs questions d'examen." },
+{ id:"f-remote-state-ds", level:2, dom:"State", type:"input",
+  q:"Quel data source lit les OUTPUTS du state d'une AUTRE configuration Terraform ? data \"terraform_____\" ...",
+  accept:["remote_state","terraform_remote_state","remote state"],
+  explain:"data \"terraform_remote_state\" \"net\" { backend = \"azurerm\" config = {...} } puis data.terraform_remote_state.net.outputs.vnet_id." },
+{ id:"f-null-alt", level:2, dom:"Config", type:"qcm",
+  q:"Assigner « null » à un argument optionnel revient à :",
+  choices:["Ne pas le définir du tout (le provider applique son défaut)","Le mettre à zéro","Provoquer une erreur","Le supprimer du state"],
+  answer:0,
+  explain:"null = « argument omis ». Pratique dans les ternaires : valeur != \"\" ? valeur : null." },
+{ id:"f-apply-target", level:2, dom:"CLI", type:"qcm",
+  q:"À quoi sert terraform apply -target=adresse et quelle est la recommandation ?",
+  choices:["Appliquer seulement une ressource et ses dépendances — usage EXCEPTIONNEL (débogage), pas en routine","La façon normale de déployer ressource par ressource","Cibler un workspace","Cibler un backend"],
+  answer:0,
+  explain:"-target crée des states incohérents s'il est utilisé en routine. HashiCorp : réservé aux situations exceptionnelles." },
+{ id:"f-tfplan-secret", level:2, dom:"State", type:"qcm",
+  q:"Un fichier de plan sauvegardé (plan -out) peut-il contenir des données sensibles ?",
+  choices:["Oui — il embarque les valeurs (dont secrets) : à protéger comme le state","Non, il est toujours chiffré","Non, il ne contient que des adresses","Seulement en JSON"],
+  answer:0,
+  explain:"Le .tfplan contient la config résolue et les valeurs. Même traitement que le state : ne pas le committer, le protéger." },
+/* ---------- NIVEAU 3 — SCÉNARIOS & PIÈGES ---------- */
+{ id:"s-team-state", level:3, dom:"State", type:"qcm",
+  q:"Deux collègues ont écrasé mutuellement leur state local et l'infra est incohérente. Quelle solution durable ?",
+  choices:["Backend distant partagé AVEC verrouillage (azurerm, HCP Terraform…)","S'envoyer le tfstate par mail après chaque apply","Committer le tfstate dans Git","Chacun son propre state local"],
+  answer:0,
+  explain:"Backend distant + locking = un seul state de vérité, jamais deux writes concurrents. Git ne verrouille pas et expose les secrets." },
+{ id:"s-secrets", level:3, dom:"State", type:"qcm",
+  q:"Ton state contient des mots de passe de base de données. Quelle est la bonne posture ?",
+  choices:["Traiter le state comme un secret : backend chiffré au repos, accès restreint, pas de commit Git","Supprimer le state après chaque apply","Utiliser sensitive = true, ça suffit à le chiffrer","Encoder les mots de passe en base64"],
+  answer:0,
+  explain:"sensitive ne masque que l'affichage. La protection réelle = backend sécurisé (chiffrement + RBAC) et state hors de Git. Base64 n'est pas du chiffrement." },
+{ id:"s-preventdestroy", level:3, dom:"Lifecycle", type:"input",
+  q:"Personne ne doit pouvoir détruire la base de données de prod via Terraform, même par accident. Quel argument lifecycle ?",
+  accept:["prevent_destroy","prevent destroy"],
+  explain:"lifecycle { prevent_destroy = true } — tout plan qui impliquerait sa destruction échoue avec une erreur." },
+{ id:"s-ignorechanges", level:3, dom:"Lifecycle", type:"input",
+  q:"Un outil externe modifie les tags de tes ressources et chaque plan veut les « corriger ». Quel argument lifecycle arrête ce cycle ?",
+  accept:["ignore_changes","ignore changes"],
+  explain:"lifecycle { ignore_changes = [tags] } — Terraform cesse de surveiller cet attribut précis." },
+{ id:"s-cbd", level:3, dom:"Lifecycle", type:"input",
+  q:"Le remplacement d'une ressource critique doit créer la NOUVELLE avant de détruire l'ancienne (zéro interruption). Quel argument lifecycle ?",
+  accept:["create_before_destroy","create before destroy"],
+  explain:"create_before_destroy = true inverse l'ordre destroy→create par défaut. Attention aux contraintes d'unicité de nom." },
+{ id:"s-corrupted", level:3, dom:"CLI", type:"qcm",
+  q:"Une VM gérée par Terraform est corrompue ; sa config n'a pas changé. Comment la recréer proprement ?",
+  choices:["terraform apply -replace=azurerm_linux_virtual_machine.web","La supprimer dans le portail et relancer apply","Modifier un tag pour forcer un changement","terraform destroy complet"],
+  answer:0,
+  explain:"-replace planifie le remplacement de cette seule ressource. La supprimer à la main fonctionnerait aussi (drift) mais c'est moins propre et plus risqué." },
+{ id:"s-adopt", level:3, dom:"State", type:"qcm",
+  q:"Un resource group historique a été créé au portail. Tu veux le gérer avec Terraform SANS le recréer. Que fais-tu ?",
+  choices:["Écrire le bloc resource + bloc import { to, id } (ou terraform import), puis plan jusqu'à zéro diff","Le supprimer et le recréer via Terraform","Copier son JSON dans le state","Un data source suffit pour le gérer"],
+  answer:0,
+  explain:"Import = adoption dans le state. Un data source ne fait que LIRE — il ne gère pas. Après import, itérer sur la config jusqu'à un plan vide." },
+{ id:"s-rename", level:3, dom:"State", type:"qcm",
+  q:"Tu renommes azurerm_storage_account.old en .main dans le code. Sans précaution, que fera le prochain apply ?",
+  choices:["Détruire l'ancienne et en créer une nouvelle — d'où le bloc moved { from, to } pour l'éviter","Rien, Terraform détecte le renommage","Une erreur de syntaxe","Un simple update en place"],
+  answer:0,
+  explain:"Terraform raisonne par adresse : nouveau nom = nouvelle ressource. moved (ou state mv) préserve l'objet réel lors du refactoring." },
+{ id:"s-envs", level:3, dom:"Workspaces", type:"qcm",
+  q:"Même infra en dev, staging et prod avec des tailles différentes. Approche idiomatique ?",
+  choices:["Un module commun + un state par environnement (workspaces CLI ou dossiers) + tfvars par env","Copier-coller la config trois fois","Trois branches Git","Un seul state pour tout"],
+  answer:0,
+  explain:"Le module porte la logique commune ; chaque env a son state isolé et ses valeurs (dev.tfvars…). Blast radius limité." },
+{ id:"s-policy", level:3, dom:"HCP Terraform", type:"input",
+  q:"L'entreprise veut BLOQUER automatiquement tout run qui déploie hors de westeurope. Quel outil HashiCorp (policy as code) ?",
+  accept:["sentinel"],
+  explain:"Une policy Sentinel hard-mandatory évaluée entre plan et apply dans HCP Terraform. (OPA est aussi supporté.)" },
+{ id:"s-debug", level:3, dom:"Debug", type:"qcm",
+  q:"Un provider échoue avec un message obscur. Comment obtenir le détail des appels API ?",
+  choices:["TF_LOG=TRACE (et TF_LOG_PATH pour fichier) puis rejouer la commande","Relancer apply en boucle","Réinstaller Terraform","Supprimer le state"],
+  answer:0,
+  explain:"TRACE montre les requêtes/réponses des providers. TF_LOG_PROVIDER cible les seuls providers." },
+{ id:"s-pr-plan", level:3, dom:"HCP Terraform", type:"qcm",
+  q:"L'équipe veut voir le plan de chaque pull request AVANT le merge, automatiquement. Quelle solution native ?",
+  choices:["HCP Terraform avec intégration VCS : speculative plans postés sur les PR","Chacun lance plan sur sa machine","Un cron qui applique la nuit","Vérifier après le merge"],
+  answer:0,
+  explain:"Le VCS-driven workflow d'HCP Terraform : plan spéculatif (non applicable) sur chaque PR, apply au merge, avec approbations." },
+{ id:"s-private-mod", level:3, dom:"Modules", type:"qcm",
+  q:"Partager des modules internes (non publics) avec versionning à toute l'entreprise. Quelle solution ?",
+  choices:["Le private registry d'HCP Terraform (ou sources git internes versionnées par tag)","Les publier sur le registry public","Un dossier partagé réseau","Copier-coller entre projets"],
+  answer:0,
+  explain:"Le private registry donne la découverte, la doc générée et le versionning semver — sans exposer le code publiquement." },
+{ id:"s-pin", level:3, dom:"Versions", type:"qcm",
+  q:"Un upgrade surprise du provider a cassé la prod. Comment éviter que ça se reproduise ?",
+  choices:["Contrainte ~> dans required_providers + committer .terraform.lock.hcl","Ne plus jamais faire init","Copier le provider dans le repo","Supprimer les contraintes de version"],
+  answer:0,
+  explain:"La contrainte pessimiste évite les sauts majeurs ; le lock file fige les versions exactes pour toute l'équipe et la CI. Upgrade choisi = init -upgrade." },
+{ id:"s-partial-backend", level:3, dom:"State", type:"qcm",
+  q:"Tu ne veux PAS committer la clé du backend dans le bloc backend {}. Comment la fournir ?",
+  choices:["Configuration partielle : terraform init -backend-config=... (fichier ou clé=valeur)","En dur dans le .tf, c'est obligatoire","Dans terraform.tfvars","Les variables var.* fonctionnent dans le bloc backend"],
+  answer:0,
+  explain:"Le bloc backend N'ACCEPTE PAS les variables (piège !). La solution : backend partiel + -backend-config au init." },
+{ id:"s-output-share", level:3, dom:"State", type:"qcm",
+  q:"La config « app » a besoin de l'ID du VNet créé par la config « network » (states séparés). Solution idiomatique ?",
+  choices:["data \"terraform_remote_state\" pour lire les outputs de network (ou un data source azurerm classique)","Fusionner les deux states","Copier l'ID en dur","Un provisioner qui lit le fichier state"],
+  answer:0,
+  explain:"terraform_remote_state expose les outputs d'une autre config. Alternative découplée : un data source qui retrouve la ressource par nom/tags." },
+{ id:"s-drift-detect", level:3, dom:"State", type:"qcm",
+  q:"Vérifier chaque nuit en CI que PERSONNE n'a modifié l'infra à la main — sans rien changer. Quelle commande ?",
+  choices:["terraform plan -detailed-exitcode (code 2 = drift) ou plan -refresh-only","terraform apply -auto-approve","terraform validate","terraform fmt -check"],
+  answer:0,
+  explain:"Un plan nocturne + exit code = alerte de drift. HCP Terraform propose aussi les health assessments (drift detection) managés." },
+{ id:"s-vm-size-map", level:3, dom:"Expressions", type:"qcm",
+  q:"La taille de VM dépend de l'environnement (dev → B1s, prod → D4s). Quelle approche idiomatique ?",
+  choices:["Une map { dev = \"Standard_B1s\", prod = \"Standard_D4s\" } indexée par var.env ou lookup()","Trois fichiers main.tf","Un if/else de blocs resource","Modifier à la main après apply"],
+  answer:0,
+  explain:"size = var.sizes[var.env] (ou lookup avec défaut). Les maps de configuration par environnement sont un pattern central." },
+{ id:"s-upgrade-tf", level:3, dom:"Versions", type:"qcm",
+  q:"Ton binaire local est en 1.7, un collègue en 1.9 : vos plans divergent. Comment stabiliser ?",
+  choices:["required_version dans le bloc terraform + un gestionnaire de versions (tenv/tfenv) ou la CI comme référence","Chacun garde sa version","Toujours prendre la plus vieille","Désinstaller Terraform"],
+  answer:0,
+  explain:"required_version = \"~> 1.9.0\" fait échouer les binaires non conformes — l'équipe converge. La CI devient l'arbitre." },
+{ id:"s-count-shift", level:3, dom:"Meta-arguments", type:"qcm",
+  q:"Tu retires le 1er élément d'une liste utilisée avec count = length(var.list). Que va proposer le plan ?",
+  choices:["Recréer/déplacer TOUTES les ressources suivantes (les index se décalent)","Supprimer seulement la 1re","Aucun changement","Une erreur"],
+  answer:0,
+  explain:"count[1] devient count[0], etc. → cascade de remplacements. C'est LA raison de préférer for_each (clés stables)." },
+{ id:"s-local-exec", level:3, dom:"Config", type:"qcm",
+  q:"Tu dois ABSOLUMENT lancer un script après création d'une ressource (aucune alternative). Quelle option, en gardant les bonnes pratiques ?",
+  choices:["provisioner \"local-exec\" sur la ressource — en sachant que c'est un dernier recours non idempotent","Un second apply","Modifier le state à la main","Un output qui exécute le script"],
+  answer:0,
+  explain:"local-exec/remote-exec existent pour ces cas limites. L'examen attend que tu saches QUE c'est possible ET que c'est déconseillé." },
+{ id:"s-relance-echec", level:3, dom:"Workflow", type:"qcm",
+  q:"Un apply échoue à mi-parcours (30 ressources sur 50 créées). Que fait le prochain apply ?",
+  choices:["Il reprend là où c'était rendu : les 30 sont dans le state, il ne crée que le reste","Il détruit tout et recommence","Il échoue tant qu'on n'a pas nettoyé","Il duplique les 30 premières"],
+  answer:0,
+  explain:"Terraform est idempotent : les ressources déjà créées (dans le state) sont conservées ; le plan ne propose que le manquant. Les ressources « tainted » partiellement créées seront remplacées." },
+
+/* ---------- HCL À COMPLÉTER ---------- */
+{ id:"c-reqprov", level:2, dom:"HCL — versions", type:"input",
+  code:"terraform {\n  required_providers {\n    azurerm = {\n      source  = \"____/azurerm\"\n      version = \"~> 4.0\"\n    }\n  }\n}",
+  q:"Complète le namespace du provider officiel :",
+  accept:["hashicorp"],
+  explain:"source = \"hashicorp/azurerm\" = registry.terraform.io/hashicorp/azurerm. Namespace + nom, toujours." },
+{ id:"c-ref", level:2, dom:"HCL — références", type:"qcm",
+  code:"resource \"azurerm_resource_group\" \"rg\" {\n  name     = \"rg-app\"\n  location = \"westeurope\"\n}\n\nresource \"azurerm_storage_account\" \"st\" {\n  name                = \"stapp42\"\n  resource_group_name = ____\n  location            = azurerm_resource_group.rg.location\n}",
+  q:"Complète la référence au nom du resource group :",
+  choices:["azurerm_resource_group.rg.name","rg.name","resource.rg.name","var.rg.name"],
+  answer:0,
+  explain:"Syntaxe : <type>.<nom_local>.<attribut>. Cette référence crée aussi la dépendance implicite (RG créé avant le storage)." },
+{ id:"c-data", level:2, dom:"HCL — data", type:"input",
+  code:"data \"azurerm_client_config\" \"current\" {}\n\noutput \"tenant\" {\n  value = ____.azurerm_client_config.current.tenant_id\n}",
+  q:"Complète le préfixe de référence d'un data source :",
+  accept:["data"],
+  explain:"Les data sources se référencent avec data.<type>.<nom>.<attr> — le préfixe data est le piège classique." },
+{ id:"c-vartype", level:2, dom:"HCL — variables", type:"input",
+  code:"variable \"environment\" {\n  ____        = string\n  description = \"Environnement cible\"\n  default     = \"dev\"\n}",
+  q:"Complète l'argument qui contraint le type :",
+  accept:["type"],
+  explain:"type = string/number/bool/list(...)/map(...)/object({...}). Toujours typer ses variables — bonne pratique et question d'examen." },
+{ id:"c-count-cond", level:2, dom:"HCL — expressions", type:"input",
+  code:"resource \"azurerm_public_ip\" \"pip\" {\n  count = var.expose_public ? 1 : ____\n  ...\n}",
+  q:"Complète le ternaire pour NE PAS créer la ressource :",
+  accept:["0","zero"],
+  explain:"count = condition ? 1 : 0 — le pattern « ressource conditionnelle ». Référence ensuite : azurerm_public_ip.pip[0]." },
+{ id:"c-foreach-each", level:2, dom:"HCL — meta-arguments", type:"qcm",
+  code:"resource \"azurerm_resource_group\" \"envs\" {\n  for_each = toset([\"dev\", \"staging\", \"prod\"])\n  name     = \"rg-${each.____}\"\n  location = \"westeurope\"\n}",
+  q:"Complète pour obtenir « dev », « staging », « prod » :",
+  choices:["key","value uniquement","index","item"],
+  answer:0,
+  explain:"Avec un set, each.key == each.value. Avec une map : each.key = la clé, each.value = la valeur. (each.index n'existe pas !)" },
+{ id:"c-lifecycle", level:2, dom:"HCL — lifecycle", type:"input",
+  code:"resource \"azurerm_mssql_database\" \"prod\" {\n  ...\n  lifecycle {\n    ____ = true\n  }\n}",
+  q:"Complète pour INTERDIRE la destruction de cette base :",
+  accept:["prevent_destroy","prevent destroy"],
+  explain:"prevent_destroy = true : tout plan destructeur échoue. Les 4 arguments lifecycle à connaître : create_before_destroy, prevent_destroy, ignore_changes, replace_triggered_by." },
+{ id:"c-dynamic", level:3, dom:"HCL — dynamic", type:"input",
+  code:"dynamic \"ip_restriction\" {\n  for_each = var.allowed_ips\n  ____ {\n    ip_address = ip_restriction.value\n  }\n}",
+  q:"Complète le mot-clé qui définit le corps de chaque bloc généré :",
+  accept:["content"],
+  explain:"dynamic \"nom\" { for_each = ...  content { ... } }. Dans content, l'itérateur porte le nom du bloc (ip_restriction.value)." },
+{ id:"c-module", level:2, dom:"HCL — modules", type:"input",
+  code:"module \"vnet\" {\n  ____    = \"Azure/vnet/azurerm\"\n  version = \"~> 4.0\"\n  resource_group_name = azurerm_resource_group.rg.name\n}",
+  q:"Complète l'argument qui indique d'où vient le module :",
+  accept:["source"],
+  explain:"source est obligatoire (registry, git, chemin local). version ne fonctionne qu'avec les sources registry." },
+{ id:"c-output-sens", level:2, dom:"HCL — outputs", type:"input",
+  code:"output \"db_password\" {\n  value     = azurerm_key_vault_secret.pwd.value\n  ____ = true\n}",
+  q:"Complète pour masquer cette valeur dans la sortie CLI :",
+  accept:["sensitive"],
+  explain:"Obligatoire si la valeur provient d'une source sensible, sinon erreur. Rappel : le state la contient quand même en clair." },
+{ id:"c-backend", level:2, dom:"HCL — backend", type:"input",
+  code:"terraform {\n  backend \"____\" {\n    resource_group_name  = \"rg-tfstate\"\n    storage_account_name = \"sttfstate42\"\n    container_name       = \"tfstate\"\n    key                  = \"prod.tfstate\"\n  }\n}",
+  q:"Complète le type de backend pour stocker le state dans un compte de stockage Azure :",
+  accept:["azurerm"],
+  explain:"backend \"azurerm\" — state dans un blob, avec verrouillage par lease. Un changement de backend exige terraform init (-migrate-state)." },
+{ id:"c-import", level:3, dom:"HCL — import", type:"input",
+  code:"import {\n  ____ = azurerm_resource_group.legacy\n  id = \"/subscriptions/xxx/resourceGroups/rg-legacy\"\n}",
+  q:"Complète l'argument qui désigne la ressource cible dans la config :",
+  accept:["to"],
+  explain:"import { to = adresse, id = \"id réel\" } (Terraform 1.5+). Bonus : terraform plan -generate-config-out=gen.tf écrit la config pour toi." },
+{ id:"c-moved", level:3, dom:"HCL — moved", type:"input",
+  code:"moved {\n  from = azurerm_storage_account.old\n  ____ = azurerm_storage_account.main\n}",
+  q:"Complète le bloc de refactoring :",
+  accept:["to"],
+  explain:"moved { from, to } : le prochain apply met à jour l'adresse dans le state sans toucher à la ressource réelle." },
+{ id:"c-ws-interp", level:2, dom:"HCL — workspaces", type:"input",
+  code:"resource \"azurerm_resource_group\" \"rg\" {\n  name     = \"rg-app-${terraform.____}\"\n  location = \"westeurope\"\n}",
+  q:"Complète pour insérer le nom du workspace courant :",
+  accept:["workspace"],
+  explain:"terraform.workspace — « default » si aucun workspace créé. Permet une config unique multi-environnements." },
+{ id:"c-locals-ref", level:2, dom:"HCL — locals", type:"qcm",
+  code:"locals {\n  prefix = \"app-${var.env}\"\n}\n\nresource \"azurerm_resource_group\" \"rg\" {\n  name = \"${____.prefix}-rg\"\n}",
+  q:"Complète la référence à la valeur locale :",
+  choices:["local","locals","var","this"],
+  answer:0,
+  explain:"Déclaration au pluriel (locals {}), référence au singulier (local.prefix) — piège de syntaxe très fréquent." },
+
+/* ---------- SÉQUENCES À ORDONNER ---------- */
+{ id:"o-workflow", level:1, dom:"Workflow", type:"order",
+  q:"Remets dans l'ordre le workflow de base Terraform (de zéro à l'infra déployée).",
+  steps:["Écrire la configuration (.tf)","terraform init — télécharger providers et backend","terraform plan — prévisualiser les changements","terraform apply — exécuter les changements"],
+  explain:"Write → Init → Plan → Apply. validate/fmt s'intercalent après init. destroy termine le cycle de vie." },
+{ id:"o-newprovider", level:2, dom:"Workflow", type:"order",
+  q:"Remets dans l'ordre : ajouter un nouveau provider à une config existante.",
+  steps:["Déclarer le provider dans required_providers","terraform init — télécharger le plugin","terraform validate — vérifier la config","terraform plan puis apply"],
+  explain:"Tout nouveau provider/module exige un init avant que plan ne fonctionne — sinon « provider not installed »." },
+{ id:"o-migrate", level:3, dom:"State", type:"order",
+  q:"Remets dans l'ordre : migrer un state local vers un backend azurerm.",
+  steps:["Créer le storage account et le conteneur de destination","Ajouter le bloc backend \"azurerm\" à la config","terraform init -migrate-state et confirmer la copie","Vérifier avec terraform state list puis supprimer le tfstate local"],
+  explain:"L'infra du backend doit exister AVANT le init. La migration copie l'état ; on vérifie toujours avant de nettoyer." },
+{ id:"o-import", level:3, dom:"State", type:"order",
+  q:"Remets dans l'ordre : adopter une ressource créée manuellement.",
+  steps:["Écrire le bloc resource correspondant dans la config","Ajouter le bloc import { to, id } (ou lancer terraform import)","terraform plan — comparer config et réalité","Ajuster la config jusqu'à un plan sans changement"],
+  explain:"L'import réussi ne suffit pas : tant que le plan propose des modifications, la config ne reflète pas la réalité." },
+{ id:"o-publish", level:3, dom:"Modules", type:"order",
+  q:"Remets dans l'ordre : publier un module sur le registry.",
+  steps:["Créer le repo nommé terraform-<PROVIDER>-<NAME>","Structurer le module (main.tf, variables.tf, outputs.tf, README)","Taguer une release semver (v1.0.0)","Publier sur le registry et consommer avec source + version"],
+  explain:"La convention de nommage et le tag semver sont OBLIGATOIRES pour le registry — questions récurrentes." },
+{ id:"o-debug", level:2, dom:"Debug", type:"order",
+  q:"Remets dans l'ordre : déboguer proprement une erreur de provider.",
+  steps:["Reproduire l'erreur avec un plan","Exporter TF_LOG=DEBUG (ou TRACE)","Définir TF_LOG_PATH pour capturer dans un fichier","Analyser les logs et corriger"],
+  explain:"Niveaux : TRACE > DEBUG > INFO > WARN > ERROR. TRACE montre les échanges API bruts avec le provider." },
+
+/* ---------- ÉTUDES DE CAS ---------- */
+{ id:"csA-backend", level:3, dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Quelle est la PREMIÈRE amélioration à mettre en place pour l'équipe ?",
+  choices:["Un backend distant avec verrouillage (azurerm ou HCP Terraform) remplaçant les states locaux","Passer tout le monde sur la même machine","Un state par développeur","Committer le state dans Git"],
+  answer:0,
+  explain:"Le state local multiplié par 4 devs = conflits garantis. Backend distant + locking est le prérequis de toute collaboration." },
+{ id:"csA-secrets", level:3, dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Comment traiter les secrets DB présents dans le state ?",
+  choices:["Chiffrement au repos du backend + accès restreint (RBAC) + state hors Git + sensitive sur les outputs","sensitive = true suffit, le state est alors chiffré","Les mettre en commentaire","Les stocker dans le README"],
+  answer:0,
+  explain:"Le state contient les secrets en clair quoi qu'il arrive : c'est le BACKEND qu'on sécurise. sensitive ne protège que l'affichage." },
+{ id:"csA-envs", level:3, dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Comment séparer proprement dev et prod ?",
+  choices:["Deux states isolés (workspaces CLI ou dossiers) + fichiers tfvars par environnement","Un booléen is_prod dans un state unique","Deux comptes Azure obligatoirement","Renommer les ressources à la main"],
+  answer:0,
+  explain:"Un state par env = blast radius limité : casser dev ne touche jamais prod. Les tfvars portent les différences (tailles, SKUs)." },
+{ id:"csA-review", level:3, dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Comment garantir qu'aucun apply ne parte sans revue ?",
+  choices:["HCP Terraform en mode VCS : speculative plan sur PR, apply après merge avec approbation","Faire confiance à l'équipe","Un mot de passe sur le laptop","Interdire terraform apply"],
+  answer:0,
+  explain:"Le VCS-driven workflow rend la PR obligatoire : le plan est visible dans la revue, l'apply est contrôlé et tracé." },
+{ id:"csB-modules", level:3, dom:"Étude de cas", type:"qcm", scen:"B",
+  q:"Comment diffuser les patterns standards (VNet, AKS, storage) à toutes les équipes ?",
+  choices:["Des modules versionnés dans le private registry HCP Terraform","Un wiki avec du code à copier-coller","Un canal Teams","Chaque équipe réinvente"],
+  answer:0,
+  explain:"Modules + private registry = réutilisation avec versionning semver et doc auto-générée. Le copier-coller diverge en quelques semaines." },
+{ id:"csB-region", level:3, dom:"Étude de cas", type:"input", scen:"B",
+  q:"Le RSSI exige de BLOQUER tout déploiement hors d'Europe, automatiquement, au niveau de l'organisation. Quel outil HashiCorp ?",
+  accept:["sentinel"],
+  explain:"Policy Sentinel hard-mandatory dans HCP Terraform : évaluée sur chaque run, impossible à contourner par les équipes." },
+{ id:"csB-legacy", level:3, dom:"Étude de cas", type:"input", scen:"B",
+  q:"Des dizaines de ressources historiques ont été créées au portail. Quelle fonctionnalité les fait entrer dans Terraform sans les recréer ?",
+  accept:["import","bloc import","terraform import","l import"],
+  explain:"Le bloc import (avec -generate-config-out pour générer la config en masse) — l'outil de l'adoption progressive." },
+{ id:"csB-refactor", level:3, dom:"Étude de cas", type:"input", scen:"B",
+  q:"La nouvelle convention de nommage impose de renommer les ressources DANS le code sans rien détruire. Quel bloc HCL ?",
+  accept:["moved","bloc moved","moved block"],
+  explain:"moved { from, to } — le refactoring déclaratif, revuable en PR, appliqué sans destroy/recreate." },
+];
+
+/* ---------- Scénarios des études de cas ---------- */
+const SCENARIOS = {
+  A: { title: "Équipe DevWeb",
+      text: "4 développeurs gèrent l'infra Azure d'une app web avec Terraform. Aujourd'hui : state local sur chaque laptop, conflits fréquents, mots de passe de base de données visibles dans le state, un seul « environnement » qui mélange dev et prod, et des applies lancés sans aucune revue." },
+  B: { title: "Standardisation d'entreprise",
+      text: "Une entreprise standardise ses déploiements Azure : des patterns réutilisables pour toutes les équipes, une politique de sécurité qui interdit certaines régions, des ressources historiques créées à la main au portail, et un grand renommage à venir pour respecter la nouvelle convention de nommage." }
+};
+
+/* ---------- Labs express ---------- */
+const LABS = [
+  { id:"lab1", title:"Lab 1 · Premier apply : RG + storage sur Azure", time:"≈ 30 min",
+    obj:"Installer Terraform, écrire une config azurerm minimale, dérouler init → plan → apply → destroy et inspecter le state.",
+    steps:[
+      "Installe Terraform (winget install Hashicorp.Terraform) et vérifie : terraform -version. Connecte-toi : az login.",
+      "Crée main.tf : bloc terraform + required_providers (azurerm ~> 4.0), provider \"azurerm\" { features {} }, un azurerm_resource_group et un azurerm_storage_account qui référence le RG.",
+      "terraform init — observe .terraform/ et .terraform.lock.hcl.",
+      "terraform fmt puis terraform validate.",
+      "terraform plan — lis chaque ligne : que signifie le + ?",
+      "terraform apply → yes. Puis inspecte : terraform state list, terraform state show azurerm_resource_group.rg.",
+      "Modifie un tag → plan (symbole ~), supprime le tag au portail → plan (drift détecté !).",
+      "terraform destroy pour tout nettoyer." ],
+    cli:"terraform init\nterraform fmt\nterraform validate\nterraform plan\nterraform apply\nterraform state list\nterraform state show azurerm_resource_group.rg\nterraform destroy",
+    verif:"tu sais expliquer chaque symbole du plan (+, ~, -/+) et tu as VU le drift apparaître après ta modification au portail." },
+  { id:"lab2", title:"Lab 2 · Variables, outputs, workspaces", time:"≈ 30 min",
+    obj:"Paramétrer la config avec variables + tfvars, exposer des outputs, et dérouler dev/prod avec les workspaces.",
+    steps:[
+      "Ajoute variable \"env\" (type string, validation : uniquement dev ou prod) et variable \"location\" (default westeurope).",
+      "Nomme les ressources avec \"${var.env}\" et un local.prefix calculé dans un bloc locals.",
+      "Crée dev.tfvars et prod.tfvars avec des valeurs différentes ; teste : terraform plan -var-file=prod.tfvars.",
+      "Teste la précédence : TF_VAR_env=staging terraform plan → la validation doit rejeter !",
+      "Ajoute un output \"rg_name\" et un output sensitive ; observe la différence à l'affichage puis terraform output -raw rg_name.",
+      "terraform workspace new dev, workspace new prod : un apply dans chaque, puis compare terraform state list entre workspaces.",
+      "Détruis dans CHAQUE workspace (workspace select puis destroy)." ],
+    cli:"terraform plan -var-file=prod.tfvars\nterraform workspace new dev\nterraform workspace select prod\nterraform workspace list\nterraform output -raw rg_name\nterraform destroy",
+    verif:"tu as vu deux states isolés pour la même config, et la validation de variable bloquer une valeur interdite." },
+  { id:"lab3", title:"Lab 3 · Backend distant azurerm + migration", time:"≈ 30 min",
+    obj:"Migrer le state local vers un blob Azure avec verrouillage, et vérifier le lock en conditions réelles.",
+    steps:[
+      "Crée (au portail ou en CLI az) un RG rg-tfstate + storage account + conteneur tfstate — HORS de ta config Terraform.",
+      "Ajoute le bloc backend \"azurerm\" (resource_group_name, storage_account_name, container_name, key).",
+      "terraform init -migrate-state → confirme. Vérifie que le blob existe et que terraform state list fonctionne toujours.",
+      "Supprime le terraform.tfstate local devenu inutile.",
+      "Ouvre 2 terminaux : lance terraform apply dans le premier (reste sur la confirmation), puis terraform plan dans le second → observe l'erreur de LOCK.",
+      "Teste terraform init -reconfigure vs -migrate-state : comprends la différence.",
+      "Nettoie : destroy (le rg-tfstate peut rester pour l'AZ-204 !)." ],
+    cli:"terraform init -migrate-state\nterraform state list\nterraform state pull\nterraform force-unlock <LOCK_ID>",
+    verif:"tu as provoqué et compris une erreur de state lock, et ton state vit dans le blob (visible au portail)." },
+  { id:"lab4", title:"Lab 4 · Import, moved, lifecycle", time:"≈ 35 min",
+    obj:"Adopter une ressource créée au portail, la renommer sans la détruire, et tester les protections lifecycle.",
+    steps:[
+      "Crée un resource group rg-legacy À LA MAIN dans le portail Azure.",
+      "Écris le bloc resource correspondant + un bloc import { to, id } (l'id : /subscriptions/<subId>/resourceGroups/rg-legacy).",
+      "terraform plan → observe « 1 to import ». apply, puis itère jusqu'à un plan vide.",
+      "Renomme la ressource dans le code (rg_legacy → rg_adopted) : plan montre destroy+create ! Ajoute un bloc moved { from, to } → replan : plus aucune destruction.",
+      "Ajoute lifecycle { prevent_destroy = true } puis tente terraform destroy → erreur attendue.",
+      "Retire prevent_destroy, teste terraform apply -replace=... sur une ressource, observe le -/+.",
+      "destroy final." ],
+    cli:"terraform plan -generate-config-out=generated.tf\nterraform apply -replace=azurerm_resource_group.rg_adopted\nterraform state mv azurerm_resource_group.a azurerm_resource_group.b\nterraform destroy",
+    verif:"import sans recréation, renommage sans destruction (moved), et prevent_destroy t'a bien bloqué." }
+];
+
+/* =====================================================================
+   MOTEUR DU QUIZ
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const LS_ERRORS = "tf004-errors";
+
+const getErrors = () => { try { return JSON.parse(localStorage.getItem(LS_ERRORS)) || []; } catch { return []; } };
+const setErrors = a => localStorage.setItem(LS_ERRORS, JSON.stringify([...new Set(a)]));
+const getLabsDone = () => { try { return JSON.parse(localStorage.getItem("tf004-labs")) || []; } catch { return []; } };
+const setLabsDone = a => localStorage.setItem("tf004-labs", JSON.stringify([...new Set(a)]));
+
+/* =====================================================================
+   MOTEUR DE MAÎTRISE — répétition espacée pilotée par la confiance
+   ===================================================================== */
+const LS_SRS = "tf004-srs";
+const BOX_DAYS = [0, 1, 2, 4, 8, 16, 30];
+const NEW_CAP = 8;
+const DAY = 86400000;
+
+const getSrs = () => { try { return JSON.parse(localStorage.getItem(LS_SRS)) || {}; } catch { return {}; } };
+const setSrs = o => localStorage.setItem(LS_SRS, JSON.stringify(o));
+const srsOf = (srs, id) => srs[id] || { box: 0, due: 0, seen: 0, lapses: 0, danger: false, reco: false, lastMs: 0 };
+
+function minReasonMs(q) {
+  const len = (q.q || "").length + (q.code || "").length;
+  return Math.max(2000, Math.min(6000, 1200 + 20 * len));
+}
+
+function srsApply(q, ok, conf, ms, isReveal) {
+  const srs = getSrs();
+  const s = { ...srsOf(srs, q.id) };
+  const before = s.box;
+  s.seen++;
+  s.lastMs = ms;
+  s.reco = !!(ok && !isReveal && s.seen >= 2 && ms < minReasonMs(q));
+  if (isReveal || !ok) {
+    if (before >= 3) s.lapses++;
+    s.box = 0;
+    s.danger = !isReveal && conf === 3;
+  } else {
+    const gain = conf === 3 ? 2 : conf === 2 ? 1 : 0;
+    s.box = Math.min(6, s.box + (s.reco ? Math.min(gain, 1) : gain));
+    if (conf === 3) s.danger = false;
+  }
+  s.due = Date.now() + BOX_DAYS[s.box] * DAY;
+  srs[q.id] = s;
+  setSrs(srs);
+  return s;
+}
+
+function buildMaitrise(n) {
+  const srs = getSrs(), now = Date.now();
+  const danger = [], due = [], fresh = [], future = [];
+  QUESTIONS.forEach(q => {
+    const s = srs[q.id];
+    if (!s) { fresh.push(q); return; }
+    if (s.danger) danger.push(q);
+    else if (s.due <= now) due.push(q);
+    else future.push({ q, due: s.due });
+  });
+  const out = [...shuffle(danger), ...shuffle(due)];
+  if (out.length < n) out.push(...shuffle(fresh).slice(0, Math.min(NEW_CAP, n - out.length)));
+  if (out.length < n) {
+    future.sort((a, b) => a.due - b.due);
+    out.push(...future.slice(0, n - out.length).map(x => x.q));
+  }
+  return out.slice(0, n);
+}
+
+function srsStats() {
+  const srs = getSrs(), now = Date.now();
+  let croyances = 0, due = 0, mastered = 0, reco = 0, vus = 0;
+  Object.values(srs).forEach(s => {
+    vus++;
+    if (s.danger) croyances++;
+    else if (s.due <= now) due++;
+    if (s.box >= 5) mastered++;
+    if (s.reco) reco++;
+  });
+  return { croyances, due, mastered, reco, nouveaux: QUESTIONS.length - vus };
+}
+
+function refreshDash() {
+  const s = srsStats();
+  $("dCroyances").textContent = s.croyances;
+  $("dDue").textContent = s.due;
+  $("dMastered").textContent = s.mastered;
+  $("dReco").textContent = s.reco;
+  $("dNew").textContent = s.nouveaux;
+  $("nmaitrise").textContent = (s.croyances + s.due) > 0
+    ? (s.croyances + s.due) + " en attente"
+    : (s.nouveaux > 0 ? "nouveau" : "à jour");
+  let note;
+  if (s.croyances > 0)
+    note = "🚨 " + s.croyances + " question(s) où tu étais SÛR et tu t'es trompé — c'est le plus urgent à corriger.";
+  else if (s.due > 0)
+    note = "🔁 " + s.due + " question(s) arrivent à échéance. Le bon moment pour les revoir est maintenant.";
+  else if (s.nouveaux > 0)
+    note = "✅ Rien à réviser : la prochaine session introduira jusqu'à " + Math.min(NEW_CAP, s.nouveaux) + " nouvelles questions.";
+  else
+    note = "🏆 Toute la banque est planifiée. Reviens quand des questions arriveront à échéance.";
+  $("dNote").textContent = note;
+}
+
+function recordAndFlag(q, ok, conf, isReveal) {
+  const ms = Date.now() - (session.startedAt || Date.now());
+  const key = isReveal ? "reveal" : conf + (ok ? "-ok" : "-ko");
+  if (session.matrix && key in session.matrix) session.matrix[key]++;
+  const s = srsApply(q, ok, conf, ms, isReveal);
+
+  let html = "";
+  if (s.danger) {
+    html += '<div class="srs-flag danger">🚨 Tu étais SÛR et c\'est faux — c\'est une croyance fausse installée, ' +
+            'le type d\'erreur qui coûte des points sans prévenir. Elle repassera en priorité jusqu\'à ce que tu la réussisses en étant sûr.</div>';
+  }
+  if (s.reco) {
+    html += '<div class="srs-flag reco">⏱️ Répondu en ' + (ms / 1000).toFixed(1) + ' s : trop vite pour avoir raisonné. ' +
+            'Tu as probablement reconnu la question plutôt que raisonné — la progression est volontairement freinée.</div>';
+  }
+  const j = BOX_DAYS[s.box];
+  html += '<p class="srs-next">📅 Prochaine révision : ' +
+          (j === 0 ? "dès la prochaine session" : j === 1 ? "demain" : "dans " + j + " jours") +
+          " · palier " + s.box + "/6</p>";
+  return html;
+}
+
+const escapeReg = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const norm = s => (s || "").toLowerCase()
+  .normalize("NFD").replace(/[̀-ͯ]/g, "")
+  .replace(/[^a-z0-9]+/g, " ").trim();
+
+function isCorrect(user, accepts) {
+  const u = norm(user);
+  if (!u) return false;
+  return accepts.some(a => {
+    const v = norm(a);
+    if (!v) return false;
+    if (u === v) return true;
+    return new RegExp("(^| )" + escapeReg(v) + "( |$)").test(u);
+  });
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let session = null;
+
+let pickCount = 20;
+$("countSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  pickCount = parseInt(b.dataset.n, 10);
+  [...$("countSeg").children].forEach(x => x.classList.toggle("on", x === b));
+});
+
+function poolFor(mode) {
+  if (mode === "mix") return QUESTIONS;
+  if (mode === "err") { const errs = getErrors(); return QUESTIONS.filter(q => errs.includes(q.id)); }
+  if (mode === "code") return QUESTIONS.filter(q => q.code);
+  if (mode === "cas") return QUESTIONS.filter(q => q.scen || q.type === "order");
+  return QUESTIONS.filter(q => q.level === Number(mode));
+}
+
+function buildExamBlanc() {
+  const orders = shuffle(QUESTIONS.filter(q => q.type === "order")).slice(0, 4);
+  const codes = shuffle(QUESTIONS.filter(q => q.code && !q.scen)).slice(0, 8);
+  const others = shuffle(QUESTIONS.filter(q => !q.scen && q.type !== "order" && !q.code && q.level >= 2)).slice(0, 20);
+  const list = shuffle([...orders, ...codes, ...others]);
+  const groups = {};
+  QUESTIONS.filter(q => q.scen).forEach(q => (groups[q.scen] = groups[q.scen] || []).push(q));
+  shuffle(Object.values(groups)).forEach(g => list.push(...g));
+  return list;
+}
+
+function refreshCounts() {
+  $("n1").textContent = QUESTIONS.filter(q => q.level === 1).length + " q";
+  $("n2").textContent = QUESTIONS.filter(q => q.level === 2).length + " q";
+  $("n3").textContent = QUESTIONS.filter(q => q.level === 3).length + " q";
+  $("ncode").textContent = poolFor("code").length + " q";
+  $("ncas").textContent = poolFor("cas").length + " q";
+  $("nblanc").textContent = "≈ 40 q";
+  $("nmix").textContent = QUESTIONS.length + " q";
+  $("nerr").textContent = poolFor("err").length + " q";
+  $("nlabs").textContent = getLabsDone().length + " / " + LABS.length;
+  refreshDash();
+}
+
+document.querySelectorAll(".mode-btn").forEach(b => b.addEventListener("click", () => {
+  const mode = b.dataset.mode;
+  if (mode === "labs") { renderLabs(); show("labs"); return; }
+  let list;
+  if (mode === "maitrise") {
+    list = buildMaitrise(pickCount === 0 ? QUESTIONS.length : pickCount);
+    if (!list.length) { alert("Rien à réviser pour le moment — reviens plus tard !"); return; }
+  } else if (mode === "blanc") {
+    list = buildExamBlanc();
+  } else {
+    const pool = poolFor(mode);
+    if (!pool.length) { alert("Aucune erreur enregistrée pour l'instant — joue d'abord un quiz !"); return; }
+    list = shuffle(pool).slice(0, pickCount === 0 ? pool.length : pickCount);
+  }
+  session = { mode, list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false,
+              matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 } };
+  show("quiz"); renderQuestion();
+}));
+
+function show(name) {
+  ["home", "quiz", "end", "labs"].forEach(n =>
+    $("screen-" + n).classList.toggle("hidden", n !== name));
+  if (name === "home") refreshCounts();
+}
+
+function renderLabs() {
+  const done = getLabsDone();
+  const list = $("labsList");
+  list.innerHTML = "";
+  LABS.forEach(l => {
+    const d = document.createElement("details");
+    d.className = "lab" + (done.includes(l.id) ? " done" : "");
+    const cliSafe = l.cli.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    d.innerHTML =
+      "<summary>" + (done.includes(l.id) ? "✅ " : "⬜ ") + l.title +
+      ' <span class="lab-time">' + l.time + "</span></summary>" +
+      '<p class="lab-obj"><b>Objectif :</b> ' + l.obj + "</p>" +
+      "<ol>" + l.steps.map(s => "<li>" + s + "</li>").join("") + "</ol>" +
+      '<pre class="qcode">' + cliSafe + "</pre>" +
+      '<p class="lab-verif"><b>Lab réussi si :</b> ' + l.verif + "</p>" +
+      '<button class="btn ghost lab-toggle">' + (done.includes(l.id) ? "Marquer non terminé" : "✅ Marquer terminé") + "</button>";
+    d.querySelector(".lab-toggle").addEventListener("click", () => {
+      const cur = getLabsDone();
+      setLabsDone(cur.includes(l.id) ? cur.filter(x => x !== l.id) : [...cur, l.id]);
+      renderLabs();
+    });
+    list.appendChild(d);
+  });
+}
+
+function renderQuestion() {
+  const q = session.list[session.idx];
+  session.answered = false; session.selectedChoice = null;
+  $("qLevel").textContent = "Niveau " + q.level;
+  $("qLevel").className = "pill lv" + q.level;
+  $("qDom").textContent = q.dom;
+  $("qCount").textContent = (session.idx + 1) + " / " + session.list.length;
+  $("qBar").style.width = (session.idx / session.list.length * 100) + "%";
+  $("qText").textContent = q.q;
+  $("qFeedback").innerHTML = "";
+  $("btnReveal").classList.remove("hidden");
+  $("btnNext").classList.add("hidden");
+
+  const maitrise = session.mode === "maitrise";
+  $("confRow").classList.toggle("hidden", !maitrise);
+  $("btnValidate").classList.toggle("hidden", maitrise);
+  session.startedAt = Date.now();
+
+  const scen = q.scen && SCENARIOS[q.scen];
+  $("qScenario").innerHTML = scen
+    ? '<div class="scenario"><div class="sc-title">📋 Étude de cas — ' + scen.title + "</div><p>" + scen.text + "</p></div>"
+    : "";
+
+  const zone = $("qInputZone");
+  zone.innerHTML = "";
+  if (q.code) {
+    const pre = document.createElement("pre");
+    pre.className = "qcode";
+    pre.textContent = q.code;
+    zone.appendChild(pre);
+  }
+  if (q.type === "input") {
+    const inp = document.createElement("input");
+    inp.type = "text"; inp.id = "answerInput";
+    inp.placeholder = "Écris ta réponse…";
+    inp.autocomplete = "off"; inp.spellcheck = false;
+    zone.appendChild(inp);
+    inp.focus();
+  } else if (q.type === "order") {
+    session.orderPick = [];
+    session.orderShuffled = shuffle(q.steps);
+    const wrap = document.createElement("div");
+    wrap.innerHTML = '<p class="order-hint">Clique les étapes dans le bon ordre (re-clique une étape choisie pour la retirer) :</p>' +
+      '<div class="order-list" id="orderPicked"></div><div class="order-list" id="orderAvail"></div>';
+    zone.appendChild(wrap);
+    renderOrder(q);
+  } else {
+    const div = document.createElement("div");
+    div.className = "choices";
+    shuffle(q.choices.map((c, i) => ({ c, i }))).forEach(({ c, i }) => {
+      const btn = document.createElement("button");
+      btn.className = "choice"; btn.textContent = c; btn.dataset.orig = i;
+      btn.addEventListener("click", () => {
+        if (session.answered) return;
+        session.selectedChoice = i;
+        div.querySelectorAll(".choice").forEach(x => x.classList.toggle("sel", x === btn));
+      });
+      div.appendChild(btn);
+    });
+    zone.appendChild(div);
+  }
+}
+
+function renderOrder(q) {
+  const picked = $("orderPicked"), avail = $("orderAvail");
+  picked.innerHTML = ""; avail.innerHTML = "";
+  session.orderPick.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "order-item picked";
+    b.textContent = (i + 1) + ". " + s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick = session.orderPick.filter(x => x !== s);
+      renderOrder(q);
+    });
+    picked.appendChild(b);
+  });
+  session.orderShuffled.filter(s => !session.orderPick.includes(s)).forEach(s => {
+    const b = document.createElement("button");
+    b.className = "order-item";
+    b.textContent = s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick.push(s);
+      renderOrder(q);
+    });
+    avail.appendChild(b);
+  });
+}
+
+function validate(conf) {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  let ok;
+  if (q.type === "input") {
+    const val = $("answerInput").value;
+    if (!val.trim()) { $("answerInput").focus(); return; }
+    ok = isCorrect(val, q.accept);
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    if (session.orderPick.length !== q.steps.length) return;
+    ok = q.steps.every((s, i) => session.orderPick[i] === s);
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    if (session.selectedChoice === null) return;
+    ok = session.selectedChoice === q.answer;
+    document.querySelectorAll(".choice").forEach(btn => {
+      const i = Number(btn.dataset.orig);
+      btn.disabled = true;
+      if (i === q.answer) btn.classList.add("good");
+      else if (i === session.selectedChoice) btn.classList.add("bad");
+    });
+  }
+  session.answered = true;
+  const srsHtml = recordAndFlag(q, ok, conf || 2, false);
+
+  const errs = getErrors();
+  if (ok) {
+    session.score++; session.streak++;
+    setErrors(errs.filter(id => id !== q.id));
+  } else {
+    session.streak = 0;
+    session.wrongIds.push(q.id);
+    setErrors([...errs, q.id]);
+  }
+  $("score").textContent = session.score;
+  $("streak").textContent = session.streak;
+
+  const goodAnswer = q.type === "input" ? q.accept[0]
+    : q.type === "order" ? q.steps.map((s, i) => (i + 1) + ". " + s).join("<br>")
+    : q.choices[q.answer];
+  const fb = document.createElement("div");
+  fb.className = "feedback " + (ok ? "ok" : "ko");
+  fb.innerHTML =
+    '<div class="verdict">' + (ok ? "✅ Bonne réponse !" : "❌ Raté") + "</div>" +
+    (ok ? "" : '<p class="rep">Réponse attendue : <b>' + goodAnswer + "</b></p>") +
+    '<p class="exp">' + q.explain + "</p>" + srsHtml;
+  $("qFeedback").innerHTML = "";
+  $("qFeedback").appendChild(fb);
+
+  $("confRow").classList.add("hidden");
+  $("btnValidate").classList.add("hidden");
+  $("btnReveal").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+  $("qBar").style.width = ((session.idx + 1) / session.list.length * 100) + "%";
+}
+
+function reveal() {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  session.answered = true;
+  const srsHtml = recordAndFlag(q, false, 1, true);
+
+  if (q.type === "input") {
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    document.querySelectorAll(".choice").forEach(btn => {
+      btn.disabled = true;
+      if (Number(btn.dataset.orig) === q.answer) btn.classList.add("good");
+    });
+  }
+
+  session.streak = 0;
+  session.wrongIds.push(q.id);
+  setErrors([...getErrors(), q.id]);
+  $("streak").textContent = session.streak;
+
+  const goodAnswer = q.type === "input" ? q.accept[0]
+    : q.type === "order" ? q.steps.map((s, i) => (i + 1) + ". " + s).join("<br>")
+    : q.choices[q.answer];
+  const fb = document.createElement("div");
+  fb.className = "feedback info";
+  fb.innerHTML =
+    '<div class="verdict">💡 Correction</div>' +
+    '<p class="rep">La bonne réponse était : <b>' + goodAnswer + "</b></p>" +
+    '<p class="exp">' + q.explain + "</p>" + srsHtml;
+  $("qFeedback").innerHTML = "";
+  $("qFeedback").appendChild(fb);
+
+  $("confRow").classList.add("hidden");
+  $("btnValidate").classList.add("hidden");
+  $("btnReveal").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+  $("qBar").style.width = ((session.idx + 1) / session.list.length * 100) + "%";
+}
+
+function next() {
+  if (session.idx + 1 < session.list.length) { session.idx++; renderQuestion(); }
+  else endSession();
+}
+
+function endSession() {
+  const total = session.list.length, s = session.score;
+  const pct = Math.round(s / total * 100);
+  $("endScore").textContent = s + " / " + total;
+  let v;
+  if (pct >= 90) v = "🏆 Prêt pour la certification — continue comme ça !";
+  else if (pct >= 70) v = "💪 Au-dessus du seuil de réussite (~70 %) — consolide !";
+  else if (pct >= 50) v = "📚 En bonne voie — rejoue tes erreurs.";
+  else v = "🌱 C'est en forgeant… rejoue cette série !";
+  $("endVerdict").textContent = v;
+
+  const m = session.matrix;
+  const enMaitrise = session.mode === "maitrise";
+  $("endMatrix").classList.toggle("hidden", !enMaitrise);
+  if (enMaitrise && m) {
+    $("endMatrix").innerHTML =
+      "<table><tr><th></th><th>Correct</th><th>Faux</th></tr>" +
+      '<tr><th>💪 Sûr</th><td class="n good">' + m["3-ok"] + '</td><td class="n danger">' + m["3-ko"] + "</td></tr>" +
+      '<tr><th>🤔 Hésitant</th><td class="n">' + m["2-ok"] + '</td><td class="n">' + m["2-ko"] + "</td></tr>" +
+      '<tr><th>✋ Au hasard</th><td class="n">' + m["1-ok"] + '</td><td class="n">' + m["1-ko"] + "</td></tr>" +
+      "</table><caption>" +
+      (m["3-ko"] > 0
+        ? "🚨 " + m["3-ko"] + " croyance(s) fausse(s) détectée(s) — la case la plus importante du tableau. Elles reviendront en priorité."
+        : "✅ Aucune croyance fausse cette session. " +
+          (m["1-ok"] > 0 ? "En revanche " + m["1-ok"] + " bonne(s) réponse(s) au hasard : elles ne comptent pas comme acquises." : "")) +
+      "</caption>";
+  }
+
+  $("endDetail").textContent = pct + " % de bonnes réponses · " +
+    (total - s) + " erreur(s) ajoutée(s) au mode « Rejouer mes erreurs » (" + getErrors().length + " au total)";
+  $("btnReplayErrors").style.display = getErrors().length ? "" : "none";
+  show("end");
+}
+
+$("btnValidate").addEventListener("click", () => validate(2));
+$("btnReveal").addEventListener("click", reveal);
+document.querySelectorAll(".conf").forEach(b =>
+  b.addEventListener("click", () => validate(Number(b.dataset.conf))));
+$("btnNext").addEventListener("click", next);
+$("btnQuit").addEventListener("click", () => show("home"));
+$("btnHome").addEventListener("click", () => show("home"));
+$("btnLabsHome").addEventListener("click", () => show("home"));
+$("btnReplayErrors").addEventListener("click", () => {
+  const pool = poolFor("err");
+  if (!pool.length) { show("home"); return; }
+  session = { mode: "err", list: shuffle(pool), idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false,
+              matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 } };
+  show("quiz"); renderQuestion();
+});
+document.addEventListener("keydown", e => {
+  if ($("screen-quiz").classList.contains("hidden")) return;
+  if (session && !session.answered && session.mode === "maitrise" && ["1", "2", "3"].includes(e.key)) {
+    const el = document.activeElement;
+    const dansUnChamp = el && el.tagName === "INPUT" && el.type === "text";
+    if (!dansUnChamp) { e.preventDefault(); validate(Number(e.key)); return; }
+  }
+  if (e.key !== "Enter") return;
+  if (session && session.answered) next(); else validate(2);
+});
+
+refreshCounts();
+show("home");
+</script>
+</body>
+</html>

@@ -1,0 +1,2207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZ-204 Quiz — Entraînement</title>
+<style>
+  :root {
+    --ground: #F6F8FB;
+    --surface: #FFFFFF;
+    --ink: #16222E;
+    --muted: #5A6B7C;
+    --accent: #0F6CBD;
+    --accent-deep: #0A4F8C;
+    --accent-soft: #E8F1FA;
+    --good: #1E7A46;
+    --good-soft: #E7F5EC;
+    --bad: #B3352B;
+    --bad-soft: #FBEAE8;
+    --warn: #9A4E00;
+    --border: #D9E2EC;
+    --shadow: 0 2px 8px rgba(22,34,46,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0D141C; --surface: #151F2A; --ink: #DBE6F0; --muted: #8FA3B5;
+      --accent: #5FB0F0; --accent-deep: #8CC6F5; --accent-soft: #14293C;
+      --good: #5BC98A; --good-soft: #12291B; --bad: #F08578; --bad-soft: #2E1512;
+      --warn: #EDAA5F; --border: #243445; --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    font-size: 16px; line-height: 1.5; min-height: 100vh;
+  }
+  code { font-family: "Cascadia Code", Consolas, monospace; background: var(--accent-soft); color: var(--accent-deep); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+  header.top h1 { font-size: 20px; margin: 0; font-weight: 700; }
+  header.top h1 .az { color: var(--accent); }
+  .stats { display: flex; gap: 14px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stats b { color: var(--ink); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px; box-shadow: var(--shadow);
+  }
+
+  /* --- Accueil --- */
+  .home h2 { margin: 0 0 4px; font-size: 24px; }
+  .home p.sub { color: var(--muted); margin: 0 0 18px; }
+  .modes { display: grid; gap: 10px; }
+  .mode-btn {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; cursor: pointer; text-align: left; color: var(--ink);
+    font-family: inherit; font-size: 15px; transition: border-color .15s, transform .1s;
+  }
+  .mode-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .mode-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mode-btn .ico { font-size: 24px; width: 34px; text-align: center; }
+  .mode-btn .t { font-weight: 650; }
+  .mode-btn .d { font-size: 13px; color: var(--muted); }
+  .mode-btn .n { margin-left: auto; font-size: 12.5px; color: var(--accent); background: var(--accent-soft); border-radius: 20px; padding: 2px 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .count-row { display: flex; gap: 8px; align-items: center; margin: 18px 0 8px; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+  .count-row .seg { display: flex; gap: 4px; }
+  .seg button {
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+    border-radius: 8px; padding: 5px 14px; cursor: pointer; font-family: inherit; font-size: 14px;
+  }
+  .seg button.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+  /* --- Quiz --- */
+  .qmeta { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .pill { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; border-radius: 20px; padding: 3px 11px; }
+  .pill.lv1 { background: var(--good-soft); color: var(--good); }
+  .pill.lv2 { background: var(--accent-soft); color: var(--accent); }
+  .pill.lv3 { background: var(--bad-soft); color: var(--bad); }
+  .pill.dom { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+  .progressbar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+  .progressbar div { height: 100%; background: var(--accent); border-radius: 3px; transition: width .25s; }
+  .question { font-size: 19px; font-weight: 650; margin: 0 0 18px; line-height: 1.4; text-wrap: balance; }
+
+  input[type=text] {
+    width: 100%; padding: 12px 14px; font-size: 16px; font-family: inherit;
+    border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink);
+  }
+  input[type=text]:focus { outline: none; border-color: var(--accent); }
+  .choices { display: grid; gap: 8px; }
+  .choice {
+    text-align: left; padding: 11px 14px; border: 2px solid var(--border); border-radius: 10px;
+    background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 15px;
+    transition: border-color .12s;
+  }
+  .choice:hover { border-color: var(--accent); }
+  .choice.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .choice.good { border-color: var(--good); background: var(--good-soft); font-weight: 600; }
+  .choice.bad { border-color: var(--bad); background: var(--bad-soft); }
+  .choice:disabled { cursor: default; opacity: .85; }
+
+  .actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn {
+    padding: 11px 22px; border-radius: 10px; border: none; cursor: pointer;
+    font-family: inherit; font-size: 15px; font-weight: 650;
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-deep); }
+  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+
+  .feedback { margin-top: 18px; border-radius: 12px; padding: 14px 16px; font-size: 15px; }
+  .feedback.ok { background: var(--good-soft); border: 1px solid var(--good); }
+  .feedback.ko { background: var(--bad-soft); border: 1px solid var(--bad); }
+  .feedback.info { background: var(--accent-soft); border: 1px solid var(--accent); }
+  .feedback .verdict { font-weight: 750; font-size: 16px; }
+  .feedback.ok .verdict { color: var(--good); }
+  .feedback.ko .verdict { color: var(--bad); }
+  .feedback.info .verdict { color: var(--accent-deep); }
+
+  pre.qcode {
+    background: #0F1B26; color: #D7E4F0; border-radius: 10px;
+    padding: 12px 14px; overflow-x: auto; font-size: 13px; line-height: 1.5;
+    font-family: "Cascadia Code", Consolas, monospace; margin: 0 0 14px; text-align: left;
+  }
+  .scenario {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0; padding: 10px 14px; margin: 0 0 14px; font-size: 14px;
+  }
+  .scenario .sc-title { font-weight: 700; color: var(--accent-deep); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .scenario p { margin: 0; }
+  .order-hint { font-size: 13.5px; color: var(--muted); margin: 0 0 8px; }
+  .order-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .order-list:empty { display: none; }
+  .order-item {
+    text-align: left; padding: 10px 13px; border: 2px solid var(--border); border-radius: 10px;
+    background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 14.5px;
+  }
+  .order-item:hover { border-color: var(--accent); }
+  .order-item.picked { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .order-item:disabled { cursor: default; opacity: .85; }
+
+  .lab { background: var(--ground); border: 1px solid var(--border); border-radius: 12px; padding: 4px 16px 12px; margin-bottom: 10px; }
+  .lab summary { cursor: pointer; font-weight: 650; padding: 10px 0; font-size: 15.5px; }
+  .lab.done summary { color: var(--good); }
+  .lab .lab-time { color: var(--muted); font-weight: 400; font-size: 13px; }
+  .lab ol { padding-left: 20px; font-size: 14.5px; }
+  .lab li { margin: 4px 0; }
+  .lab .lab-obj, .lab .lab-verif { font-size: 14px; }
+  .lab .lab-verif { background: var(--good-soft); border-radius: 8px; padding: 8px 12px; }
+  .labs-note {
+    background: color-mix(in srgb, var(--warn) 12%, transparent);
+    border-radius: 10px; padding: 10px 14px; font-size: 13.5px; color: var(--warn); margin-bottom: 14px;
+  }
+  .feedback .rep { margin: 6px 0 0; }
+  .feedback .exp { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+  /* --- Fin --- */
+  .end { text-align: center; }
+  .end .big { font-size: 52px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin: 10px 0 0; }
+  .end .verdict { font-size: 18px; font-weight: 650; margin: 6px 0 18px; }
+  .end .detail { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .streak { color: var(--warn); font-weight: 700; }
+  .kbd-hint { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 14px; }
+  .hidden { display: none; }
+
+  /* ---- Mode Maîtrise : tableau de bord ---- */
+  .dash {
+    background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
+  }
+  .dash h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-deep); }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  .dash-cell { background: var(--surface); border-radius: 9px; padding: 8px 10px; text-align: center; }
+  .dash-cell .v { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .dash-cell .k { font-size: 11px; color: var(--muted); line-height: 1.25; }
+  .dash-cell.danger .v { color: var(--bad); }
+  .dash-cell.due .v { color: var(--accent); }
+  .dash-cell.mastered .v { color: var(--good); }
+  .dash-cell.reco .v { color: var(--warn); }
+  .dash-note { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+
+  /* ---- Boutons de confiance ---- */
+  .conf-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .conf-label { width: 100%; font-size: 12.5px; color: var(--muted); margin-bottom: 2px; }
+  .conf {
+    flex: 1 1 30%; min-width: 120px; padding: 11px 12px; border-radius: 10px; cursor: pointer;
+    font-family: inherit; font-size: 14.5px; font-weight: 650; border: 2px solid var(--border);
+    background: var(--surface); color: var(--ink); text-align: center; line-height: 1.25;
+  }
+  .conf small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
+  .conf:hover { border-color: var(--accent); }
+  .conf:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+  .conf.c3 { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+  .conf.c3:hover { border-color: var(--good); background: var(--good-soft); }
+  .conf.c1 { border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .conf.c1:hover { border-color: var(--warn); background: var(--warn-soft); }
+
+  .srs-flag { font-size: 12.5px; border-radius: 8px; padding: 7px 11px; margin-top: 10px; }
+  .srs-flag.danger { background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad); font-weight: 600; }
+  .srs-flag.reco { background: var(--warn-soft); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
+  .srs-next { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+  /* ---- Matrice confiance × résultat (écran de fin) ---- */
+  .matrix { max-width: 420px; margin: 0 auto 18px; }
+  .matrix table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .matrix th, .matrix td { padding: 7px 9px; border: 1px solid var(--border); text-align: center; }
+  .matrix th { background: var(--accent-soft); color: var(--accent-deep); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .matrix td.n { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; }
+  .matrix td.danger { background: var(--bad-soft); color: var(--bad); }
+  .matrix td.good { background: var(--good-soft); color: var(--good); }
+  .matrix caption { caption-side: bottom; font-size: 12px; color: var(--muted); padding-top: 8px; text-align: left; }
+
+  .bydom { text-align: left; font-size: 13.5px; margin: 0 auto 18px; max-width: 440px; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; }
+  .bydom .dl { color: var(--muted); }
+  .bydom .dv { font-variant-numeric: tabular-nums; font-weight: 650; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1><span class="az">AZ-204</span> · Quiz d'entraînement</h1>
+    <div class="stats">
+      <span>Série : <b id="streak">0</b> 🔥</span>
+      <span>Score : <b id="score">0</b></span>
+    </div>
+  </header>
+
+  <!-- Accueil -->
+  <div id="screen-home" class="card home">
+    <h2>Choisis ton mode</h2>
+    <p class="sub">Tape ta réponse pour la plupart des questions — comme si c'était le jour J, sans filet.</p>
+    <div class="dash">
+      <h3>🧠 Mode Maîtrise — ancrage durable</h3>
+      <div class="dash-grid">
+        <div class="dash-cell danger"><div class="v" id="dCroyances">0</div><div class="k">croyances fausses</div></div>
+        <div class="dash-cell due"><div class="v" id="dDue">0</div><div class="k">à réviser</div></div>
+        <div class="dash-cell mastered"><div class="v" id="dMastered">0</div><div class="k">ancrés</div></div>
+        <div class="dash-cell reco"><div class="v" id="dReco">0</div><div class="k">reconnaissance ?</div></div>
+        <div class="dash-cell"><div class="v" id="dNew">0</div><div class="k">jamais vus</div></div>
+      </div>
+      <p class="dash-note" id="dNote"></p>
+    </div>
+    <div class="count-row">
+      Nombre de questions :
+      <div class="seg" id="countSeg">
+        <button data-n="10">10</button>
+        <button data-n="20" class="on">20</button>
+        <button data-n="0">Toutes</button>
+      </div>
+    </div>
+    <div class="count-row">
+      Domaine officiel :
+      <div class="seg" id="domSeg">
+        <button data-d="all" class="on">Tous</button>
+        <button data-d="comp">Compute</button>
+        <button data-d="stor">Stockage</button>
+        <button data-d="sec">Sécurité</button>
+        <button data-d="mon">Monitoring</button>
+        <button data-d="integ">Intégration</button>
+        <button data-d="base">Bases</button>
+      </div>
+    </div>
+    <div class="modes">
+      <button class="mode-btn" data-mode="maitrise" style="border-color:var(--accent);background:var(--accent-soft)">
+        <span class="ico">🧠</span>
+        <span><span class="t">Session Maîtrise (recommandé au quotidien)</span><br><span class="d">Répétition espacée pilotée par ta confiance — corrige d'abord ce que tu crois savoir à tort</span></span>
+        <span class="n" id="nmaitrise"></span>
+      </button>
+      <button class="mode-btn" data-mode="1">
+        <span class="ico">🌱</span>
+        <span><span class="t">Niveau 1 — Vocabulaire &amp; bases</span><br><span class="d">SKU, PaaS, sigles, HTTP, notions fondamentales</span></span>
+        <span class="n" id="n1"></span>
+      </button>
+      <button class="mode-btn" data-mode="2">
+        <span class="ico">⚙️</span>
+        <span><span class="t">Niveau 2 — Les faits d'examen</span><br><span class="d">Chiffres, limites, défauts, noms exacts à connaître par cœur</span></span>
+        <span class="n" id="n2"></span>
+      </button>
+      <button class="mode-btn" data-mode="3">
+        <span class="ico">🎯</span>
+        <span><span class="t">Niveau 3 — Scénarios &amp; pièges</span><br><span class="d">« Quel service choisir ? » — comme les vraies questions</span></span>
+        <span class="n" id="n3"></span>
+      </button>
+      <button class="mode-btn" data-mode="code">
+        <span class="ico">💻</span>
+        <span><span class="t">Code à compléter</span><br><span class="d">C#, policies APIM, KQL, function.json — le format exact de l'examen</span></span>
+        <span class="n" id="ncode"></span>
+      </button>
+      <button class="mode-btn" data-mode="cas">
+        <span class="ico">🧩</span>
+        <span><span class="t">Études de cas &amp; séquences</span><br><span class="d">Scénarios d'entreprise + étapes à remettre dans l'ordre</span></span>
+        <span class="n" id="ncas"></span>
+      </button>
+      <button class="mode-btn" data-mode="blanc">
+        <span class="ico">🎓</span>
+        <span><span class="t">Examen blanc</span><br><span class="d">≈ 40 questions, tous formats mélangés, études de cas en fin — comme le jour J</span></span>
+        <span class="n" id="nblanc"></span>
+      </button>
+      <button class="mode-btn" data-mode="mix">
+        <span class="ico">🎲</span>
+        <span><span class="t">Tout mélanger</span><br><span class="d">Toute la banque mélangée aléatoirement</span></span>
+        <span class="n" id="nmix"></span>
+      </button>
+      <button class="mode-btn" data-mode="err">
+        <span class="ico">🩹</span>
+        <span><span class="t">Rejouer mes erreurs</span><br><span class="d">Uniquement les questions déjà ratées</span></span>
+        <span class="n" id="nerr"></span>
+      </button>
+      <button class="mode-btn" data-mode="labs">
+        <span class="ico">🧪</span>
+        <span><span class="t">Labs guidés</span><br><span class="d">Pratique réelle sur ton abonnement Azure, commandes fournies</span></span>
+        <span class="n" id="nlabs"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div id="screen-quiz" class="card hidden">
+    <div class="qmeta">
+      <span class="pill" id="qLevel"></span>
+      <span class="pill dom" id="qDom"></span>
+      <span style="margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums" id="qCount"></span>
+    </div>
+    <div class="progressbar"><div id="qBar" style="width:0%"></div></div>
+    <div id="qScenario"></div>
+    <p class="question" id="qText"></p>
+    <div id="qInputZone"></div>
+    <div class="conf-row hidden" id="confRow">
+      <span class="conf-label">Valide en déclarant ta confiance — c'est ce qui pilote ta prochaine révision :</span>
+      <button class="conf c1" data-conf="1" id="conf1">✋ Au hasard<small>touche 1</small></button>
+      <button class="conf c2" data-conf="2" id="conf2">🤔 Hésitant<small>touche 2 ou Entrée</small></button>
+      <button class="conf c3" data-conf="3" id="conf3">💪 Sûr<small>touche 3</small></button>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnValidate">Valider</button>
+      <button class="btn primary hidden" id="btnNext">Question suivante →</button>
+      <button class="btn ghost" id="btnReveal">💡 Je ne sais pas</button>
+      <button class="btn ghost" id="btnQuit">Quitter</button>
+    </div>
+    <div id="qFeedback"></div>
+    <p class="kbd-hint">Entrée = valider / question suivante</p>
+  </div>
+
+  <!-- Fin -->
+  <div id="screen-end" class="card end hidden">
+    <h2>Session terminée !</h2>
+    <p class="big" id="endScore"></p>
+    <p class="verdict" id="endVerdict"></p>
+    <div class="matrix hidden" id="endMatrix"></div>
+    <div class="bydom" id="endByDom"></div>
+    <p class="detail" id="endDetail"></p>
+    <div class="actions" style="justify-content:center">
+      <button class="btn primary" id="btnReplayErrors">🩹 Rejouer mes erreurs</button>
+      <button class="btn ghost" id="btnHome">← Menu</button>
+    </div>
+  </div>
+
+  <!-- Labs -->
+  <div id="screen-labs" class="card hidden">
+    <h2>🧪 Labs guidés — sur ton abonnement Azure</h2>
+    <p class="labs-note">⚠️ Chaque lab se termine par la suppression du resource group (<code>az group delete</code>) pour ne rien payer inutilement. Remplace <code>&lt;unique&gt;</code> par un suffixe à toi (les noms de webapp/registry sont mondiaux). Utilise le Cloud Shell du portail ou <code>az login</code> en local.</p>
+    <div id="labsList"></div>
+    <div class="actions">
+      <button class="btn ghost" id="btnLabsHome">← Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   BANQUE DE QUESTIONS
+   type "input" : réponse à taper — accept = variantes acceptées
+   type "qcm"   : choix multiple — answer = index de la bonne réponse
+   ===================================================================== */
+const QUESTIONS = [
+/* ---------- NIVEAU 1 — VOCABULAIRE & BASES ---------- */
+{ id:"v-paas", level:1, d:"base", dom:"Concepts cloud", type:"input",
+  q:"Modèle cloud où tu ne gères que ton code et tes données — pas l'OS, ni le runtime, ni les serveurs (ex : App Service). Quel est ce modèle (sigle) ?",
+  accept:["paas","platform as a service"],
+  explain:"PaaS = Platform as a Service. IaaS = tu gères l'OS (VM) ; SaaS = tu utilises juste le logiciel (Office 365)." },
+{ id:"v-iaas", level:1, d:"base", dom:"Concepts cloud", type:"input",
+  q:"Modèle cloud où le fournisseur gère le matériel mais TOI tu gères l'OS, les patchs et le runtime (ex : machines virtuelles). Sigle ?",
+  accept:["iaas","infrastructure as a service"],
+  explain:"IaaS = Infrastructure as a Service — le plus de contrôle, le plus de responsabilité." },
+{ id:"v-sku", level:1, d:"base", dom:"Concepts cloud", type:"qcm",
+  q:"Dans Azure, que désigne le « SKU » d'un service ?",
+  choices:["Sa déclinaison tarifaire et de capacité (ex : Basic, Standard, Premium)","Son identifiant unique dans le tenant","Sa région de déploiement","Sa version d'API"],
+  answer:0,
+  explain:"SKU = Stock Keeping Unit, terme hérité du commerce. Dans Azure : le « tier » choisi (Basic/Standard/Premium…), qui détermine fonctionnalités et prix." },
+{ id:"v-sla", level:1, d:"base", dom:"Concepts cloud", type:"input",
+  q:"Engagement contractuel de disponibilité d'un service (ex : 99,9 %). Quel sigle ?",
+  accept:["sla","service level agreement"],
+  explain:"SLA = Service Level Agreement. À savoir : le tier Basic de Redis et le plan Free d'App Service n'ont PAS de SLA." },
+{ id:"v-serverless", level:1, d:"base", dom:"Concepts cloud", type:"input",
+  q:"Modèle d'exécution où l'infrastructure scale automatiquement (jusqu'à zéro) et où tu paies à l'exécution, sans gérer de serveurs. Quel terme ?",
+  accept:["serverless","sans serveur"],
+  explain:"Serverless : Azure Functions (plan Consumption), Container Apps, APIM Consumption, Cosmos DB serverless…" },
+{ id:"v-coldstart", level:1, d:"base", dom:"Concepts cloud", type:"input",
+  q:"Latence au premier appel d'une Function quand l'infrastructure doit démarrer une instance à froid. Quel terme (anglais) ?",
+  accept:["cold start","coldstart","demarrage a froid"],
+  explain:"Le cold start touche le plan Consumption. Le plan Premium l'élimine grâce aux instances pré-chauffées (pre-warmed)." },
+{ id:"v-rg", level:1, d:"base", dom:"Concepts cloud", type:"input",
+  q:"Conteneur logique Azure qui regroupe des ressources partageant le même cycle de vie (créé avec « az group create »). Quel nom ?",
+  accept:["resource group","groupe de ressources","ressource group"],
+  explain:"Le resource group : supprimer le groupe supprime tout ce qu'il contient. Toute ressource vit dans exactement un groupe." },
+{ id:"v-arm", level:1, d:"base", dom:"Concepts cloud", type:"qcm",
+  q:"Qu'est-ce qu'ARM dans Azure ?",
+  choices:["Azure Resource Manager — la couche de déploiement et de gestion de toutes les ressources","Un type de processeur uniquement","Le service de monitoring","L'annuaire des identités"],
+  answer:0,
+  explain:"Azure Resource Manager reçoit toutes les requêtes (portail, CLI, SDK) et gère les déploiements — notamment via les templates ARM/Bicep." },
+{ id:"v-rbac", level:1, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Que permet Azure RBAC (Role-Based Access Control) ?",
+  choices:["Attribuer des rôles (lecteur, contributeur…) à des identités sur un périmètre donné","Chiffrer les données au repos","Filtrer le trafic réseau","Générer des tokens OAuth"],
+  answer:0,
+  explain:"RBAC = qui (identité) peut faire quoi (rôle) sur quoi (scope : subscription, resource group, ressource)." },
+{ id:"v-mi", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Identité Azure attribuée automatiquement à une ressource (app, VM…) pour s'authentifier SANS stocker de secret dans le code. Quel nom ?",
+  accept:["managed identity","identite managee","identite geree","managed identities"],
+  explain:"La managed identity est LA réponse à « éliminer les credentials du code ». Deux types : system-assigned et user-assigned." },
+{ id:"v-vnet", level:1, d:"base", dom:"Réseau", type:"input",
+  q:"Réseau privé virtuel dans Azure où tu isoles tes ressources. Quel nom court ?",
+  accept:["vnet","virtual network","reseau virtuel"],
+  explain:"VNet = Virtual Network. Pour AZ-204 : l'intégration VNet des Functions exige le plan Premium ou Dedicated." },
+{ id:"v-blob", level:1, d:"stor", dom:"Stockage", type:"qcm",
+  q:"Que signifie « blob » dans Azure Blob Storage ?",
+  choices:["Binary Large Object — un objet binaire (fichier) non structuré","Backup Log Object Base","Un type de base de données","Block Level Output Buffer"],
+  answer:0,
+  explain:"Un blob = n'importe quel fichier (image, vidéo, log…). Trois types : block blob (fichiers), append blob (logs), page blob (disques VM)." },
+{ id:"v-lrs", level:1, d:"stor", dom:"Stockage", type:"qcm",
+  q:"Que garantit la redondance LRS (Locally Redundant Storage) ?",
+  choices:["3 copies dans un même datacenter","3 copies sur 3 zones de disponibilité","6 copies sur 2 régions","1 copie avec snapshot quotidien"],
+  answer:0,
+  explain:"LRS = 3 copies, 1 datacenter. ZRS = 3 zones. GRS = + région appairée. RA-GRS = + lecture sur le secondaire." },
+{ id:"v-ru", level:1, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Unité qui mesure le coût de chaque opération dans Cosmos DB (1 unité ≈ lecture d'un item de 1 Ko). Quel sigle ?",
+  accept:["ru","request unit","request units","ru s","unite de requete"],
+  explain:"RU = Request Unit. On provisionne des RU/s (manuel ou autoscale) ou on paie à la conso (serverless). Dépassement → erreur 429." },
+{ id:"v-ttl", level:1, d:"base", dom:"Concepts", type:"input",
+  q:"Durée de vie au bout de laquelle une donnée (message, document, entrée de cache) expire automatiquement. Quel sigle ?",
+  accept:["ttl","time to live"],
+  explain:"TTL = Time To Live. Présent partout : Cosmos DB, Redis, files de messages, CDN…" },
+{ id:"v-fifo", level:1, d:"integ", dom:"Messagerie", type:"input",
+  q:"Ordre de traitement où le premier message arrivé est le premier traité. Quel sigle ?",
+  accept:["fifo","first in first out"],
+  explain:"FIFO = First In, First Out. Dans Service Bus, le FIFO strict est garanti par les sessions." },
+{ id:"v-dlq", level:1, d:"integ", dom:"Messagerie", type:"input",
+  q:"File spéciale où atterrissent les messages impossibles à traiter (trop d'échecs, TTL expiré). Quel nom (sigle ou complet) ?",
+  accept:["dlq","dead letter queue","dead letter","file de lettres mortes"],
+  explain:"La Dead-Letter Queue. Dans Service Bus elle est automatique ; dans Event Grid il faut l'activer (vers un blob storage)." },
+{ id:"v-etag", level:1, d:"stor", dom:"Stockage", type:"qcm",
+  q:"À quoi sert l'ETag d'un blob ou d'un document Cosmos ?",
+  choices:["À la concurrence optimiste : détecter qu'une ressource a changé depuis sa lecture (If-Match)","À chiffrer la ressource","À définir son tier d'accès","À tracer les accès"],
+  answer:0,
+  explain:"L'ETag change à chaque modification. En envoyant If-Match: <etag>, l'écriture échoue (412) si quelqu'un a modifié entre-temps." },
+{ id:"v-sas", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"URL signée qui accorde un accès limité (permissions + durée) à une ressource de stockage sans partager la clé du compte. Quel sigle ?",
+  accept:["sas","shared access signature"],
+  explain:"SAS = Shared Access Signature. Trois types : user delegation (Entra ID, la plus sûre), service, account." },
+{ id:"v-jwt", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Format de token signé, en 3 parties séparées par des points (header.payload.signature), utilisé par OAuth/OIDC. Quel sigle ?",
+  accept:["jwt","json web token"],
+  explain:"JWT = JSON Web Token. Le payload contient les claims : aud (audience), iss (émetteur), exp (expiration), scp, roles…" },
+{ id:"v-oidc", level:1, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Quelle est la différence entre OAuth 2.0 et OpenID Connect (OIDC) ?",
+  choices:["OAuth = autorisation (accéder à des ressources) ; OIDC = authentification (prouver qui est l'utilisateur), par-dessus OAuth","Ce sont deux noms du même protocole","OIDC est l'ancienne version d'OAuth","OAuth authentifie, OIDC autorise"],
+  answer:0,
+  explain:"OIDC ajoute l'ID token à OAuth 2.0. Access token = ce que l'app peut faire ; ID token = qui est l'utilisateur." },
+{ id:"v-msal", level:1, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Qu'est-ce que MSAL ?",
+  choices:["La bibliothèque Microsoft pour obtenir des tokens auprès de la plateforme d'identité (Microsoft Authentication Library)","Le service d'audit de sécurité Azure","Un protocole réseau","Le langage des policies APIM"],
+  answer:0,
+  explain:"MSAL gère l'acquisition et le cache des tokens. Deux clients : PublicClientApplication et ConfidentialClientApplication." },
+{ id:"v-entra", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Quel est le nouveau nom d'Azure Active Directory (Azure AD) ?",
+  accept:["microsoft entra id","entra id","entra"],
+  explain:"Azure AD s'appelle Microsoft Entra ID depuis 2023. L'examen utilise le nouveau nom." },
+{ id:"v-kv", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Service Azure qui stocke secrets, clés cryptographiques et certificats de façon centralisée et sécurisée. Quel nom ?",
+  accept:["key vault","azure key vault","keyvault"],
+  explain:"Azure Key Vault. Les 3 types d'objets : secrets, keys, certificates." },
+{ id:"v-hsm", level:1, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Que signifie HSM (disponible dans Key Vault Premium) ?",
+  choices:["Hardware Security Module — un boîtier matériel qui protège les clés cryptographiques","High Security Mode","Hosted Secret Manager","Hybrid Storage Module"],
+  answer:0,
+  explain:"Le HSM garantit que les clés ne quittent jamais un matériel certifié (FIPS 140-2). C'est ce qui distingue Key Vault Premium du Standard." },
+{ id:"v-apm", level:1, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"Application Insights est un outil « APM ». Que signifie ce sigle ?",
+  choices:["Application Performance Monitoring (ou Management)","Azure Platform Metrics","Automated Process Manager","Application Portal Microsoft"],
+  answer:0,
+  explain:"APM = surveiller les performances applicatives : requêtes, dépendances, exceptions, disponibilité." },
+{ id:"v-kql", level:1, d:"mon", dom:"Monitoring", type:"input",
+  q:"Langage de requête utilisé dans Log Analytics / Application Insights (mot-clés : where, summarize, ago…). Quel nom ou sigle ?",
+  accept:["kql","kusto","kusto query language"],
+  explain:"KQL = Kusto Query Language. Ex : requests | where success == false | summarize count() by name" },
+{ id:"v-cdn", level:1, d:"mon", dom:"Optimisation", type:"input",
+  q:"Réseau de serveurs répartis dans le monde qui met en cache le contenu statique au plus près des utilisateurs. Quel sigle ?",
+  accept:["cdn","content delivery network"],
+  explain:"CDN = Content Delivery Network. Les serveurs edge s'appellent des POP (Points of Presence)." },
+{ id:"v-webhook", level:1, d:"integ", dom:"Intégration", type:"input",
+  q:"Mécanisme où un service t'appelle en HTTP POST sur une URL que tu exposes quand un événement se produit (mode push). Quel terme ?",
+  accept:["webhook","web hook"],
+  explain:"Le webhook. Event Grid livre ses événements par webhook — après un handshake de validation." },
+{ id:"v-idempotent", level:1, d:"base", dom:"Concepts", type:"qcm",
+  q:"Une opération « idempotente », c'est quoi ?",
+  choices:["Une opération qu'on peut exécuter plusieurs fois avec le même résultat qu'une seule fois","Une opération qui ne peut jamais échouer","Une opération asynchrone","Une opération chiffrée de bout en bout"],
+  answer:0,
+  explain:"Crucial en messagerie : Event Grid et Service Bus livrent « at-least-once » → un même message peut arriver deux fois, ton traitement doit être idempotent." },
+{ id:"v-pubsub", level:1, d:"integ", dom:"Messagerie", type:"input",
+  q:"Patron de messagerie où un émetteur publie et où PLUSIEURS abonnés reçoivent chacun leur copie. Quel nom (anglais, avec un /) ?",
+  accept:["pub sub","publish subscribe","pubsub","publisher subscriber"],
+  explain:"Pub/Sub. Dans Service Bus : topics + subscriptions. Dans Event Grid : topics + event subscriptions." },
+{ id:"v-partkey", level:1, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Propriété d'un document Cosmos DB qui détermine sa répartition physique entre les partitions. Quel nom ?",
+  accept:["partition key","cle de partition","partitionkey"],
+  explain:"La partition key. À choisir avec une haute cardinalité — et elle est immuable après création du conteneur." },
+{ id:"v-nosql", level:1, d:"stor", dom:"Cosmos DB", type:"qcm",
+  q:"Qu'est-ce qui caractérise une base NoSQL comme Cosmos DB par rapport à SQL Server ?",
+  choices:["Schéma flexible (documents JSON), scalabilité horizontale par partitionnement","Pas de possibilité de requêtes","Uniquement du stockage clé-valeur","Transactions impossibles"],
+  answer:0,
+  explain:"Cosmos DB stocke des documents JSON sans schéma imposé et scale horizontalement via les partitions. Les requêtes SQL-like existent (SELECT * FROM c WHERE…)." },
+{ id:"v-patch", level:1, d:"base", dom:"HTTP", type:"input",
+  q:"Quelle méthode HTTP est prévue pour une mise à jour PARTIELLE d'une ressource REST ?",
+  accept:["patch"],
+  explain:"PATCH = partiel, PUT = remplacement complet, POST = création, DELETE = suppression, GET = lecture." },
+{ id:"v-401", level:1, d:"base", dom:"HTTP", type:"qcm",
+  q:"Quelle est la différence entre HTTP 401 et 403 ?",
+  choices:["401 = non authentifié (pas/mauvais token) ; 403 = authentifié mais pas autorisé","401 = pas autorisé ; 403 = pas authentifié","Les deux sont identiques","401 = erreur serveur ; 403 = erreur client"],
+  answer:0,
+  explain:"401 Unauthorized = « qui es-tu ? » ; 403 Forbidden = « je sais qui tu es, mais tu n'as pas le droit »." },
+{ id:"v-429", level:1, d:"base", dom:"HTTP", type:"input",
+  q:"Quel code HTTP signifie « trop de requêtes, ralentis » (renvoyé par Cosmos DB, Microsoft Graph, APIM rate-limit…) ?",
+  accept:["429","429 too many requests","too many requests"],
+  explain:"429 Too Many Requests. La bonne réaction : attendre la durée du header Retry-After puis réessayer." },
+{ id:"v-202", level:1, d:"base", dom:"HTTP", type:"input",
+  q:"Quel code HTTP signifie « requête acceptée, traitement asynchrone en cours » (utilisé par le pattern async HTTP API des Durable Functions) ?",
+  accept:["202","202 accepted","accepted"],
+  explain:"202 Accepted + une URL de statut à poller. C'est le pattern « Async HTTP APIs » des Durable Functions." },
+{ id:"v-azlogin", level:1, d:"comp", dom:"CLI", type:"input",
+  q:"Quelle commande Azure CLI permet de se connecter à son compte Azure ?",
+  accept:["az login"],
+  explain:"az login ouvre le navigateur pour s'authentifier. Ensuite : az account set --subscription pour choisir l'abonnement." },
+{ id:"v-sidecar", level:1, d:"comp", dom:"Conteneurs", type:"qcm",
+  q:"Dans le pattern « sidecar », que fait le second conteneur ?",
+  choices:["Il tourne à côté du conteneur principal (même hôte, réseau partagé) pour l'assister : logs, proxy, monitoring","Il remplace le conteneur principal en cas de panne","Il stocke les images","Il compile le code du conteneur principal"],
+  answer:0,
+  explain:"Dans ACI, un container group permet ce pattern : plusieurs conteneurs sur le même hôte partageant réseau et volumes." },
+{ id:"v-acr", level:1, d:"comp", dom:"Conteneurs", type:"input",
+  q:"Service Azure privé où tu stockes et distribues tes images Docker. Quel nom (sigle accepté) ?",
+  accept:["acr","azure container registry","container registry"],
+  explain:"ACR = Azure Container Registry. Équivalent privé de Docker Hub, avec build cloud (az acr build) et ACR Tasks." },
+{ id:"v-slot", level:1, d:"comp", dom:"App Service", type:"input",
+  q:"Environnement parallèle d'une App Service (ex : staging) qu'on peut échanger avec la production sans downtime. Quel nom (français ou anglais) ?",
+  accept:["deployment slot","slot","slot de deploiement","emplacement de deploiement"],
+  explain:"Le deployment slot. L'échange s'appelle un swap — avec préchauffage, donc zéro downtime." },
+/* ---------- NIVEAU 2 — LES FAITS D'EXAMEN ---------- */
+{ id:"f-timeout-cons", level:2, d:"comp", dom:"Functions", type:"input",
+  q:"Timeout PAR DÉFAUT d'une Azure Function en plan Consumption (en minutes) ?",
+  accept:["5","5 min","5 minutes","cinq"],
+  explain:"5 minutes par défaut, extensible à 10 max en Consumption. Besoin de plus ? → plan Premium, Flex Consumption ou Dedicated." },
+{ id:"f-timeout-max", level:2, d:"comp", dom:"Functions", type:"input",
+  q:"Timeout MAXIMUM d'une Function en plan Consumption classique (en minutes) ?",
+  accept:["10","10 min","10 minutes","dix"],
+  explain:"10 minutes maximum. C'est LE chiffre qui déclenche « il faut changer de plan » dans les scénarios d'examen." },
+{ id:"f-plan-nocold", level:2, d:"comp", dom:"Functions", type:"input",
+  q:"Quel plan d'hébergement Functions élimine les cold starts grâce aux instances pré-chauffées ?",
+  accept:["premium","plan premium","elastic premium"],
+  explain:"Le plan Premium (EP1–EP3) : instances pre-warmed, VNet, durée illimitée. Les mots-clés « cold start » ou « VNet » à l'examen → Premium." },
+{ id:"f-storage-req", level:2, d:"comp", dom:"Functions", type:"qcm",
+  q:"Une Function App exige-t-elle un compte de stockage Azure ?",
+  choices:["Oui, toujours (AzureWebJobsStorage)","Non, jamais","Seulement en plan Premium","Seulement avec Durable Functions"],
+  answer:0,
+  explain:"Toujours : le runtime s'en sert pour la gestion des triggers, les clés, et l'état des Durable Functions (task hub)." },
+{ id:"f-ncrontab", level:2, d:"comp", dom:"Functions", type:"input",
+  q:"Combien de champs contient une expression NCRONTAB de trigger Timer (contrairement au cron Unix) ?",
+  accept:["6","six"],
+  explain:"6 champs : {seconde} {minute} {heure} {jour} {mois} {jour-semaine}. Ex : 0 */5 * * * * = toutes les 5 minutes." },
+{ id:"f-cron5min", level:2, d:"comp", dom:"Functions", type:"qcm",
+  q:"Quelle expression NCRONTAB déclenche une fonction toutes les 5 minutes ?",
+  choices:["0 */5 * * * *","*/5 * * * *","0 0 */5 * * *","5 * * * * *"],
+  answer:0,
+  explain:"6 champs, secondes en premier : « 0 */5 * * * * » = à la seconde 0 de chaque minute multiple de 5. « 0 0 */5 * * * » serait toutes les 5 heures." },
+{ id:"f-hostjson", level:2, d:"comp", dom:"Functions", type:"qcm",
+  q:"host.json vs local.settings.json : lequel est déployé dans Azure ?",
+  choices:["host.json (config globale du runtime) ; local.settings.json reste local","local.settings.json ; host.json reste local","Les deux sont déployés","Aucun des deux"],
+  answer:0,
+  explain:"local.settings.json ne quitte JAMAIS ta machine (il contient les secrets locaux). En prod, ses valeurs deviennent des app settings." },
+{ id:"f-durable-det", level:2, d:"comp", dom:"Functions", type:"qcm",
+  q:"Dans un orchestrateur Durable Functions, comment obtenir la date/heure courante ?",
+  choices:["context.CurrentUtcDateTime — jamais DateTime.Now","DateTime.Now","DateTime.UtcNow","Environment.TickCount"],
+  answer:0,
+  explain:"L'orchestrateur rejoue son historique (event sourcing) : son code doit être déterministe. DateTime.Now changerait à chaque replay." },
+{ id:"f-slots-std", level:2, d:"comp", dom:"App Service", type:"input",
+  q:"Combien de deployment slots offre le plan App Service STANDARD ?",
+  accept:["5","cinq"],
+  explain:"Standard = 5 slots, Premium et Isolated = 20. Free/Shared/Basic = 0. « Slots au moindre coût » → Standard." },
+{ id:"f-slots-prem", level:2, d:"comp", dom:"App Service", type:"input",
+  q:"Combien de deployment slots offre le plan App Service PREMIUM ?",
+  accept:["20","vingt"],
+  explain:"Premium = 20 slots (comme Isolated). Standard = 5." },
+{ id:"f-autoscale-tier", level:2, d:"comp", dom:"App Service", type:"input",
+  q:"Quel est le PREMIER plan App Service (le moins cher) qui permet l'autoscale ?",
+  accept:["standard","s1","plan standard"],
+  explain:"Autoscale à partir de Standard. Basic ne permet que le scale manuel (3 instances max)." },
+{ id:"f-autoswap-os", level:2, d:"comp", dom:"App Service", type:"input",
+  q:"L'auto swap des deployment slots n'est supporté que sur un seul OS. Lequel ?",
+  accept:["windows"],
+  explain:"Auto swap = Windows uniquement. Sur Linux, il faut swapper manuellement (ou via pipeline)." },
+{ id:"f-connstr-prefix", level:2, d:"comp", dom:"App Service", type:"qcm",
+  q:"Une connection string de type « Custom » configurée dans App Service apparaît dans l'environnement avec quel préfixe ?",
+  choices:["CUSTOMCONNSTR_","SQLCONNSTR_","AZURECONNSTR_","CONNSTR_"],
+  answer:0,
+  explain:"Chaque type a son préfixe : SQLAZURECONNSTR_, SQLCONNSTR_, MYSQLCONNSTR_, POSTGRESQLCONNSTR_, CUSTOMCONNSTR_." },
+{ id:"f-appsettings-restart", level:2, d:"comp", dom:"App Service", type:"qcm",
+  q:"Que se passe-t-il quand tu modifies un app setting d'une App Service ?",
+  choices:["L'application redémarre","Rien, c'est pris en compte à chaud","Il faut redéployer le code","Le setting n'est appliqué qu'au prochain swap"],
+  answer:0,
+  explain:"Modifier les app settings redémarre l'app. Ils sont injectés comme variables d'environnement au démarrage et écrasent appsettings.json." },
+{ id:"f-acr-geo", level:2, d:"comp", dom:"Conteneurs", type:"input",
+  q:"Quel SKU d'Azure Container Registry est requis pour la geo-replication et le private link ?",
+  accept:["premium"],
+  explain:"ACR Premium uniquement. Basic = dev, Standard = prod simple." },
+{ id:"f-aci-os", level:2, d:"comp", dom:"Conteneurs", type:"input",
+  q:"Les container groups ACI multi-conteneurs ne sont supportés que sur un seul OS. Lequel ?",
+  accept:["linux"],
+  explain:"Multi-conteneurs (sidecar) = Linux uniquement. Windows = un seul conteneur par groupe. Idem pour le montage Azure Files : Linux only." },
+{ id:"f-aci-restart", level:2, d:"comp", dom:"Conteneurs", type:"input",
+  q:"Quelle est la restart policy PAR DÉFAUT d'un conteneur ACI ?",
+  accept:["always"],
+  explain:"Always (pour les services). OnFailure = tâches à réessayer, Never = exécution unique." },
+{ id:"f-ca-keda", level:2, d:"comp", dom:"Conteneurs", type:"input",
+  q:"Quelle technologie open source gère l'autoscaling événementiel dans Azure Container Apps ?",
+  accept:["keda"],
+  explain:"KEDA (Kubernetes Event-Driven Autoscaling) : scale sur HTTP, files Service Bus, Event Hubs… jusqu'à zéro. Dapr gère la partie microservices." },
+{ id:"f-cool-min", level:2, d:"stor", dom:"Blob Storage", type:"input",
+  q:"Durée minimale de rétention du tier Cool avant frais de suppression anticipée (en jours) ?",
+  accept:["30","30 jours","trente"],
+  explain:"Cool = 30 jours, Cold = 90, Archive = 180. Supprimer/changer de tier avant → pénalité." },
+{ id:"f-archive-min", level:2, d:"stor", dom:"Blob Storage", type:"input",
+  q:"Durée minimale de rétention du tier Archive (en jours) ?",
+  accept:["180","180 jours"],
+  explain:"180 jours. Et Archive est OFFLINE : lecture impossible sans réhydratation préalable." },
+{ id:"f-rehydrate", level:2, d:"stor", dom:"Blob Storage", type:"input",
+  q:"Durée maximale d'une réhydratation d'un blob Archive en priorité STANDARD (en heures) ?",
+  accept:["15","15 h","15 heures","jusqu a 15"],
+  explain:"Standard : jusqu'à 15 h. High priority : < 1 h pour les blobs < 10 Go (plus cher)." },
+{ id:"f-ragrs", level:2, d:"stor", dom:"Blob Storage", type:"input",
+  q:"Quelle option de redondance permet de LIRE les données sur la région secondaire (sigle) ?",
+  accept:["RA-GRS","ra grs","ragrs","ra gzrs","ragzrs","read access grs"],
+  explain:"RA-GRS (ou RA-GZRS) : Read-Access Geo-Redundant Storage — endpoint « -secondary » accessible en lecture." },
+{ id:"f-lease", level:2, d:"stor", dom:"Blob Storage", type:"input",
+  q:"Mécanisme de verrou EXCLUSIF d'écriture sur un blob (concurrence pessimiste), d'une durée de 15 à 60 s ou infinie ?",
+  accept:["lease","bail"],
+  explain:"Le lease. Concurrence optimiste = ETag + If-Match ; pessimiste = lease." },
+{ id:"f-lifecycle-freq", level:2, d:"stor", dom:"Blob Storage", type:"qcm",
+  q:"À quelle fréquence s'exécute une lifecycle management policy sur un compte de stockage ?",
+  choices:["Environ une fois par jour (premiers effets sous 24-48 h)","En temps réel","Toutes les heures","Une fois par semaine"],
+  answer:0,
+  explain:"~1×/jour. Ne pas s'attendre à un effet immédiat après création de la policy — question classique." },
+{ id:"f-cosmos-default", level:2, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Quel est le niveau de cohérence PAR DÉFAUT d'un compte Cosmos DB ?",
+  accept:["session"],
+  explain:"Session : cohérence « read your own writes » dans sa propre session. Le meilleur compromis perf/cohérence." },
+{ id:"f-cosmos-bounded", level:2, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Quel niveau de cohérence Cosmos garantit un retard de réplication BORNÉ (K versions ou T secondes max) ?",
+  accept:["bounded staleness","bounded","obsolescence limitee"],
+  explain:"Bounded staleness — le niveau à choisir quand l'énoncé parle de « lag maximal garanti » avec distribution globale." },
+{ id:"f-cosmos-partmax", level:2, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Taille maximale d'une partition LOGIQUE dans Cosmos DB (en Go) ?",
+  accept:["20","20 go","20 gb"],
+  explain:"20 Go par partition logique. Si ta partition key concentre trop de données sur une valeur → hot partition + plafond atteint." },
+{ id:"f-cosmos-429", level:2, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Quel code HTTP renvoie Cosmos DB quand tu dépasses les RU/s provisionnées ?",
+  accept:["429","429 too many requests"],
+  explain:"429 avec le header x-ms-retry-after-ms. Le SDK réessaie automatiquement (MaxRetryAttemptsOnRateLimitedRequests)." },
+{ id:"f-cosmos-sproc", level:2, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Dans quel langage s'écrivent les stored procedures, triggers et UDF de Cosmos DB ?",
+  accept:["javascript","js"],
+  explain:"JavaScript, exécuté côté serveur dans une transaction limitée à UNE partition logique." },
+{ id:"f-cosmos-trigger", level:2, d:"stor", dom:"Cosmos DB", type:"qcm",
+  q:"Les pre/post-triggers Cosmos DB s'exécutent-ils automatiquement sur chaque opération ?",
+  choices:["Non — ils doivent être explicitement spécifiés dans les options de chaque requête","Oui, dès qu'ils sont créés","Oui, mais seulement les pre-triggers","Seulement en mode serverless"],
+  answer:0,
+  explain:"Piège classique : contrairement à SQL Server, un trigger Cosmos ne se déclenche que si l'opération le demande (PreTriggers/PostTriggers dans les options)." },
+{ id:"f-cosmos-feed", level:2, d:"stor", dom:"Cosmos DB", type:"qcm",
+  q:"Le change feed de Cosmos DB expose-t-il les suppressions ?",
+  choices:["Non (en mode standard) — utiliser un flag soft delete + TTL","Oui, toutes les opérations","Oui, mais seulement 24 h","Seulement via stored procedure"],
+  answer:0,
+  explain:"Le change feed standard = créations + modifications, dans l'ordre par partition. Pour « voir » les deletes : marquer l'item supprimé puis laisser le TTL le purger." },
+{ id:"f-msal-public", level:2, d:"sec", dom:"Identité", type:"input",
+  q:"Quelle classe MSAL utilise-t-on pour une app desktop/mobile qui ne peut PAS garder de secret ?",
+  accept:["publicclientapplication","public client application","public client"],
+  explain:"PublicClientApplication. Les web apps et daemons (qui ont un secret/certificat) utilisent ConfidentialClientApplication." },
+{ id:"f-flow-daemon", level:2, d:"sec", dom:"Identité", type:"input",
+  q:"Quel flow OAuth 2.0 utilise un daemon/service sans utilisateur connecté ?",
+  accept:["client credentials","client credential"],
+  explain:"Client credentials : l'app s'authentifie elle-même (secret/certificat) avec des permissions APPLICATION et un scope /.default." },
+{ id:"f-scope-default", level:2, d:"sec", dom:"Identité", type:"input",
+  q:"Avec le flow client credentials, le scope se termine obligatoirement par quel suffixe ?",
+  accept:["/.default",".default","default"],
+  explain:"ressource/.default (ex : https://graph.microsoft.com/.default) — jamais un scope granulaire comme User.Read." },
+{ id:"f-claim-app", level:2, d:"sec", dom:"Identité", type:"input",
+  q:"Dans un access token, quel claim contient les permissions APPLICATION (daemon) — par opposition à « scp » pour les déléguées ?",
+  accept:["roles","role"],
+  explain:"roles = permissions d'application (admin consent obligatoire) ; scp = permissions déléguées (utilisateur connecté)." },
+{ id:"f-sas-safe", level:2, d:"sec", dom:"Sécurité", type:"input",
+  q:"Quel type de SAS est signé avec des credentials Microsoft Entra ID (recommandé par Microsoft) ?",
+  accept:["user delegation","user delegation sas","delegation d utilisateur"],
+  explain:"User delegation SAS — blobs uniquement, révocable, pas besoin de la clé du compte de stockage." },
+{ id:"f-sap-max", level:2, d:"sec", dom:"Sécurité", type:"input",
+  q:"Combien de stored access policies maximum par conteneur blob ?",
+  accept:["5","cinq"],
+  explain:"5 par conteneur. Elles centralisent début/expiration/permissions et permettent de révoquer les SAS liées." },
+{ id:"f-kv-retention", level:2, d:"sec", dom:"Key Vault", type:"input",
+  q:"Durée de rétention PAR DÉFAUT du soft delete de Key Vault (en jours) ?",
+  accept:["90","90 jours"],
+  explain:"90 jours par défaut (configurable 7–90). La purge protection empêche toute suppression définitive pendant cette période — et est irréversible." },
+{ id:"f-mi-shared", level:2, d:"sec", dom:"Identité", type:"input",
+  q:"Quel type de managed identity peut être partagé entre plusieurs ressources Azure ?",
+  accept:["user assigned","user assigned managed identity","affectee par l utilisateur","user"],
+  explain:"User-assigned : ressource autonome, réutilisable sur N apps/VMs. System-assigned : liée 1:1 à sa ressource, supprimée avec elle." },
+{ id:"f-dac", level:2, d:"sec", dom:"Identité", type:"input",
+  q:"Quelle classe du SDK Azure essaie en chaîne : variables d'env → managed identity → Azure CLI… (même code en local et en prod) ?",
+  accept:["defaultazurecredential","default azure credential"],
+  explain:"DefaultAzureCredential (package Azure.Identity). En local elle utilise az login ; en prod la managed identity. Zéro secret dans le code." },
+{ id:"f-ai-tests", level:2, d:"mon", dom:"Monitoring", type:"input",
+  q:"Nombre maximum de tests de disponibilité (availability tests) par ressource Application Insights ?",
+  accept:["100","cent"],
+  explain:"100 tests max. Recommandation : tester depuis au moins 5 régions différentes." },
+{ id:"f-ai-sampling", level:2, d:"mon", dom:"Monitoring", type:"input",
+  q:"Quel type de sampling est activé PAR DÉFAUT dans le SDK ASP.NET d'Application Insights ?",
+  accept:["adaptive","adaptatif","adaptive sampling"],
+  explain:"Adaptive sampling : ajuste automatiquement le volume de télémétrie. Les autres : fixed-rate (taux fixe) et ingestion (côté service)." },
+{ id:"f-redis-port", level:2, d:"mon", dom:"Redis", type:"input",
+  q:"Sur quel port Azure Cache for Redis accepte-t-il les connexions TLS/SSL ?",
+  accept:["6380"],
+  explain:"6380 (TLS). Le port 6379 non chiffré est désactivé par défaut." },
+{ id:"f-redis-evict", level:2, d:"mon", dom:"Redis", type:"input",
+  q:"Quelle est la politique d'éviction PAR DÉFAUT de Redis quand la mémoire est pleine ?",
+  accept:["volatile-lru","volatile lru","volatilelru"],
+  explain:"volatile-lru : évince les clés AVEC expiration les moins récemment utilisées. allkeys-lru éviverait toutes les clés." },
+{ id:"f-cdn-ttl", level:2, d:"mon", dom:"CDN", type:"input",
+  q:"TTL par défaut du cache Azure CDN (web delivery) si l'origine n'envoie pas de Cache-Control (en jours) ?",
+  accept:["7","7 jours","sept"],
+  explain:"7 jours. Pour invalider avant expiration : purge de l'endpoint." },
+{ id:"f-apim-header", level:2, d:"integ", dom:"APIM", type:"input",
+  q:"Quel header HTTP transporte la clé de souscription APIM ?",
+  accept:["Ocp-Apim-Subscription-Key","ocp apim subscription key","ocpapimsubscriptionkey"],
+  explain:"Ocp-Apim-Subscription-Key (ou query string « subscription-key »). Sans clé valide sur un product protégé → 401." },
+{ id:"f-apim-serverless", level:2, d:"integ", dom:"APIM", type:"input",
+  q:"Quel tier APIM est serverless, facturé à l'appel, mais sans developer portal ?",
+  accept:["consumption","conso"],
+  explain:"Consumption. Premium = VNet + multi-région ; Developer = complet mais sans SLA." },
+{ id:"f-apim-sections", level:2, d:"integ", dom:"APIM", type:"qcm",
+  q:"Quelles sont les 4 sections d'une policy APIM ?",
+  choices:["inbound, backend, outbound, on-error","request, response, error, retry","pre, main, post, catch","in, out, err, finally"],
+  answer:0,
+  explain:"inbound (avant le backend), backend, outbound (avant de répondre au client), on-error. <base /> contrôle l'héritage des policies parentes." },
+{ id:"f-eg-size", level:2, d:"integ", dom:"Event Grid", type:"input",
+  q:"Taille maximale d'un événement Event Grid (en Mo) ?",
+  accept:["1","1 mo","1 mb"],
+  explain:"1 Mo max, facturé par tranches de 64 Ko." },
+{ id:"f-eg-retry", level:2, d:"integ", dom:"Event Grid", type:"input",
+  q:"Pendant combien de temps maximum Event Grid réessaie-t-il de livrer un événement (en heures) ?",
+  accept:["24","24 h","24 heures"],
+  explain:"Backoff exponentiel jusqu'à 24 h, puis abandon — ou dead-letter vers un blob storage si configuré." },
+{ id:"f-eh-retention", level:2, d:"integ", dom:"Event Hubs", type:"input",
+  q:"Rétention maximale des événements dans Event Hubs tier STANDARD (en jours) ?",
+  accept:["7","7 jours","sept"],
+  explain:"1 à 7 jours en Standard (défaut 1). Ce n'est PAS un stockage long terme → utiliser Capture pour archiver." },
+{ id:"f-eh-partmax", level:2, d:"integ", dom:"Event Hubs", type:"input",
+  q:"Nombre maximum de partitions d'un Event Hub en tier Standard ?",
+  accept:["32","trente deux"],
+  explain:"32 partitions max en Standard (défaut 4). Le nombre est fixé à la création — impossible à réduire ensuite." },
+{ id:"f-eh-capture", level:2, d:"integ", dom:"Event Hubs", type:"input",
+  q:"Quelle fonctionnalité d'Event Hubs archive automatiquement le flux vers Blob Storage / Data Lake sans écrire de code ?",
+  accept:["capture","event hubs capture"],
+  explain:"Capture : format Avro, déclenché par taille ou durée. LA réponse à « conserver les événements à long terme »." },
+{ id:"f-sb-size", level:2, d:"integ", dom:"Service Bus", type:"input",
+  q:"Taille maximale d'un message Service Bus en tier STANDARD (en Ko) ?",
+  accept:["256","256 ko","256 kb"],
+  explain:"256 Ko en Standard, jusqu'à 100 Mo en Premium. À comparer : Queue Storage = 64 Ko." },
+{ id:"f-sb-maxdeliv", level:2, d:"integ", dom:"Service Bus", type:"input",
+  q:"Valeur par défaut du MaxDeliveryCount avant qu'un message Service Bus parte en dead-letter ?",
+  accept:["10","dix"],
+  explain:"10 tentatives. Autres causes de DLQ automatique : TTL expiré, erreur d'évaluation de filtre." },
+{ id:"f-sb-fifo", level:2, d:"integ", dom:"Service Bus", type:"input",
+  q:"Quelle fonctionnalité de Service Bus garantit le FIFO strict et l'affinité de consommateur ?",
+  accept:["sessions","session","les sessions"],
+  explain:"Les sessions (SessionId sur les messages). Sans sessions, l'ordre n'est pas garanti." },
+{ id:"f-sb-modes", level:2, d:"integ", dom:"Service Bus", type:"qcm",
+  q:"Quel mode de réception Service Bus risque de PERDRE un message si le consommateur crashe ?",
+  choices:["Receive-and-delete (supprimé dès réception)","Peek-lock","Les deux","Aucun"],
+  answer:0,
+  explain:"Receive-and-delete = at-most-once (rapide mais risqué). Peek-lock (défaut) = at-least-once : le message revient si pas complété avant la fin du lock." },
+{ id:"f-qs-size", level:2, d:"integ", dom:"Queue Storage", type:"input",
+  q:"Taille maximale d'un message Azure Queue Storage (en Ko) ?",
+  accept:["64","64 ko","64 kb"],
+  explain:"64 Ko seulement — mais une capacité totale énorme (celle du compte de stockage, > 500 To)." },
+{ id:"f-qs-visibility", level:2, d:"integ", dom:"Queue Storage", type:"input",
+  q:"Durée par défaut du visibility timeout d'un message Queue Storage (en secondes) ?",
+  accept:["30","30 s","30 secondes","trente"],
+  explain:"30 secondes : le message redevient visible s'il n'est pas supprimé à temps. Le consommateur doit Receive PUIS Delete explicitement." },
+{ id:"f-eg-schemas", level:2, d:"integ", dom:"Event Grid", type:"qcm",
+  q:"Quels sont les deux schémas d'événements supportés par Event Grid ?",
+  choices:["Event Grid schema et CloudEvents 1.0","JSON et XML","AMQP et MQTT","OpenAPI et AsyncAPI"],
+  answer:0,
+  explain:"Le schéma propriétaire (id, topic, subject, eventType…) et CloudEvents 1.0 (source, type, specversion…) — le standard ouvert interopérable." },
+/* ---------- NIVEAU 3 — SCÉNARIOS & PIÈGES ---------- */
+{ id:"s-slots-cheap", level:3, d:"comp", dom:"App Service", type:"input",
+  q:"Ton app a besoin de deployment slots et d'autoscale, au COÛT MINIMUM. Quel plan App Service choisis-tu ?",
+  accept:["standard","s1","plan standard"],
+  explain:"Standard : premier tier avec slots (5) ET autoscale. Ne choisis Premium que si l'énoncé exige plus de 5 slots, plus de perf ou du VNet avancé." },
+{ id:"s-func-30min", level:3, d:"comp", dom:"Functions", type:"qcm",
+  q:"Un traitement serverless dure 30 minutes. Quels plans Functions conviennent ?",
+  choices:["Premium ou Flex Consumption (ou Dedicated)","Consumption classique","N'importe lequel","Aucun — il faut une VM"],
+  answer:0,
+  explain:"Consumption plafonne à 10 min. Premium/Flex/Dedicated : 30 min par défaut, extensible sans limite garantie 60 min." },
+{ id:"s-creds-code", level:3, d:"sec", dom:"Sécurité", type:"input",
+  q:"L'audit exige de supprimer TOUTES les credentials (connection strings, secrets) du code et de la config pour accéder à Key Vault. Quelle fonctionnalité Azure utilises-tu ?",
+  accept:["managed identity","identite managee","identite geree","managed identities"],
+  explain:"Managed identity + RBAC sur Key Vault + DefaultAzureCredential dans le code. Aucun secret nulle part." },
+{ id:"s-mi-fleet", level:3, d:"sec", dom:"Sécurité", type:"input",
+  q:"10 App Services doivent partager exactement les MÊMES permissions vers Key Vault, gérées en un seul endroit. Quel type de managed identity ?",
+  accept:["user assigned","user assigned managed identity","user"],
+  explain:"Une seule user-assigned identity attachée aux 10 apps : un seul role assignment à gérer. System-assigned créerait 10 identités à autoriser une par une." },
+{ id:"s-cosmos-ryow", level:3, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Un utilisateur doit toujours voir immédiatement SES propres écritures, sans payer le prix de la cohérence forte. Quel niveau de cohérence ?",
+  accept:["session"],
+  explain:"Session = read your own writes, dans la même session. C'est aussi le défaut de Cosmos DB." },
+{ id:"s-cosmos-lag", level:3, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Application multi-régions : les lectures ne doivent jamais avoir plus de 5 secondes de retard sur les écritures. Quel niveau de cohérence ?",
+  accept:["bounded staleness","bounded"],
+  explain:"Bounded staleness borne le retard (T secondes ou K versions). Strong serait trop coûteux en multi-régions ; session ne borne pas le lag global." },
+{ id:"s-order-strict", level:3, d:"integ", dom:"Messagerie", type:"qcm",
+  q:"Les commandes d'un même client doivent être traitées STRICTEMENT dans l'ordre. Quelle solution ?",
+  choices:["Service Bus avec sessions (SessionId = id client)","Queue Storage","Event Grid","Event Hubs sans consumer group"],
+  answer:0,
+  explain:"Sessions Service Bus = FIFO garanti par session + un seul consommateur par session. Queue Storage ne garantit pas l'ordre." },
+{ id:"s-queue-80gb", level:3, d:"integ", dom:"Messagerie", type:"input",
+  q:"Il te faut une file simple qui stockera plus de 80 Go de messages, au moindre coût, sans besoin d'ordre ni de pub/sub. Quel service ?",
+  accept:["queue storage","azure queue storage","storage queue","file de stockage","queue"],
+  explain:"Queue Storage : capacité quasi illimitée (celle du compte), très économique. Service Bus plafonne à 80 Go max par entité." },
+{ id:"s-blob-react", level:3, d:"integ", dom:"Intégration", type:"input",
+  q:"Tu dois déclencher un traitement dès qu'un blob est créé dans un compte de stockage, en mode push serverless. Quel service d'événements ?",
+  accept:["event grid","eventgrid","azure event grid"],
+  explain:"Event Grid : system topic du compte de stockage, événement Microsoft.Storage.BlobCreated, handler = Function/webhook. Réactif et facturé à l'événement." },
+{ id:"s-iot-stream", level:3, d:"integ", dom:"Intégration", type:"input",
+  q:"Des milliers de capteurs envoient 1 million d'événements par seconde à analyser en streaming (compatible Kafka). Quel service d'ingestion ?",
+  accept:["event hubs","event hub","azure event hubs","eventhub","eventhubs"],
+  explain:"Event Hubs : conçu pour l'ingestion massive, partitions, consumer groups, endpoint Kafka. Event Grid = événements discrets, pas du streaming." },
+{ id:"s-eh-archive", level:3, d:"integ", dom:"Event Hubs", type:"input",
+  q:"Le flux Event Hubs doit être archivé automatiquement dans Data Lake SANS écrire de code. Quelle fonctionnalité ?",
+  accept:["capture","event hubs capture"],
+  explain:"Event Hubs Capture — archive en Avro vers Blob/ADLS, par fenêtre de taille ou de temps." },
+{ id:"s-avail-multi", level:3, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"Tu dois tester la disponibilité d'un parcours qui enchaîne login puis appel API (plusieurs requêtes + logique custom). Quelle approche App Insights ?",
+  choices:["Une Azure Function qui exécute le parcours et appelle TrackAvailability()","Un standard test","Un URL ping test","Live Metrics"],
+  answer:0,
+  explain:"Le standard test = UNE requête. Multi-étapes ou logique custom → TrackAvailability() dans une Function déclenchée par timer." },
+{ id:"s-livemetrics", level:3, d:"mon", dom:"Monitoring", type:"input",
+  q:"Pendant un déploiement, tu veux surveiller les requêtes/échecs en quasi temps réel (~1 s) SANS consommer de stockage. Quelle fonctionnalité d'App Insights ?",
+  accept:["live metrics","livemetrics","live metrics stream","metriques en direct"],
+  explain:"Live Metrics : latence ~1 seconde, données non persistées, aucun impact sur les coûts de stockage." },
+{ id:"s-sas-revoke", level:3, d:"sec", dom:"Sécurité", type:"input",
+  q:"Tu dois pouvoir RÉVOQUER des SAS distribuées à des partenaires sans régénérer la clé du compte de stockage. Que fallait-il associer aux SAS ?",
+  accept:["stored access policy","stored access policies","politique d acces stockee"],
+  explain:"Une stored access policy sur le conteneur : supprimer/modifier la policy révoque toutes les SAS qui y sont liées." },
+{ id:"s-apim-breaking", level:3, d:"integ", dom:"APIM", type:"qcm",
+  q:"Tu introduis un changement d'API INCOMPATIBLE que les consommateurs doivent choisir explicitement. Version ou revision ?",
+  choices:["Version (breaking, visible : /v2, query ou header)","Revision (non-breaking, testable via ;rev=2)","Les deux sont équivalents","Un nouveau product"],
+  answer:0,
+  explain:"Version = breaking change, opt-in du consommateur. Revision = changement non-breaking testé en parallèle puis promu « current »." },
+{ id:"s-apim-ratelimit", level:3, d:"integ", dom:"APIM", type:"qcm",
+  q:"Limiter chaque IP à 100 appels par minute sur ton API. Quelle policy APIM ?",
+  choices:["rate-limit-by-key avec counter-key = l'adresse IP","quota","validate-jwt","ip-filter"],
+  answer:0,
+  explain:"rate-limit-by-key calls=\"100\" renewal-period=\"60\" counter-key=\"@(context.Request.IpAddress)\". quota = plafond long terme (mois), ip-filter = bloquer des IP." },
+{ id:"s-apim-mock", level:3, d:"integ", dom:"APIM", type:"input",
+  q:"Le backend n'est pas encore développé mais les équipes front doivent tester l'API. Quelle policy APIM renvoie des réponses simulées ?",
+  accept:["mock response","mock-response","mockresponse","mock"],
+  explain:"mock-response : renvoie les exemples/schémas définis dans la spec de l'API sans appeler de backend." },
+{ id:"s-apim-jwt", level:3, d:"integ", dom:"APIM", type:"input",
+  q:"Chaque requête entrante doit présenter un token Entra ID valide, rejeté en 401 sinon — sans modifier le backend. Quelle policy APIM ?",
+  accept:["validate jwt","validate-jwt","validatejwt"],
+  explain:"validate-jwt en inbound, avec l'openid-config du tenant. Le backend reste inchangé : APIM fait le travail." },
+{ id:"s-fanout", level:3, d:"comp", dom:"Durable Functions", type:"qcm",
+  q:"Traiter 500 images en PARALLÈLE puis agréger les résultats en un rapport. Quel pattern Durable Functions ?",
+  choices:["Fan-out/fan-in","Function chaining","Monitor","Human interaction"],
+  answer:0,
+  explain:"Fan-out : lancer N activities en parallèle ; fan-in : Task.WhenAll pour agréger. Chaining = séquentiel." },
+{ id:"s-approval", level:3, d:"comp", dom:"Durable Functions", type:"qcm",
+  q:"Un workflow attend l'approbation d'un manager, avec escalade automatique après 72 h. Quelles APIs Durable Functions ?",
+  choices:["WaitForExternalEvent + CreateTimer (pattern human interaction)","CallActivityAsync en boucle","Un trigger HTTP simple","SignalEntity"],
+  answer:0,
+  explain:"Task.WhenAny entre WaitForExternalEvent(\"Approval\") et un durable timer de 72 h : le premier arrivé gagne." },
+{ id:"s-202", level:3, d:"comp", dom:"Durable Functions", type:"qcm",
+  q:"Une API REST lance un traitement de 20 min. Le client HTTP ne peut pas attendre. Quel pattern ?",
+  choices:["Async HTTP API : répondre 202 + URL de statut à poller","Augmenter le timeout HTTP à 20 min","Répondre 200 à la fin","WebSockets obligatoires"],
+  answer:0,
+  explain:"Le starter Durable Functions renvoie 202 Accepted avec CreateCheckStatusResponse() : le client polle l'endpoint de statut." },
+{ id:"s-swap-sticky", level:3, d:"comp", dom:"App Service", type:"qcm",
+  q:"Après un swap staging → production, quel élément reste attaché au slot (ne bascule PAS) ?",
+  choices:["Les app settings marqués « Deployment slot setting »","Les app settings non marqués","Les handler mappings","Les certificats publics"],
+  answer:0,
+  explain:"Les settings marqués slot-specific sont sticky, comme les custom domains, bindings TLS et paramètres de scale. Le reste suit le code." },
+{ id:"s-acr-build", level:3, d:"comp", dom:"Conteneurs", type:"input",
+  q:"Tu dois builder une image Docker et la pousser dans ACR depuis une machine SANS Docker installé. Quelle commande CLI (3 mots) ?",
+  accept:["az acr build"],
+  explain:"az acr build -r monregistry -t app:v1 . — le build s'exécute dans le cloud (ACR Tasks) puis l'image est poussée automatiquement." },
+{ id:"s-canary", level:3, d:"comp", dom:"Conteneurs", type:"qcm",
+  q:"Déployer une nouvelle version d'un microservice conteneurisé en envoyant 10 % du trafic dessus (canary). Quel service le permet nativement ?",
+  choices:["Container Apps (traffic splitting entre révisions)","ACI","App Service Free","ACR"],
+  answer:0,
+  explain:"Container Apps en mode multiple revisions : 90 % sur l'ancienne révision, 10 % sur la nouvelle. ACI n'a ni révisions ni répartition." },
+{ id:"s-cosmos-ttl", level:3, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Les documents d'un conteneur Cosmos doivent être supprimés automatiquement 30 jours après leur dernière modification. Quelle fonctionnalité ?",
+  accept:["ttl","time to live"],
+  explain:"TTL au niveau conteneur (2592000 s) — la suppression est gratuite en RU prioritaires (best effort avec les RU restantes)." },
+{ id:"s-cosmos-react", level:3, d:"stor", dom:"Cosmos DB", type:"qcm",
+  q:"Exécuter du code à chaque création/modification de document Cosmos DB, en serverless. Quelle approche ?",
+  choices:["Azure Function avec trigger Cosmos DB (change feed)","Un pre-trigger Cosmos","Interroger la base toutes les secondes","Event Grid sur le compte Cosmos"],
+  answer:0,
+  explain:"Le trigger Functions s'appuie sur le change feed (+ lease container). Les triggers Cosmos natifs ne sont pas automatiques, et le polling gaspille des RU." },
+{ id:"s-silent", level:3, d:"sec", dom:"Identité", type:"qcm",
+  q:"Dans quel ordre MSAL doit-il tenter d'obtenir un token pour minimiser les interactions utilisateur ?",
+  choices:["AcquireTokenSilent d'abord, AcquireTokenInteractive dans le catch (MsalUiRequiredException)","Interactive d'abord, silent ensuite","Toujours interactive","Toujours silent"],
+  answer:0,
+  explain:"Le cache d'abord (silent), l'UI seulement si nécessaire. C'est le pattern canonique MSAL — et une question récurrente." },
+{ id:"s-graph-throttle", level:3, d:"sec", dom:"Microsoft Graph", type:"qcm",
+  q:"Microsoft Graph renvoie 429 à ton application. Que doit-elle faire ?",
+  choices:["Attendre la durée du header Retry-After puis réessayer","Réessayer immédiatement en boucle","Changer de tenant","Passer en HTTP 1.0"],
+  answer:0,
+  explain:"Respecter Retry-After (backoff). Réduire aussi la charge : $select, $top, batching." },
+{ id:"s-graph-select", level:3, d:"sec", dom:"Microsoft Graph", type:"input",
+  q:"Quel query parameter OData limite les champs renvoyés par Microsoft Graph (ex : ne récupérer que displayName et mail) ?",
+  accept:["select","$select"],
+  explain:"$select=displayName,mail — réduit la taille des réponses et le risque de throttling. $filter filtre les lignes, $select les colonnes." },
+{ id:"s-appconfig", level:3, d:"sec", dom:"Configuration", type:"qcm",
+  q:"Centraliser la config NON sensible de 5 microservices avec des valeurs différentes par environnement (dev/prod). Quelle solution ?",
+  choices:["Azure App Configuration avec labels","Key Vault uniquement","Un fichier JSON dans chaque repo","Variables d'environnement en dur"],
+  answer:0,
+  explain:"App Configuration + labels dev/prod ; les secrets restent dans Key Vault (via des références Key Vault). Un seul endroit à modifier." },
+{ id:"s-feature10", level:3, d:"sec", dom:"Configuration", type:"qcm",
+  q:"Activer une nouvelle fonctionnalité pour seulement 10 % des utilisateurs, sans redéployer. Quelle approche ?",
+  choices:["Feature flag App Configuration avec filtre percentage","Un app setting booléen","Deux déploiements séparés","Un slot de staging"],
+  answer:0,
+  explain:"Feature management d'App Configuration : filtres percentage (déploiement progressif), time window et targeting (groupes précis)." },
+{ id:"s-cacheaside", level:3, d:"mon", dom:"Redis", type:"input",
+  q:"Pattern de cache : lire le cache ; si absent, lire la base puis peupler le cache avec un TTL. Quel nom (anglais) ?",
+  accept:["cache aside","cache-aside","cacheaside"],
+  explain:"Cache-aside — LE pattern à connaître. Attention aussi : le ConnectionMultiplexer StackExchange.Redis doit être un singleton réutilisé." },
+{ id:"s-cdn-update", level:3, d:"mon", dom:"CDN", type:"input",
+  q:"Tu déploies une nouvelle version de tes fichiers JS mais le CDN sert encore l'ancienne. Quelle action pour forcer la mise à jour immédiate ?",
+  accept:["purge","purger","purge du cache","purge de l endpoint"],
+  explain:"Purge de l'endpoint CDN (ou versionner les URLs des assets). Sinon il faut attendre l'expiration du TTL." },
+{ id:"s-eg-validate", level:3, d:"integ", dom:"Event Grid", type:"qcm",
+  q:"À la création d'une subscription Event Grid vers ton webhook custom, la livraison échoue immédiatement. Que faut-il gérer ?",
+  choices:["Le handshake de validation : renvoyer le validationCode reçu dans l'événement SubscriptionValidationEvent","Rien, Event Grid n'a pas de validation","Installer un certificat client","Ouvrir le port 8080"],
+  answer:0,
+  explain:"Event Grid vérifie que tu possèdes l'endpoint : répondre 200 avec le validationCode (les handlers Azure comme Functions le font automatiquement)." },
+{ id:"s-eg-filter", level:3, d:"integ", dom:"Event Grid", type:"qcm",
+  q:"Ta Function ne doit recevoir que les événements des blobs créés dans le dossier « factures/ ». Quelle configuration de la subscription ?",
+  choices:["Un filtre subjectBeginsWith sur le chemin","Un consumer group dédié","Filtrer dans le code de la Function","Une session"],
+  answer:0,
+  explain:"Le filtrage se fait dans l'event subscription (subject begins/ends with, event types, advanced filters) — pas dans le code, pour ne pas payer les invocations inutiles." },
+{ id:"s-replay", level:3, d:"integ", dom:"Event Hubs", type:"qcm",
+  q:"Un bug a corrompu le traitement des événements d'hier. Comment retraiter les données avec Event Hubs (rétention 7 jours) ?",
+  choices:["Relire le flux depuis un offset antérieur (le checkpoint appartient au consommateur)","Impossible, les événements sont consommés","Demander à l'émetteur de tout renvoyer","Restaurer un backup"],
+  answer:0,
+  explain:"Event Hubs ne supprime rien à la lecture : chaque consumer group garde son offset. Il suffit de repartir d'un checkpoint antérieur pendant la rétention." },
+{ id:"s-dlq-why", level:3, d:"integ", dom:"Service Bus", type:"qcm",
+  q:"Des messages disparaissent de ta queue Service Bus sans avoir été traités avec succès. Où regarder en premier ?",
+  choices:["La dead-letter queue (TTL expiré ou MaxDeliveryCount atteint)","Les logs du VNet","Le change feed","La région secondaire"],
+  answer:0,
+  explain:"queue/$deadletterqueue : les messages y partent automatiquement après 10 échecs de livraison ou TTL expiré. Rien n'est « perdu » silencieusement en peek-lock." },
+{ id:"s-dedup", level:3, d:"integ", dom:"Service Bus", type:"qcm",
+  q:"L'émetteur peut envoyer deux fois la même commande en cas de retry réseau. Comment éviter le double traitement côté Service Bus ?",
+  choices:["Activer la duplicate detection (fenêtre basée sur MessageId)","Utiliser receive-and-delete","Réduire le TTL","Passer en tier Basic"],
+  answer:0,
+  explain:"Duplicate detection : Service Bus ignore les messages portant un MessageId déjà vu dans la fenêtre configurée. L'émetteur doit fixer un MessageId métier." },
+{ id:"s-sub-filter", level:3, d:"integ", dom:"Service Bus", type:"qcm",
+  q:"Sur un topic Service Bus, la subscription « compta » ne doit recevoir que les messages où montant > 1000. Quel type de filtre ?",
+  choices:["SQL filter (expression sur les propriétés applicatives)","Correlation filter","Boolean filter","Session filter"],
+  answer:0,
+  explain:"SQL filter : montant > 1000. Le correlation filter ne fait que des égalités (plus performant) ; boolean = tout ou rien." },
+{ id:"s-kv-deleted", level:3, d:"sec", dom:"Key Vault", type:"qcm",
+  q:"Un développeur a supprimé un secret Key Vault critique il y a 3 jours (soft delete actif). Que faire ?",
+  choices:["Le récupérer avec az keyvault secret recover — il est en rétention","Il est perdu définitivement","Restaurer un backup de la subscription","Recréer le vault"],
+  answer:0,
+  explain:"Le soft delete conserve les objets supprimés (90 j par défaut) : ils sont récupérables. La purge protection empêche même leur purge anticipée." },
+{ id:"s-healthcheck", level:3, d:"comp", dom:"App Service", type:"qcm",
+  q:"Sur 4 instances App Service, une instance renvoie des erreurs. Comment l'écarter automatiquement du trafic ?",
+  choices:["Activer le health check : l'instance défaillante est retirée du load balancer","Redémarrer manuellement toutes les heures","Passer en plan Isolated","Activer Always On"],
+  answer:0,
+  explain:"Health check pingue un chemin sur chaque instance ; en échec répété, l'instance est exclue puis remplacée si elle ne récupère pas." },
+{ id:"s-secure-env", level:3, d:"comp", dom:"Conteneurs", type:"qcm",
+  q:"Passer une clé API à un conteneur ACI sans qu'elle apparaisse dans le portail ni dans az container show. Comment ?",
+  choices:["--secure-environment-variables","--environment-variables","La coder en dur dans l'image","Un tag Docker"],
+  answer:0,
+  explain:"Les secure environment variables sont masquées dans les sorties. Encore mieux pour du vrai secret : managed identity + Key Vault." },
+{ id:"s-scale-rule", level:3, d:"comp", dom:"App Service", type:"qcm",
+  q:"Ton autoscale ajoute des instances à CPU > 70 % mais la facture explose : le nombre d'instances ne redescend jamais. Qu'as-tu oublié ?",
+  choices:["La règle de scale-IN symétrique (ex : CPU < 30 %)","Le health check","Un slot de staging","Le cool down"],
+  answer:0,
+  explain:"Toujours des règles en PAIRE : scale-out ET scale-in. Sans règle de retour, les instances ajoutées restent indéfiniment." },
+{ id:"s-choose-svc", level:3, d:"integ", dom:"Architecture", type:"qcm",
+  q:"« Notifier en push plusieurs systèmes qu'une commande a été créée, sans qu'ils aient de valeur métier à extraire du message lui-même. » Quel service ?",
+  choices:["Event Grid (événement discret, push, réactif)","Event Hubs","Service Bus","Queue Storage"],
+  answer:0,
+  explain:"Un ÉVÉNEMENT notifie un fait (l'émetteur n'attend rien) → Event Grid. Un MESSAGE transporte une donnée à traiter (contrat) → Service Bus / Queue Storage." },
+/* ---------- EXTENSION NIVEAU 1 — vocabulaire indispensable ---------- */
+{ id:"v-tenant", level:1, d:"sec", dom:"Identité", type:"input",
+  q:"Instance dédiée de Microsoft Entra ID qui représente une organisation et contient ses utilisateurs, groupes et app registrations. Quel nom ?",
+  accept:["tenant","locataire"],
+  explain:"Le tenant. Une app « multitenant » peut être utilisée par les utilisateurs d'autres organisations. Chaque tenant a un ID (GUID) et un domaine *.onmicrosoft.com." },
+{ id:"v-subscription", level:1, d:"base", dom:"Concepts cloud", type:"input",
+  q:"Conteneur de FACTURATION Azure auquel sont rattachées toutes les ressources (tu en as un actif pour t'entraîner). Quel nom ?",
+  accept:["subscription","abonnement","souscription"],
+  explain:"La subscription. Hiérarchie : tenant → subscriptions → resource groups → ressources. La facture tombe au niveau de la subscription." },
+{ id:"v-az-zone", level:1, d:"base", dom:"Concepts cloud", type:"qcm",
+  q:"Qu'est-ce qu'une « availability zone » dans une région Azure ?",
+  choices:["Un (ou plusieurs) datacenter physiquement séparé, avec alimentation et réseau indépendants","Un sous-réseau virtuel","Une zone géographique de facturation","Un cluster Kubernetes"],
+  answer:0,
+  explain:"3 zones minimum par région compatible. C'est ce qui rend ZRS résilient : 3 copies sur 3 zones = survivre à la perte d'un datacenter entier." },
+{ id:"v-rest", level:1, d:"base", dom:"HTTP", type:"input",
+  q:"Style d'architecture d'API basé sur HTTP : des ressources identifiées par des URLs et manipulées via GET/POST/PUT/DELETE. Quel sigle ?",
+  accept:["rest","restful","representational state transfer"],
+  explain:"REST. Toutes les APIs Azure sont REST — les SDK et la CLI ne sont que des enrobages par-dessus." },
+{ id:"v-cors", level:1, d:"base", dom:"HTTP", type:"input",
+  q:"Mécanisme de sécurité des navigateurs qui bloque les appels JavaScript vers un AUTRE domaine, sauf si le serveur les autorise explicitement. Quel sigle ?",
+  accept:["cors","cross origin resource sharing"],
+  explain:"CORS = Cross-Origin Resource Sharing. À configurer côté serveur (App Service, Functions, APIM policy cors, compte de stockage) quand une SPA appelle ton API." },
+{ id:"v-authcode", level:1, d:"sec", dom:"Identité", type:"qcm",
+  q:"Quel flow OAuth 2.0 utilise une web app classique pour connecter un UTILISATEUR ?",
+  choices:["Authorization code (avec PKCE)","Client credentials","Device code","Implicit (recommandé)"],
+  answer:0,
+  explain:"Authorization code + PKCE est le standard actuel. Client credentials = daemons sans utilisateur. Le flow implicit est déprécié." },
+{ id:"v-pkce", level:1, d:"sec", dom:"Identité", type:"qcm",
+  q:"À quoi sert PKCE dans le flow authorization code ?",
+  choices:["Protéger les clients publics (SPA, mobile) contre l'interception du code d'autorisation","Chiffrer le token en AES","Remplacer le refresh token","Signer les requêtes Graph"],
+  answer:0,
+  explain:"PKCE (Proof Key for Code Exchange) : le client prouve que c'est bien lui qui échange le code, sans avoir besoin d'un secret." },
+{ id:"v-scopedef", level:1, d:"sec", dom:"Identité", type:"input",
+  q:"Permission granulaire qu'une application demande (ex : « User.Read » pour lire le profil). Quel terme anglais ?",
+  accept:["scope","scopes","etendue"],
+  explain:"Le scope. Demandé à l'acquisition du token, il apparaît dans le claim « scp » (délégué). Consentement statique (/.default) ou incrémental." },
+{ id:"v-claimdef", level:1, d:"sec", dom:"Identité", type:"input",
+  q:"Information portée par un token JWT : aud, iss, exp, scp, roles… Comment s'appelle chacune de ces paires ?",
+  accept:["claim","claims","revendication"],
+  explain:"Un claim. aud = à qui le token est destiné, iss = qui l'a émis, exp = expiration, scp/roles = permissions." },
+{ id:"v-kudu", level:1, d:"comp", dom:"App Service", type:"qcm",
+  q:"Qu'est-ce que « Kudu » pour une App Service ?",
+  choices:["La console d'administration avancée (site https://monapp.scm.azurewebsites.net) : fichiers, console, déploiements","Le load balancer interne","Un SKU Premium","L'outil de migration de bases"],
+  answer:0,
+  explain:"Kudu (endpoint SCM) donne accès aux fichiers, aux logs de déploiement, à une console — très utile en debug. C'est aussi lui qui reçoit les ZIP deploy." },
+{ id:"v-bicep", level:1, d:"base", dom:"IaC", type:"input",
+  q:"Langage déclaratif de Microsoft qui simplifie l'écriture des templates ARM pour déployer l'infrastructure « as code ». Quel nom ?",
+  accept:["bicep"],
+  explain:"Bicep se compile en JSON ARM. Infrastructure as Code = décrire les ressources dans des fichiers versionnés au lieu de cliquer dans le portail." },
+{ id:"v-dapr", level:1, d:"comp", dom:"Conteneurs", type:"qcm",
+  q:"Que fournit Dapr, intégré nativement dans Azure Container Apps ?",
+  choices:["Des briques microservices : invocation de services, pub/sub, gestion d'état, via un sidecar","L'autoscaling","Le registre d'images","Le chiffrement TLS"],
+  answer:0,
+  explain:"Dapr (Distributed Application Runtime) tourne en sidecar à côté de ton conteneur. KEDA = scaling, Dapr = plomberie microservices, envoy = ingress." },
+{ id:"v-put", level:1, d:"base", dom:"HTTP", type:"qcm",
+  q:"Quelle est la différence entre PUT et PATCH ?",
+  choices:["PUT remplace la ressource ENTIÈRE (idempotent) ; PATCH modifie partiellement","PUT crée, PATCH supprime","PATCH est plus rapide","Aucune différence"],
+  answer:0,
+  explain:"PUT envoyé deux fois = même résultat (idempotent). Les SDK Azure Cosmos utilisent ReplaceItem (PUT) vs PatchItem (PATCH, opérations ciblées)." },
+{ id:"v-snapshot", level:1, d:"stor", dom:"Blob Storage", type:"input",
+  q:"Copie en LECTURE SEULE d'un blob figée à un instant T, stockée à côté de l'original. Quel terme anglais ?",
+  accept:["snapshot","instantane"],
+  explain:"Le snapshot (manuel, à la demande) — à distinguer du versioning (automatique à chaque écriture, si activé)." },
+{ id:"v-dockerfile", level:1, d:"comp", dom:"Conteneurs", type:"input",
+  q:"Fichier texte qui décrit les étapes de construction d'une image de conteneur (FROM, COPY, RUN, CMD…). Quel nom ?",
+  accept:["dockerfile","docker file"],
+  explain:"Le Dockerfile. az acr build l'utilise pour builder dans le cloud. FROM = image de base — sa mise à jour peut déclencher un ACR Task automatique." },
+{ id:"v-appserviceplan", level:1, d:"comp", dom:"App Service", type:"input",
+  q:"Ressource qui définit les machines sous-jacentes (SKU, région, nombre d'instances) et que PLUSIEURS web apps peuvent partager. Quel nom ?",
+  accept:["app service plan","plan app service","appservice plan","service plan"],
+  explain:"L'App Service plan. On scale le PLAN, pas l'app : toutes les apps du plan partagent (et se disputent) ses instances." },
+{ id:"v-cicd", level:1, d:"base", dom:"DevOps", type:"qcm",
+  q:"Que signifie CI/CD (indispensable pour ta carrière) ?",
+  choices:["Continuous Integration / Continuous Delivery — builder, tester et déployer automatiquement à chaque commit","Cloud Infrastructure / Cloud Deployment","Container Image / Container Deploy","Code Inspection / Code Debug"],
+  answer:0,
+  explain:"CI = intégrer et tester en continu ; CD = livrer automatiquement. Sur Azure : GitHub Actions ou Azure DevOps Pipelines, souvent vers un slot de staging puis swap." },
+{ id:"v-ade", level:1, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"« Encryption at rest » vs « encryption in transit » : quelle est la différence ?",
+  choices:["At rest = données chiffrées sur disque (SSE) ; in transit = chiffrées sur le réseau (TLS/HTTPS)","At rest = RAM, in transit = disque","Ce sont des synonymes","At rest concerne seulement les backups"],
+  answer:0,
+  explain:"Azure Storage chiffre au repos par défaut (SSE, clés Microsoft ou customer-managed). En transit : TLS — d'où les options « HTTPS only » et spr=https des SAS." },
+
+/* ---------- EXTENSION NIVEAU 2 — faits d'examen ---------- */
+{ id:"f-alwayson", level:2, d:"comp", dom:"App Service", type:"qcm",
+  q:"À quoi sert le paramètre « Always On » d'une App Service ?",
+  choices:["Empêcher le déchargement de l'app après ~20 min sans trafic (requis pour les Functions en plan Dedicated)","Garantir le SLA","Activer l'autoscale","Forcer HTTPS"],
+  answer:0,
+  explain:"Sans Always On (dispo dès Basic), l'app « s'endort » et la première requête subit un démarrage lent. Obligatoire pour des Functions sur plan App Service." },
+{ id:"f-zipdeploy", level:2, d:"comp", dom:"App Service", type:"qcm",
+  q:"Quelle commande CLI déploie un package ZIP sur une App Service ?",
+  choices:["az webapp deploy --src-path app.zip --type zip","az webapp push app.zip","az appservice upload app.zip","az webapp start --zip"],
+  answer:0,
+  explain:"az webapp deploy (successeur de config-zip). Astuce liée : WEBSITE_RUN_FROM_PACKAGE=1 exécute l'app directement depuis le package (lecture seule, démarrage propre)." },
+{ id:"f-workerruntime", level:2, d:"comp", dom:"Functions", type:"input",
+  q:"Quel app setting indique au runtime Functions le langage utilisé (dotnet-isolated, node, python…) ?",
+  accept:["FUNCTIONS_WORKER_RUNTIME","functions worker runtime"],
+  explain:"FUNCTIONS_WORKER_RUNTIME. Avec AzureWebJobsStorage et FUNCTIONS_EXTENSION_VERSION, c'est un des settings clés d'une Function App." },
+{ id:"f-taskhub", level:2, d:"comp", dom:"Functions", type:"input",
+  q:"Comment s'appelle l'espace de stockage (dans le storage account) où Durable Functions persiste l'état des orchestrations ?",
+  accept:["task hub","taskhub"],
+  explain:"Le task hub : queues + tables + blobs qui portent l'historique. Deux apps partageant un storage doivent avoir des task hubs différents." },
+{ id:"f-coretools", level:2, d:"comp", dom:"Functions", type:"input",
+  q:"Quel outil en ligne de commande permet de créer et d'exécuter des Azure Functions EN LOCAL (commandes func init, func start) ?",
+  accept:["core tools","azure functions core tools","func"],
+  explain:"Azure Functions Core Tools. func init → func new → func start, puis func azure functionapp publish pour déployer." },
+{ id:"f-blobtypes", level:2, d:"stor", dom:"Blob Storage", type:"qcm",
+  q:"Quels sont les 3 types de blobs et leur usage ?",
+  choices:["Block (fichiers), Append (logs, ajout en fin), Page (disques VM, accès aléatoire)","Hot, Cool, Archive","Standard, Premium, Ultra","Text, Binary, Stream"],
+  answer:0,
+  explain:"Block blob = le cas général. Append blob = optimisé pour l'ajout (logs). Page blob = pages de 512 octets, disques de VM. Hot/Cool/Archive sont des TIERS, pas des types." },
+{ id:"f-staticweb", level:2, d:"stor", dom:"Blob Storage", type:"qcm",
+  q:"Comment héberger un site statique directement depuis un compte de stockage ?",
+  choices:["Activer « static website » : les fichiers sont servis depuis le conteneur $web","Créer un conteneur public nommé www","Installer IIS sur le compte","Impossible sans App Service"],
+  answer:0,
+  explain:"Static website → conteneur $web + endpoint https://compte.z6.web.core.windows.net. Souvent combiné avec un CDN pour le domaine custom et le HTTPS." },
+{ id:"f-storagev2", level:2, d:"stor", dom:"Blob Storage", type:"input",
+  q:"Quel « kind » de compte de stockage est recommandé aujourd'hui pour un usage général (blobs + files + queues + tables, tous les tiers) ?",
+  accept:["storagev2","storage v2","general purpose v2","gpv2","standard general purpose v2"],
+  explain:"StorageV2 (general-purpose v2). Les comptes Premium (block blob, page blob, file) sont des cas de perf spécifiques." },
+{ id:"f-cosmos-serverless", level:2, d:"stor", dom:"Cosmos DB", type:"input",
+  q:"Quel mode de facturation Cosmos DB ne provisionne AUCUN RU/s et facture uniquement les RU consommées (idéal trafic intermittent) ?",
+  accept:["serverless","sans serveur"],
+  explain:"Serverless — mais limité à une seule région et 50 Go/conteneur. Trafic soutenu → provisioned (manuel ou autoscale)." },
+{ id:"f-cosmos-autoscale", level:2, d:"stor", dom:"Cosmos DB", type:"qcm",
+  q:"En mode autoscale, entre quelles bornes Cosmos DB fait-il varier le débit ?",
+  choices:["Entre 10 % et 100 % du maximum configuré","Entre 0 et l'infini","Entre 50 % et 150 %","Il double à chaque pic"],
+  answer:0,
+  explain:"Autoscale RU max = 4000 → varie entre 400 et 4000 RU/s. Tu paies le pic atteint dans l'heure." },
+{ id:"f-cosmos-indexmode", level:2, d:"stor", dom:"Cosmos DB", type:"qcm",
+  q:"Quels sont les modes d'indexation d'un conteneur Cosmos DB ?",
+  choices:["Consistent (index mis à jour de façon synchrone, défaut) et None","Fast et Slow","Lazy uniquement","Full-text et Vector uniquement"],
+  answer:0,
+  explain:"Consistent = défaut (l'index suit chaque écriture). None = pour les conteneurs purement clé/valeur. On optimise surtout via include/exclude paths." },
+{ id:"f-graph-batchmax", level:2, d:"sec", dom:"Microsoft Graph", type:"input",
+  q:"Combien de requêtes maximum peut contenir un batch Microsoft Graph (POST /$batch) ?",
+  accept:["20","vingt"],
+  explain:"20 requêtes par batch — chacune avec son id pour corréler les réponses. Réduit les allers-retours et le risque de throttling." },
+{ id:"f-graph-url", level:2, d:"sec", dom:"Microsoft Graph", type:"input",
+  q:"Quelle est l'URL de base de l'API Microsoft Graph (version stable) ?",
+  accept:["https://graph.microsoft.com/v1.0","graph microsoft com v1 0","graph microsoft com"],
+  explain:"https://graph.microsoft.com/v1.0 (et /beta pour les préversions — jamais en prod). Un seul endpoint pour tout Microsoft 365 / Entra." },
+{ id:"f-kv-objects", level:2, d:"sec", dom:"Key Vault", type:"qcm",
+  q:"Quels sont les 3 types d'objets stockés dans Key Vault ?",
+  choices:["Secrets, keys (clés crypto), certificates","Users, groups, roles","Blobs, queues, tables","Tokens, claims, scopes"],
+  answer:0,
+  explain:"Secrets (valeurs récupérables), keys (opérations crypto SANS extraction de la clé), certificates (gestion + renouvellement auto possible)." },
+{ id:"f-imds", level:2, d:"sec", dom:"Identité", type:"input",
+  q:"Quelle adresse IP magique expose le service de métadonnées (IMDS) où une VM/app récupère les tokens de sa managed identity ?",
+  accept:["169.254.169.254","169 254 169 254"],
+  explain:"169.254.169.254 — non routable, accessible uniquement depuis la ressource. En pratique, DefaultAzureCredential fait l'appel pour toi." },
+{ id:"f-ai-standardtest", level:2, d:"mon", dom:"Monitoring", type:"input",
+  q:"Quel type de test de disponibilité App Insights a remplacé l'ancien « URL ping test » (requête unique + validation TLS) ?",
+  accept:["standard test","standard","test standard"],
+  explain:"Le standard test. Pour des parcours multi-étapes : TrackAvailability() dans une Azure Function." },
+{ id:"f-redis-sla", level:2, d:"mon", dom:"Redis", type:"input",
+  q:"Quel est le PREMIER tier d'Azure Cache for Redis qui offre un SLA (2 nœuds répliqués) ?",
+  accept:["standard"],
+  explain:"Standard = réplication + SLA 99,9 %. Basic = 1 nœud sans SLA (dev/test). Persistance et clustering → Premium." },
+{ id:"f-redis-persist", level:2, d:"mon", dom:"Redis", type:"input",
+  q:"Quel tier Redis minimum permet la PERSISTANCE des données (RDB/AOF) et le placement en VNet ?",
+  accept:["premium"],
+  explain:"Premium. Un cache Basic/Standard qui redémarre perd tout — le cache doit toujours être reconstructible depuis la source de vérité." },
+{ id:"f-apim-namedvalues", level:2, d:"integ", dom:"APIM", type:"input",
+  q:"Comment s'appellent les constantes réutilisables (éventuellement secrètes ou liées à Key Vault) qu'on référence dans les policies APIM avec {{...}} ?",
+  accept:["named values","named value","valeurs nommees"],
+  explain:"Les named values : centralisent URLs, clés, configs — utilisées dans les policies via {{ma-valeur}}." },
+{ id:"f-apim-groups", level:2, d:"integ", dom:"APIM", type:"qcm",
+  q:"Quels sont les 3 groupes intégrés du developer portal APIM ?",
+  choices:["Administrators, Developers, Guests","Owners, Readers, Contributors","Admins, Users, Anonymous","Root, Staff, Public"],
+  answer:0,
+  explain:"Administrators (gèrent), Developers (authentifiés, consomment), Guests (non authentifiés — peuvent voir les APIs autorisées)." },
+{ id:"f-eg-systemtopic", level:2, d:"integ", dom:"Event Grid", type:"input",
+  q:"Comment s'appellent les topics Event Grid intégrés qui exposent les événements natifs des services Azure (Storage, Resource Group…) ?",
+  accept:["system topics","system topic","topics systeme"],
+  explain:"System topics — créés sur la ressource source. Tes propres événements → custom topics. Multi-tenant à grande échelle → event domains." },
+{ id:"f-eg-domains", level:2, d:"integ", dom:"Event Grid", type:"input",
+  q:"Quelle fonctionnalité Event Grid regroupe des milliers de topics sous un même endpoint pour publier vers de nombreux tenants/clients ?",
+  accept:["event domains","event domain","domaines d evenements"],
+  explain:"Les event domains : un endpoint de publication, jusqu'à 100 000 topics, gestion centralisée des autorisations par topic." },
+{ id:"f-eh-readers", level:2, d:"integ", dom:"Event Hubs", type:"input",
+  q:"Combien de lecteurs simultanés MAXIMUM par partition dans un même consumer group Event Hubs ?",
+  accept:["5","cinq"],
+  explain:"5 max — mais la bonne pratique est UN seul lecteur actif par partition par consumer group (sinon doublons garantis)." },
+{ id:"f-eh-tu", level:2, d:"integ", dom:"Event Hubs", type:"qcm",
+  q:"Que représente 1 throughput unit (TU) Event Hubs Standard ?",
+  choices:["1 Mo/s (ou 1000 événements/s) en entrée et 2 Mo/s en sortie","10 Mo/s symétriques","1 partition","1 consumer group"],
+  answer:0,
+  explain:"1 TU = 1 Mo/s ingress, 2 Mo/s egress. Premium compte en processing units, Dedicated en capacity units." },
+{ id:"f-sb-basic", level:2, d:"integ", dom:"Service Bus", type:"qcm",
+  q:"Quelle fonctionnalité N'EST PAS disponible dans Service Bus tier Basic ?",
+  choices:["Les topics (pub/sub)","Les queues","L'envoi de messages","La réception peek-lock"],
+  answer:0,
+  explain:"Basic = queues uniquement. Topics/subscriptions → Standard minimum. Messages 100 Mo, VNet, perf prévisible → Premium." },
+{ id:"f-sb-lockdur", level:2, d:"integ", dom:"Service Bus", type:"qcm",
+  q:"Durée par défaut (et maximum) du verrou peek-lock sur un message Service Bus ?",
+  choices:["1 minute par défaut, 5 minutes max (renouvelable)","30 s par défaut, 1 h max","5 min par défaut, illimité","10 s fixes"],
+  answer:0,
+  explain:"Lock de 1 min (défaut), 5 min max — renouvelable côté client (auto-renewal du SDK). Passé le délai sans Complete, le message redevient visible." },
+{ id:"f-sb-autofwd", level:2, d:"integ", dom:"Service Bus", type:"input",
+  q:"Fonctionnalité Service Bus qui déplace automatiquement les messages d'une queue/subscription vers une autre entité (chaînage) ?",
+  accept:["auto forwarding","autoforwarding","auto forward","transfert automatique"],
+  explain:"Auto-forwarding : découple les topologies (ex : fan-in de plusieurs subscriptions vers une queue de traitement)." },
+{ id:"f-qs-ttl", level:2, d:"integ", dom:"Queue Storage", type:"input",
+  q:"TTL par défaut d'un message Azure Queue Storage (en jours) ?",
+  accept:["7","7 jours","sept"],
+  explain:"7 jours ; -1 = n'expire jamais. À comparer au visibility timeout (30 s par défaut) qui, lui, masque temporairement le message pendant son traitement." },
+{ id:"f-acr-triggers", level:2, d:"comp", dom:"Conteneurs", type:"qcm",
+  q:"Quels sont les 3 déclencheurs automatiques d'un ACR Task ?",
+  choices:["Commit dans le repo source, mise à jour de l'image de base, planification (timer)","Push d'image, pull d'image, suppression","Alerte de sécurité, quota, coût","Webhook, e-mail, SMS"],
+  answer:0,
+  explain:"Source code update, base image update (LE cas d'examen : patcher automatiquement quand l'image FROM est mise à jour), et schedule." },
+{ id:"f-ca-secretref", level:2, d:"comp", dom:"Conteneurs", type:"input",
+  q:"Dans Container Apps, quel préfixe utilise une variable d'environnement pour référencer un secret de l'app ?",
+  accept:["secretref","secretref:","secret ref"],
+  explain:"secretref:mon-secret. Les secrets peuvent aussi référencer Key Vault via la managed identity de l'app." },
+
+/* ---------- EXTENSION NIVEAU 3 — scénarios & pièges ---------- */
+{ id:"s-managed-cert", level:3, d:"comp", dom:"App Service", type:"qcm",
+  q:"Ajouter HTTPS sur le domaine custom www.monsite.fr d'une App Service SANS acheter de certificat. Quelle solution ?",
+  choices:["Le certificat managé App Service (gratuit, renouvelé automatiquement)","Un certificat auto-signé","Obligatoirement un certificat payant","Désactiver HTTPS"],
+  answer:0,
+  explain:"App Service managed certificate : gratuit, auto-renouvelé. Limites : pas de wildcard, pas d'export. Custom domain + TLS dès le tier Basic." },
+{ id:"s-worm", level:3, d:"stor", dom:"Blob Storage", type:"qcm",
+  q:"La réglementation impose que des documents blob ne puissent être NI modifiés NI supprimés pendant 5 ans. Quelle fonctionnalité ?",
+  choices:["Immutable storage : time-based retention policy (WORM)","Le tier Archive","Un lease infini","La redondance GRS"],
+  answer:0,
+  explain:"Immutability policies (WORM = Write Once, Read Many) : time-based retention ou legal hold. Archive rend le blob offline mais pas immuable." },
+{ id:"s-storage-cors", level:3, d:"stor", dom:"Blob Storage", type:"qcm",
+  q:"Ta SPA JavaScript reçoit une erreur du navigateur en appelant directement le blob storage : « blocked by CORS policy ». Que faire ?",
+  choices:["Configurer les règles CORS sur le compte de stockage (origines, méthodes, headers autorisés)","Changer le tier du blob","Utiliser HTTP au lieu de HTTPS","Désactiver le firewall Windows"],
+  answer:0,
+  explain:"CORS se configure côté service (compte de stockage, section CORS) : allowed origins/methods/headers + max age." },
+{ id:"s-poison", level:3, d:"comp", dom:"Functions", type:"qcm",
+  q:"Un message de Queue Storage fait planter ta Function à chaque tentative. Que se passe-t-il après 5 échecs ?",
+  choices:["Il est déplacé dans la queue « nomqueue-poison »","Il est supprimé définitivement","La Function est désactivée","Il bloque la queue"],
+  answer:0,
+  explain:"Le trigger Queue Storage retente 5 fois (maxDequeueCount) puis met le message en poison queue. L'équivalent Service Bus = dead-letter après MaxDeliveryCount." },
+{ id:"s-hotpartition", level:3, d:"stor", dom:"Cosmos DB", type:"qcm",
+  q:"Ton conteneur Cosmos a des 429 alors que le débit global est loin du provisionné : une seule partition sature. Quelle est la cause probable ?",
+  choices:["Partition key mal choisie (faible cardinalité → hot partition)","Trop de consumer groups","Le TTL est désactivé","L'index est en mode consistent"],
+  answer:0,
+  explain:"Le débit est réparti entre partitions physiques : une partition key qui concentre le trafic (ex : la date du jour) sature sa partition. Choisir haute cardinalité + répartition uniforme." },
+{ id:"s-crosspartition", level:3, d:"stor", dom:"Cosmos DB", type:"qcm",
+  q:"Une requête Cosmos coûte très cher en RU et s'exécute lentement car elle interroge TOUTES les partitions. Comment l'éviter ?",
+  choices:["Inclure la partition key dans le filtre WHERE (requête ciblée sur une partition)","Augmenter le TTL","Passer en consistance eventual","Désactiver l'index"],
+  answer:0,
+  explain:"Une requête sans partition key = cross-partition (fan-out sur toutes les partitions). Toujours filtrer sur la partition key quand c'est possible." },
+{ id:"s-obo", level:3, d:"sec", dom:"Identité", type:"qcm",
+  q:"Ton API reçoit un token utilisateur et doit appeler Microsoft Graph AU NOM de cet utilisateur. Quel flow OAuth ?",
+  choices:["On-behalf-of (OBO) : échanger le token entrant contre un token Graph","Client credentials","Device code","Implicit"],
+  answer:0,
+  explain:"On-behalf-of : l'API (confidential client) échange le token reçu contre un token pour l'API en aval, en préservant l'identité de l'utilisateur." },
+{ id:"s-kvref", level:3, d:"sec", dom:"Key Vault", type:"qcm",
+  q:"Une App Service doit lire un secret Key Vault via un simple app setting, sans code SDK. Quelle syntaxe ?",
+  choices:["@Microsoft.KeyVault(SecretUri=https://monvault.vault.azure.net/secrets/MonSecret/)","{{keyvault:MonSecret}}","$KEYVAULT/MonSecret","%KV_MonSecret%"],
+  answer:0,
+  explain:"Les Key Vault references dans les app settings + managed identity autorisée sur le vault : l'app lit le setting comme une valeur normale." },
+{ id:"s-slowdep", level:3, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"Les utilisateurs se plaignent de lenteurs. Tu veux identifier QUELLE dépendance (SQL, API externe…) ralentit quelle opération. Quel outil App Insights ?",
+  choices:["Application Map (+ dependency tracking) pour visualiser latence et taux d'échec par composant","Live Metrics","Un availability test","Le sampling"],
+  answer:0,
+  explain:"Application Map montre la topologie avec latences/échecs par dépendance ; ensuite le transaction search/end-to-end détaille chaque opération." },
+{ id:"s-ai-cost", level:3, d:"mon", dom:"Monitoring", type:"input",
+  q:"La facture App Insights explose à cause du volume de télémétrie. Quelle technique réduit le volume tout en gardant des données statistiquement représentatives ?",
+  accept:["sampling","echantillonnage","le sampling"],
+  explain:"Le sampling (adaptive par défaut en ASP.NET, fixed-rate sinon). App Insights conserve les items corrélés d'une même opération pour garder les traces cohérentes." },
+{ id:"s-redis-mux", level:3, d:"mon", dom:"Redis", type:"qcm",
+  q:"Ton app .NET épuise les connexions Redis et lève des timeouts sous charge. Quelle est l'erreur de code classique ?",
+  choices:["Créer un ConnectionMultiplexer à chaque requête au lieu d'un singleton réutilisé","Utiliser le port 6380","Mettre des TTL trop courts","Utiliser StringSet au lieu de HashSet"],
+  answer:0,
+  explain:"Le ConnectionMultiplexer est thread-safe et conçu pour être partagé (singleton / Lazy<T>). En créer un par requête = fuite de connexions." },
+{ id:"s-cdn-qs", level:3, d:"mon", dom:"CDN", type:"qcm",
+  q:"Ton API derrière CDN renvoie des résultats différents selon ?ville=paris ou ?ville=lyon, mais le CDN sert la même réponse aux deux. Quel réglage ?",
+  choices:["Query string caching = « cache every unique URL »","Purger le cache","Augmenter le TTL","Désactiver la compression"],
+  answer:0,
+  explain:"Par défaut le CDN peut ignorer la query string. « Cache every unique URL » fait de chaque combinaison de paramètres une entrée de cache distincte." },
+{ id:"s-apim-cachepol", level:3, d:"integ", dom:"APIM", type:"qcm",
+  q:"Réduire la charge du backend pour un GET très fréquent dont la réponse change peu. Quelles policies APIM ?",
+  choices:["cache-lookup (inbound) + cache-store (outbound) avec une durée","rate-limit + quota","validate-jwt + cors","mock-response"],
+  answer:0,
+  explain:"cache-lookup vérifie le cache en entrée ; cache-store enregistre la réponse en sortie (duration en secondes). Le backend n'est appelé qu'à l'expiration." },
+{ id:"s-apim-corspol", level:3, d:"integ", dom:"APIM", type:"input",
+  q:"Une SPA appelle ton API via APIM et le navigateur bloque la requête cross-origin. Quelle policy APIM ajouter ?",
+  accept:["cors","policy cors","la policy cors"],
+  explain:"La policy cors en inbound (allowed-origins, allowed-methods, allowed-headers). C'est APIM qui répond au preflight OPTIONS." },
+{ id:"s-apim-delheader", level:3, d:"integ", dom:"APIM", type:"qcm",
+  q:"Pour des raisons de sécurité, supprimer le header « X-Powered-By » des réponses renvoyées aux clients. Quelle policy et où ?",
+  choices:["set-header avec exists-action=\"delete\" dans la section outbound","rewrite-uri en inbound","ip-filter en backend","retry en on-error"],
+  answer:0,
+  explain:"On modifie les réponses en OUTBOUND : <set-header name=\"X-Powered-By\" exists-action=\"delete\" />. Masquer les headers techniques limite la reconnaissance." },
+{ id:"s-eg-dl", level:3, d:"integ", dom:"Event Grid", type:"qcm",
+  q:"Des événements Event Grid non livrés après 24 h de retry doivent être CONSERVÉS pour analyse. Quelle configuration ?",
+  choices:["Activer le dead-lettering de la subscription vers un conteneur blob","Ils sont conservés automatiquement","Augmenter le retry à 48 h","Basculer sur CloudEvents"],
+  answer:0,
+  explain:"Sans dead-letter configuré, les événements expirés sont PERDUS. Le dead-lettering (vers un blob storage) doit être explicitement activé sur la subscription." },
+{ id:"s-kafka", level:3, d:"integ", dom:"Event Hubs", type:"qcm",
+  q:"Migrer une application Kafka existante vers Azure SANS réécrire le code producteur/consommateur. Quelle solution ?",
+  choices:["Event Hubs avec son endpoint compatible Kafka (changer la connection string)","Service Bus topics","Event Grid","Queue Storage"],
+  answer:0,
+  explain:"Event Hubs expose une surface Kafka (protocole 1.0+) : l'app pointe sur le namespace Event Hubs, quasiment sans changement de code." },
+{ id:"s-sb-scheduled", level:3, d:"integ", dom:"Service Bus", type:"qcm",
+  q:"Envoyer maintenant un message qui ne doit être DISPONIBLE pour les consommateurs que demain à 9 h. Quelle fonctionnalité Service Bus ?",
+  choices:["Scheduled delivery (ScheduledEnqueueTime sur le message)","Le TTL","Une session","Le defer"],
+  answer:0,
+  explain:"ScheduledEnqueueTimeUtc (ou ScheduleMessageAsync) : le message reste invisible jusqu'à l'heure programmée. TTL = expiration, l'inverse." },
+{ id:"s-sb-defer", level:3, d:"integ", dom:"Service Bus", type:"qcm",
+  q:"Un message ne peut pas être traité MAINTENANT (il attend un autre événement) mais ne doit être ni abandonné ni dead-lettered. Quelle opération ?",
+  choices:["Defer : le mettre de côté et le récupérer plus tard par son SequenceNumber","Complete","Abandon (il reviendra)","Le renvoyer dans la queue"],
+  answer:0,
+  explain:"Defer sort le message du flux normal ; on le récupère explicitement via ReceiveDeferredMessageAsync(sequenceNumber) — à stocker quelque part." },
+{ id:"s-cli-swap", level:3, d:"comp", dom:"CLI", type:"input",
+  q:"Écris la commande CLI (sans les paramètres) qui échange le slot staging avec la production d'une web app : az webapp … ?",
+  accept:["az webapp deployment slot swap","deployment slot swap","slot swap"],
+  explain:"az webapp deployment slot swap -g MonRG -n monapp --slot staging --target-slot production." },
+{ id:"s-cli-acrbuild", level:3, d:"comp", dom:"CLI", type:"input",
+  q:"Écris la commande CLI (3 mots après « az ») qui build une image dans le cloud ET la pousse dans ton registre : az … ?",
+  accept:["az acr build","acr build"],
+  explain:"az acr build -r monregistry -t app:v1 . — pas besoin de Docker en local, le build tourne dans ACR Tasks." },
+{ id:"s-front-back", level:3, d:"integ", dom:"Architecture", type:"qcm",
+  q:"Pour ta carrière : une API interne appelée UNIQUEMENT par tes microservices doit être protégée sans gérer de secrets. Quelle combinaison Azure ?",
+  choices:["Managed identities + validation du token Entra ID (audience de l'API)","Une clé API en dur dans le code","Un mot de passe partagé par e-mail","IP whitelisting seul"],
+  answer:0,
+  explain:"Chaque service appelle avec sa managed identity (token Entra ID), l'API valide audience et rôle. Zéro secret, rotation automatique — le pattern de référence." },
+/* ---------- CODE À COMPLÉTER — format examen ---------- */
+{ id:"c-blob-get", level:2, d:"stor", dom:"Code C# — Blob", type:"qcm",
+  code:"var service = new BlobServiceClient(uri, new DefaultAzureCredential());\nvar container = service.GetBlobContainerClient(\"docs\");\nvar blob = container.____(\"rapport.pdf\");\nawait blob.UploadAsync(stream, overwrite: true);",
+  q:"Complète le code : quelle méthode obtient le client du blob ?",
+  choices:["GetBlobClient","GetBlockBlobReference","CreateBlob","OpenBlob"], answer:0,
+  explain:"Hiérarchie SDK v12 : BlobServiceClient → GetBlobContainerClient → GetBlobClient. GetBlockBlobReference vient de l'ancien SDK v11 — piège classique." },
+{ id:"c-blob-udk", level:3, d:"stor", dom:"Code C# — Blob", type:"qcm",
+  code:"// SAS la plus securisee, signee Entra ID\nUserDelegationKey key = await service.____(\n    DateTimeOffset.UtcNow,\n    DateTimeOffset.UtcNow.AddHours(1));",
+  q:"Quelle méthode obtient la clé nécessaire à une user delegation SAS ?",
+  choices:["GetUserDelegationKeyAsync","GetAccountSasAsync","CreateSasTokenAsync","GetSharedKeyAsync"], answer:0,
+  explain:"On demande d'abord la user delegation key (credentials Entra ID), puis on signe la SAS avec — jamais avec la clé du compte." },
+{ id:"c-blob-meta", level:2, d:"stor", dom:"Code C# — Blob", type:"input",
+  code:"var meta = new Dictionary<string, string>\n    { [\"auteur\"] = \"osama\" };\nawait blob.____(meta);",
+  q:"Complète : quelle méthode écrit les métadonnées du blob ? (tape le nom)",
+  accept:["SetMetadataAsync","set metadata async","SetMetadata"],
+  explain:"SetMetadataAsync — côté HTTP ce sont les headers x-ms-meta-*. GetPropertiesAsync les relit (avec les propriétés système)." },
+{ id:"c-cosmos-pk", level:2, d:"stor", dom:"Code C# — Cosmos", type:"input",
+  code:"await container.CreateItemAsync(commande,\n    new ____(commande.ClientId));",
+  q:"Complète : quelle classe indique la partition cible ? (tape le nom)",
+  accept:["PartitionKey","partition key"],
+  explain:"new PartitionKey(valeur). La fournir évite une opération cross-partition coûteuse en RU." },
+{ id:"c-cosmos-param", level:2, d:"stor", dom:"Code C# — Cosmos", type:"input",
+  code:"var query = new QueryDefinition(\n    \"SELECT * FROM c WHERE c.statut = @s\")\n    .____(\"@s\", \"payee\");",
+  q:"Complète : quelle méthode lie la valeur du paramètre @s ?",
+  accept:["WithParameter","with parameter"],
+  explain:"QueryDefinition.WithParameter — requête paramétrée = pas d'injection et meilleures perfs." },
+{ id:"c-feed-lease", level:3, d:"stor", dom:"Code C# — Cosmos", type:"qcm",
+  code:"var processor = monitored\n    .GetChangeFeedProcessorBuilder<Commande>(\"proc\", HandleAsync)\n    .WithInstanceName(\"instance1\")\n    .____(leaseContainer)\n    .Build();",
+  q:"Complète : où le change feed processor stocke-t-il sa position de lecture ?",
+  choices:["WithLeaseContainer","WithCheckpointStore","WithOffsetContainer","WithStateTable"], answer:0,
+  explain:"Le lease container mémorise l'avancement et coordonne plusieurs instances. Les 4 composants : conteneur surveillé, lease container, host, delegate." },
+{ id:"c-msal-secret", level:2, d:"sec", dom:"Code C# — MSAL", type:"input",
+  code:"var app = ConfidentialClientApplicationBuilder\n    .Create(clientId)\n    .____(secret)\n    .WithAuthority(authority)\n    .Build();",
+  q:"Complète : quelle méthode fournit le secret client ?",
+  accept:["WithClientSecret","with client secret"],
+  explain:"WithClientSecret — ou WithCertificate(cert), recommandé en production. Réservé aux confidential clients." },
+{ id:"c-msal-client", level:3, d:"sec", dom:"Code C# — MSAL", type:"qcm",
+  code:"// Daemon sans utilisateur connecte\nvar result = await app.____(\n    new[] { \"https://graph.microsoft.com/.default\" })\n    .ExecuteAsync();",
+  q:"Quelle méthode MSAL correspond au flow client credentials ?",
+  choices:["AcquireTokenForClient","AcquireTokenSilent","AcquireTokenInteractive","AcquireTokenByAuthorizationCode"], answer:0,
+  explain:"AcquireTokenForClient = l'app s'authentifie elle-même. Note le scope /.default — indissociable de ce flow." },
+{ id:"c-kv-cred", level:2, d:"sec", dom:"Code C# — Key Vault", type:"input",
+  code:"var client = new SecretClient(\n    new Uri(\"https://monvault.vault.azure.net\"),\n    new ____());",
+  q:"Complète : quelle classe d'Azure.Identity fonctionne en local ET en prod sans stocker de secret ?",
+  accept:["DefaultAzureCredential","default azure credential"],
+  explain:"DefaultAzureCredential : chaîne env vars → managed identity → Azure CLI… Même code partout." },
+{ id:"c-durable-activity", level:2, d:"comp", dom:"Code C# — Durable", type:"input",
+  code:"[FunctionName(\"Orchestrateur\")]\npublic static async Task Run(\n  [OrchestrationTrigger] IDurableOrchestrationContext context)\n{\n    var resultat = await context.____<string>(\"TraiterImage\", url);\n}",
+  q:"Complète : quelle méthode appelle une activity function ?",
+  accept:["CallActivityAsync","call activity async"],
+  explain:"CallActivityAsync — l'orchestrateur délègue tout le vrai travail (I/O, calculs) aux activities." },
+{ id:"c-durable-event", level:3, d:"comp", dom:"Code C# — Durable", type:"input",
+  code:"// Pattern human interaction\nTask approbation = context.____<bool>(\"Approval\");\nTask timeout = context.CreateTimer(deadline, cts.Token);\nTask gagnant = await Task.WhenAny(approbation, timeout);",
+  q:"Complète : quelle méthode attend un événement externe (l'approbation) ?",
+  accept:["WaitForExternalEvent","wait for external event"],
+  explain:"WaitForExternalEvent + durable timer + Task.WhenAny = le pattern human interaction avec escalade." },
+{ id:"c-sb-sender", level:2, d:"integ", dom:"Code C# — Service Bus", type:"qcm",
+  code:"await using var client = new ServiceBusClient(ns,\n    new DefaultAzureCredential());\nvar sender = client.____(\"commandes\");\nawait sender.SendMessageAsync(new ServiceBusMessage(\"payload\"));",
+  q:"Complète la création de l'émetteur :",
+  choices:["CreateSender","GetQueue","CreateProducer","OpenChannel"], answer:0,
+  explain:"ServiceBusClient.CreateSender / CreateReceiver / CreateProcessor. (CreateProducer, c'est Event Hubs — piège.)" },
+{ id:"c-sb-complete", level:2, d:"integ", dom:"Code C# — Service Bus", type:"input",
+  code:"var msg = await receiver.ReceiveMessageAsync();\n// traitement reussi -> retirer le message\nawait receiver.____(msg);",
+  q:"Complète : quelle méthode confirme le traitement en mode peek-lock ?",
+  accept:["CompleteMessageAsync","complete message async"],
+  explain:"CompleteMessageAsync supprime le message. Les alternatives : AbandonMessageAsync, DeadLetterMessageAsync, DeferMessageAsync." },
+{ id:"c-eh-batch", level:2, d:"integ", dom:"Code C# — Event Hubs", type:"qcm",
+  code:"var producer = new EventHubProducerClient(ns, \"telemetrie\");\nusing EventDataBatch batch = await producer.____();\nbatch.TryAdd(new EventData(donnees));\nawait producer.SendAsync(batch);",
+  q:"Complète la création du lot d'événements :",
+  choices:["CreateBatchAsync","NewBatch","BeginBatchAsync","CreateEventGroup"], answer:0,
+  explain:"CreateBatchAsync + TryAdd (qui renvoie false si le lot est plein) + SendAsync — le pattern d'envoi efficace." },
+{ id:"c-redis-set", level:2, d:"mon", dom:"Code C# — Redis", type:"input",
+  code:"IDatabase db = mux.GetDatabase();\nawait db.____(\"produit:42\", json,\n    TimeSpan.FromMinutes(10));",
+  q:"Complète : quelle méthode StackExchange.Redis écrit une valeur AVEC un TTL ?",
+  accept:["StringSetAsync","string set async","StringSet"],
+  explain:"StringSetAsync(clé, valeur, expiry). Le 3e paramètre est le TTL — indispensable pour le cache-aside." },
+{ id:"c-queue-send", level:2, d:"integ", dom:"Code C# — Queue Storage", type:"qcm",
+  code:"var qc = new QueueClient(connStr, \"traitements\");\nawait qc.CreateIfNotExistsAsync();\nawait qc.____(\"nouvelle tache\");",
+  q:"Complète l'envoi du message :",
+  choices:["SendMessageAsync","AddMessageAsync","EnqueueAsync","PushAsync"], answer:0,
+  explain:"SDK v12 : SendMessageAsync / ReceiveMessagesAsync / UpdateMessageAsync / DeleteMessageAsync. AddMessage = ancien SDK." },
+{ id:"c-ai-track", level:2, d:"mon", dom:"Code C# — App Insights", type:"input",
+  code:"// Compter un evenement metier personnalise\ntelemetryClient.____(\"CommandeValidee\");",
+  q:"Complète : quelle méthode envoie un événement custom ?",
+  accept:["TrackEvent","track event"],
+  explain:"TrackEvent — et sa famille : TrackMetric, TrackException, TrackDependency, TrackTrace, TrackAvailability." },
+{ id:"c-graph-me", level:2, d:"sec", dom:"Code C# — Graph", type:"qcm",
+  code:"var graphClient = new GraphServiceClient(credential, scopes);\nvar profil = await graphClient.____.GetAsync();",
+  q:"Complète pour récupérer le profil de l'utilisateur connecté :",
+  choices:["Me","Users[\"moi\"]","Profile","CurrentUser"], answer:0,
+  explain:"graphClient.Me = l'utilisateur du token. graphClient.Users[id] pour un autre utilisateur (permissions app)." },
+{ id:"c-funcjson-dir", level:2, d:"comp", dom:"Code — function.json", type:"qcm",
+  code:"{\n  \"bindings\": [\n    { \"type\": \"queueTrigger\", \"direction\": \"____\",\n      \"name\": \"msg\", \"queueName\": \"commandes\",\n      \"connection\": \"StorageConn\" }\n  ]\n}",
+  q:"Quelle valeur pour la direction d'un trigger ?",
+  choices:["in","out","inout","trigger"], answer:0,
+  explain:"Un trigger est toujours direction « in ». Les bindings de sortie sont « out »." },
+{ id:"c-ncron-930", level:3, d:"comp", dom:"Code — NCRONTAB", type:"qcm",
+  code:"{ \"schedule\": \"____\" }  // tous les jours a 9h30",
+  q:"Quelle expression NCRONTAB déclenche tous les jours à 9 h 30 ?",
+  choices:["0 30 9 * * *","30 9 * * *","0 9 30 * * *","* 30 9 * * *"], answer:0,
+  explain:"6 champs : sec min heure jour mois jour-semaine → 0 30 9 * * *. « 30 9 * * * » est du cron Unix à 5 champs — invalide ici." },
+{ id:"c-apim-jwtpol", level:3, d:"integ", dom:"Code — Policy APIM", type:"input",
+  code:"<inbound>\n  <base />\n  <____ header-name=\"Authorization\"\n        failed-validation-httpcode=\"401\">\n    <openid-config url=\"https://login.microsoftonline.com/...\" />\n  </____>\n</inbound>",
+  q:"Complète le nom de la policy qui valide le token Entra ID :",
+  accept:["validate-jwt","validate jwt","validatejwt"],
+  explain:"validate-jwt en inbound — vérifie signature, audience, émetteur, claims. 401 si invalide, sans toucher le backend." },
+{ id:"c-apim-ratekey", level:3, d:"integ", dom:"Code — Policy APIM", type:"qcm",
+  code:"<rate-limit-by-key calls=\"10\" renewal-period=\"60\"\n    counter-key=\"@(context.Request.____)\" />",
+  q:"Complète pour limiter le débit PAR adresse IP :",
+  choices:["IpAddress","ClientIp","RemoteAddr","Origin"], answer:0,
+  explain:"context.Request.IpAddress. Les expressions de policy sont du C# entre @(...)." },
+{ id:"c-kql-fail", level:2, d:"mon", dom:"Code — KQL", type:"qcm",
+  code:"requests\n| where ____ == false\n| summarize total = count() by name\n| order by total desc",
+  q:"Complète pour ne garder que les requêtes en échec :",
+  choices:["success","failed","status","ok"], answer:0,
+  explain:"La table requests a une colonne booléenne « success ». where → summarize → order : le squelette KQL à reconnaître." },
+{ id:"c-kvref-setting", level:3, d:"sec", dom:"Code — App settings", type:"qcm",
+  code:"// App setting d'une App Service\nDbPassword = @Microsoft.____(SecretUri=\n  https://monvault.vault.azure.net/secrets/DbPassword/)",
+  q:"Complète la syntaxe de référence Key Vault :",
+  choices:["KeyVault","SecretStore","Vault","AppConfig"], answer:0,
+  explain:"@Microsoft.KeyVault(SecretUri=...) + managed identity autorisée sur le vault = secret lu comme un app setting normal." },
+
+/* ---------- SÉQUENCES À ORDONNER ---------- */
+{ id:"o-slots", level:2, d:"comp", dom:"App Service", type:"order",
+  q:"Remets dans l'ordre : déployer une nouvelle version SANS interruption de service.",
+  steps:["Créer le slot de déploiement « staging »","Déployer la nouvelle version dans staging","Tester et préchauffer staging","Swapper staging vers production"],
+  explain:"Le swap échange les routages après warm-up : les utilisateurs ne voient jamais d'app froide ni d'interruption." },
+{ id:"o-mi-kv", level:2, d:"sec", dom:"Sécurité", type:"order",
+  q:"Remets dans l'ordre : une App Service lit un secret Key Vault sans aucun credential.",
+  steps:["Activer la managed identity sur l'App Service","Attribuer le rôle « Key Vault Secrets User » à cette identité","Configurer la lecture du secret (SDK ou Key Vault reference)","L'app lit le secret sans credential stocké"],
+  explain:"Identité d'abord, droits ensuite, lecture enfin. L'ordre RBAC avant lecture est ce que l'examen vérifie." },
+{ id:"o-udsas", level:3, d:"sec", dom:"Sécurité", type:"order",
+  q:"Remets dans l'ordre : générer une user delegation SAS.",
+  steps:["S'authentifier auprès de Microsoft Entra ID","Demander la user delegation key au service Blob","Signer la SAS avec cette clé","Distribuer l'URL SAS au client"],
+  explain:"La user delegation key remplace la clé du compte comme matériau de signature — c'est ce qui rend cette SAS révocable et plus sûre." },
+{ id:"o-eg-webhook", level:3, d:"integ", dom:"Event Grid", type:"order",
+  q:"Remets dans l'ordre : abonner ton webhook custom à Event Grid.",
+  steps:["Exposer un endpoint HTTPS public","Créer l'event subscription vers cet endpoint","Répondre au handshake avec le validationCode","Recevoir et traiter les événements"],
+  explain:"Sans la réponse au SubscriptionValidationEvent, la subscription reste bloquée — Event Grid vérifie que tu possèdes l'endpoint." },
+{ id:"o-rehydrate", level:2, d:"stor", dom:"Blob Storage", type:"order",
+  q:"Remets dans l'ordre : lire un blob actuellement en tier Archive.",
+  steps:["Repérer le blob en tier Archive (offline)","Lancer Set Blob Tier vers Hot ou Cool","Attendre la fin de la réhydratation (jusqu'à 15 h)","Lire enfin le contenu du blob"],
+  explain:"Archive = offline : impossible de lire sans réhydrater d'abord. High priority < 1 h pour < 10 Go, sinon jusqu'à 15 h." },
+{ id:"o-acr-aci", level:2, d:"comp", dom:"Conteneurs", type:"order",
+  q:"Remets dans l'ordre : du code source au conteneur qui tourne dans ACI.",
+  steps:["Créer le registre ACR","Builder et pousser l'image avec az acr build","Créer le conteneur ACI à partir de l'image du registre","Vérifier le démarrage avec az container logs"],
+  explain:"az acr build fait build + push en une commande, dans le cloud. ACI tire ensuite l'image du registre." },
+{ id:"o-feedproc", level:3, d:"stor", dom:"Cosmos DB", type:"order",
+  q:"Remets dans l'ordre : mettre en place un change feed processor Cosmos DB.",
+  steps:["Créer le conteneur surveillé (les données)","Créer le lease container (l'état de lecture)","Écrire le delegate qui traite les changements","Démarrer le change feed processor"],
+  explain:"Les 4 composants du processor : monitored container, lease container, host, delegate — dans cet ordre de mise en place." },
+{ id:"o-func-deploy", level:2, d:"comp", dom:"Functions", type:"order",
+  q:"Remets dans l'ordre : développer une Function en local puis la déployer.",
+  steps:["func init — créer le projet local","func new — ajouter une fonction","func start — tester en local","Créer la Function App dans Azure (az functionapp create)","func azure functionapp publish — déployer"],
+  explain:"Le cycle Core Tools complet. az functionapp create doit exister AVANT le publish — piège d'ordre classique." },
+{ id:"o-apim-onboard", level:3, d:"integ", dom:"APIM", type:"order",
+  q:"Remets dans l'ordre : exposer ton API à un partenaire via APIM.",
+  steps:["Importer l'API dans APIM","Ajouter l'API à un product","Publier le product","Le partenaire s'abonne et obtient ses clés","Il appelle l'API avec Ocp-Apim-Subscription-Key"],
+  explain:"API → product → publication → souscription → appel. Un product non publié est invisible pour les développeurs." },
+
+/* ---------- ÉTUDES DE CAS ---------- */
+{ id:"csA-deploy", level:3, d:"comp", dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Comment répondre à l'exigence « déploiements sans interruption » au moindre effort ?",
+  choices:["Deployment slots + swap (le plan Standard les inclut déjà)","Redéployer la nuit en espérant peu de trafic","Créer une 2e app et basculer le DNS","Arrêter l'app pendant la mise à jour"],
+  answer:0,
+  explain:"Le plan Standard de Contoso inclut 5 slots : staging + swap préchauffé = zéro downtime, sans coût supplémentaire." },
+{ id:"csA-scale", level:3, d:"comp", dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Comment absorber la charge des week-ends en maîtrisant les coûts ?",
+  choices:["Autoscale : règles planifiées (week-end) + règles métriques (CPU), avec scale-in symétrique","Passer en plan Isolated en permanence","Scale-up manuel chaque vendredi soir","Doubler le nombre d'instances à l'année"],
+  answer:0,
+  explain:"Le pic est prévisible → règles planifiées, complétées par des règles métriques pour l'imprévu. Et toujours des règles de scale-in pour redescendre." },
+{ id:"csA-tier", level:3, d:"stor", dom:"Étude de cas", type:"input", scen:"A",
+  q:"Les images des produits retirés du catalogue (consultées rarement, environ une fois par mois, mais qui doivent rester disponibles IMMÉDIATEMENT) doivent coûter moins cher. Quel access tier ?",
+  accept:["cool"],
+  explain:"Cool : accès rare mais online (lecture immédiate), durée min 30 jours. Archive serait moins cher mais OFFLINE — incompatible avec « disponibles immédiatement »." },
+{ id:"csA-secrets", level:3, d:"sec", dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Comment satisfaire « aucun secret dans le code ou la configuration » pour l'accès à Cosmos DB ?",
+  choices:["Managed identity de l'App Service + rôle RBAC sur Cosmos, via DefaultAzureCredential","Connection string dans appsettings.json","Connection string dans un app setting en clair","Un compte SQL partagé par l'équipe"],
+  answer:0,
+  explain:"Managed identity + RBAC élimine le secret. Un app setting en clair reste un secret stocké — ça ne répond pas à l'exigence." },
+{ id:"csB-ingest", level:3, d:"integ", dom:"Étude de cas", type:"input", scen:"B",
+  q:"Quel service Azure pour ingérer les 20 000 événements/seconde des capteurs ?",
+  accept:["event hubs","event hub","azure event hubs","eventhubs","eventhub"],
+  explain:"Event Hubs est conçu pour le streaming massif : partitions, consumer groups, compatibilité Kafka. Event Grid ne convient pas au streaming continu." },
+{ id:"csB-archive", level:3, d:"integ", dom:"Étude de cas", type:"input", scen:"B",
+  q:"Comment archiver le flux 5 ans pour l'audit, SANS écrire de code ?",
+  accept:["capture","event hubs capture"],
+  explain:"Event Hubs Capture écrit automatiquement vers Blob/Data Lake (Avro). La rétention native (max 7 j en Standard) ne suffit pas pour 5 ans." },
+{ id:"csB-alert", level:3, d:"integ", dom:"Étude de cas", type:"qcm", scen:"B",
+  q:"Une anomalie détectée doit alerter PLUSIEURS systèmes en mode push et réactif. Quel service ?",
+  choices:["Event Grid (custom topic + une subscription par système)","Une boucle de polling sur Event Hubs","Un e-mail groupé","Queue Storage lue par tous"],
+  answer:0,
+  explain:"Un événement discret à diffuser en push vers plusieurs abonnés = Event Grid. Chaque système filtre ce qui l'intéresse." },
+{ id:"csB-order", level:3, d:"integ", dom:"Étude de cas", type:"qcm", scen:"B",
+  q:"Les ordres de maintenance doivent être traités DANS L'ORDRE pour chaque machine. Quelle solution ?",
+  choices:["Service Bus avec sessions (SessionId = identifiant machine)","Event Grid avec advanced filters","Queue Storage avec visibility timeout","Event Hubs avec Capture"],
+  answer:0,
+  explain:"FIFO par machine = sessions Service Bus, avec le SessionId comme clé de regroupement. Aucun autre service ne garantit cet ordre." },
+{ id:"csC-expose", level:3, d:"integ", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Comment exposer l'API aux partenaires avec clés d'accès et documentation self-service ?",
+  choices:["API Management : products, subscriptions et developer portal","Distribuer l'URL des Functions avec leur clé de fonction","Un PDF envoyé par e-mail","Un VPN par partenaire"],
+  answer:0,
+  explain:"APIM industrialise tout : le developer portal documente, les products regroupent, les subscriptions fournissent les clés." },
+{ id:"csC-quota", level:3, d:"integ", dom:"Étude de cas", type:"input", scen:"C",
+  q:"Chaque partenaire a un plafond de 100 000 appels PAR MOIS selon son contrat. Quelle policy APIM (nom) ?",
+  accept:["quota","quota-by-key","quota by key"],
+  explain:"quota / quota-by-key = plafond de volume sur longue période (renouvelé au mois) → 403. rate-limit ne gère que les pics courts → 429." },
+{ id:"csC-version", level:3, d:"integ", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Tailwind doit livrer un changement incompatible SANS casser les intégrations existantes. Quelle approche APIM ?",
+  choices:["Publier une version v2 (path/header) et laisser la v1 active pour les partenaires existants","Modifier l'API en place","Créer une revision et la rendre current immédiatement","Changer l'URL du backend"],
+  answer:0,
+  explain:"Breaking change = nouvelle VERSION, opt-in des consommateurs, coexistence v1/v2. Une revision promue modifierait l'API sous leurs pieds." },
+{ id:"csC-slow", level:3, d:"mon", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Des partenaires signalent des lenteurs intermittentes. Comment identifier le composant responsable ?",
+  choices:["Application Insights : Application Map + suivi des dépendances pour voir les latences par composant","Redémarrer les Functions tous les jours","Augmenter le SKU APIM","Demander des captures d'écran aux partenaires"],
+  answer:0,
+  explain:"App Insights trace chaque requête de bout en bout (APIM → Functions → dépendances) : l'Application Map montre où le temps se perd." },
+];
+
+/* ---------- Scénarios des études de cas ---------- */
+const SCENARIOS = {
+  A: { title: "Contoso Commerce",
+      text: "Contoso vend en ligne. Site ASP.NET Core hébergé sur App Service (plan Standard), images produits dans Blob Storage, commandes dans Cosmos DB (API NoSQL). Exigences : déploiements sans interruption, forte charge les week-ends, coûts maîtrisés, aucun secret stocké dans le code ou la configuration." },
+  B: { title: "Fabrikam Industrie",
+      text: "50 000 capteurs d'usine envoient 20 000 événements par seconde. Besoins : analytics en quasi temps réel, archivage 5 ans pour audit, retraitement possible des données récentes, alerte de plusieurs systèmes en cas d'anomalie, et ordres de maintenance traités dans l'ordre pour chaque machine." },
+  C: { title: "Tailwind API",
+      text: "Tailwind expose une API REST publique à des partenaires payants, backend en Azure Functions. Besoins : authentification Entra ID, plafond d'appels mensuel par partenaire, documentation self-service, évolutions sans casser les intégrations existantes, diagnostic des lenteurs." }
+};
+
+/* ---------- Labs guidés ---------- */
+const LABS = [
+  { id:"lab1", title:"Lab 1 · App Service : slots & swap sans downtime", time:"≈ 45 min",
+    obj:"Déployer une web app, créer un slot staging, livrer une nouvelle version et la basculer en production sans interruption.",
+    steps:[
+      "Crée le resource group et le plan (Standard S1 minimum : c'est lui qui débloque les slots).",
+      "Crée la web app puis ouvre son URL (https://&lt;nom&gt;.azurewebsites.net) — page par défaut.",
+      "Crée le slot « staging » et déploie-y une page modifiée (az webapp deploy ou déploiement Git/ZIP).",
+      "Ouvre l'URL du slot (&lt;nom&gt;-staging.azurewebsites.net) et vérifie la nouvelle version.",
+      "Swappe, puis rafraîchis l'URL de production : la nouvelle version est là, sans coupure.",
+      "Bonus : marque un app setting « Deployment slot setting » et observe qu'il ne suit PAS le swap.",
+      "Supprime le resource group." ],
+    cli:"az group create -n rg-az204-lab1 -l westeurope\naz appservice plan create -g rg-az204-lab1 -n plan-lab1 --sku S1\naz webapp create -g rg-az204-lab1 -p plan-lab1 -n webapp-osama-<unique>\naz webapp deployment slot create -g rg-az204-lab1 -n webapp-osama-<unique> --slot staging\naz webapp deployment slot swap -g rg-az204-lab1 -n webapp-osama-<unique> --slot staging --target-slot production\naz group delete -n rg-az204-lab1 --yes --no-wait",
+    verif:"tu as vu la version staging apparaître en production immédiatement après le swap, sans erreur 503." },
+  { id:"lab2", title:"Lab 2 · Azure Functions : du local au cloud", time:"≈ 45 min",
+    obj:"Créer une Function HTTP + une Function timer en local avec Core Tools, les tester, puis les déployer en plan Consumption.",
+    steps:[
+      "Installe Azure Functions Core Tools (npm i -g azure-functions-core-tools@4) si besoin.",
+      "func init MonProjetFunc (choisis ton langage) puis func new → template « HTTP trigger ».",
+      "func new → template « Timer trigger » avec le schedule 0 */5 * * * * (toutes les 5 min).",
+      "func start : appelle l'endpoint HTTP local (http://localhost:7071/api/...) et observe le timer.",
+      "Crée le storage account + la Function App Consumption dans Azure (voir CLI).",
+      "func azure functionapp publish func-osama-&lt;unique&gt; puis teste l'URL Azure (récupère la clé avec func azure functionapp list-functions --show-keys).",
+      "Regarde les logs en direct : func azure functionapp logstream func-osama-&lt;unique&gt;.",
+      "Supprime le resource group." ],
+    cli:"az group create -n rg-az204-lab2 -l westeurope\naz storage account create -g rg-az204-lab2 -n stosama<unique> --sku Standard_LRS\naz functionapp create -g rg-az204-lab2 -n func-osama-<unique> --storage-account stosama<unique> --consumption-plan-location westeurope --runtime dotnet-isolated --functions-version 4\nfunc azure functionapp publish func-osama-<unique>\naz group delete -n rg-az204-lab2 --yes --no-wait",
+    verif:"ta Function HTTP répond sur l'URL azurewebsites.net et le timer s'exécute toutes les 5 minutes dans les logs." },
+  { id:"lab3", title:"Lab 3 · Conteneurs : ACR build + ACI", time:"≈ 40 min",
+    obj:"Builder une image dans le cloud sans Docker local, puis l'exécuter dans Azure Container Instances avec une URL publique.",
+    steps:[
+      "Crée un dossier avec un Dockerfile minimal (FROM mcr.microsoft.com/dotnet/samples:aspnetapp fonctionne très bien pour tester).",
+      "Crée le registre ACR (SKU Basic suffit pour le lab).",
+      "az acr build : le build tourne DANS Azure et pousse l'image — observe les logs de build en streaming.",
+      "Vérifie l'image : az acr repository list.",
+      "Crée le conteneur ACI avec un dns-name-label et le port 8080 (image d'exemple aspnetapp) — active l'admin ACR ou une managed identity pour le pull.",
+      "Ouvre http://&lt;label&gt;.westeurope.azurecontainer.io:8080, puis inspecte : az container logs et az container exec.",
+      "Supprime le resource group." ],
+    cli:"az group create -n rg-az204-lab3 -l westeurope\naz acr create -g rg-az204-lab3 -n acrosama<unique> --sku Basic --admin-enabled true\naz acr build -r acrosama<unique> -t monapp:v1 .\naz container create -g rg-az204-lab3 -n aci-lab3 --image acrosama<unique>.azurecr.io/monapp:v1 --registry-username $(az acr credential show -n acrosama<unique> --query username -o tsv) --registry-password $(az acr credential show -n acrosama<unique> --query passwords[0].value -o tsv) --dns-name-label osama-lab3-<unique> --ports 8080\naz container logs -g rg-az204-lab3 -n aci-lab3\naz group delete -n rg-az204-lab3 --yes --no-wait",
+    verif:"l'app répond sur l'URL azurecontainer.io et tu as vu les logs du conteneur." },
+  { id:"lab4", title:"Lab 4 · Storage & Cosmos DB", time:"≈ 50 min",
+    obj:"Manipuler les tiers de blobs et une lifecycle policy, puis créer un conteneur Cosmos DB et le requêter.",
+    steps:[
+      "Crée un compte StorageV2 + un conteneur « docs », upload un fichier (az storage blob upload).",
+      "Passe le blob en tier Cool puis Archive (az storage blob set-tier) — essaie de le télécharger en Archive et constate l'erreur (offline !).",
+      "Lance la réhydratation (set-tier vers Hot) et vérifie son statut (archiveStatus dans az storage blob show).",
+      "Crée une lifecycle policy JSON (tierToCool à 30 j, delete à 365 j) et applique-la (az storage account management-policy create).",
+      "Crée un compte Cosmos DB NoSQL (--default-consistency-level Session), une base et un conteneur avec /clientId comme partition key.",
+      "Dans le Data Explorer du portail : insère 3-4 documents JSON, puis exécute SELECT * FROM c WHERE c.clientId = \"...\" et compare le coût en RU avec et sans filtre sur la partition key.",
+      "Supprime les deux resource groups." ],
+    cli:"az group create -n rg-az204-lab4 -l westeurope\naz storage account create -g rg-az204-lab4 -n stlab4osama<unique> --sku Standard_LRS --kind StorageV2\naz storage blob upload --account-name stlab4osama<unique> -c docs -f monfichier.txt --auth-mode login\naz storage blob set-tier --account-name stlab4osama<unique> -c docs -n monfichier.txt --tier Archive --auth-mode login\naz cosmosdb create -g rg-az204-lab4 -n cosmos-osama-<unique> --default-consistency-level Session\naz cosmosdb sql database create -a cosmos-osama-<unique> -g rg-az204-lab4 -n boutique\naz cosmosdb sql container create -a cosmos-osama-<unique> -g rg-az204-lab4 -d boutique -n commandes --partition-key-path \"/clientId\" --throughput 400\naz group delete -n rg-az204-lab4 --yes --no-wait",
+    verif:"tu as constaté qu'un blob Archive est illisible avant réhydratation, et vu la différence de RU entre une requête ciblée partition et une cross-partition." },
+  { id:"lab5", title:"Lab 5 · Key Vault + Managed Identity", time:"≈ 35 min",
+    obj:"Éliminer tout secret : une web app lit un secret Key Vault via sa managed identity et une Key Vault reference.",
+    steps:[
+      "Crée un Key Vault en mode RBAC (--enable-rbac-authorization) et ajoute-toi le rôle « Key Vault Secrets Officer » pour pouvoir écrire.",
+      "Crée un secret DbPassword.",
+      "Réutilise une web app (ou crée-en une en plan F1/B1) et active sa managed identity system-assigned.",
+      "Attribue à cette identité le rôle « Key Vault Secrets User » sur le vault.",
+      "Ajoute l'app setting : MonSecret = @Microsoft.KeyVault(SecretUri=https://kv-osama-&lt;unique&gt;.vault.azure.net/secrets/DbPassword/).",
+      "Dans le portail → Configuration : la référence affiche une coche verte si la résolution fonctionne. Vérifie aussi via la console Kudu (variable d'environnement MonSecret).",
+      "Supprime le resource group." ],
+    cli:"az group create -n rg-az204-lab5 -l westeurope\naz keyvault create -g rg-az204-lab5 -n kv-osama-<unique> --enable-rbac-authorization\naz keyvault secret set --vault-name kv-osama-<unique> -n DbPassword --value \"S3cret!\"\naz webapp identity assign -g rg-az204-lab5 -n webapp-osama-<unique>\naz role assignment create --assignee <principalId> --role \"Key Vault Secrets User\" --scope $(az keyvault show -n kv-osama-<unique> --query id -o tsv)\naz group delete -n rg-az204-lab5 --yes --no-wait",
+    verif:"la Key Vault reference affiche sa coche verte et l'app voit la valeur du secret — sans aucun secret dans sa config." },
+  { id:"lab6", title:"Lab 6 · Messagerie + Event Grid + App Insights", time:"≈ 50 min",
+    obj:"Envoyer/recevoir des messages Service Bus, réagir à un blob créé via Event Grid, et observer le tout dans Application Insights.",
+    steps:[
+      "Crée un namespace Service Bus Standard + une queue « commandes » (avec MaxDeliveryCount à 10, observe les propriétés).",
+      "Dans le portail → Service Bus Explorer : envoie 2-3 messages, lis-les en mode Peek, puis Receive, et observe la différence.",
+      "Laisse un message expirer (TTL court) ou Abandon-le 10 fois → retrouve-le dans la dead-letter queue.",
+      "Crée une Function avec trigger Event Grid (ou un endpoint webhook) et abonne-la aux événements BlobCreated de ton compte de stockage (az eventgrid event-subscription create).",
+      "Upload un blob et vérifie que la Function se déclenche avec les détails de l'événement.",
+      "Active Application Insights sur la Function, ouvre Live Metrics pendant que tu uploades des blobs, puis explore Application Map et le transaction search.",
+      "Supprime le resource group." ],
+    cli:"az group create -n rg-az204-lab6 -l westeurope\naz servicebus namespace create -g rg-az204-lab6 -n sb-osama-<unique> --sku Standard\naz servicebus queue create -g rg-az204-lab6 --namespace-name sb-osama-<unique> -n commandes\naz eventgrid event-subscription create --source-resource-id $(az storage account show -g rg-az204-lab6 -n stlab6osama<unique> --query id -o tsv) -n sub-blob-cree --endpoint-type azurefunction --endpoint <resourceId de la Function>\naz group delete -n rg-az204-lab6 --yes --no-wait",
+    verif:"tu as vu un message partir en DLQ, ta Function réagir à un BlobCreated, et le trafic défiler dans Live Metrics." }
+];
+
+/* =====================================================================
+   MOTEUR DU QUIZ
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const LS_ERRORS = "az204-errors";
+
+const getErrors = () => { try { return JSON.parse(localStorage.getItem(LS_ERRORS)) || []; } catch { return []; } };
+const setErrors = a => localStorage.setItem(LS_ERRORS, JSON.stringify([...new Set(a)]));
+
+/* =====================================================================
+   MOTEUR DE MAÎTRISE — répétition espacée pilotée par la confiance
+   État par question : { box, due, seen, lapses, danger, reco, lastMs }
+   ===================================================================== */
+const LS_SRS = "az204-srs";
+const BOX_DAYS = [0, 1, 2, 4, 8, 16, 30];   // intervalle en jours par palier
+const NEW_CAP = 8;                           // nouvelles questions max par session
+const DAY = 86400000;
+
+const getSrs = () => { try { return JSON.parse(localStorage.getItem(LS_SRS)) || {}; } catch { return {}; } };
+const setSrs = o => localStorage.setItem(LS_SRS, JSON.stringify(o));
+const srsOf = (srs, id) => srs[id] || { box: 0, due: 0, seen: 0, lapses: 0, danger: false, reco: false, lastMs: 0 };
+
+/* Temps de lecture plancher : en dessous, c'est de la reconnaissance, pas du raisonnement */
+function minReasonMs(q) {
+  const len = (q.q || "").length + (q.code || "").length;
+  return Math.max(2000, Math.min(6000, 1200 + 20 * len));
+}
+
+/* Applique le résultat d'une réponse et renvoie l'état mis à jour */
+function srsApply(q, ok, conf, ms, isReveal) {
+  const srs = getSrs();
+  const s = { ...srsOf(srs, q.id) };
+  const before = s.box;
+  s.seen++;
+  s.lastMs = ms;
+
+  // Détection de reconnaissance : correct, déjà vu, et trop rapide pour avoir raisonné
+  s.reco = !!(ok && !isReveal && s.seen >= 2 && ms < minReasonMs(q));
+
+  if (isReveal || !ok) {
+    if (before >= 3) s.lapses++;           // on oublie quelque chose qu'on maîtrisait
+    s.box = 0;
+    s.danger = !isReveal && conf === 3;    // « sûr » + faux = croyance fausse installée
+  } else {
+    const gain = conf === 3 ? 2 : conf === 2 ? 1 : 0;
+    s.box = Math.min(6, s.box + (s.reco ? Math.min(gain, 1) : gain));
+    if (conf === 3) s.danger = false;      // on ne lève le drapeau qu'avec une réussite assumée
+  }
+  s.due = Date.now() + BOX_DAYS[s.box] * DAY;
+  srs[q.id] = s;
+  setSrs(srs);
+  return s;
+}
+
+/* Construit la session du jour : croyances fausses d'abord, puis les dues, puis du neuf */
+function buildMaitrise(n) {
+  const srs = getSrs(), now = Date.now();
+  const danger = [], due = [], fresh = [], future = [];
+  byDom(QUESTIONS).forEach(q => {
+    const s = srs[q.id];
+    if (!s) { fresh.push(q); return; }
+    if (s.danger) danger.push(q);
+    else if (s.due <= now) due.push(q);
+    else future.push({ q, due: s.due });
+  });
+  const out = [...shuffle(danger), ...shuffle(due)];
+  if (out.length < n) out.push(...shuffle(fresh).slice(0, Math.min(NEW_CAP, n - out.length)));
+  if (out.length < n) {
+    future.sort((a, b) => a.due - b.due);
+    out.push(...future.slice(0, n - out.length).map(x => x.q));
+  }
+  return out.slice(0, n);
+}
+
+function srsStats() {
+  const srs = getSrs(), now = Date.now();
+  let croyances = 0, due = 0, mastered = 0, reco = 0, vus = 0;
+  const parDomaine = {};
+  Object.entries(srs).forEach(([id, s]) => {
+    vus++;
+    if (s.danger) {
+      croyances++;
+      const q = QUESTIONS.find(x => x.id === id);
+      if (q && q.d) parDomaine[q.d] = (parDomaine[q.d] || 0) + 1;
+    }
+    else if (s.due <= now) due++;
+    if (s.box >= 5) mastered++;
+    if (s.reco) reco++;
+  });
+  return { croyances, due, mastered, reco, nouveaux: QUESTIONS.length - vus, parDomaine };
+}
+
+function refreshDash() {
+  const s = srsStats();
+  $("dCroyances").textContent = s.croyances;
+  $("dDue").textContent = s.due;
+  $("dMastered").textContent = s.mastered;
+  $("dReco").textContent = s.reco;
+  $("dNew").textContent = s.nouveaux;
+  $("nmaitrise").textContent = (s.croyances + s.due) > 0
+    ? (s.croyances + s.due) + " en attente"
+    : (s.nouveaux > 0 ? "nouveau" : "à jour");
+  let note;
+  if (s.croyances > 0) {
+    const pires = Object.entries(s.parDomaine).sort((a, b) => b[1] - a[1])
+      .map(([k, v]) => DOM_LABEL[k] + " (" + v + ")").join(", ");
+    note = "🚨 " + s.croyances + " question(s) où tu étais SÛR et tu t'es trompé — le plus urgent à corriger." +
+           (pires ? " Domaines concernés : " + pires + "." : "");
+  }
+  else if (s.due > 0)
+    note = "🔁 " + s.due + " question(s) arrivent à échéance. Le bon moment pour les revoir est maintenant, pas avant.";
+  else if (s.nouveaux > 0)
+    note = "✅ Rien à réviser : la prochaine session introduira jusqu'à " + Math.min(NEW_CAP, s.nouveaux) + " nouvelles questions.";
+  else
+    note = "🏆 Toute la banque est planifiée. Reviens quand des questions arriveront à échéance.";
+  $("dNote").textContent = note;
+}
+
+/* Enregistre la réponse dans le planificateur et renvoie les bandeaux à afficher */
+function recordAndFlag(q, ok, conf, isReveal) {
+  const ms = Date.now() - (session.startedAt || Date.now());
+  const key = isReveal ? "reveal" : conf + (ok ? "-ok" : "-ko");
+  if (session.matrix && key in session.matrix) session.matrix[key]++;
+  if (q.d) {
+    const pd = session.perDom || (session.perDom = {});
+    const pe = pd[q.d] || (pd[q.d] = { ok: 0, total: 0 });
+    pe.total++; if (ok && !isReveal) pe.ok++;
+  }
+  const s = srsApply(q, ok, conf, ms, isReveal);
+
+  let html = "";
+  if (s.danger) {
+    html += '<div class="srs-flag danger">🚨 Tu étais SÛR et c\'est faux — c\'est une croyance fausse installée, ' +
+            'le type d\'erreur qui coûte des points sans prévenir. Elle repassera en priorité jusqu\'à ce que tu la réussisses en étant sûr.</div>';
+  }
+  if (s.reco) {
+    html += '<div class="srs-flag reco">⏱️ Répondu en ' + (ms / 1000).toFixed(1) + ' s : trop vite pour avoir raisonné. ' +
+            'Tu as probablement reconnu la question plutôt que raisonné — la progression est volontairement freinée.</div>';
+  }
+  const j = BOX_DAYS[s.box];
+  html += '<p class="srs-next">📅 Prochaine révision : ' +
+          (j === 0 ? "dès la prochaine session" : j === 1 ? "demain" : "dans " + j + " jours") +
+          " · palier " + s.box + "/6</p>";
+  return html;
+}
+
+const escapeReg = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const norm = s => (s || "").toLowerCase()
+  .normalize("NFD").replace(/[̀-ͯ]/g, "")
+  .replace(/[^a-z0-9]+/g, " ").trim();
+
+function isCorrect(user, accepts) {
+  const u = norm(user);
+  if (!u) return false;
+  return accepts.some(a => {
+    const v = norm(a);
+    if (!v) return false;
+    if (u === v) return true;
+    return new RegExp("(^| )" + escapeReg(v) + "( |$)").test(u); // réponse contenue mot-à-mot
+  });
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let session = null; // { list, idx, score, streak, wrongIds, selectedChoice, answered }
+
+/* ---------- Accueil ---------- */
+let pickCount = 20;
+let domFilter = "all";
+const DOM_LABEL = { comp:"Compute", stor:"Stockage", sec:"Sécurité", mon:"Monitoring", integ:"Intégration", base:"Bases" };
+$("countSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  pickCount = parseInt(b.dataset.n, 10);
+  [...$("countSeg").children].forEach(x => x.classList.toggle("on", x === b));
+});
+$("domSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  domFilter = b.dataset.d;
+  [...$("domSeg").children].forEach(x => x.classList.toggle("on", x === b));
+  refreshCounts();
+});
+const byDom = qs => domFilter === "all" ? qs : qs.filter(q => q.d === domFilter);
+
+function poolFor(mode) {
+  if (mode === "mix") return byDom(QUESTIONS);
+  if (mode === "err") { const errs = getErrors(); return byDom(QUESTIONS.filter(q => errs.includes(q.id))); }
+  if (mode === "code") return byDom(QUESTIONS.filter(q => q.code));
+  if (mode === "cas") return byDom(QUESTIONS.filter(q => q.scen || q.type === "order"));
+  return byDom(QUESTIONS.filter(q => q.level === Number(mode)));
+}
+
+/* Examen blanc : mélange pondéré tous formats, études de cas groupées en fin (comme le vrai examen) */
+/* Examen blanc pondéré selon les pourcentages officiels :
+   compute 25-30 %, intégration 20-25 %, stockage 15-20 %, sécurité 15-20 %, monitoring 10-15 % */
+/* Quotas hors études de cas — celles-ci ajoutent 2 comp, 1 stor, 1 sec, 1 mon et 7 integ,
+   d'où un quota integ réduit pour retomber sur les pourcentages officiels */
+const BLANC_WEIGHTS = { comp: 9, integ: 3, stor: 6, sec: 6, mon: 4 };
+function buildExamBlanc() {
+  const list = [];
+  Object.entries(BLANC_WEIGHTS).forEach(([dk, n]) => {
+    const pool = QUESTIONS.filter(q => q.d === dk && !q.scen && (q.level >= 2 || q.code || q.type === "order"));
+    list.push(...shuffle(pool).slice(0, n));
+  });
+  const out = shuffle(list);
+  const groups = {};
+  QUESTIONS.filter(q => q.scen).forEach(q => (groups[q.scen] = groups[q.scen] || []).push(q));
+  shuffle(Object.values(groups)).forEach(g => out.push(...g));
+  return out;
+}
+
+const getLabsDone = () => { try { return JSON.parse(localStorage.getItem("az204-labs")) || []; } catch { return []; } };
+const setLabsDone = a => localStorage.setItem("az204-labs", JSON.stringify([...new Set(a)]));
+
+function refreshCounts() {
+  $("n1").textContent = QUESTIONS.filter(q => q.level === 1).length + " q";
+  $("n2").textContent = QUESTIONS.filter(q => q.level === 2).length + " q";
+  $("n3").textContent = QUESTIONS.filter(q => q.level === 3).length + " q";
+  $("ncode").textContent = poolFor("code").length + " q";
+  $("ncas").textContent = poolFor("cas").length + " q";
+  $("nblanc").textContent = "≈ 40 q";
+  $("nmix").textContent = poolFor("mix").length + " q";
+  $("nerr").textContent = poolFor("err").length + " q";
+  $("nlabs").textContent = getLabsDone().length + " / " + LABS.length;
+  refreshDash();
+}
+
+document.querySelectorAll(".mode-btn").forEach(b => b.addEventListener("click", () => {
+  const mode = b.dataset.mode;
+  if (mode === "labs") { renderLabs(); show("labs"); return; }
+  let list;
+  if (mode === "maitrise") {
+    list = buildMaitrise(pickCount === 0 ? QUESTIONS.length : pickCount);
+    if (!list.length) { alert("Rien à réviser pour le moment — reviens plus tard !"); return; }
+  } else if (mode === "blanc") {
+    list = buildExamBlanc();
+  } else {
+    const pool = poolFor(mode);
+    if (!pool.length) { alert("Aucune erreur enregistrée pour l'instant — joue d'abord un quiz !"); return; }
+    list = shuffle(pool).slice(0, pickCount === 0 ? pool.length : pickCount);
+  }
+  session = { mode, list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false,
+              matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 }, perDom: {} };
+  show("quiz"); renderQuestion();
+}));
+
+/* ---------- Écrans ---------- */
+function show(name) {
+  ["home", "quiz", "end", "labs"].forEach(n =>
+    $("screen-" + n).classList.toggle("hidden", n !== name));
+  if (name === "home") refreshCounts();
+}
+
+/* ---------- Labs ---------- */
+function renderLabs() {
+  const done = getLabsDone();
+  const list = $("labsList");
+  list.innerHTML = "";
+  LABS.forEach(l => {
+    const d = document.createElement("details");
+    d.className = "lab" + (done.includes(l.id) ? " done" : "");
+    const cliSafe = l.cli.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    d.innerHTML =
+      "<summary>" + (done.includes(l.id) ? "✅ " : "⬜ ") + l.title +
+      ' <span class="lab-time">' + l.time + "</span></summary>" +
+      '<p class="lab-obj"><b>Objectif :</b> ' + l.obj + "</p>" +
+      "<ol>" + l.steps.map(s => "<li>" + s + "</li>").join("") + "</ol>" +
+      '<pre class="qcode">' + cliSafe + "</pre>" +
+      '<p class="lab-verif"><b>Lab réussi si :</b> ' + l.verif + "</p>" +
+      '<button class="btn ghost lab-toggle">' + (done.includes(l.id) ? "Marquer non terminé" : "✅ Marquer terminé") + "</button>";
+    d.querySelector(".lab-toggle").addEventListener("click", () => {
+      const cur = getLabsDone();
+      setLabsDone(cur.includes(l.id) ? cur.filter(x => x !== l.id) : [...cur, l.id]);
+      renderLabs();
+    });
+    list.appendChild(d);
+  });
+}
+
+/* ---------- Question ---------- */
+function renderQuestion() {
+  const q = session.list[session.idx];
+  session.answered = false; session.selectedChoice = null;
+  $("qLevel").textContent = "Niveau " + q.level;
+  $("qLevel").className = "pill lv" + q.level;
+  $("qDom").textContent = (DOM_LABEL[q.d] ? DOM_LABEL[q.d] + " · " : "") + q.dom;
+  $("qCount").textContent = (session.idx + 1) + " / " + session.list.length;
+  $("qBar").style.width = (session.idx / session.list.length * 100) + "%";
+  $("qText").textContent = q.q;
+  $("qFeedback").innerHTML = "";
+  $("btnReveal").classList.remove("hidden");
+  $("btnNext").classList.add("hidden");
+
+  // En mode Maîtrise, la validation passe par les 3 boutons de confiance
+  const maitrise = session.mode === "maitrise";
+  $("confRow").classList.toggle("hidden", !maitrise);
+  $("btnValidate").classList.toggle("hidden", maitrise);
+  session.startedAt = Date.now();
+
+  const scen = q.scen && SCENARIOS[q.scen];
+  $("qScenario").innerHTML = scen
+    ? '<div class="scenario"><div class="sc-title">📋 Étude de cas — ' + scen.title + "</div><p>" + scen.text + "</p></div>"
+    : "";
+
+  const zone = $("qInputZone");
+  zone.innerHTML = "";
+  if (q.code) {
+    const pre = document.createElement("pre");
+    pre.className = "qcode";
+    pre.textContent = q.code;
+    zone.appendChild(pre);
+  }
+  if (q.type === "input") {
+    const inp = document.createElement("input");
+    inp.type = "text"; inp.id = "answerInput";
+    inp.placeholder = "Écris ta réponse…";
+    inp.autocomplete = "off"; inp.spellcheck = false;
+    zone.appendChild(inp);
+    inp.focus();
+  } else if (q.type === "order") {
+    session.orderPick = [];
+    session.orderShuffled = shuffle(q.steps);
+    const wrap = document.createElement("div");
+    wrap.innerHTML = '<p class="order-hint">Clique les étapes dans le bon ordre (re-clique une étape choisie pour la retirer) :</p>' +
+      '<div class="order-list" id="orderPicked"></div><div class="order-list" id="orderAvail"></div>';
+    zone.appendChild(wrap);
+    renderOrder(q);
+  } else {
+    const div = document.createElement("div");
+    div.className = "choices";
+    shuffle(q.choices.map((c, i) => ({ c, i }))).forEach(({ c, i }) => {
+      const btn = document.createElement("button");
+      btn.className = "choice"; btn.textContent = c; btn.dataset.orig = i;
+      btn.addEventListener("click", () => {
+        if (session.answered) return;
+        session.selectedChoice = i;
+        div.querySelectorAll(".choice").forEach(x => x.classList.toggle("sel", x === btn));
+      });
+      div.appendChild(btn);
+    });
+    zone.appendChild(div);
+  }
+}
+
+function renderOrder(q) {
+  const picked = $("orderPicked"), avail = $("orderAvail");
+  picked.innerHTML = ""; avail.innerHTML = "";
+  session.orderPick.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "order-item picked";
+    b.textContent = (i + 1) + ". " + s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick = session.orderPick.filter(x => x !== s);
+      renderOrder(q);
+    });
+    picked.appendChild(b);
+  });
+  session.orderShuffled.filter(s => !session.orderPick.includes(s)).forEach(s => {
+    const b = document.createElement("button");
+    b.className = "order-item";
+    b.textContent = s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick.push(s);
+      renderOrder(q);
+    });
+    avail.appendChild(b);
+  });
+}
+
+/* ---------- Validation ---------- */
+function validate(conf) {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  let ok;
+  if (q.type === "input") {
+    const val = $("answerInput").value;
+    if (!val.trim()) { $("answerInput").focus(); return; }
+    ok = isCorrect(val, q.accept);
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    if (session.orderPick.length !== q.steps.length) return;
+    ok = q.steps.every((s, i) => session.orderPick[i] === s);
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    if (session.selectedChoice === null) return;
+    ok = session.selectedChoice === q.answer;
+    document.querySelectorAll(".choice").forEach(btn => {
+      const i = Number(btn.dataset.orig);
+      btn.disabled = true;
+      if (i === q.answer) btn.classList.add("good");
+      else if (i === session.selectedChoice) btn.classList.add("bad");
+    });
+  }
+  session.answered = true;
+  const srsHtml = recordAndFlag(q, ok, conf || 2, false);
+
+  const errs = getErrors();
+  if (ok) {
+    session.score++; session.streak++;
+    setErrors(errs.filter(id => id !== q.id)); // maîtrisée → sort du mode erreurs
+  } else {
+    session.streak = 0;
+    session.wrongIds.push(q.id);
+    setErrors([...errs, q.id]);
+  }
+  $("score").textContent = session.score;
+  $("streak").textContent = session.streak;
+
+  const goodAnswer = q.type === "input" ? q.accept[0]
+    : q.type === "order" ? q.steps.map((s, i) => (i + 1) + ". " + s).join("<br>")
+    : q.choices[q.answer];
+  const fb = document.createElement("div");
+  fb.className = "feedback " + (ok ? "ok" : "ko");
+  fb.innerHTML =
+    '<div class="verdict">' + (ok ? "✅ Bonne réponse !" : "❌ Raté") + "</div>" +
+    (ok ? "" : '<p class="rep">Réponse attendue : <b>' + goodAnswer + "</b></p>") +
+    '<p class="exp">' + q.explain + "</p>" + srsHtml;
+  $("qFeedback").innerHTML = "";
+  $("qFeedback").appendChild(fb);
+
+  $("confRow").classList.add("hidden");
+  $("btnValidate").classList.add("hidden");
+  $("btnReveal").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+  $("qBar").style.width = ((session.idx + 1) / session.list.length * 100) + "%";
+}
+
+/* ---------- Correction sans répondre (« Je ne sais pas ») ---------- */
+function reveal() {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  session.answered = true;
+  const srsHtml = recordAndFlag(q, false, 1, true);
+
+  if (q.type === "input") {
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    document.querySelectorAll(".choice").forEach(btn => {
+      btn.disabled = true;
+      if (Number(btn.dataset.orig) === q.answer) btn.classList.add("good");
+    });
+  }
+
+  // Compte comme une erreur : série remise à zéro + ajout au mode « Rejouer mes erreurs »
+  session.streak = 0;
+  session.wrongIds.push(q.id);
+  setErrors([...getErrors(), q.id]);
+  $("streak").textContent = session.streak;
+
+  const goodAnswer = q.type === "input" ? q.accept[0]
+    : q.type === "order" ? q.steps.map((s, i) => (i + 1) + ". " + s).join("<br>")
+    : q.choices[q.answer];
+  const fb = document.createElement("div");
+  fb.className = "feedback info";
+  fb.innerHTML =
+    '<div class="verdict">💡 Correction</div>' +
+    '<p class="rep">La bonne réponse était : <b>' + goodAnswer + "</b></p>" +
+    '<p class="exp">' + q.explain + "</p>" + srsHtml;
+  $("qFeedback").innerHTML = "";
+  $("qFeedback").appendChild(fb);
+
+  $("confRow").classList.add("hidden");
+  $("btnValidate").classList.add("hidden");
+  $("btnReveal").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+  $("qBar").style.width = ((session.idx + 1) / session.list.length * 100) + "%";
+}
+
+function next() {
+  if (session.idx + 1 < session.list.length) { session.idx++; renderQuestion(); }
+  else endSession();
+}
+
+/* ---------- Fin ---------- */
+function endSession() {
+  const total = session.list.length, s = session.score;
+  const pct = Math.round(s / total * 100);
+  $("endScore").textContent = s + " / " + total;
+  let v;
+  if (pct >= 90) v = "🏆 Niveau certification — continue comme ça !";
+  else if (pct >= 70) v = "💪 Solide ! Tu serais au-dessus des 700 points.";
+  else if (pct >= 50) v = "📚 En bonne voie — rejoue tes erreurs.";
+  else v = "🌱 C'est en forgeant… rejoue cette série !";
+  $("endVerdict").textContent = v;
+
+  // Matrice confiance × résultat : le vrai diagnostic d'une session Maîtrise
+  const m = session.matrix;
+  const enMaitrise = session.mode === "maitrise";
+  $("endMatrix").classList.toggle("hidden", !enMaitrise);
+  if (enMaitrise && m) {
+    $("endMatrix").innerHTML =
+      "<table><tr><th></th><th>Correct</th><th>Faux</th></tr>" +
+      '<tr><th>💪 Sûr</th><td class="n good">' + m["3-ok"] + '</td><td class="n danger">' + m["3-ko"] + "</td></tr>" +
+      '<tr><th>🤔 Hésitant</th><td class="n">' + m["2-ok"] + '</td><td class="n">' + m["2-ko"] + "</td></tr>" +
+      '<tr><th>✋ Au hasard</th><td class="n">' + m["1-ok"] + '</td><td class="n">' + m["1-ko"] + "</td></tr>" +
+      "</table><caption>" +
+      (m["3-ko"] > 0
+        ? "🚨 " + m["3-ko"] + " croyance(s) fausse(s) détectée(s) — la case la plus importante du tableau. Elles reviendront en priorité."
+        : "✅ Aucune croyance fausse cette session. " +
+          (m["1-ok"] > 0 ? "En revanche " + m["1-ok"] + " bonne(s) réponse(s) au hasard : elles ne comptent pas comme acquises." : "")) +
+      "</caption>";
+  }
+
+  // Bilan par domaine officiel, trié du plus faible au plus fort
+  const pd = session.perDom || {};
+  $("endByDom").innerHTML = Object.entries(pd)
+    .filter(([, o]) => o.total > 0)
+    .sort((a, b) => (a[1].ok / a[1].total) - (b[1].ok / b[1].total))
+    .map(([k, o]) => {
+      const p = Math.round(o.ok / o.total * 100);
+      const icon = p >= 75 ? "✅" : p >= 50 ? "⚠️" : "❌";
+      return '<span class="dl">' + icon + " " + (DOM_LABEL[k] || k) + '</span><span class="dv">' +
+             o.ok + "/" + o.total + " · " + p + "%</span>";
+    }).join("");
+
+  $("endDetail").textContent = pct + " % de bonnes réponses · " +
+    (total - s) + " erreur(s) ajoutée(s) au mode « Rejouer mes erreurs » (" + getErrors().length + " au total)";
+  $("btnReplayErrors").style.display = getErrors().length ? "" : "none";
+  show("end");
+}
+
+/* ---------- Boutons & clavier ---------- */
+$("btnValidate").addEventListener("click", () => validate(2));
+$("btnReveal").addEventListener("click", reveal);
+$("btnNext").addEventListener("click", next);
+document.querySelectorAll(".conf").forEach(b =>
+  b.addEventListener("click", () => validate(Number(b.dataset.conf))));
+$("btnQuit").addEventListener("click", () => show("home"));
+$("btnHome").addEventListener("click", () => show("home"));
+$("btnLabsHome").addEventListener("click", () => show("home"));
+$("btnReplayErrors").addEventListener("click", () => {
+  const pool = poolFor("err");
+  if (!pool.length) { show("home"); return; }
+  session = { mode: "err", list: shuffle(pool), idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null,
+              answered: false, matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 }, perDom: {} };
+  show("quiz"); renderQuestion();
+});
+document.addEventListener("keydown", e => {
+  if ($("screen-quiz").classList.contains("hidden")) return;
+  // En mode Maîtrise, 1/2/3 valident directement avec le niveau de confiance
+  if (session && !session.answered && session.mode === "maitrise" && ["1", "2", "3"].includes(e.key)) {
+    const el = document.activeElement;
+    const dansUnChamp = el && el.tagName === "INPUT" && el.type === "text";
+    if (!dansUnChamp) { e.preventDefault(); validate(Number(e.key)); return; }
+  }
+  if (e.key !== "Enter") return;
+  if (session && session.answered) next(); else validate(2);
+});
+
+refreshCounts();
+show("home");
+</script>
+</body>
+</html>

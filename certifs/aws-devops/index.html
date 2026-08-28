@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS DevOps Pro (DOP-C02) — Quiz</title>
+<style>
+  :root {
+    --ground: #FAF7F4;
+    --surface: #FFFFFF;
+    --ink: #1B2430;
+    --muted: #6B6259;
+    --accent: #B8541A;
+    --accent-deep: #8C3D11;
+    --accent-soft: #FBEDE3;
+    --good: #1E7A46;
+    --good-soft: #E7F5EC;
+    --bad: #B3352B;
+    --bad-soft: #FBEAE8;
+    --warn: #8A5A00;
+    --border: #E7DED5;
+    --shadow: 0 2px 8px rgba(27,36,48,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #131820; --surface: #1C232E; --ink: #E6E2DC; --muted: #A69B8E;
+      --accent: #FF9F5A; --accent-deep: #FFB985; --accent-soft: #33251A;
+      --good: #5BC98A; --good-soft: #12291B; --bad: #F08578; --bad-soft: #2E1512;
+      --warn: #EDAA5F; --border: #2E3844; --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    font-size: 16px; line-height: 1.5; min-height: 100vh;
+  }
+  code { font-family: "Cascadia Code", Consolas, monospace; background: var(--accent-soft); color: var(--accent-deep); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+  header.top h1 { font-size: 20px; margin: 0; font-weight: 700; }
+  header.top h1 .aw { color: var(--accent); }
+  .stats { display: flex; gap: 14px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stats b { color: var(--ink); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); }
+
+  .home h2 { margin: 0 0 4px; font-size: 24px; }
+  .home p.sub { color: var(--muted); margin: 0 0 12px; }
+  .exam-banner { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin-bottom: 8px; }
+  .weights { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; font-size: 12.5px; margin: 8px 0 0; }
+  .weights .wl { color: var(--muted); }
+  .weights .wv { font-weight: 700; color: var(--accent-deep); font-variant-numeric: tabular-nums; text-align: right; }
+
+  .filters { margin: 16px 0 10px; display: grid; gap: 8px; }
+  .frow { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+  .seg { display: flex; gap: 4px; flex-wrap: wrap; }
+  .seg button { border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 13.5px; }
+  .seg button.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .seg button:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 1px; }
+
+  .modes { display: grid; gap: 10px; }
+  .mode-btn {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; cursor: pointer; text-align: left; color: var(--ink);
+    font-family: inherit; font-size: 15px; transition: border-color .15s, transform .1s;
+  }
+  .mode-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .mode-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mode-btn .ico { font-size: 24px; width: 34px; text-align: center; }
+  .mode-btn .t { font-weight: 650; }
+  .mode-btn .d { font-size: 13px; color: var(--muted); }
+  .mode-btn .n { margin-left: auto; font-size: 12.5px; color: var(--accent); background: var(--accent-soft); border-radius: 20px; padding: 2px 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .qmeta { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .pill { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; border-radius: 20px; padding: 3px 11px; }
+  .pill.lv1 { background: var(--good-soft); color: var(--good); }
+  .pill.lv2 { background: var(--accent-soft); color: var(--accent); }
+  .pill.lv3 { background: var(--bad-soft); color: var(--bad); }
+  .pill.dom { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+  .progressbar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+  .progressbar div { height: 100%; background: var(--accent); border-radius: 3px; transition: width .25s; }
+  .question { font-size: 19px; font-weight: 650; margin: 0 0 18px; line-height: 1.4; text-wrap: balance; }
+
+  input[type=text] {
+    width: 100%; padding: 12px 14px; font-size: 16px; font-family: inherit;
+    border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink);
+  }
+  input[type=text]:focus { outline: none; border-color: var(--accent); }
+  .choices { display: grid; gap: 8px; }
+  .choice {
+    text-align: left; padding: 11px 14px; border: 2px solid var(--border); border-radius: 10px;
+    background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 15px;
+    transition: border-color .12s;
+  }
+  .choice:hover { border-color: var(--accent); }
+  .choice.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .choice.good { border-color: var(--good); background: var(--good-soft); font-weight: 600; }
+  .choice.bad { border-color: var(--bad); background: var(--bad-soft); }
+  .choice:disabled { cursor: default; opacity: .85; }
+
+  .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .btn { padding: 11px 22px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 650; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-deep); }
+  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+
+  .feedback { margin-top: 18px; border-radius: 12px; padding: 14px 16px; font-size: 15px; }
+  .feedback.ok { background: var(--good-soft); border: 1px solid var(--good); }
+  .feedback.ko { background: var(--bad-soft); border: 1px solid var(--bad); }
+  .feedback.info { background: var(--accent-soft); border: 1px solid var(--accent); }
+  .feedback .verdict { font-weight: 750; font-size: 16px; }
+  .feedback.ok .verdict { color: var(--good); }
+  .feedback.ko .verdict { color: var(--bad); }
+  .feedback.info .verdict { color: var(--accent-deep); }
+  .feedback .rep { margin: 6px 0 0; }
+  .feedback .exp { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+  pre.qcode {
+    background: #16202B; color: #E3DED6; border-radius: 10px;
+    padding: 12px 14px; overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+    font-family: "Cascadia Code", Consolas, monospace; margin: 0 0 14px; text-align: left;
+  }
+  .scenario { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 10px 14px; margin: 0 0 14px; font-size: 14px; }
+  .scenario .sc-title { font-weight: 700; color: var(--accent-deep); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .scenario p { margin: 0; }
+  .order-hint { font-size: 13.5px; color: var(--muted); margin: 0 0 8px; }
+  .order-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .order-list:empty { display: none; }
+  .order-item { text-align: left; padding: 10px 13px; border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 14.5px; }
+  .order-item:hover { border-color: var(--accent); }
+  .order-item.picked { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .order-item:disabled { cursor: default; opacity: .85; }
+
+  .lab { background: var(--ground); border: 1px solid var(--border); border-radius: 12px; padding: 4px 16px 12px; margin-bottom: 10px; }
+  .lab summary { cursor: pointer; font-weight: 650; padding: 10px 0; font-size: 15.5px; }
+  .lab.done summary { color: var(--good); }
+  .lab .lab-time { color: var(--muted); font-weight: 400; font-size: 13px; }
+  .lab ol { padding-left: 20px; font-size: 14.5px; }
+  .lab li { margin: 4px 0; }
+  .lab .lab-obj, .lab .lab-verif { font-size: 14px; }
+  .lab .lab-verif { background: var(--good-soft); border-radius: 8px; padding: 8px 12px; }
+  .labs-note { background: color-mix(in srgb, var(--warn) 14%, transparent); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; color: var(--warn); margin-bottom: 14px; }
+
+  .end { text-align: center; }
+  .end .big { font-size: 52px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin: 10px 0 0; }
+  .end .verdict { font-size: 18px; font-weight: 650; margin: 6px 0 18px; }
+  .end .detail { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .end .bydom { text-align: left; font-size: 13.5px; margin: 0 auto 18px; max-width: 460px; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; }
+  .end .bydom .dl { color: var(--muted); }
+  .end .bydom .dv { font-variant-numeric: tabular-nums; font-weight: 650; }
+  .kbd-hint { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 14px; }
+  .hidden { display: none; }
+
+  /* ---- Mode Maîtrise ---- */
+  .dash { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  .dash h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-deep); }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  .dash-cell { background: var(--surface); border-radius: 9px; padding: 8px 10px; text-align: center; }
+  .dash-cell .v { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .dash-cell .k { font-size: 11px; color: var(--muted); line-height: 1.25; }
+  .dash-cell.danger .v { color: var(--bad); }
+  .dash-cell.due .v { color: var(--accent); }
+  .dash-cell.mastered .v { color: var(--good); }
+  .dash-cell.reco .v { color: var(--warn); }
+  .dash-note { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+
+  .conf-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .conf-label { width: 100%; font-size: 12.5px; color: var(--muted); margin-bottom: 2px; }
+  .conf {
+    flex: 1 1 30%; min-width: 120px; padding: 11px 12px; border-radius: 10px; cursor: pointer;
+    font-family: inherit; font-size: 14.5px; font-weight: 650; border: 2px solid var(--border);
+    background: var(--surface); color: var(--ink); text-align: center; line-height: 1.25;
+  }
+  .conf small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
+  .conf:hover { border-color: var(--accent); }
+  .conf:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+  .conf.c3 { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+  .conf.c3:hover { border-color: var(--good); background: var(--good-soft); }
+  .conf.c1 { border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .conf.c1:hover { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+
+  .srs-flag { font-size: 12.5px; border-radius: 8px; padding: 7px 11px; margin-top: 10px; }
+  .srs-flag.danger { background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad); font-weight: 600; }
+  .srs-flag.reco { background: color-mix(in srgb, var(--warn) 12%, transparent); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
+  .srs-next { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+  .matrix { max-width: 420px; margin: 0 auto 18px; }
+  .matrix table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .matrix th, .matrix td { padding: 7px 9px; border: 1px solid var(--border); text-align: center; }
+  .matrix th { background: var(--accent-soft); color: var(--accent-deep); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .matrix td.n { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; }
+  .matrix td.danger { background: var(--bad-soft); color: var(--bad); }
+  .matrix td.good { background: var(--good-soft); color: var(--good); }
+  .matrix caption { caption-side: bottom; font-size: 12px; color: var(--muted); padding-top: 8px; text-align: left; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1><span class="aw">AWS DevOps</span> Engineer · Professional</h1>
+    <div class="stats">
+      <span>Série : <b id="streak">0</b> 🔥</span>
+      <span>Score : <b id="score">0</b></span>
+    </div>
+  </header>
+
+  <!-- Accueil -->
+  <div id="screen-home" class="card home">
+    <h2>Choisis ton mode</h2>
+    <p class="sub">Banque calée sur le guide officiel <b>DOP-C02</b>. Réponses à taper dès qu'une réponse précise existe.</p>
+    <div class="exam-banner">
+      <b>75 questions · 180 min · 750/1000 requis · 300 $ · valable 3 ans.</b>
+      65 questions comptent, 10 sont des questions de test non notées. Scoring compensatoire : pas de note minimale par domaine. Aucune pénalité si tu te trompes → ne laisse jamais une question vide.
+      <div class="weights">
+        <span class="wl">1 · Automatisation du SDLC</span><span class="wv">22 %</span>
+        <span class="wl">2 · Gestion de configuration &amp; IaC</span><span class="wv">17 %</span>
+        <span class="wl">6 · Sécurité &amp; conformité</span><span class="wv">17 %</span>
+        <span class="wl">3 · Solutions cloud résilientes</span><span class="wv">15 %</span>
+        <span class="wl">4 · Supervision &amp; logs</span><span class="wv">15 %</span>
+        <span class="wl">5 · Réponse aux incidents</span><span class="wv">14 %</span>
+      </div>
+    </div>
+    <div class="filters">
+      <div class="frow">
+        Questions :
+        <div class="seg" id="countSeg">
+          <button data-n="10">10</button>
+          <button data-n="20" class="on">20</button>
+          <button data-n="0">Toutes</button>
+        </div>
+      </div>
+      <div class="frow">
+        Domaine :
+        <div class="seg" id="domSeg">
+          <button data-d="all" class="on">Tous</button>
+          <button data-d="sdlc">SDLC</button>
+          <button data-d="iac">IaC</button>
+          <button data-d="resil">Résilience</button>
+          <button data-d="mon">Monitoring</button>
+          <button data-d="inc">Incidents</button>
+          <button data-d="sec">Sécurité</button>
+        </div>
+      </div>
+    </div>
+    <div class="dash">
+      <h3>🧠 Ta progression</h3>
+      <div class="dash-grid">
+        <div class="dash-cell danger"><div class="v" id="dCroyances">0</div><div class="k">croyances fausses</div></div>
+        <div class="dash-cell due"><div class="v" id="dDue">0</div><div class="k">à réviser</div></div>
+        <div class="dash-cell mastered"><div class="v" id="dMastered">0</div><div class="k">ancrés</div></div>
+        <div class="dash-cell reco"><div class="v" id="dReco">0</div><div class="k">reconnaissance ?</div></div>
+        <div class="dash-cell"><div class="v" id="dNew">0</div><div class="k">jamais vus</div></div>
+      </div>
+      <p class="dash-note" id="dNote"></p>
+    </div>
+    <div class="modes">
+      <button class="mode-btn" data-mode="maitrise" style="border-color:var(--accent);background:var(--accent-soft)">
+        <span class="ico">🧠</span>
+        <span><span class="t">Session Maîtrise (recommandé)</span><br><span class="d">Répétition espacée pilotée par ta confiance — corrige d'abord ce que tu crois savoir à tort</span></span>
+        <span class="n" id="nmaitrise"></span>
+      </button>
+      <button class="mode-btn" data-mode="1">
+        <span class="ico">🌱</span>
+        <span><span class="t">Niveau 1 — Services &amp; vocabulaire</span><br><span class="d">Reconnaître le bon service AWS, les sigles, les concepts de base</span></span>
+        <span class="n" id="n1"></span>
+      </button>
+      <button class="mode-btn" data-mode="2">
+        <span class="ico">⚙️</span>
+        <span><span class="t">Niveau 2 — Faits &amp; configurations</span><br><span class="d">Hooks, deployment configs, valeurs par défaut, limites — le par-cœur</span></span>
+        <span class="n" id="n2"></span>
+      </button>
+      <button class="mode-btn" data-mode="3">
+        <span class="ico">🎯</span>
+        <span><span class="t">Niveau 3 — Scénarios</span><br><span class="d">Le format réel du DOP : longs énoncés, plusieurs solutions plausibles</span></span>
+        <span class="n" id="n3"></span>
+      </button>
+      <button class="mode-btn" data-mode="code">
+        <span class="ico">💻</span>
+        <span><span class="t">Code à compléter</span><br><span class="d">buildspec, appspec, CloudFormation, IAM, EventBridge, Logs Insights, CLI</span></span>
+        <span class="n" id="ncode"></span>
+      </button>
+      <button class="mode-btn" data-mode="cas">
+        <span class="ico">🧩</span>
+        <span><span class="t">Études de cas &amp; séquences</span><br><span class="d">3 entreprises + workflows à remettre dans l'ordre</span></span>
+        <span class="n" id="ncas"></span>
+      </button>
+      <button class="mode-btn" data-mode="blanc">
+        <span class="ico">🎓</span>
+        <span><span class="t">Examen blanc pondéré</span><br><span class="d">≈ 60 questions réparties selon les vrais pourcentages du guide</span></span>
+        <span class="n" id="nblanc"></span>
+      </button>
+      <button class="mode-btn" data-mode="mix">
+        <span class="ico">🎲</span>
+        <span><span class="t">Tout mélanger</span><br><span class="d">Toute la banque aléatoirement</span></span>
+        <span class="n" id="nmix"></span>
+      </button>
+      <button class="mode-btn" data-mode="err">
+        <span class="ico">🩹</span>
+        <span><span class="t">Rejouer mes erreurs</span><br><span class="d">Uniquement les questions déjà ratées</span></span>
+        <span class="n" id="nerr"></span>
+      </button>
+      <button class="mode-btn" data-mode="labs">
+        <span class="ico">🧪</span>
+        <span><span class="t">Labs guidés</span><br><span class="d">Sur ton compte AWS, pensés pour rester dans le free tier</span></span>
+        <span class="n" id="nlabs"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div id="screen-quiz" class="card hidden">
+    <div class="qmeta">
+      <span class="pill" id="qLevel"></span>
+      <span class="pill dom" id="qDom"></span>
+      <span style="margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums" id="qCount"></span>
+    </div>
+    <div class="progressbar"><div id="qBar" style="width:0%"></div></div>
+    <div id="qScenario"></div>
+    <p class="question" id="qText"></p>
+    <div id="qInputZone"></div>
+    <div class="conf-row hidden" id="confRow">
+      <span class="conf-label">Valide en déclarant ta confiance — c'est ce qui pilote ta prochaine révision :</span>
+      <button class="conf c1" data-conf="1" id="conf1">✋ Au hasard<small>touche 1</small></button>
+      <button class="conf c2" data-conf="2" id="conf2">🤔 Hésitant<small>touche 2 ou Entrée</small></button>
+      <button class="conf c3" data-conf="3" id="conf3">💪 Sûr<small>touche 3</small></button>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnValidate">Valider</button>
+      <button class="btn primary hidden" id="btnNext">Question suivante →</button>
+      <button class="btn ghost" id="btnReveal">💡 Je ne sais pas</button>
+      <button class="btn ghost" id="btnQuit">Quitter</button>
+    </div>
+    <div id="qFeedback"></div>
+    <p class="kbd-hint">Entrée = valider / question suivante</p>
+  </div>
+
+  <!-- Fin -->
+  <div id="screen-end" class="card end hidden">
+    <h2>Session terminée !</h2>
+    <p class="big" id="endScore"></p>
+    <p class="verdict" id="endVerdict"></p>
+    <div class="matrix hidden" id="endMatrix"></div>
+    <div class="bydom" id="endByDom"></div>
+    <p class="detail" id="endDetail"></p>
+    <div class="actions" style="justify-content:center">
+      <button class="btn primary" id="btnReplayErrors">🩹 Rejouer mes erreurs</button>
+      <button class="btn ghost" id="btnHome">← Menu</button>
+    </div>
+  </div>
+
+  <!-- Labs -->
+  <div id="screen-labs" class="card hidden">
+    <h2>🧪 Labs guidés — sur ton compte AWS</h2>
+    <p class="labs-note">
+      ⚠️ <b>AWS facture plus vite qu'Azure.</b> Active un budget d'alerte à 5 $ avant de commencer (Billing → Budgets), reste en <code>us-east-1</code>, et termine CHAQUE lab par la suppression de la stack. Évite NAT Gateway, ALB laissé allumé et EIP non attachée — ce sont les pièges de facturation classiques.<br><br>
+      💡 <b>Note importante :</b> <b>CodeCommit n'est plus ouvert aux nouveaux comptes</b> depuis juillet 2024, mais reste au programme de l'examen. Les labs utilisent donc GitHub comme source via CodeConnections — apprends quand même CodeCommit pour les questions.
+    </p>
+    <div id="labsList"></div>
+    <div class="actions">
+      <button class="btn ghost" id="btnLabsHome">← Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   BANQUE DE QUESTIONS — AWS DevOps Engineer Professional (DOP-C02)
+   d : sdlc | iac | resil | mon | inc | sec
+   ===================================================================== */
+const QUESTIONS = [
+/* ============ NIVEAU 1 — SERVICES & VOCABULAIRE ============ */
+{ id:"v-codepipeline", level:1, d:"sdlc", dom:"Services CI/CD", type:"input",
+  q:"Quel service AWS orchestre les étapes d'un pipeline CI/CD (source → build → test → déploiement) ?",
+  accept:["CodePipeline","codepipeline","aws codepipeline"],
+  explain:"CodePipeline est l'orchestrateur. CodeBuild compile, CodeDeploy déploie, CodeCommit héberge le Git — ne pas confondre leurs rôles, c'est la base du domaine SDLC (22 %)." },
+{ id:"v-codebuild", level:1, d:"sdlc", dom:"Services CI/CD", type:"input",
+  q:"Quel service AWS compile le code, exécute les tests et produit les artefacts, piloté par un fichier buildspec ?",
+  accept:["CodeBuild","codebuild","aws codebuild"],
+  explain:"CodeBuild : service de build managé, facturé à la minute, configuré par buildspec.yml à la racine du dépôt." },
+{ id:"v-codedeploy", level:1, d:"sdlc", dom:"Services CI/CD", type:"input",
+  q:"Quel service AWS automatise le déploiement applicatif sur EC2, Lambda ou ECS, piloté par un fichier appspec ?",
+  accept:["CodeDeploy","codedeploy","aws codedeploy"],
+  explain:"CodeDeploy gère les stratégies (in-place, blue/green, canary, linear) et les hooks du cycle de vie via appspec.yml (EC2) ou appspec.yaml (Lambda/ECS)." },
+{ id:"v-codeartifact", level:1, d:"sdlc", dom:"Services CI/CD", type:"input",
+  q:"Quel service AWS héberge des dépôts de packages privés (npm, pip, Maven, NuGet) avec des sources amont publiques ?",
+  accept:["CodeArtifact","codeartifact","aws codeartifact"],
+  explain:"CodeArtifact = l'équivalent d'Azure Artifacts. Organisation : domaine → dépôt → packages, avec upstream vers npmjs/PyPI/Maven Central." },
+{ id:"v-buildspec", level:1, d:"sdlc", dom:"CodeBuild", type:"input",
+  q:"Comment s'appelle le fichier YAML qui décrit les phases d'un build CodeBuild ?",
+  accept:["buildspec.yml","buildspec","buildspec.yml","buildspec yml","buildspec yaml"],
+  explain:"buildspec.yml à la racine du dépôt (ou défini en ligne dans le projet). Ses phases : install, pre_build, build, post_build." },
+{ id:"v-appspec", level:1, d:"sdlc", dom:"CodeDeploy", type:"input",
+  q:"Comment s'appelle le fichier qui décrit comment CodeDeploy doit déployer l'application et quels hooks exécuter ?",
+  accept:["appspec.yml","appspec","appspec.yml","appspec yml","appspec yaml"],
+  explain:"appspec.yml (EC2/on-premises, avec sections files et hooks) ou appspec.yaml (Lambda/ECS, avec resources et hooks)." },
+{ id:"v-cfn", level:1, d:"iac", dom:"IaC", type:"input",
+  q:"Quel service AWS natif déploie l'infrastructure as code à partir de templates JSON ou YAML déclaratifs ?",
+  accept:["CloudFormation","cloudformation","aws cloudformation","cfn"],
+  explain:"CloudFormation. Concepts : template (le code), stack (l'instance déployée), change set (l'aperçu), StackSet (multi-comptes/régions)." },
+{ id:"v-cdk", level:1, d:"iac", dom:"IaC", type:"input",
+  q:"Quel framework AWS permet de définir l'infrastructure en TypeScript, Python ou Java, puis la compile (synthétise) en CloudFormation ?",
+  accept:["AWS CDK","cdk","aws cdk","cloud development kit"],
+  explain:"L'AWS CDK : `cdk synth` génère le template CloudFormation, `cdk deploy` le déploie. Idéal quand on veut des boucles et de l'abstraction." },
+{ id:"v-sam", level:1, d:"iac", dom:"IaC", type:"input",
+  q:"Quelle extension de CloudFormation simplifie la définition d'applications serverless (Lambda, API Gateway, DynamoDB) ?",
+  accept:["AWS SAM","sam","aws sam","serverless application model"],
+  explain:"AWS SAM : une syntaxe raccourcie (Transform: AWS::Serverless-2016-10-31) qui se transforme en CloudFormation classique au déploiement." },
+{ id:"v-stack", level:1, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Quelle est la différence entre un template et une stack CloudFormation ?",
+  choices:["Le template est le fichier de code ; la stack est l'ensemble des ressources réellement déployées à partir de ce template","La stack est le fichier, le template est le déploiement","Ce sont deux noms du même objet","Le template ne concerne que le JSON, la stack le YAML"],
+  answer:0,
+  explain:"Un même template peut créer plusieurs stacks (dev, staging, prod). Supprimer la stack supprime les ressources (sauf DeletionPolicy: Retain)." },
+{ id:"v-changeset", level:1, d:"iac", dom:"CloudFormation", type:"input",
+  q:"Quel objet CloudFormation permet de PRÉVISUALISER les modifications avant de les appliquer (équivalent du terraform plan) ?",
+  accept:["change set","changeset","change sets"],
+  explain:"Le change set liste les ressources ajoutées, modifiées ou remplacées. Crucial : il signale les remplacements (Replacement: True) qui détruisent la ressource." },
+{ id:"v-drift", level:1, d:"iac", dom:"CloudFormation", type:"input",
+  q:"Comment appelle-t-on l'écart entre la configuration décrite dans la stack et l'état réel des ressources (suite à une modification manuelle) ?",
+  accept:["drift","derive","configuration drift"],
+  explain:"Le drift. CloudFormation propose la détection de drift ; AWS Config peut aussi surveiller la conformité en continu." },
+{ id:"v-stackset", level:1, d:"iac", dom:"CloudFormation", type:"input",
+  q:"Quel objet CloudFormation déploie une même stack sur PLUSIEURS comptes et régions en une seule opération ?",
+  accept:["StackSet","stackset","stack set","stacksets"],
+  explain:"Les StackSets : self-managed (rôles IAM que tu crées) ou service-managed (via AWS Organizations, avec auto-déploiement sur les nouveaux comptes)." },
+{ id:"v-ssm", level:1, d:"iac", dom:"Systems Manager", type:"input",
+  q:"Quel service AWS regroupe Parameter Store, Session Manager, Run Command, Patch Manager et Automation ?",
+  accept:["Systems Manager","systems manager","ssm","aws systems manager"],
+  explain:"AWS Systems Manager (SSM). Omniprésent au DOP : configuration, accès sans SSH, patching, automatisation de la remédiation." },
+{ id:"v-session-manager", level:1, d:"sec", dom:"Systems Manager", type:"input",
+  q:"Quelle fonctionnalité de Systems Manager ouvre un shell sur une instance SANS clé SSH, sans port 22 ouvert ni bastion ?",
+  accept:["Session Manager","session manager"],
+  explain:"Session Manager : accès via l'agent SSM, tracé dans CloudTrail et enregistrable dans S3/CloudWatch Logs. LA réponse aux questions « supprimer les bastions et les clés SSH »." },
+{ id:"v-parameter-store", level:1, d:"sec", dom:"Systems Manager", type:"input",
+  q:"Quel composant de Systems Manager stocke des paramètres de configuration hiérarchiques, dont des SecureString chiffrées par KMS, gratuitement en tier standard ?",
+  accept:["Parameter Store","parameter store","ssm parameter store"],
+  explain:"Parameter Store : gratuit (standard), mais SANS rotation automatique. Secrets Manager coûte plus cher mais gère la rotation native." },
+{ id:"v-secrets-manager", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Quel service AWS stocke des secrets AVEC rotation automatique native (notamment pour RDS) ?",
+  accept:["Secrets Manager","secrets manager","aws secrets manager"],
+  explain:"Secrets Manager. La distinction Parameter Store / Secrets Manager est une question quasi certaine : rotation automatique = Secrets Manager." },
+{ id:"v-cloudwatch", level:1, d:"mon", dom:"Monitoring", type:"input",
+  q:"Quel service AWS collecte métriques, logs et déclenche des alarmes ?",
+  accept:["CloudWatch","cloudwatch","amazon cloudwatch"],
+  explain:"CloudWatch : Metrics, Logs, Alarms, Dashboards, Logs Insights, Contributor Insights. Le cœur du domaine monitoring (15 %)." },
+{ id:"v-cloudtrail", level:1, d:"sec", dom:"Audit", type:"input",
+  q:"Quel service AWS enregistre QUI a fait QUOI sur l'API AWS (audit des appels d'API) ?",
+  accept:["CloudTrail","cloudtrail","aws cloudtrail"],
+  explain:"CloudTrail = audit des actions (qui/quoi/quand). CloudWatch = santé et performances. Confusion classique à l'examen." },
+{ id:"v-config", level:1, d:"sec", dom:"Conformité", type:"input",
+  q:"Quel service AWS enregistre l'historique de configuration des ressources et évalue leur conformité via des règles ?",
+  accept:["AWS Config","aws config","config"],
+  explain:"AWS Config : configuration items, règles managées ou custom, remédiation automatique via SSM Automation, conformance packs, agrégateur multi-comptes." },
+{ id:"v-eventbridge", level:1, d:"inc", dom:"Événements", type:"input",
+  q:"Quel service AWS route les événements (changements d'état, appels d'API, planifications) vers des cibles comme Lambda ou SNS ?",
+  accept:["EventBridge","eventbridge","amazon eventbridge","cloudwatch events"],
+  explain:"EventBridge (ex-CloudWatch Events) : le pivot du domaine « réponse aux incidents » — détecter un événement puis déclencher une remédiation automatique." },
+{ id:"v-sns", level:1, d:"inc", dom:"Messagerie", type:"input",
+  q:"Quel service AWS diffuse un message en mode publication/abonnement vers plusieurs abonnés (e-mail, SMS, Lambda, SQS) ?",
+  accept:["SNS","sns","amazon sns","simple notification service"],
+  explain:"SNS = pub/sub, push, un message vers N abonnés. SQS = file, pull, un message consommé par un seul lecteur." },
+{ id:"v-sqs", level:1, d:"resil", dom:"Messagerie", type:"input",
+  q:"Quel service AWS fournit des files de messages permettant de découpler les composants et d'absorber les pics de charge ?",
+  accept:["SQS","sqs","amazon sqs","simple queue service"],
+  explain:"SQS : standard (débit illimité, ordre non garanti, at-least-once) ou FIFO (ordre garanti, exactly-once, 300-3000 msg/s)." },
+{ id:"v-xray", level:1, d:"mon", dom:"Observabilité", type:"input",
+  q:"Quel service AWS fournit le traçage distribué pour suivre une requête à travers plusieurs microservices ?",
+  accept:["X-Ray","x-ray","xray","aws x-ray"],
+  explain:"X-Ray : service map, segments et sous-segments, analyse des latences. ServiceLens combine X-Ray, CloudWatch metrics et logs." },
+{ id:"v-guardduty", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Quel service AWS détecte les menaces en analysant CloudTrail, les VPC Flow Logs et les logs DNS par machine learning ?",
+  accept:["GuardDuty","guardduty","amazon guardduty"],
+  explain:"GuardDuty = détection de menaces (comportement anormal, IP malveillante). Inspector = vulnérabilités logicielles. Macie = données sensibles dans S3." },
+{ id:"v-inspector", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Quel service AWS scanne en continu les vulnérabilités (CVE) des instances EC2, images ECR et fonctions Lambda ?",
+  accept:["Amazon Inspector","inspector","amazon inspector"],
+  explain:"Amazon Inspector : scan de vulnérabilités logicielles et d'exposition réseau, déclenché automatiquement à chaque nouveau déploiement ou nouvelle CVE publiée." },
+{ id:"v-macie", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Quel service AWS découvre et classe les données sensibles (PII, cartes bancaires) stockées dans S3 ?",
+  accept:["Macie","macie","amazon macie"],
+  explain:"Macie utilise le ML pour repérer les données sensibles dans S3 — la réponse aux scénarios de conformité RGPD/PCI." },
+{ id:"v-securityhub", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Quel service AWS centralise et priorise les résultats de GuardDuty, Inspector, Macie et Config selon des standards (CIS, PCI DSS) ?",
+  accept:["Security Hub","security hub","aws security hub","securityhub"],
+  explain:"Security Hub = la vue unifiée de la posture de sécurité, multi-comptes, avec actions personnalisées vers EventBridge pour la remédiation." },
+{ id:"v-organizations", level:1, d:"sec", dom:"Gouvernance", type:"input",
+  q:"Quel service AWS gère plusieurs comptes de façon centralisée, avec facturation consolidée et unités d'organisation (OU) ?",
+  accept:["AWS Organizations","organizations","aws organizations"],
+  explain:"AWS Organizations : la base de toute stratégie multi-comptes, et le support des SCP, des StackSets service-managed et des politiques de sauvegarde." },
+{ id:"v-scp", level:1, d:"sec", dom:"Gouvernance", type:"input",
+  q:"Quel type de politique AWS Organizations définit le PLAFOND maximal de permissions d'un compte ou d'une OU (sigle) ?",
+  accept:["SCP","scp","service control policy","service control policies"],
+  explain:"Une SCP ne DONNE jamais de droit : elle limite ce que les politiques IAM peuvent accorder. Même l'utilisateur root du compte membre y est soumis." },
+{ id:"v-asg", level:1, d:"resil", dom:"Élasticité", type:"input",
+  q:"Quel service AWS ajuste automatiquement le nombre d'instances EC2 et remplace celles qui deviennent défaillantes (sigle) ?",
+  accept:["Auto Scaling Group","asg","auto scaling group","ec2 auto scaling","auto scaling"],
+  explain:"L'Auto Scaling Group : min/max/desired, launch template, health checks (EC2 ou ELB), politiques de scaling et lifecycle hooks." },
+{ id:"v-elb", level:1, d:"resil", dom:"Réseau", type:"qcm",
+  q:"Quelle est la différence principale entre un Application Load Balancer et un Network Load Balancer ?",
+  choices:["L'ALB opère en couche 7 (HTTP/HTTPS, routage par chemin ou en-tête) ; le NLB en couche 4 (TCP/UDP, très faible latence, IP statique)","L'ALB est plus rapide","Le NLB gère le HTTPS, pas l'ALB","L'ALB est régional, le NLB est global"],
+  answer:0,
+  explain:"ALB pour le routage applicatif (chemins, hôtes, blue/green par target group) ; NLB pour la performance extrême, le TCP brut ou une IP fixe." },
+{ id:"v-route53", level:1, d:"resil", dom:"Réseau", type:"input",
+  q:"Quel service AWS gère le DNS avec des politiques de routage (pondéré, latence, basculement, géolocalisation) ?",
+  accept:["Route 53","route 53","route53","amazon route 53"],
+  explain:"Route 53 : routage pondéré (canary/blue-green), failover (avec health checks) et latence. Un pilier de la résilience multi-régions." },
+{ id:"v-rto-rpo", level:1, d:"resil", dom:"Reprise", type:"qcm",
+  q:"Quelle est la différence entre RTO et RPO ?",
+  choices:["Le RTO est la durée d'indisponibilité acceptable ; le RPO est la quantité de données qu'on accepte de perdre (fenêtre de temps)","Le RTO concerne les données, le RPO le temps","Ce sont des synonymes","Le RPO mesure la performance"],
+  answer:0,
+  explain:"RTO = Recovery Time Objective (combien de temps pour redémarrer) ; RPO = Recovery Point Objective (combien de données perdues). Ils dictent la stratégie de DR." },
+{ id:"v-dr-strategies", level:1, d:"resil", dom:"Reprise", type:"qcm",
+  q:"Classe les 4 stratégies de reprise après sinistre du RTO le plus long au plus court :",
+  choices:["Backup & restore → Pilot light → Warm standby → Multi-site active/active","Pilot light → Backup & restore → Multi-site → Warm standby","Multi-site → Warm standby → Pilot light → Backup & restore","Warm standby → Multi-site → Backup & restore → Pilot light"],
+  answer:0,
+  explain:"Plus le RTO/RPO est court, plus c'est cher. Pilot light = données répliquées + cœur minimal éteint ; warm standby = version réduite mais ACTIVE." },
+{ id:"v-immutable", level:1, d:"iac", dom:"Concepts", type:"qcm",
+  q:"Que signifie une infrastructure « immuable » (immutable infrastructure) ?",
+  choices:["On ne modifie jamais un serveur en place : on en déploie un nouveau à partir d'une image et on retire l'ancien","On empêche la suppression des ressources","On chiffre les volumes","On verrouille les templates CloudFormation"],
+  answer:0,
+  explain:"L'immuabilité élimine le drift de configuration et rend les déploiements reproductibles — d'où les AMI construites avec EC2 Image Builder ou Packer." },
+{ id:"v-bluegreen", level:1, d:"sdlc", dom:"Déploiement", type:"input",
+  q:"Quelle stratégie déploie sur un environnement parallèle complet puis bascule tout le trafic d'un coup, avec rollback immédiat ?",
+  accept:["blue/green","blue green","blue/green","bluegreen","bleu vert"],
+  explain:"Blue/green : deux environnements, bascule par DNS ou par target group ELB. CodeDeploy le supporte nativement pour EC2, Lambda et ECS." },
+{ id:"v-canary", level:1, d:"sdlc", dom:"Déploiement", type:"input",
+  q:"Quelle stratégie envoie d'abord un petit pourcentage du trafic vers la nouvelle version, puis bascule le reste après une période d'observation ?",
+  accept:["canary","canari"],
+  explain:"Canary. Chez CodeDeploy Lambda/ECS : Canary10Percent5Minutes = 10 % pendant 5 min, puis 100 %. Le linear, lui, monte par paliers réguliers." },
+{ id:"v-featureflag", level:1, d:"sdlc", dom:"Déploiement", type:"qcm",
+  q:"Quel service AWS gère les feature flags et les expérimentations A/B ?",
+  choices:["Amazon CloudWatch Evidently (ou AppConfig feature flags)","AWS Config","CodeGuru","Systems Manager Run Command"],
+  answer:0,
+  explain:"AppConfig gère les feature flags avec déploiement progressif et rollback automatique sur alarme ; Evidently ajoute l'A/B testing avec analyse statistique." },
+{ id:"v-appconfig", level:1, d:"sdlc", dom:"Déploiement", type:"input",
+  q:"Quel composant de Systems Manager déploie progressivement des changements de CONFIGURATION applicative, avec rollback automatique sur alarme CloudWatch ?",
+  accept:["AppConfig","appconfig","aws appconfig","ssm appconfig"],
+  explain:"AppConfig : valide la config (JSON Schema ou Lambda), la déploie par paliers et revient en arrière si une alarme se déclenche. Sans redéployer le code." },
+{ id:"v-ecs-fargate", level:1, d:"sdlc", dom:"Conteneurs", type:"qcm",
+  q:"Quelle est la différence entre ECS sur EC2 et ECS sur Fargate ?",
+  choices:["Sur EC2 tu gères les instances hôtes ; sur Fargate AWS les gère et tu paies à la tâche (vCPU/mémoire)","Fargate ne supporte pas Docker","EC2 est serverless","Fargate impose Kubernetes"],
+  answer:0,
+  explain:"Fargate supprime la gestion du parc d'instances. À l'examen : « pas d'infrastructure à gérer » → Fargate ; « besoin de GPU ou d'accès à l'hôte » → EC2." },
+{ id:"v-ecr", level:1, d:"sdlc", dom:"Conteneurs", type:"input",
+  q:"Quel service AWS héberge les images de conteneurs privées, avec scan de vulnérabilités et politiques de cycle de vie ?",
+  accept:["ECR","ecr","amazon ecr","elastic container registry"],
+  explain:"ECR : scan à la poussée (basic) ou continu via Inspector (enhanced), lifecycle policies pour purger les vieilles images, réplication inter-régions." },
+{ id:"v-lambda-alias", level:1, d:"sdlc", dom:"Lambda", type:"qcm",
+  q:"À quoi sert un alias Lambda ?",
+  choices:["Pointer vers une version, avec possibilité de répartir le trafic en pourcentage entre deux versions (déploiement pondéré)","Renommer la fonction","Créer un raccourci d'URL","Chiffrer les variables d'environnement"],
+  answer:0,
+  explain:"L'alias (ex : « prod ») permet le routage pondéré 90/10 — la base du canary Lambda, que CodeDeploy automatise." },
+{ id:"v-iam-role", level:1, d:"sec", dom:"IAM", type:"qcm",
+  q:"Quelle est la différence entre un utilisateur IAM et un rôle IAM ?",
+  choices:["L'utilisateur a des credentials permanents ; le rôle est assumé temporairement et fournit des credentials éphémères via STS","Le rôle est réservé aux humains","L'utilisateur est temporaire","Aucune différence pratique"],
+  answer:0,
+  explain:"Bonne pratique AWS : privilégier les rôles (credentials temporaires, rotation automatique) plutôt que des access keys longue durée." },
+{ id:"v-instance-profile", level:1, d:"sec", dom:"IAM", type:"input",
+  q:"Quel objet IAM permet d'attacher un rôle à une instance EC2 pour qu'elle obtienne des credentials temporaires sans clés stockées ?",
+  accept:["instance profile","profil d instance","iam instance profile"],
+  explain:"L'instance profile est le conteneur du rôle attaché à l'EC2. Les credentials sont récupérés via l'IMDS (169.254.169.254) — l'équivalent de la managed identity Azure." },
+{ id:"v-sts", level:1, d:"sec", dom:"IAM", type:"input",
+  q:"Quel service AWS délivre les credentials temporaires lors d'un AssumeRole (sigle) ?",
+  accept:["STS","sts","security token service","aws sts"],
+  explain:"STS : AssumeRole, AssumeRoleWithWebIdentity (OIDC pour GitHub Actions !), GetSessionToken. Les credentials expirent (15 min à 12 h)." },
+{ id:"v-oidc-gh", level:1, d:"sec", dom:"IAM", type:"qcm",
+  q:"Comment GitHub Actions peut-il déployer sur AWS SANS stocker d'access key dans les secrets du dépôt ?",
+  choices:["Via un fournisseur d'identité OIDC dans IAM : le workflow échange son jeton OIDC contre un rôle temporaire (AssumeRoleWithWebIdentity)","En chiffrant l'access key","En utilisant un utilisateur IAM dédié","C'est impossible"],
+  answer:0,
+  explain:"OIDC + rôle IAM avec condition sur `sub` (repo:org/repo:ref:refs/heads/main). C'est l'équivalent AWS de la workload identity federation." },
+{ id:"v-kms", level:1, d:"sec", dom:"Chiffrement", type:"input",
+  q:"Quel service AWS gère les clés de chiffrement utilisées par S3, EBS, RDS, Secrets Manager (sigle) ?",
+  accept:["KMS","kms","aws kms","key management service"],
+  explain:"KMS : clés managées par AWS ou par le client (CMK), avec key policies, rotation annuelle automatique et traçabilité dans CloudTrail." },
+{ id:"v-shift-left", level:1, d:"sec", dom:"DevSecOps", type:"qcm",
+  q:"Que signifie « shift left » en DevSecOps ?",
+  choices:["Déplacer les contrôles de sécurité et de qualité au plus TÔT dans le cycle (dès le commit ou la PR)","Déplacer la charge vers les équipes ops","Déployer plus tôt dans la journée","Réduire le nombre d'environnements"],
+  answer:0,
+  explain:"Plus un défaut est détecté tard, plus il coûte cher. Concrètement : scan des dépendances et de l'IaC dans CodeBuild, avant tout déploiement." },
+{ id:"v-dora", level:1, d:"sdlc", dom:"Métriques", type:"qcm",
+  q:"Quelles sont les 4 métriques DORA de performance DevOps ?",
+  choices:["Fréquence de déploiement, délai de livraison des changements, taux d'échec des changements, temps de restauration du service","Vélocité, burndown, story points, capacité","CPU, mémoire, disque, réseau","Couverture de tests, dette technique, bugs, incidents"],
+  answer:0,
+  explain:"Deux métriques de vitesse et deux de stabilité. Elles reviennent dans toutes les certifications DevOps, AWS comme Azure." },
+{ id:"v-mttr", level:1, d:"inc", dom:"Métriques", type:"input",
+  q:"Quelle métrique mesure le temps moyen de restauration du service après un incident (sigle) ?",
+  accept:["MTTR","mttr","mean time to recovery","mean time to restore"],
+  explain:"MTTR. Le domaine « réponse aux incidents » (14 %) vise justement à le réduire par la détection et la remédiation automatiques." },
+{ id:"v-runbook", level:1, d:"inc", dom:"Incidents", type:"qcm",
+  q:"Qu'est-ce qu'un runbook dans Systems Manager Automation ?",
+  choices:["Un document décrivant une suite d'actions automatisables pour traiter une situation opérationnelle (redémarrer, isoler, corriger)","Un rapport d'incident","Un manuel utilisateur","Un journal d'exécution"],
+  answer:0,
+  explain:"Les runbooks SSM Automation (AWS-* ou custom) sont LA cible privilégiée d'une remédiation automatique déclenchée par EventBridge ou AWS Config." },
+{ id:"v-idempotent", level:1, d:"iac", dom:"Concepts", type:"qcm",
+  q:"Pourquoi une opération de déploiement doit-elle être idempotente ?",
+  choices:["Pour qu'une réexécution produise le même résultat sans effet de bord — indispensable aux relances après échec","Pour accélérer le déploiement","Pour réduire les coûts","Pour chiffrer les données"],
+  answer:0,
+  explain:"CloudFormation est idempotent par nature : réappliquer le même template ne change rien. C'est ce qui rend les relances sûres." },
+{ id:"v-artifact-once", level:1, d:"sdlc", dom:"Pipelines", type:"qcm",
+  q:"Que signifie le principe « build once, deploy many » ?",
+  choices:["Un artefact unique est construit puis promu tel quel de dev à prod, la configuration étant injectée à l'exécution","Recompiler pour chaque environnement garantit la fraîcheur","Un build par région","Un artefact par branche"],
+  answer:0,
+  explain:"Recompiler par environnement casse la garantie de test. La config vient de Parameter Store / AppConfig, pas d'une recompilation." },
+{ id:"v-tag", level:1, d:"sec", dom:"Gouvernance", type:"qcm",
+  q:"Pourquoi une stratégie de tagging est-elle essentielle en DevOps sur AWS ?",
+  choices:["Les tags pilotent la répartition des coûts, les contrôles d'accès (ABAC), l'automatisation (Patch Manager, backups) et les rapports de conformité","Uniquement pour la facturation","Uniquement pour la documentation","Uniquement pour trier la console"],
+  answer:0,
+  explain:"Les tag policies d'Organizations imposent la nomenclature ; ABAC autorise selon les tags ; Patch Manager et Backup ciblent par tags." },
+/* ============ NIVEAU 2 — FAITS & CONFIGURATIONS ============ */
+/* --- SDLC : CodeBuild / CodeDeploy / CodePipeline --- */
+{ id:"f-buildspec-phases", level:2, d:"sdlc", dom:"CodeBuild", type:"qcm",
+  q:"Quelles sont les 4 phases d'un buildspec, dans l'ordre ?",
+  choices:["install, pre_build, build, post_build","init, build, test, deploy","setup, compile, package, publish","before, main, after, cleanup"],
+  answer:0,
+  explain:"install (runtimes et dépendances), pre_build (login ECR, préparation), build (compilation/tests), post_build (packaging, push d'image)." },
+{ id:"f-buildspec-artifacts", level:2, d:"sdlc", dom:"CodeBuild", type:"input",
+  q:"Quelle section du buildspec définit les fichiers à transmettre à l'étape suivante du pipeline ?",
+  accept:["artifacts"],
+  explain:"La section artifacts (files, base-directory, discard-paths). Sans elle, le build produit des logs mais aucun livrable exploitable." },
+{ id:"f-buildspec-reports", level:2, d:"sdlc", dom:"CodeBuild", type:"input",
+  q:"Quelle section du buildspec publie les résultats de tests et la couverture de code dans la console CodeBuild ?",
+  accept:["reports","report groups"],
+  explain:"reports: avec un report group, des files et un file-format (JUNITXML, CUCUMBERJSON, COBERTURAXML, JACOCOXML…). Alimente les tendances de tests." },
+{ id:"f-buildspec-cache", level:2, d:"sdlc", dom:"CodeBuild", type:"qcm",
+  q:"Quels types de cache CodeBuild permettent d'accélérer les builds ?",
+  choices:["Le cache S3 (partagé entre builds) et le cache local (docker layer, source, custom — sur le même hôte)","Uniquement le cache S3","Uniquement EFS","CodeBuild ne supporte pas le cache"],
+  answer:0,
+  explain:"Cache local = plus rapide mais non garanti (dépend de la réutilisation de l'hôte). Cache S3 = fiable et partagé, avec un coût de transfert." },
+{ id:"f-codebuild-vpc", level:2, d:"sdlc", dom:"CodeBuild", type:"qcm",
+  q:"Que faut-il configurer pour qu'un projet CodeBuild accède à une base RDS dans un subnet privé ?",
+  choices:["La configuration VPC du projet (VPC, subnets privés, security group) — et une NAT Gateway ou des VPC endpoints pour l'accès sortant","Ouvrir la base sur Internet","Utiliser un agent self-hosted","Rien, CodeBuild accède à tout par défaut"],
+  answer:0,
+  explain:"Par défaut CodeBuild s'exécute hors de ton VPC. En VPC, prévoir l'accès sortant (NAT ou endpoints vers S3, ECR, CloudWatch Logs, Secrets Manager)." },
+{ id:"f-codebuild-privileged", level:2, d:"sdlc", dom:"CodeBuild", type:"qcm",
+  q:"Quel réglage est requis pour construire une image Docker dans CodeBuild (démon Docker) ?",
+  choices:["Le mode privileged (privilegedMode: true) sur l'environnement du projet","Un runtime Docker installé manuellement","Un agent EC2 dédié","Aucun, c'est activé par défaut"],
+  answer:0,
+  explain:"privilegedMode est obligatoire pour le Docker-in-Docker. Alternative moderne : buildah/kaniko, ou les images de build fournies par AWS." },
+{ id:"f-cd-configs-ec2", level:2, d:"sdlc", dom:"CodeDeploy", type:"qcm",
+  q:"Quelles sont les 3 deployment configurations prédéfinies de CodeDeploy pour EC2 ?",
+  choices:["CodeDeployDefault.OneAtATime, HalfAtATime, AllAtOnce","Canary, Linear, AllAtOnce","Rolling, Immutable, BlueGreen","Fast, Safe, Staged"],
+  answer:0,
+  explain:"Pour EC2/on-premises. Pour Lambda et ECS ce sont Canary/Linear/AllAtOnce — ne pas mélanger les deux familles, c'est un piège classique." },
+{ id:"f-cd-canary-lambda", level:2, d:"sdlc", dom:"CodeDeploy", type:"qcm",
+  q:"Que signifie la configuration CodeDeployDefault.LambdaCanary10Percent5Minutes ?",
+  choices:["10 % du trafic vers la nouvelle version pendant 5 minutes, puis 100 % d'un coup","10 % de plus toutes les 5 minutes jusqu'à 100 %","10 % du trafic pendant tout le déploiement","5 % pendant 10 minutes"],
+  answer:0,
+  explain:"Canary = deux paliers (X % puis tout). Linear = incréments réguliers (Linear10PercentEvery1Minute = +10 % chaque minute pendant 10 min)." },
+{ id:"f-appspec-hooks-ec2", level:2, d:"sdlc", dom:"CodeDeploy", type:"qcm",
+  q:"Quel est l'ordre des hooks appspec principaux lors d'un déploiement in-place sur EC2 ?",
+  choices:["ApplicationStop → BeforeInstall → Install → AfterInstall → ApplicationStart → ValidateService","BeforeInstall → ApplicationStop → Install → ApplicationStart → ValidateService","Install → BeforeInstall → AfterInstall → ValidateService","ValidateService → Install → ApplicationStart"],
+  answer:0,
+  explain:"ApplicationStop utilise l'appspec de la révision PRÉCÉDENTE (souvent source d'échecs au 1er déploiement). ValidateService est le dernier : c'est là qu'on teste." },
+{ id:"f-appspec-hooks-lambda", level:2, d:"sdlc", dom:"CodeDeploy", type:"qcm",
+  q:"Quels sont les 2 hooks disponibles pour un déploiement CodeDeploy sur Lambda ?",
+  choices:["BeforeAllowTraffic et AfterAllowTraffic","BeforeInstall et AfterInstall","ApplicationStop et ApplicationStart","PreDeploy et PostDeploy"],
+  answer:0,
+  explain:"BeforeAllowTraffic = tests avant l'envoi du trafic ; AfterAllowTraffic = validation après. Chaque hook est lui-même une fonction Lambda de validation." },
+{ id:"f-appspec-hooks-ecs", level:2, d:"sdlc", dom:"CodeDeploy", type:"input",
+  q:"Dans un déploiement blue/green ECS, quel hook permet de tester la nouvelle version sur le listener de TEST avant toute bascule (nom exact) ?",
+  accept:["AfterAllowTestTraffic","after allow test traffic"],
+  explain:"Ordre ECS : BeforeInstall → AfterInstall → AfterAllowTestTraffic → BeforeAllowTraffic → AfterAllowTraffic. Le listener de test permet de valider sans exposer les vrais utilisateurs." },
+{ id:"f-cd-rollback", level:2, d:"sdlc", dom:"CodeDeploy", type:"qcm",
+  q:"Comment CodeDeploy peut-il annuler automatiquement un déploiement ?",
+  choices:["Via les automatic rollback : sur échec du déploiement ou lorsqu'une alarme CloudWatch associée passe en ALARM","Uniquement manuellement","En redéployant la version précédente à la main","Par un script dans ValidateService"],
+  answer:0,
+  explain:"Rollback = redéploiement de la dernière révision saine connue. Associer une alarme (taux d'erreur 5xx, latence) rend la protection automatique." },
+{ id:"f-cp-artifacts", level:2, d:"sdlc", dom:"CodePipeline", type:"qcm",
+  q:"Où CodePipeline stocke-t-il les artefacts échangés entre les étapes ?",
+  choices:["Dans un bucket S3 d'artefacts (l'artifact store), chiffré par KMS, dans la même région que le pipeline","Dans CodeCommit","Dans CodeArtifact","En mémoire sur l'agent"],
+  answer:0,
+  explain:"Chaque action a des input/output artifacts qui transitent par S3. En cross-account, il faut une KMS key partagée et une bucket policy adaptée." },
+{ id:"f-cp-approval", level:2, d:"sdlc", dom:"CodePipeline", type:"qcm",
+  q:"Comment insérer une validation humaine dans un pipeline CodePipeline ?",
+  choices:["Une action de type Manual approval, éventuellement reliée à un topic SNS pour notifier les approbateurs","Un script qui attend","Une Lambda bloquante","Ce n'est pas possible nativement"],
+  answer:0,
+  explain:"L'action Manual approval bloque la transition jusqu'à décision (7 jours max), avec une URL de revue et une notification SNS." },
+{ id:"f-cp-invoke", level:2, d:"sdlc", dom:"CodePipeline", type:"qcm",
+  q:"Comment exécuter une logique personnalisée (test maison, appel d'API tierce) dans une étape de pipeline ?",
+  choices:["Une action Invoke de type AWS Lambda, qui renvoie son résultat via PutJobSuccessResult / PutJobFailureResult","Une action CodeDeploy","Un hook appspec","Un événement EventBridge"],
+  answer:0,
+  explain:"La Lambda DOIT rappeler PutJobSuccessResult ou PutJobFailureResult, sinon le pipeline reste bloqué jusqu'au timeout — piège classique." },
+{ id:"f-cp-trigger", level:2, d:"sdlc", dom:"CodePipeline", type:"qcm",
+  q:"Quelle est la méthode RECOMMANDÉE pour déclencher un pipeline dès un commit (plutôt que le polling) ?",
+  choices:["Une règle EventBridge sur l'événement du dépôt (ou le webhook CodeConnections) — détection immédiate et sans appels d'API inutiles","Le polling périodique de CodePipeline","Un cron toutes les 5 minutes","Un déclenchement manuel"],
+  answer:0,
+  explain:"Le polling introduit jusqu'à 1 min de latence et consomme des appels d'API. EventBridge déclenche instantanément — réponse attendue à l'examen." },
+{ id:"f-cp-crossregion", level:2, d:"sdlc", dom:"CodePipeline", type:"qcm",
+  q:"Que faut-il pour déployer dans une région différente de celle du pipeline ?",
+  choices:["Une action cross-region, avec un bucket d'artefacts dans CHAQUE région concernée","Rien, c'est transparent","Un second pipeline obligatoirement","Un VPC peering"],
+  answer:0,
+  explain:"CodePipeline réplique automatiquement les artefacts vers le bucket de la région cible, à condition qu'il soit déclaré dans la configuration du pipeline." },
+{ id:"f-codeartifact-upstream", level:2, d:"sdlc", dom:"CodeArtifact", type:"input",
+  q:"Quel mécanisme d'un dépôt CodeArtifact relaie et met en cache les packages d'une source publique comme npmjs ou PyPI (2 mots) ?",
+  accept:["upstream repository","upstream","upstream repositories","source amont"],
+  explain:"L'upstream : un seul endpoint pour les développeurs, mise en cache locale des packages publics, protection contre leur suppression amont." },
+/* --- IaC : CloudFormation --- */
+{ id:"f-cfn-sections", level:2, d:"iac", dom:"CloudFormation", type:"input",
+  q:"Quelle est la SEULE section obligatoire d'un template CloudFormation ?",
+  accept:["Resources","resources"],
+  explain:"Resources. Toutes les autres (Parameters, Mappings, Conditions, Outputs, Metadata, Transform, Description) sont facultatives." },
+{ id:"f-cfn-ref", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Quelle est la différence entre !Ref et !GetAtt sur une ressource ?",
+  choices:["!Ref renvoie la valeur par défaut de la ressource (souvent son nom ou son ID) ; !GetAtt renvoie un attribut précis (ARN, DNS, endpoint…)","!Ref ne marche que sur les paramètres","!GetAtt renvoie toujours l'ARN","Ce sont des synonymes"],
+  answer:0,
+  explain:"!Ref sur un paramètre renvoie sa valeur ; sur une ressource, sa valeur « par défaut » documentée. !GetAtt MaRessource.Arn cible un attribut nommé." },
+{ id:"f-cfn-sub", level:2, d:"iac", dom:"CloudFormation", type:"input",
+  q:"Quelle fonction intrinsèque CloudFormation permet d'insérer des variables dans une chaîne, par exemple \"arn:aws:s3:::${NomBucket}\" ?",
+  accept:["!Sub","sub","!sub","fn::sub","fn sub"],
+  explain:"!Sub. Bien plus lisible que !Join. Variante avec map de substitution : !Sub ['texte ${cle}', {cle: valeur}]." },
+{ id:"f-cfn-importvalue", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Comment partager une valeur (ex : l'ID d'un VPC) entre deux stacks distinctes ?",
+  choices:["Exporter la valeur via Outputs/Export dans la stack source, puis l'utiliser avec !ImportValue dans l'autre","Copier la valeur manuellement","Utiliser un nested stack obligatoirement","Via un paramètre SSM uniquement"],
+  answer:0,
+  explain:"Export/ImportValue crée une dépendance forte : impossible de supprimer ou modifier l'export tant qu'une stack l'importe. Alternative souple : les paramètres SSM." },
+{ id:"f-cfn-nested", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Quelle différence entre nested stacks et cross-stack references ?",
+  choices:["Les nested stacks sont des composants réutilisables imbriqués dans une stack parente ; les cross-stack references relient des stacks indépendantes via Export/Import","Les nested stacks sont dépréciées","Les cross-stack ne marchent qu'entre régions","Aucune différence"],
+  answer:0,
+  explain:"Nested = découper un gros template en modules gérés ensemble. Cross-stack = stacks à cycles de vie indépendants (réseau vs application)." },
+{ id:"f-cfn-deletionpolicy", level:2, d:"iac", dom:"CloudFormation", type:"input",
+  q:"Quel attribut CloudFormation empêche la suppression d'une ressource critique (base de données) quand la stack est supprimée ?",
+  accept:["DeletionPolicy","deletionpolicy","deletion policy"],
+  explain:"DeletionPolicy: Retain (garder) ou Snapshot (sauvegarder avant suppression). UpdateReplacePolicy fait de même lors d'un remplacement." },
+{ id:"f-cfn-creationpolicy", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Comment faire attendre CloudFormation qu'une application soit réellement prête sur une instance avant de continuer ?",
+  choices:["Une CreationPolicy sur la ressource + l'envoi du signal cfn-signal depuis l'instance","Un simple sleep dans le UserData","DependsOn suffit","Une Lambda de vérification obligatoire"],
+  answer:0,
+  explain:"Sans signal, CloudFormation considère l'EC2 « créée » dès son lancement, pas quand l'app tourne. CreationPolicy + cfn-signal règle exactement ce problème." },
+{ id:"f-cfn-updatepolicy", level:2, d:"iac", dom:"CloudFormation", type:"input",
+  q:"Quel attribut CloudFormation contrôle la mise à jour progressive des instances d'un Auto Scaling Group (rolling update) ?",
+  accept:["UpdatePolicy","updatepolicy","update policy"],
+  explain:"UpdatePolicy avec AutoScalingRollingUpdate (MinInstancesInService, MaxBatchSize, PauseTime, WaitOnResourceSignals) — le rolling deployment natif de CloudFormation." },
+{ id:"f-cfn-helpers", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"À quoi servent respectivement cfn-init, cfn-signal et cfn-hup ?",
+  choices:["cfn-init applique la configuration de Metadata ; cfn-signal informe CloudFormation que l'instance est prête ; cfn-hup détecte les changements de metadata et réapplique","Ce sont trois alias de la même commande","cfn-hup crée la stack","cfn-signal supprime la stack"],
+  answer:0,
+  explain:"Le trio des helper scripts. cfn-hup est la réponse au « appliquer un changement de configuration sans recréer l'instance »." },
+{ id:"f-cfn-customresource", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Comment gérer dans CloudFormation une ressource qu'il ne supporte pas nativement (ou un traitement externe) ?",
+  choices:["Une custom resource adossée à une Lambda (ou un topic SNS), qui doit répondre SUCCESS/FAILED à l'URL pré-signée","Un script UserData","Une ressource AWS::Unknown","C'est impossible"],
+  answer:0,
+  explain:"La Lambda DOIT répondre à l'URL de callback, y compris en cas d'erreur — sinon la stack reste bloquée jusqu'au timeout (1 h). Piège récurrent." },
+{ id:"f-cfn-dynamic-ref", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Comment injecter un mot de passe stocké dans Secrets Manager dans un template CloudFormation sans l'écrire en clair ?",
+  choices:["Une dynamic reference : '{{resolve:secretsmanager:MonSecret:SecretString:password}}'","Un paramètre avec NoEcho suffit","Une variable d'environnement","Un fichier chiffré en S3"],
+  answer:0,
+  explain:"Les dynamic references : ssm, ssm-secure et secretsmanager. NoEcho masque l'affichage mais la valeur reste transmise en paramètre." },
+{ id:"f-cfn-noecho", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Que fait exactement NoEcho: true sur un paramètre CloudFormation ?",
+  choices:["Masque la valeur dans la console, les logs et les describe-stacks — mais ce n'est pas du chiffrement","Chiffre le paramètre avec KMS","Empêche sa modification","Le rend obligatoire"],
+  answer:0,
+  explain:"NoEcho = masquage d'affichage seulement. Pour un vrai secret : dynamic reference vers Secrets Manager ou SSM SecureString." },
+{ id:"f-cfn-stackset-modes", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Quelle différence entre StackSets self-managed et service-managed ?",
+  choices:["Self-managed : tu crées toi-même les rôles IAM d'administration et d'exécution. Service-managed : intégré à AWS Organizations, avec déploiement automatique sur les nouveaux comptes","Service-managed est déprécié","Self-managed ne marche pas en multi-région","Aucune différence de permissions"],
+  answer:0,
+  explain:"L'auto-deployment sur les nouveaux comptes d'une OU n'existe qu'en service-managed — réponse fréquente aux scénarios de gouvernance multi-comptes." },
+{ id:"f-cfn-rollback-trigger", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Comment annuler automatiquement une mise à jour de stack si une alarme CloudWatch se déclenche pendant le déploiement ?",
+  choices:["Configurer des rollback triggers (alarmes CloudWatch) avec une période de surveillance","Ce n'est pas possible","Uniquement via un script externe","Avec DeletionPolicy"],
+  answer:0,
+  explain:"Les rollback triggers surveillent jusqu'à 5 alarmes pendant le déploiement et la période de monitoring qui suit, puis annulent en cas de déclenchement." },
+{ id:"f-cfn-drift-limit", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Quelle est la limite importante de la détection de drift CloudFormation ?",
+  choices:["Elle est ponctuelle (à la demande) et ne corrige rien — pour une surveillance continue, il faut AWS Config","Elle est continue mais payante","Elle corrige automatiquement le drift","Elle ne marche que sur EC2"],
+  answer:0,
+  explain:"Drift detection = photo à l'instant T. Pour détecter en continu et remédier automatiquement : AWS Config + règles + SSM Automation." },
+{ id:"f-beanstalk-policies", level:2, d:"iac", dom:"Elastic Beanstalk", type:"qcm",
+  q:"Quelle politique de déploiement Elastic Beanstalk garantit ZÉRO indisponibilité et un rollback rapide, en créant de nouvelles instances ?",
+  choices:["Immutable (nouvelles instances dans un ASG temporaire, bascule si tout est sain)","All at once","Rolling","Rolling with additional batch"],
+  answer:0,
+  explain:"Ordre du plus risqué au plus sûr : all at once < rolling < rolling with additional batch < immutable < blue/green (swap CNAME). Immutable double temporairement la capacité." },
+{ id:"f-beanstalk-swap", level:2, d:"iac", dom:"Elastic Beanstalk", type:"input",
+  q:"Quelle opération Elastic Beanstalk réalise un blue/green en échangeant les URL de deux environnements ?",
+  accept:["swap cname","swap environment urls","swap url","swap"],
+  explain:"Swap Environment URLs : les CNAME sont échangés, la bascule est quasi instantanée et réversible. Attention aux migrations de base de données." },
+{ id:"f-ebextensions", level:2, d:"iac", dom:"Elastic Beanstalk", type:"input",
+  q:"Quel dossier du code source permet de personnaliser la configuration d'un environnement Elastic Beanstalk (fichiers .config) ?",
+  accept:[".ebextensions","ebextensions"],
+  explain:".ebextensions/*.config (YAML ou JSON) : packages, files, commands, container_commands, option_settings, ressources CloudFormation additionnelles." },
+{ id:"f-ssm-param-tiers", level:2, d:"iac", dom:"Parameter Store", type:"qcm",
+  q:"Quelle différence entre les tiers standard et advanced de Parameter Store ?",
+  choices:["Standard : 10 000 paramètres, 4 Ko, gratuit. Advanced : 100 000 paramètres, 8 Ko, payant, avec politiques (expiration, notification)","Advanced est gratuit","Standard supporte la rotation","Aucune différence de taille"],
+  answer:0,
+  explain:"Les parameter policies (Expiration, ExpirationNotification, NoChangeNotification) n'existent qu'en tier advanced." },
+{ id:"f-ssm-patch", level:2, d:"iac", dom:"Systems Manager", type:"qcm",
+  q:"Quels composants Patch Manager définissent QUOI patcher et QUAND ?",
+  choices:["Une patch baseline (règles d'approbation des correctifs) et une maintenance window (fenêtre d'exécution), ciblées par tags ou patch groups","Uniquement un cron","Un runbook Automation","Une règle Config"],
+  answer:0,
+  explain:"Patch baseline + patch group (via le tag « Patch Group ») + maintenance window = le trio du patching automatisé et conforme." },
+{ id:"f-ssm-state-manager", level:2, d:"iac", dom:"Systems Manager", type:"qcm",
+  q:"Quel composant de Systems Manager maintient les instances dans un état de configuration voulu, en réappliquant périodiquement une association ?",
+  choices:["State Manager","Run Command","Session Manager","Inventory"],
+  answer:0,
+  explain:"State Manager = configuration désirée appliquée à intervalle régulier (anti-drift). Run Command = exécution ponctuelle et impérative." },
+/* --- Résilience --- */
+{ id:"f-asg-lifecycle", level:2, d:"resil", dom:"Auto Scaling", type:"input",
+  q:"Quel mécanisme d'un Auto Scaling Group met une instance en pause (état Pending:Wait ou Terminating:Wait) pour exécuter une action avant sa mise en service ou sa suppression (2 mots) ?",
+  accept:["lifecycle hook","lifecycle hooks","hook de cycle de vie"],
+  explain:"Le lifecycle hook : installer l'app avant la mise en service, ou récupérer les logs avant la terminaison. On termine par CompleteLifecycleAction." },
+{ id:"f-asg-warmpool", level:2, d:"resil", dom:"Auto Scaling", type:"input",
+  q:"Quelle fonctionnalité d'ASG maintient un pool d'instances pré-initialisées et arrêtées, pour un scale-out quasi instantané (2 mots) ?",
+  accept:["warm pool","warm pools","pool chaud"],
+  explain:"Les warm pools réduisent drastiquement le temps de démarrage quand le bootstrap est long, en ne payant que le stockage des instances arrêtées." },
+{ id:"f-asg-refresh", level:2, d:"resil", dom:"Auto Scaling", type:"input",
+  q:"Quelle opération d'ASG remplace progressivement toutes les instances par lots pour appliquer un nouveau launch template (2 mots) ?",
+  accept:["instance refresh","rafraichissement d instances"],
+  explain:"Instance refresh : MinHealthyPercentage, InstanceWarmup et checkpoints. C'est le rolling update natif de l'ASG, avec rollback possible." },
+{ id:"f-asg-healthcheck", level:2, d:"resil", dom:"Auto Scaling", type:"qcm",
+  q:"Une instance passe les health checks EC2 mais l'application ne répond plus. Comment l'ASG peut-il la remplacer ?",
+  choices:["Activer le health check de type ELB sur l'ASG, afin qu'il tienne compte de la santé applicative du target group","Réduire le cooldown","Activer les detailed metrics","Augmenter la capacité désirée"],
+  answer:0,
+  explain:"Le health check EC2 ne vérifie que l'état de l'hyperviseur/instance. Le health check ELB teste réellement l'application — question quasi certaine." },
+{ id:"f-asg-scaling-types", level:2, d:"resil", dom:"Auto Scaling", type:"qcm",
+  q:"Quelle politique de scaling faut-il privilégier pour maintenir une métrique autour d'une valeur cible (ex : 60 % de CPU) ?",
+  choices:["Target tracking scaling","Simple scaling","Step scaling","Scheduled scaling"],
+  answer:0,
+  explain:"Target tracking = le plus simple et recommandé par défaut. Step scaling pour des réactions graduées, scheduled pour les pics prévisibles, predictive pour les motifs cycliques appris." },
+{ id:"f-alb-deregistration", level:2, d:"resil", dom:"ELB", type:"input",
+  q:"Quel réglage d'un target group laisse aux connexions en cours le temps de se terminer avant de retirer une cible (2 mots, terme anglais) ?",
+  accept:["deregistration delay","connection draining","delai de desinscription"],
+  explain:"Deregistration delay (ex-connection draining), 300 s par défaut. Trop long = déploiements lents ; trop court = requêtes coupées." },
+{ id:"f-alb-bluegreen", level:2, d:"resil", dom:"ELB", type:"qcm",
+  q:"Comment réaliser un blue/green avec un ALB ?",
+  choices:["Deux target groups (bleu et vert) et une règle de listener qui bascule le trafic — éventuellement pondérée pour un canary","Deux ALB obligatoirement","Changer le security group","Redémarrer les instances"],
+  answer:0,
+  explain:"Le weighted target group permet même un canary progressif (95/5 puis 50/50…). C'est ce que CodeDeploy pilote pour ECS blue/green." },
+{ id:"f-route53-failover", level:2, d:"resil", dom:"Route 53", type:"qcm",
+  q:"Quelle politique de routage Route 53 bascule automatiquement vers une région de secours quand le health check de la région primaire échoue ?",
+  choices:["Failover routing","Weighted routing","Latency-based routing","Multivalue answer"],
+  answer:0,
+  explain:"Failover (primary/secondary) + health check = le DR actif/passif. Le weighted sert au canary, le latency à la performance multi-régions." },
+{ id:"f-rds-multiaz", level:2, d:"resil", dom:"Bases de données", type:"qcm",
+  q:"Quelle différence entre RDS Multi-AZ et une read replica ?",
+  choices:["Multi-AZ = réplication synchrone pour la HAUTE DISPONIBILITÉ (bascule automatique, standby non lisible) ; read replica = réplication asynchrone pour la MONTÉE EN CHARGE en lecture","Ce sont deux noms du même mécanisme","Multi-AZ améliore les performances de lecture","La read replica bascule automatiquement"],
+  answer:0,
+  explain:"Multi-AZ = disponibilité ; read replica = performance (et peut servir de DR cross-région, avec promotion MANUELLE). Distinction testée systématiquement." },
+{ id:"f-dynamodb-global", level:2, d:"resil", dom:"Bases de données", type:"input",
+  q:"Quelle fonctionnalité DynamoDB fournit une réplication multi-régions active/active (2 mots) ?",
+  accept:["Global Tables","global tables","global table","tables globales"],
+  explain:"Global Tables : écriture dans n'importe quelle région, résolution des conflits en last-writer-wins. Base d'une architecture multi-site active/active." },
+{ id:"f-sqs-visibility", level:2, d:"resil", dom:"SQS", type:"qcm",
+  q:"Un même message SQS est traité plusieurs fois par des consommateurs différents. Quelle est la cause la plus probable ?",
+  choices:["Le visibility timeout est plus court que la durée de traitement : le message redevient visible avant d'être supprimé","La file est en mode FIFO","Le long polling est désactivé","La DLQ est mal configurée"],
+  answer:0,
+  explain:"Visibility timeout (30 s par défaut, 12 h max) doit dépasser la durée de traitement — ou être prolongé par ChangeMessageVisibility." },
+{ id:"f-sqs-dlq", level:2, d:"resil", dom:"SQS", type:"input",
+  q:"Quel paramètre de la redrive policy SQS détermine après combien d'échecs un message part en dead-letter queue ?",
+  accept:["maxReceiveCount","maxreceivecount","max receive count"],
+  explain:"maxReceiveCount dans la redrive policy. La DLQ doit être du même type (standard/FIFO) que la file source." },
+{ id:"f-lambda-concurrency", level:2, d:"resil", dom:"Lambda", type:"qcm",
+  q:"Quelle différence entre reserved concurrency et provisioned concurrency ?",
+  choices:["Reserved : réserve (et plafonne) un quota de concurrence pour la fonction. Provisioned : pré-initialise des environnements d'exécution pour éliminer les cold starts","Ce sont des synonymes","Provisioned est gratuit","Reserved supprime les cold starts"],
+  answer:0,
+  explain:"Reserved = gestion de quota (protéger les autres fonctions ou brider l'accès à une base). Provisioned = performance (latence), et c'est payant." },
+/* --- Monitoring --- */
+{ id:"f-cw-metric-filter", level:2, d:"mon", dom:"CloudWatch Logs", type:"input",
+  q:"Quel objet CloudWatch Logs transforme un motif texte trouvé dans les logs en métrique numérique, sur laquelle on peut poser une alarme (2 mots) ?",
+  accept:["metric filter","metric filters","filtre de metrique"],
+  explain:"Metric filter : compte les occurrences (ex : « ERROR ») et publie une métrique custom. C'est LA façon d'alarmer sur un contenu de log." },
+{ id:"f-cw-subscription", level:2, d:"mon", dom:"CloudWatch Logs", type:"qcm",
+  q:"Quelles cibles peut alimenter un subscription filter CloudWatch Logs en temps réel ?",
+  choices:["Lambda, Kinesis Data Streams, Data Firehose et OpenSearch","Uniquement S3","Uniquement SNS","Uniquement une autre log group"],
+  answer:0,
+  explain:"Subscription filter = flux temps réel des logs. Pour la centralisation multi-comptes, on route en général vers Firehose puis S3/OpenSearch." },
+{ id:"f-cw-insights", level:2, d:"mon", dom:"CloudWatch Logs", type:"qcm",
+  q:"Quels sont les principaux mots-clés d'une requête CloudWatch Logs Insights ?",
+  choices:["fields, filter, stats, sort, limit, parse","select, where, group by","match, aggregate, order","summarize, project, extend"],
+  answer:0,
+  explain:"Ex : fields @timestamp, @message | filter @message like /ERROR/ | stats count() by bin(5m). (summarize/project, c'est du KQL Azure — piège si tu révises les deux.)" },
+{ id:"f-cw-alarm-missing", level:2, d:"mon", dom:"CloudWatch", type:"qcm",
+  q:"Quelles sont les options de traitement des données manquantes d'une alarme CloudWatch ?",
+  choices:["notBreaching, breaching, ignore, missing","true, false, null","ok, alarm, insufficient","skip, fail, retry"],
+  answer:0,
+  explain:"Réglage crucial : une métrique custom qui ne remonte plus (application morte !) laisse l'alarme en INSUFFICIENT_DATA si on choisit « missing »." },
+{ id:"f-cw-composite", level:2, d:"mon", dom:"CloudWatch", type:"input",
+  q:"Quel type d'alarme CloudWatch combine plusieurs alarmes par une expression logique (AND/OR) pour réduire le bruit (2 mots) ?",
+  accept:["composite alarm","composite alarms","alarme composite"],
+  explain:"L'alarme composite ne notifie que si plusieurs conditions sont réunies — l'antidote à la fatigue d'alerte lors d'incidents en cascade." },
+{ id:"f-cw-agent", level:2, d:"mon", dom:"CloudWatch", type:"qcm",
+  q:"Comment collecter l'utilisation MÉMOIRE et l'espace DISQUE d'une instance EC2 ?",
+  choices:["Installer et configurer le CloudWatch agent — ces métriques ne sont pas fournies par défaut","Elles sont disponibles nativement","Via CloudTrail","Via VPC Flow Logs"],
+  answer:0,
+  explain:"L'hyperviseur ne voit ni la RAM ni le système de fichiers de l'invité : seul un agent DANS l'instance peut les remonter. Question classique." },
+{ id:"f-cw-emf", level:2, d:"mon", dom:"CloudWatch", type:"qcm",
+  q:"Qu'est-ce que l'Embedded Metric Format (EMF) ?",
+  choices:["Un format de log JSON structuré depuis lequel CloudWatch extrait automatiquement des métriques custom, sans appel PutMetricData","Un format d'export de dashboard","Un format d'archivage S3","Un protocole de l'agent"],
+  answer:0,
+  explain:"EMF évite les appels API PutMetricData (coûteux et à limite de débit) : l'application écrit un log JSON, CloudWatch en tire les métriques." },
+{ id:"f-cw-retention", level:2, d:"mon", dom:"CloudWatch Logs", type:"qcm",
+  q:"Quelle est la rétention par défaut d'un log group CloudWatch Logs ?",
+  choices:["Never expire (indéfinie) — il faut la configurer explicitement pour maîtriser les coûts","30 jours","7 jours","90 jours"],
+  answer:0,
+  explain:"Par défaut les logs ne sont jamais purgés et la facture grimpe. Définir une rétention (ou exporter vers S3 + Glacier) est une optimisation attendue." },
+{ id:"f-xray-sampling", level:2, d:"mon", dom:"X-Ray", type:"qcm",
+  q:"Pourquoi X-Ray applique-t-il un échantillonnage (sampling) par défaut ?",
+  choices:["Pour limiter le coût et l'impact sur les performances tout en gardant une vision statistiquement représentative","Parce que le service est limité à 100 traces","Pour respecter le RGPD","Pour accélérer le réseau"],
+  answer:0,
+  explain:"Règle par défaut : 1 requête/seconde puis 5 % au-delà. Personnalisable par des sampling rules (ex : tracer 100 % d'un endpoint critique)." },
+{ id:"f-cw-anomaly", level:2, d:"mon", dom:"CloudWatch", type:"input",
+  q:"Quelle fonctionnalité CloudWatch apprend le comportement normal d'une métrique et alarme sur les écarts, sans seuil fixe (2 mots) ?",
+  accept:["anomaly detection","detection d anomalies"],
+  explain:"Anomaly detection : bande de confiance apprise par ML. Idéal pour les métriques saisonnières où un seuil statique génère trop de faux positifs." },
+/* --- Incidents --- */
+{ id:"f-eb-pattern", level:2, d:"inc", dom:"EventBridge", type:"qcm",
+  q:"Comment une règle EventBridge sélectionne-t-elle les événements qui l'intéressent ?",
+  choices:["Par un event pattern (filtre JSON sur source, detail-type, detail…) ou par une expression de planification","Par un script Lambda","Par une requête SQL","Par un tag"],
+  answer:0,
+  explain:"Le pattern est un sous-ensemble JSON de l'événement. Ex : {\"source\":[\"aws.ec2\"],\"detail-type\":[\"EC2 Instance State-change Notification\"]}." },
+{ id:"f-eb-archive", level:2, d:"inc", dom:"EventBridge", type:"qcm",
+  q:"Quelle fonctionnalité EventBridge permet de rejouer des événements passés (après correction d'un bug de traitement) ?",
+  choices:["Archive & replay","Le DLQ","Les schemas","Les buses partagées"],
+  answer:0,
+  explain:"On archive les événements d'un bus (avec rétention), puis on les rejoue vers une ou plusieurs règles. Précieux en réponse à incident." },
+{ id:"f-eb-dlq", level:2, d:"inc", dom:"EventBridge", type:"qcm",
+  q:"Que se passe-t-il si une cible EventBridge échoue de façon répétée ?",
+  choices:["Après les tentatives (retry policy : âge maximal et nombre de tentatives), l'événement est envoyé en DLQ SQS si elle est configurée — sinon il est perdu","Il est rejoué indéfiniment","Il est stocké 30 jours automatiquement","La règle se désactive"],
+  answer:0,
+  explain:"Sans DLQ configurée, les événements non délivrés sont PERDUS silencieusement. Configurer une DLQ est une bonne pratique attendue." },
+{ id:"f-ssm-automation-remediation", level:2, d:"inc", dom:"Remédiation", type:"qcm",
+  q:"Quel est le schéma standard d'une remédiation automatique sur AWS ?",
+  choices:["Détection (Config rule / GuardDuty / alarme) → EventBridge → SSM Automation runbook ou Lambda → correction + notification SNS","Un cron qui vérifie toutes les heures","Un ticket manuel","Un script sur une instance bastion"],
+  answer:0,
+  explain:"C'est LE motif du domaine « réponse aux incidents » (14 %). AWS Config peut aussi invoquer directement une remédiation SSM Automation." },
+{ id:"f-config-remediation", level:2, d:"inc", dom:"AWS Config", type:"qcm",
+  q:"Comment AWS Config peut-il corriger automatiquement une ressource non conforme ?",
+  choices:["Par une remediation action associée à la règle, qui exécute un runbook SSM Automation (avec option de remédiation automatique ou manuelle)","Par une Lambda obligatoirement","Config ne peut que détecter","Par une SCP"],
+  answer:0,
+  explain:"Ex : règle s3-bucket-public-read-prohibited + remédiation AWS-DisableS3BucketPublicReadWrite. La correction peut être automatique et réessayée." },
+{ id:"f-health", level:2, d:"inc", dom:"Incidents", type:"qcm",
+  q:"Quel service informe des événements affectant TES ressources (maintenance planifiée, dégradation, retrait d'instance) ?",
+  choices:["AWS Health (Personal Health Dashboard), dont les événements sont routables via EventBridge","CloudWatch","Trusted Advisor","Service Health Dashboard public uniquement"],
+  answer:0,
+  explain:"AWS Health est personnalisé à ton compte, contrairement au dashboard public. Ses événements EventBridge permettent d'automatiser la réaction." },
+/* --- Sécurité --- */
+{ id:"f-iam-eval", level:2, d:"sec", dom:"IAM", type:"qcm",
+  q:"Dans l'évaluation des permissions IAM, quelle règle prime toujours ?",
+  choices:["Un Deny explicite l'emporte sur tout Allow, où qu'il se trouve (identity policy, resource policy, SCP, boundary)","Le dernier Allow évalué","La policy la plus spécifique","La resource policy prime sur l'identity policy"],
+  answer:0,
+  explain:"Ordre : Deny explicite > Allow explicite > Deny implicite (par défaut). Une SCP qui n'autorise pas une action bloque même un administrateur." },
+{ id:"f-permission-boundary", level:2, d:"sec", dom:"IAM", type:"qcm",
+  q:"À quoi sert une permission boundary IAM ?",
+  choices:["Définir le plafond maximal de permissions d'un utilisateur ou rôle — utile pour déléguer la création de rôles sans risque d'escalade de privilèges","Accorder des permissions supplémentaires","Limiter les coûts","Restreindre les régions uniquement"],
+  answer:0,
+  explain:"Permissions effectives = intersection de la policy et de la boundary. C'est la réponse au scénario « laisser les devs créer des rôles sans qu'ils deviennent admin »." },
+{ id:"f-scp-vs-iam", level:2, d:"sec", dom:"Gouvernance", type:"qcm",
+  q:"Une SCP autorise-t-elle une action ?",
+  choices:["Non — elle définit uniquement le plafond de ce qui PEUT être autorisé ; il faut toujours une policy IAM qui accorde l'action","Oui, elle remplace les policies IAM","Oui, pour l'utilisateur root uniquement","Oui, si elle est attachée à la racine"],
+  answer:0,
+  explain:"SCP = garde-fou, jamais une source de droits. Elle s'applique à tous les principals du compte membre, y compris root (sauf compte de gestion)." },
+{ id:"f-s3-encryption", level:2, d:"sec", dom:"Chiffrement", type:"qcm",
+  q:"Quelle différence entre SSE-S3, SSE-KMS et SSE-C ?",
+  choices:["SSE-S3 : clés gérées par S3. SSE-KMS : clés dans KMS (politique et traçabilité CloudTrail). SSE-C : clés fournies par le client à chaque requête","Trois noms du même mécanisme","SSE-C est le plus simple","SSE-KMS ne trace rien"],
+  answer:0,
+  explain:"SSE-KMS est attendu dès qu'on parle de contrôle d'accès aux clés et d'audit. Attention à ses quotas d'appels API sur les gros volumes." },
+{ id:"f-s3-objectlock", level:2, d:"sec", dom:"Conformité", type:"input",
+  q:"Quelle fonctionnalité S3 empêche la suppression ou la modification d'objets pendant une durée définie, en mode WORM (2 mots) ?",
+  accept:["Object Lock","object lock","s3 object lock","verrouillage d objets"],
+  explain:"S3 Object Lock : mode Governance (contournable avec une permission spéciale) ou Compliance (personne, pas même root). Exige le versioning." },
+{ id:"f-cloudtrail-validation", level:2, d:"sec", dom:"Audit", type:"input",
+  q:"Quelle option de CloudTrail permet de prouver qu'un fichier de log n'a pas été modifié après son écriture (3 mots) ?",
+  accept:["log file validation","validation des fichiers journaux","log file integrity validation"],
+  explain:"Log file validation génère des fichiers digest signés. Combiné à S3 Object Lock, il garantit l'intégrité exigée par les audits." },
+{ id:"f-cloudtrail-data-events", level:2, d:"sec", dom:"Audit", type:"qcm",
+  q:"Pourquoi les accès en lecture aux objets d'un bucket S3 n'apparaissent-ils pas dans CloudTrail par défaut ?",
+  choices:["Ce sont des data events, désactivés par défaut (volume et coût) — seuls les management events sont tracés d'office","CloudTrail ne trace jamais S3","Il faut activer GuardDuty","Il faut activer le versioning"],
+  answer:0,
+  explain:"Management events (gratuits, activés) vs data events S3/Lambda/DynamoDB (payants, à activer explicitement). Question fréquente en investigation." },
+{ id:"f-org-trail", level:2, d:"sec", dom:"Audit", type:"qcm",
+  q:"Comment collecter les logs CloudTrail de TOUS les comptes d'une organisation dans un bucket central, sans configuration par compte ?",
+  choices:["Créer un organization trail depuis le compte de gestion : il s'applique automatiquement à tous les comptes, y compris les nouveaux","Un trail par compte, configuré manuellement","Une réplication S3","Un script quotidien"],
+  answer:0,
+  explain:"L'organization trail est LA réponse aux scénarios d'audit centralisé multi-comptes, avec application automatique aux comptes créés ensuite." },
+{ id:"f-secrets-rotation", level:2, d:"sec", dom:"Secrets", type:"qcm",
+  q:"Comment fonctionne la rotation automatique d'un secret RDS dans Secrets Manager ?",
+  choices:["Une Lambda de rotation applique les 4 étapes createSecret, setSecret, testSecret, finishSecret, avec les étiquettes AWSCURRENT et AWSPENDING","Le mot de passe change à chaque lecture","La base est redémarrée","Il faut un script cron"],
+  answer:0,
+  explain:"La stratégie alternating users (deux utilisateurs alternés) évite toute interruption pendant la rotation. Les applications lisent toujours AWSCURRENT." },
+{ id:"f-ecr-scan", level:2, d:"sec", dom:"Conteneurs", type:"qcm",
+  q:"Quelle différence entre le scan basique et le scan amélioré (enhanced) d'ECR ?",
+  choices:["Basic : scan à la poussée, CVE du système d'exploitation. Enhanced : via Amazon Inspector, scan continu, OS + dépendances applicatives","Enhanced est gratuit","Basic est continu","Aucune différence"],
+  answer:0,
+  explain:"Enhanced scanning re-scanne les images déjà publiées quand une nouvelle CVE paraît — indispensable, une image « propre » hier ne l'est plus demain." },
+{ id:"f-guardduty-org", level:2, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Comment activer GuardDuty sur tous les comptes d'une organisation, y compris les futurs ?",
+  choices:["Désigner un compte administrateur délégué GuardDuty dans Organizations et activer l'auto-enable pour les nouveaux comptes","Se connecter à chaque compte","Utiliser une SCP","Via CloudFormation uniquement"],
+  answer:0,
+  explain:"Le pattern « delegated administrator » vaut pour GuardDuty, Security Hub, Config, Inspector et Macie — motif récurrent en gouvernance multi-comptes." },
+{ id:"f-sechub-custom-action", level:2, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Comment déclencher une remédiation depuis un finding Security Hub ?",
+  choices:["Une custom action Security Hub qui émet un événement EventBridge, routé vers une Lambda ou un runbook SSM Automation","Security Hub corrige directement","Via une SCP","Via CloudTrail"],
+  answer:0,
+  explain:"Custom action (manuelle, depuis la console) ou règle EventBridge sur les findings (automatique). Security Hub détecte et centralise, la remédiation est externe." },
+{ id:"f-vpc-flow", level:2, d:"sec", dom:"Réseau", type:"qcm",
+  q:"Que contiennent les VPC Flow Logs ?",
+  choices:["Les métadonnées du trafic IP (source, destination, ports, protocole, octets, ACCEPT/REJECT) — pas le contenu des paquets","Le contenu complet des paquets","Uniquement le trafic refusé","Les requêtes DNS uniquement"],
+  answer:0,
+  explain:"Métadonnées seulement. Pour le contenu, il faut VPC Traffic Mirroring. Les Flow Logs servent à diagnostiquer les blocages de security group/NACL." },
+{ id:"f-abac", level:2, d:"sec", dom:"IAM", type:"qcm",
+  q:"Qu'est-ce que l'ABAC (attribute-based access control) sur AWS ?",
+  choices:["Autoriser l'accès en comparant les tags du principal et ceux de la ressource (ex : aws:PrincipalTag/Projet = aws:ResourceTag/Projet)","Un contrôle basé sur les groupes IAM","Un chiffrement par attribut","Une politique de facturation"],
+  answer:0,
+  explain:"ABAC évite de multiplier les policies : une seule règle couvre tous les projets, à condition que la stratégie de tagging soit imposée (tag policies)." },
+/* ============ NIVEAU 3 — SCÉNARIOS ============ */
+{ id:"s-cd-alarm", level:3, d:"sdlc", dom:"Déploiement", type:"qcm",
+  q:"Après un déploiement, le taux d'erreurs 5xx grimpe. L'équipe veut un retour arrière AUTOMATIQUE, sans intervention humaine. Quelle configuration ?",
+  choices:["Associer une alarme CloudWatch sur le taux 5xx au deployment group CodeDeploy, avec rollback automatique activé","Un runbook manuel documenté","Une astreinte 24/7","Un déploiement plus lent"],
+  answer:0,
+  explain:"CodeDeploy surveille les alarmes pendant le déploiement et déclenche le rollback. Combiné à un canary, l'impact reste limité à quelques pourcents du trafic." },
+{ id:"s-lambda-canary", level:3, d:"sdlc", dom:"Déploiement", type:"qcm",
+  q:"Une fonction Lambda critique doit être livrée en exposant d'abord 10 % du trafic pendant 10 minutes, avec rollback automatique sur erreur. Quelle solution avec le MOINS de code maison ?",
+  choices:["CodeDeploy avec une deployment config Canary et des alarmes CloudWatch, en s'appuyant sur les alias pondérés (SAM/CDK le configurent nativement)","Deux fonctions et un routage maison dans API Gateway","Un déploiement all-at-once et une surveillance manuelle","Des feature flags dans le code"],
+  answer:0,
+  explain:"SAM expose DeploymentPreference (Type, Alarms, Hooks) qui génère toute la mécanique CodeDeploy — zéro code d'orchestration à écrire." },
+{ id:"s-ecs-bluegreen", level:3, d:"sdlc", dom:"Déploiement", type:"qcm",
+  q:"Un service ECS doit être déployé en blue/green avec des tests automatisés sur la nouvelle version AVANT que les utilisateurs y accèdent. Comment ?",
+  choices:["CodeDeploy blue/green pour ECS avec un listener de test sur l'ALB, et une Lambda de validation branchée sur le hook AfterAllowTestTraffic","Un rolling update ECS classique","Deux clusters ECS et un basculement DNS manuel","Des tests en préproduction uniquement"],
+  answer:0,
+  explain:"Le listener de test expose la version verte sur un port séparé : on la valide réellement en conditions de production avant la bascule du trafic client." },
+{ id:"s-ecs-rolling", level:3, d:"sdlc", dom:"Déploiement", type:"qcm",
+  q:"Un service ECS en rolling update doit conserver 100 % de capacité pendant le déploiement. Quels paramètres ?",
+  choices:["minimumHealthyPercent à 100 et maximumPercent à 200 : ECS démarre les nouvelles tâches avant d'arrêter les anciennes","minimumHealthyPercent 0 et maximumPercent 100","Les deux à 100","Les deux à 50"],
+  answer:0,
+  explain:"min 100 / max 200 = surcapacité temporaire, aucune dégradation. min 50 / max 100 économise des ressources mais dégrade la capacité pendant le déploiement." },
+{ id:"s-ecs-circuit", level:3, d:"sdlc", dom:"Déploiement", type:"qcm",
+  q:"Un déploiement ECS échoue en boucle : les nouvelles tâches crashent et ECS les relance indéfiniment. Quelle fonctionnalité arrête ce cycle et revient à la version stable ?",
+  choices:["Le deployment circuit breaker avec rollback activé","Réduire le desired count","Augmenter le health check grace period","Passer sur Fargate"],
+  answer:0,
+  explain:"Le circuit breaker détecte l'échec répété du déploiement, l'arrête et (avec rollback: true) restaure la dernière révision saine du task definition." },
+{ id:"s-pipeline-crossaccount", level:3, d:"sdlc", dom:"CodePipeline", type:"qcm",
+  q:"Un pipeline dans le compte « outils » doit déployer dans les comptes dev, staging et prod. Quelle architecture ?",
+  choices:["Des rôles IAM cross-account assumés par le pipeline dans chaque compte cible, avec une clé KMS partagée pour le bucket d'artefacts","Un pipeline dupliqué dans chaque compte","Des access keys stockées en variables","Un VPC peering entre comptes"],
+  answer:0,
+  explain:"Motif canonique : le pipeline assume un rôle de déploiement dans le compte cible. La KMS key doit autoriser les comptes cibles à déchiffrer les artefacts." },
+{ id:"s-artifacts-promote", level:3, d:"sdlc", dom:"Pipelines", type:"qcm",
+  q:"Pour garantir que le binaire testé en staging est EXACTEMENT celui déployé en production, que fais-tu ?",
+  choices:["Construire l'artefact une seule fois en début de pipeline et le promouvoir d'un environnement à l'autre, en injectant la configuration au déploiement","Recompiler à chaque environnement depuis le même commit","Comparer les checksums après coup","Rebuilder uniquement pour la prod"],
+  answer:0,
+  explain:"Build once, deploy many. Recompiler introduit un risque (dépendance amont modifiée, version de toolchain différente) même à commit identique." },
+{ id:"s-build-slow", level:3, d:"sdlc", dom:"Optimisation", type:"qcm",
+  q:"Un build CodeBuild dure 25 min, dont 15 de téléchargement de dépendances identiques à chaque exécution. Quelle optimisation en priorité ?",
+  choices:["Activer le cache (S3 ou local) sur les répertoires de dépendances, et envisager une image de build custom pré-équipée","Passer sur une instance de build plus grosse uniquement","Réduire le nombre de tests","Builder moins souvent"],
+  answer:0,
+  explain:"On traite la cause : le téléchargement répété. Une image custom dans ECR contenant déjà les outils supprime aussi le temps d'installation." },
+{ id:"s-build-parallel", level:3, d:"sdlc", dom:"Optimisation", type:"qcm",
+  q:"Une suite de tests séquentielle de 40 minutes bloque le pipeline. Quelle approche CodeBuild ?",
+  choices:["Un batch build en mode build-fanout (ou plusieurs actions parallèles dans la même stage) pour répartir les tests","Supprimer les tests lents","Augmenter le timeout","Exécuter les tests après le déploiement"],
+  answer:0,
+  explain:"CodePipeline exécute en parallèle les actions d'une même stage ayant le même runOrder ; CodeBuild propose les batch builds pour le fan-out natif." },
+{ id:"s-cfn-nested-vs-module", level:3, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Un template CloudFormation de 3000 lignes devient ingérable et plusieurs équipes doivent réutiliser les mêmes briques. Que recommandes-tu ?",
+  choices:["Découper en nested stacks réutilisables (ou en constructs CDK), versionnées dans S3 et référencées par les templates parents","Un seul template par compte","Copier-coller les sections utiles","Passer en console manuelle"],
+  answer:0,
+  explain:"Nested stacks = modularité et réutilisation, avec une limite de taille de template contournée. Le CDK apporte en plus les boucles et le typage." },
+{ id:"s-cfn-stack-fail", level:3, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Une mise à jour de stack échoue et reste bloquée en UPDATE_ROLLBACK_FAILED. Que faire ?",
+  choices:["Utiliser continue-update-rollback en ignorant (skip) les ressources problématiques, corriger manuellement, puis relancer la mise à jour","Supprimer la stack et tout recréer","Attendre le timeout","Modifier le template et redéployer directement"],
+  answer:0,
+  explain:"ContinueUpdateRollback avec ResourcesToSkip débloque la stack sans tout détruire. Supprimer une stack de production serait catastrophique." },
+{ id:"s-cfn-manual-change", level:3, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Des ingénieurs modifient à la main des ressources gérées par CloudFormation, provoquant des échecs de déploiement. Quelle réponse durable ?",
+  choices:["Restreindre les permissions IAM aux seuls déploiements via CloudFormation (SCP/policies), détecter le drift en continu avec AWS Config, et alerter","Documenter l'interdiction","Détecter le drift une fois par trimestre","Recréer les stacks régulièrement"],
+  answer:0,
+  explain:"Le contrôle technique prime : si personne ne PEUT modifier hors pipeline, le drift disparaît. Config + EventBridge fournissent la surveillance continue." },
+{ id:"s-cfn-secret", level:3, d:"iac", dom:"CloudFormation", type:"qcm",
+  q:"Un template doit créer une base RDS dont le mot de passe ne doit apparaître ni dans le template, ni dans les paramètres, ni dans les logs.",
+  choices:["Générer le secret dans Secrets Manager (AWS::SecretsManager::Secret avec GenerateSecretString) et le référencer par dynamic reference","Un paramètre avec NoEcho","Un paramètre chiffré en base64","Passer le mot de passe en variable d'environnement du pipeline"],
+  answer:0,
+  explain:"Le secret est généré côté AWS et n'existe jamais en clair côté pipeline. SecretTargetAttachment relie ensuite le secret à l'instance RDS pour la rotation." },
+{ id:"s-multi-account-baseline", level:3, d:"iac", dom:"Multi-comptes", type:"qcm",
+  q:"Chaque nouveau compte AWS de l'organisation doit recevoir automatiquement une base commune (rôles, CloudTrail, Config, alarmes). Quelle solution avec le MOINS d'effort opérationnel ?",
+  choices:["Des StackSets service-managed avec auto-deployment sur l'OU concernée (idéalement via AWS Control Tower)","Un script à lancer à chaque création de compte","Un template partagé que chaque équipe déploie","Une AMI commune"],
+  answer:0,
+  explain:"L'auto-deployment applique la baseline dès la création du compte, sans intervention. Control Tower industrialise ce motif avec ses guardrails." },
+{ id:"s-config-vs-cfn", level:3, d:"iac", dom:"Conformité", type:"qcm",
+  q:"L'entreprise veut détecter EN CONTINU tout bucket S3 rendu public et le corriger automatiquement. Quelle combinaison ?",
+  choices:["Une règle AWS Config (s3-bucket-public-read-prohibited) avec remédiation automatique par SSM Automation","La détection de drift CloudFormation","Un scan quotidien par script","Trusted Advisor"],
+  answer:0,
+  explain:"Config évalue à chaque changement de configuration et peut remédier. Le drift CloudFormation est ponctuel et ne corrige rien." },
+{ id:"s-ami-pipeline", level:3, d:"iac", dom:"Images", type:"qcm",
+  q:"Les AMI de l'entreprise doivent être reconstruites chaque mois avec les derniers correctifs, testées, puis partagées avec tous les comptes. Quelle solution managée ?",
+  choices:["EC2 Image Builder : pipeline d'image avec composants de build et de test, planification et distribution multi-comptes/régions","Un script Packer sur une instance dédiée","Créer les AMI à la main","Patcher les instances en production"],
+  answer:0,
+  explain:"Image Builder gère build + test + distribution + versionnement, sans infrastructure à maintenir. C'est le pilier de l'infrastructure immuable sur AWS." },
+{ id:"s-golden-vs-config", level:3, d:"iac", dom:"Configuration", type:"qcm",
+  q:"Un déploiement met 12 minutes car chaque instance installe ses dépendances au démarrage (UserData). Comment réduire ce délai ?",
+  choices:["Pré-construire une AMI dorée contenant les dépendances (Image Builder), pour ne laisser au démarrage que la configuration spécifique","Augmenter la taille des instances","Ajouter un lifecycle hook plus long","Désactiver les health checks"],
+  answer:0,
+  explain:"Déplacer le travail du démarrage vers la construction de l'image : le scale-out devient rapide et reproductible. Complémentaire : les warm pools." },
+{ id:"s-asg-longboot", level:3, d:"resil", dom:"Auto Scaling", type:"qcm",
+  q:"Le scale-out est trop lent : les instances mettent 6 minutes à devenir opérationnelles et le trafic monte plus vite. Quelles options ?",
+  choices:["Warm pool d'instances pré-initialisées, AMI dorée, et predictive scaling si la charge est cyclique","Baisser le seuil de CPU uniquement","Supprimer le health check grace period","Passer en scaling manuel"],
+  answer:0,
+  explain:"On attaque le délai de mise en service (warm pool + AMI) et l'anticipation (predictive scaling apprend les motifs récurrents et provisionne à l'avance)." },
+{ id:"s-stateful", level:3, d:"resil", dom:"Architecture", type:"qcm",
+  q:"Les utilisateurs sont déconnectés à chaque déploiement car les sessions sont stockées en mémoire sur les instances. Quelle correction architecturale ?",
+  choices:["Externaliser les sessions (ElastiCache Redis ou DynamoDB) pour rendre les instances stateless","Activer les sticky sessions","Allonger le deregistration delay","Déployer la nuit"],
+  answer:0,
+  explain:"Les sticky sessions ne font que masquer le problème : l'instance qui disparaît emporte les sessions. Stateless = prérequis de l'élasticité et des déploiements sereins." },
+{ id:"s-dr-choice", level:3, d:"resil", dom:"Reprise", type:"qcm",
+  q:"RTO de 10 minutes et RPO de 1 minute, avec un budget contraint. Quelle stratégie de DR ?",
+  choices:["Warm standby : une version réduite mais ACTIVE dans la région secondaire, mise à l'échelle lors du basculement, avec réplication continue des données","Backup & restore","Pilot light","Multi-site actif/actif"],
+  answer:0,
+  explain:"Backup & restore (heures) et pilot light (dizaines de minutes) sont trop lents ; le multi-site actif/actif tiendrait le RTO mais coûte le double. Warm standby est le compromis." },
+{ id:"s-dr-test", level:3, d:"resil", dom:"Reprise", type:"qcm",
+  q:"Comment garantir que le plan de reprise fonctionnera vraiment le jour J ?",
+  choices:["Tester régulièrement le basculement (game days, exercices planifiés) et automatiser la procédure en IaC pour qu'elle soit reproductible","Documenter la procédure en détail","Faire confiance à la réplication","Tester une fois à la mise en place"],
+  answer:0,
+  explain:"Un plan de DR jamais testé est une hypothèse. AWS Resilience Hub et Fault Injection Service permettent d'éprouver la résilience méthodiquement." },
+{ id:"s-multiaz-outage", level:3, d:"resil", dom:"Haute disponibilité", type:"qcm",
+  q:"Une application doit survivre à la panne complète d'une zone de disponibilité, sans intervention. Que vérifies-tu ?",
+  choices:["ASG et subnets répartis sur au moins 2 AZ, ELB multi-AZ, RDS en Multi-AZ, et une capacité suffisante pour absorber la perte d'une AZ","Un snapshot quotidien","Une seconde région active","Des instances plus grosses"],
+  answer:0,
+  explain:"Piège du dimensionnement : si 2 AZ tournent à 100 %, la perte d'une AZ sature l'autre. Il faut prévoir la marge (N+1)." },
+{ id:"s-throttle", level:3, d:"resil", dom:"Architecture", type:"qcm",
+  q:"Un pic de trafic sature la base de données et fait tomber l'application. Quelle correction architecturale ?",
+  choices:["Découpler avec une file SQS entre le front et le traitement, pour lisser les pics et absorber la charge","Augmenter la taille de la base indéfiniment","Limiter le nombre d'utilisateurs","Désactiver les health checks"],
+  answer:0,
+  explain:"Le buffering par file transforme un pic en flux régulier. Complément : Auto Scaling piloté par la profondeur de la file (ApproximateNumberOfMessagesVisible)." },
+{ id:"s-alarm-noise", level:3, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"L'équipe reçoit 200 alertes par jour et ignore désormais les notifications. Que fais-tu ?",
+  choices:["Alarmer sur les symptômes visibles par l'utilisateur (SLO), supprimer les alertes non actionnables, et regrouper les corrélées en alarmes composites","Augmenter tous les seuils","Créer un canal dédié","Ajouter des destinataires"],
+  answer:0,
+  explain:"La fatigue d'alerte fait rater les vrais incidents. Une alerte qui réveille quelqu'un doit être urgente, actionnable et liée à l'impact client." },
+{ id:"s-log-central", level:3, d:"mon", dom:"Logs", type:"qcm",
+  q:"Les logs de 40 comptes AWS doivent être centralisés dans un compte d'audit, en quasi temps réel, pour analyse et conservation longue durée.",
+  choices:["Subscription filters CloudWatch Logs → Kinesis Data Firehose cross-account → S3 (avec lifecycle vers Glacier) et OpenSearch pour la recherche","Copier les fichiers chaque nuit par script","Donner un accès console à chaque compte","Un seul log group partagé"],
+  answer:0,
+  explain:"Firehose gère le buffering, la compression et la livraison. S3 + lifecycle assure le stockage long terme économique, OpenSearch la recherche opérationnelle." },
+{ id:"s-log-cost", level:3, d:"mon", dom:"Logs", type:"qcm",
+  q:"La facture CloudWatch Logs explose. Quelles actions concrètes ?",
+  choices:["Définir des rétentions adaptées par log group, exporter l'historique vers S3/Glacier, réduire la verbosité, et utiliser les metric filters plutôt que de tout indexer","Supprimer tous les logs","Désactiver CloudWatch","Réduire le nombre d'instances"],
+  answer:0,
+  explain:"Par défaut la rétention est infinie. L'ingestion et le stockage sont facturés : la rétention par groupe est le premier levier, souvent oublié." },
+{ id:"s-app-slow", level:3, d:"mon", dom:"Observabilité", type:"qcm",
+  q:"Une requête traverse 8 microservices et devient lente, sans qu'aucun service ne semble fautif isolément. Quel outil ?",
+  choices:["X-Ray : traçage distribué, service map et analyse des segments pour localiser le maillon lent","Les métriques CPU de chaque service","Les VPC Flow Logs","CloudTrail"],
+  answer:0,
+  explain:"Sans corrélation de bout en bout, on ne fait que deviner. X-Ray relie les segments par trace ID et révèle où le temps est réellement consommé." },
+{ id:"s-custom-metric", level:3, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"Il faut alarmer dès que le mot « OutOfMemory » apparaît dans les logs applicatifs. Comment ?",
+  choices:["Un metric filter sur le log group qui incrémente une métrique custom, puis une alarme CloudWatch sur cette métrique","Une requête Logs Insights planifiée","Un script qui lit les logs","Une règle AWS Config"],
+  answer:0,
+  explain:"Metric filter + alarme = le motif standard pour alarmer sur un CONTENU de log. Penser au traitement des données manquantes (treat missing data)." },
+{ id:"s-dashboards", level:3, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"La direction veut suivre les 4 métriques DORA de l'organisation. Où trouver les données brutes sur AWS ?",
+  choices:["Les événements CodePipeline/CodeDeploy via EventBridge stockés et agrégés (Lambda → DynamoDB/S3), restitués dans un dashboard CloudWatch ou QuickSight","Dans Trusted Advisor","Dans Cost Explorer","Dans AWS Config"],
+  answer:0,
+  explain:"AWS ne calcule pas DORA nativement : on capte les événements de déploiement (succès/échec, horodatage) et on dérive fréquence, lead time, CFR et MTTR." },
+{ id:"s-incident-auto", level:3, d:"inc", dom:"Remédiation", type:"qcm",
+  q:"Dès qu'une instance EC2 passe en état d'alarme de status check, elle doit être remplacée automatiquement et l'équipe notifiée.",
+  choices:["Une règle EventBridge (ou alarme CloudWatch avec action EC2 recover/terminate) déclenchant le remplacement par l'ASG, plus une notification SNS","Une astreinte humaine","Un script cron de vérification","Un redémarrage quotidien préventif"],
+  answer:0,
+  explain:"Dans un ASG, marquer l'instance unhealthy suffit : l'ASG la remplace. Hors ASG, l'action de récupération de l'alarme CloudWatch fait le travail." },
+{ id:"s-guardduty-response", level:3, d:"inc", dom:"Remédiation", type:"qcm",
+  q:"GuardDuty détecte une instance EC2 communiquant avec une IP de minage de cryptomonnaie. Quelle réponse automatisée ?",
+  choices:["EventBridge sur le finding → Lambda/SSM Automation : isoler l'instance (security group de quarantaine), prendre un snapshot pour investigation, notifier l'équipe","Terminer immédiatement l'instance","Ignorer si l'application fonctionne","Attendre la revue hebdomadaire"],
+  answer:0,
+  explain:"Isoler AVANT de détruire : le snapshot préserve les preuves forensiques. Terminer l'instance efface les traces nécessaires à l'analyse." },
+{ id:"s-runbook-auto", level:3, d:"inc", dom:"Remédiation", type:"qcm",
+  q:"Un incident récurrent (disque plein sur un serveur applicatif) mobilise l'astreinte chaque semaine. Quelle approche ?",
+  choices:["Automatiser la remédiation : alarme CloudWatch (métrique disque via l'agent) → SSM Automation runbook qui purge les logs et notifie, puis traiter la cause racine","Augmenter la taille des disques et attendre","Documenter la procédure manuelle","Supprimer l'alarme"],
+  answer:0,
+  explain:"Réduire le MTTR par l'automatisation, mais SANS masquer la cause : le toil récurrent doit aussi déclencher une correction de fond (rotation des logs)." },
+{ id:"s-postmortem", level:3, d:"inc", dom:"Incidents", type:"qcm",
+  q:"Comment garantir qu'un incident majeur améliore réellement le système ?",
+  choices:["Un postmortem sans blâme, dont les actions correctives deviennent des tickets priorisés et suivis jusqu'à leur déploiement","Un rapport archivé","Une sanction pour l'auteur de l'erreur","Une réunion de crise"],
+  answer:0,
+  explain:"Blâmer pousse à cacher l'information. Et une analyse dont les actions ne sont pas suivies ne change rien : c'est le suivi qui ferme la boucle." },
+{ id:"s-mttr-reduce", level:3, d:"inc", dom:"Incidents", type:"qcm",
+  q:"Quel est le premier réflexe lors d'un incident de production majeur ?",
+  choices:["Rétablir le service au plus vite (rollback, bascule, feature flag), puis diagnostiquer la cause une fois les utilisateurs servis","Trouver la cause racine avant toute action","Identifier le responsable","Attendre la reproduction du problème"],
+  answer:0,
+  explain:"Atténuer d'abord, comprendre ensuite. Chercher la cause pendant que les utilisateurs sont impactés allonge inutilement le MTTR." },
+{ id:"s-least-priv", level:3, d:"sec", dom:"IAM", type:"qcm",
+  q:"Comment resserrer les permissions d'un rôle de déploiement trop permissif, sans casser le pipeline ?",
+  choices:["Analyser l'usage réel avec IAM Access Analyzer (génération de policy à partir de l'historique CloudTrail), puis appliquer la policy resserrée et surveiller","Retirer toutes les permissions et attendre les erreurs","Garder AdministratorAccess","Créer un utilisateur IAM dédié"],
+  answer:0,
+  explain:"IAM Access Analyzer génère une policy fondée sur les actions réellement utilisées — la méthode outillée pour atteindre le moindre privilège sans deviner." },
+{ id:"s-keys-rotation", level:3, d:"sec", dom:"IAM", type:"qcm",
+  q:"Un audit révèle des access keys IAM vieilles de 2 ans utilisées par des scripts sur EC2. Quelle correction durable ?",
+  choices:["Remplacer les access keys par des rôles IAM attachés aux instances (instance profile) : credentials temporaires et rotation automatique","Faire tourner les clés tous les 90 jours","Chiffrer les clés dans un fichier","Restreindre les clés par IP"],
+  answer:0,
+  explain:"Supprimer le secret plutôt que le gérer. Sur EC2 → instance profile ; en CI externe → OIDC ; entre services AWS → rôles assumés." },
+{ id:"s-public-s3", level:3, d:"sec", dom:"Conformité", type:"qcm",
+  q:"Comment empêcher DÉFINITIVEMENT toute exposition publique d'un bucket S3 dans l'organisation ?",
+  choices:["Activer S3 Block Public Access au niveau du compte (via StackSets sur tous les comptes) et interdire sa désactivation par une SCP","Une règle Config avec remédiation seule","Une revue mensuelle des buckets","Chiffrer les objets"],
+  answer:0,
+  explain:"Prévention (Block Public Access + SCP) plutôt que détection/correction. Config reste utile en filet de sécurité et pour la preuve d'audit." },
+{ id:"s-compliance-evidence", level:3, d:"sec", dom:"Conformité", type:"qcm",
+  q:"Un auditeur exige la preuve que toutes les ressources sont restées conformes pendant 12 mois. Que fournis-tu ?",
+  choices:["L'historique de conformité d'AWS Config (avec agrégateur multi-comptes) et les logs CloudTrail avec validation d'intégrité, conservés en S3 verrouillé","Des captures d'écran de la console","Les templates CloudFormation","Un rapport Trusted Advisor"],
+  answer:0,
+  explain:"Config conserve l'historique de configuration et de conformité dans le temps ; CloudTrail prouve qui a agi. S3 Object Lock rend les preuves inaltérables." },
+{ id:"s-secret-leak", level:3, d:"sec", dom:"Secrets", type:"qcm",
+  q:"Une access key AWS a été committée dans un dépôt Git public. Quel est l'ORDRE des actions ?",
+  choices:["Désactiver/supprimer la clé immédiatement, analyser CloudTrail pour détecter un usage frauduleux, puis nettoyer l'historique Git et mettre en place un scan de secrets","Nettoyer l'historique Git d'abord","Rendre le dépôt privé et attendre","Changer le mot de passe du compte"],
+  answer:0,
+  explain:"La clé est compromise dès la publication : la révoquer est prioritaire. Nettoyer l'historique d'abord laisserait la clé active pendant l'opération." },
+{ id:"s-pipeline-scan", level:3, d:"sec", dom:"DevSecOps", type:"qcm",
+  q:"Comment empêcher qu'une image de conteneur contenant une vulnérabilité critique atteigne la production ?",
+  choices:["Scanner l'image dans le pipeline (ECR enhanced scanning / Inspector) et faire ÉCHOUER l'étape si une CVE critique est détectée, plus un scan continu du registre","Scanner après le déploiement","Un audit trimestriel","Faire confiance à l'image de base officielle"],
+  answer:0,
+  explain:"Gate bloquante dans le pipeline (shift left) + scan continu du registre, car une nouvelle CVE peut concerner une image déjà publiée." },
+{ id:"s-iac-scan", level:3, d:"sec", dom:"DevSecOps", type:"qcm",
+  q:"Comment détecter une mauvaise configuration de sécurité DANS le code IaC, avant tout déploiement ?",
+  choices:["Un scan statique de l'IaC dans le pipeline (cfn-lint, cfn_nag, CloudFormation Guard, Checkov) qui bloque en cas de violation de règle","AWS Config après déploiement","Une revue de code humaine seule","Trusted Advisor"],
+  answer:0,
+  explain:"CloudFormation Guard (policy-as-code) exprime des règles vérifiées sur le template. Config détecte APRÈS coup, ce qui est déjà trop tard." },
+{ id:"s-approval-sod", level:3, d:"sec", dom:"Conformité", type:"qcm",
+  q:"La conformité exige que le déploiement en production soit validé par une personne différente de l'auteur du code, avec traçabilité.",
+  choices:["Une action Manual approval dans CodePipeline, restreinte par IAM à un groupe distinct des développeurs, tracée dans CloudTrail","Une revue de code par un pair suffit","Un e-mail de validation","Une notification Slack"],
+  answer:0,
+  explain:"Séparation des tâches par IAM + piste d'audit CloudTrail = la preuve exigée par l'auditeur, bien plus solide qu'un processus hors outil." },
+{ id:"s-tag-enforce", level:3, d:"sec", dom:"Gouvernance", type:"qcm",
+  q:"Comment garantir que toutes les ressources portent un tag « CostCenter » ?",
+  choices:["Combiner tag policies (Organizations), une SCP refusant la création sans le tag, et une règle Config required-tags pour l'existant","Documenter la convention","Un rapport mensuel","Un script de correction hebdomadaire"],
+  answer:0,
+  explain:"Prévention (SCP avec condition sur aws:RequestTag) pour le nouveau + détection/remédiation (Config) pour l'historique. Les deux sont complémentaires." },
+{ id:"s-crossaccount-read", level:3, d:"sec", dom:"IAM", type:"qcm",
+  q:"Une équipe d'un compte A doit lire un bucket S3 du compte B. Quelle configuration ?",
+  choices:["Une bucket policy dans B autorisant le principal de A, et une policy IAM dans A autorisant l'action — les deux côtés sont nécessaires","Uniquement une policy IAM dans A","Uniquement une bucket policy dans B","Rendre le bucket public"],
+  answer:0,
+  explain:"En cross-account, l'accès exige un Allow des DEUX côtés (identity policy + resource policy). Vrai aussi pour KMS : la key policy doit autoriser le compte." },
+{ id:"s-least-overhead", level:3, d:"sdlc", dom:"Stratégie", type:"qcm",
+  q:"Une question DOP précise « with the LEAST operational overhead ». Quel type de réponse privilégier ?",
+  choices:["La solution managée qui exige le moins de code maison et de maintenance (service AWS natif plutôt que script ou serveur à administrer)","La solution la moins chère","La plus rapide à exécuter","Celle qui utilise le plus de services"],
+  answer:0,
+  explain:"Réflexe d'examen : « least operational overhead » → managé et natif. « Most cost-effective » → coût. Lire ce qualificatif AVANT d'analyser les options fait gagner du temps." },
+/* ============ CODE À COMPLÉTER ============ */
+{ id:"c-buildspec-version", level:2, d:"sdlc", dom:"buildspec", type:"input",
+  code:"____: 0.2\nphases:\n  install:\n    runtime-versions:\n      nodejs: 20\n  build:\n    commands:\n      - npm ci && npm test",
+  q:"Complète la clé obligatoire en tête d'un buildspec :",
+  accept:["version"],
+  explain:"version: 0.2 est la syntaxe actuelle (0.1 exécutait chaque commande dans son propre shell — les variables ne se propageaient pas)." },
+{ id:"c-buildspec-artifacts", level:2, d:"sdlc", dom:"buildspec", type:"input",
+  code:"phases:\n  build:\n    commands:\n      - npm run build\n____:\n  files:\n    - '**/*'\n  base-directory: dist",
+  q:"Complète la section qui déclare les fichiers à transmettre à l'étape suivante :",
+  accept:["artifacts"],
+  explain:"base-directory évite de reproduire l'arborescence complète ; discard-paths: yes aplatit la structure." },
+{ id:"c-buildspec-ecr", level:3, d:"sdlc", dom:"buildspec", type:"qcm",
+  code:"  pre_build:\n    commands:\n      - aws ecr get-login-password --region $AWS_REGION |\n          docker login --username AWS --password-stdin $REPO_URI\n  post_build:\n    commands:\n      - docker push $REPO_URI:$CODEBUILD_____",
+  q:"Quelle variable d'environnement CodeBuild identifie de façon unique la version du code buildé (souvent utilisée comme tag d'image) ?",
+  choices:["RESOLVED_SOURCE_VERSION","BUILD_NUMBER","SOURCE_REPO","PROJECT_NAME"],
+  answer:0,
+  explain:"CODEBUILD_RESOLVED_SOURCE_VERSION = le SHA du commit : tag d'image traçable jusqu'au code source. CODEBUILD_BUILD_NUMBER est un simple compteur." },
+{ id:"c-appspec-ec2", level:2, d:"sdlc", dom:"appspec", type:"input",
+  code:"version: 0.0\nos: linux\nfiles:\n  - source: /\n    destination: /var/www/html\n____:\n  AfterInstall:\n    - location: scripts/configure.sh\n  ApplicationStart:\n    - location: scripts/start.sh",
+  q:"Complète la section qui déclare les scripts du cycle de vie :",
+  accept:["hooks"],
+  explain:"Chaque hook accepte location, timeout et runas. La section files ne concerne que les déploiements EC2/on-premises." },
+{ id:"c-appspec-lambda", level:3, d:"sdlc", dom:"appspec", type:"input",
+  code:"version: 0.0\nResources:\n  - maFonction:\n      Type: AWS::Lambda::Function\n      Properties:\n        Name: maFonction\n        Alias: prod\n        CurrentVersion: 3\n        TargetVersion: 4\nHooks:\n  - ____: LambdaValidationBefore",
+  q:"Complète le hook exécuté AVANT que le trafic ne soit envoyé à la nouvelle version :",
+  accept:["BeforeAllowTraffic","before allow traffic"],
+  explain:"Lambda n'a que deux hooks : BeforeAllowTraffic et AfterAllowTraffic. Chacun pointe vers une fonction de validation qui appelle PutLifecycleEventHookExecutionStatus." },
+{ id:"c-cfn-getatt", level:2, d:"iac", dom:"CloudFormation", type:"qcm",
+  code:"Outputs:\n  BucketArn:\n    Value: !____ MonBucket.Arn",
+  q:"Complète la fonction qui récupère un attribut précis d'une ressource :",
+  choices:["GetAtt","Ref","Sub","ImportValue"],
+  answer:0,
+  explain:"!GetAtt ressource.attribut. !Ref MonBucket renverrait le NOM du bucket, pas son ARN." },
+{ id:"c-cfn-condition", level:3, d:"iac", dom:"CloudFormation", type:"input",
+  code:"Conditions:\n  IsProd: !Equals [ !Ref EnvType, prod ]\n\nResources:\n  BackupBucket:\n    Type: AWS::S3::Bucket\n    ____: IsProd",
+  q:"Complète l'attribut qui ne crée cette ressource que si la condition est vraie :",
+  accept:["Condition","condition"],
+  explain:"Condition: NomCondition sur une ressource = création conditionnelle. On peut aussi l'utiliser dans un Output ou avec !If dans une propriété." },
+{ id:"c-cfn-deletionpolicy", level:2, d:"iac", dom:"CloudFormation", type:"input",
+  code:"  BaseDeDonnees:\n    Type: AWS::RDS::DBInstance\n    ____: Snapshot\n    Properties:\n      Engine: postgres",
+  q:"Complète l'attribut qui déclenche une sauvegarde avant suppression de la ressource :",
+  accept:["DeletionPolicy","deletionpolicy","deletion policy"],
+  explain:"DeletionPolicy: Snapshot (ou Retain). Sans lui, supprimer la stack détruit la base et ses données — définitivement." },
+{ id:"c-cfn-creationpolicy", level:3, d:"iac", dom:"CloudFormation", type:"qcm",
+  code:"  ServeurWeb:\n    Type: AWS::EC2::Instance\n    CreationPolicy:\n      ResourceSignal:\n        Count: 1\n        Timeout: PT10M\n    # UserData se termine par :\n    #   /opt/aws/bin/____ -e $? --stack ... --resource ServeurWeb",
+  q:"Quelle commande l'instance doit-elle exécuter pour signaler qu'elle est prête ?",
+  choices:["cfn-signal","cfn-init","cfn-hup","cfn-get-metadata"],
+  answer:0,
+  explain:"Sans cfn-signal, CloudFormation attend jusqu'au timeout puis échoue. cfn-init applique la config, cfn-signal notifie, cfn-hup surveille les changements." },
+{ id:"c-cfn-dynamic", level:3, d:"iac", dom:"CloudFormation", type:"qcm",
+  code:"      MasterUserPassword: '{{resolve:____:MonSecretRDS:SecretString:password}}'",
+  q:"Complète la dynamic reference vers un secret à rotation automatique :",
+  choices:["secretsmanager","ssm","ssm-secure","kms"],
+  answer:0,
+  explain:"Trois dynamic references : ssm (paramètre standard), ssm-secure (SecureString) et secretsmanager (avec rotation). Aucun secret n'apparaît dans le template." },
+{ id:"c-cfn-stackset", level:3, d:"iac", dom:"CloudFormation", type:"input",
+  code:"aws cloudformation create-stack-set \\\n  --stack-set-name baseline \\\n  --template-body file://baseline.yaml \\\n  --permission-model ____ \\\n  --auto-deployment Enabled=true,RetainStacksOnAccountRemoval=false",
+  q:"Complète le modèle de permission requis pour l'auto-deployment via AWS Organizations :",
+  accept:["SERVICE_MANAGED","service managed","service-managed"],
+  explain:"L'auto-deployment sur les nouveaux comptes d'une OU n'existe qu'en SERVICE_MANAGED. En SELF_MANAGED, tu fournis toi-même les rôles IAM." },
+{ id:"c-iam-condition", level:3, d:"sec", dom:"IAM", type:"qcm",
+  code:"{\n  \"Effect\": \"Deny\",\n  \"Action\": \"s3:*\",\n  \"Resource\": \"*\",\n  \"____\": { \"Bool\": { \"aws:SecureTransport\": \"false\" } }\n}",
+  q:"Complète l'élément qui rend cette règle applicable uniquement en HTTP non chiffré :",
+  choices:["Condition","Principal","Sid","NotAction"],
+  answer:0,
+  explain:"Cette policy classique refuse tout accès S3 hors HTTPS. aws:SecureTransport est une clé de condition globale à connaître." },
+{ id:"c-iam-oidc", level:3, d:"sec", dom:"IAM", type:"qcm",
+  code:"\"Condition\": {\n  \"StringEquals\": {\n    \"token.actions.githubusercontent.com:aud\": \"sts.amazonaws.com\"\n  },\n  \"StringLike\": {\n    \"token.actions.githubusercontent.com:____\": \"repo:mon-org/mon-repo:ref:refs/heads/main\"\n  }\n}",
+  q:"Complète le claim qui restreint la confiance à un dépôt et une branche précis :",
+  choices:["sub","iss","jti","azp"],
+  answer:0,
+  explain:"Le claim « sub » identifie précisément le workflow. L'oublier (ou mettre *) laisserait N'IMPORTE quel dépôt GitHub assumer ton rôle — faille critique." },
+{ id:"c-scp-region", level:3, d:"sec", dom:"SCP", type:"qcm",
+  code:"{\n  \"Effect\": \"____\",\n  \"NotAction\": [ \"iam:*\", \"organizations:*\", \"support:*\" ],\n  \"Resource\": \"*\",\n  \"Condition\": {\n    \"StringNotEquals\": { \"aws:RequestedRegion\": [\"eu-west-1\", \"eu-west-3\"] }\n  }\n}",
+  q:"Complète l'effet de cette SCP qui restreint l'usage aux régions européennes :",
+  choices:["Deny","Allow","Block","Restrict"],
+  answer:0,
+  explain:"Une SCP restrictive utilise Deny. Les services globaux (IAM, Organizations, Support) sont exclus via NotAction, sinon on casse le compte." },
+{ id:"c-eventbridge-pattern", level:3, d:"inc", dom:"EventBridge", type:"qcm",
+  code:"{\n  \"source\": [\"aws.codepipeline\"],\n  \"____\": [\"CodePipeline Pipeline Execution State Change\"],\n  \"detail\": { \"state\": [\"FAILED\"] }\n}",
+  q:"Complète la clé qui identifie le type d'événement :",
+  choices:["detail-type","event-name","type","action"],
+  answer:0,
+  explain:"source + detail-type + detail = le trio du pattern EventBridge. Ce pattern précis alerte sur tout échec de pipeline." },
+{ id:"c-eventbridge-schedule", level:2, d:"inc", dom:"EventBridge", type:"qcm",
+  code:"ScheduleExpression: '____(0 2 * * ? *)'   # tous les jours a 2h UTC",
+  q:"Complète le type d'expression de planification :",
+  choices:["cron","rate","schedule","timer"],
+  answer:0,
+  explain:"Le cron EventBridge a 6 champs (min heure jour-du-mois mois jour-semaine année) et impose un « ? » sur l'un des deux champs de jour. rate(5 minutes) pour les intervalles simples." },
+{ id:"c-logs-insights", level:2, d:"mon", dom:"Logs Insights", type:"qcm",
+  code:"fields @timestamp, @message\n| filter @message like /ERROR/\n| ____ count() by bin(5m)\n| sort @timestamp desc",
+  q:"Complète l'opérateur d'agrégation de CloudWatch Logs Insights :",
+  choices:["stats","summarize","group","aggregate"],
+  answer:0,
+  explain:"C'est « stats » en Logs Insights (« summarize », c'est le KQL d'Azure Monitor — piège si tu prépares les deux certifications)." },
+{ id:"c-logs-parse", level:3, d:"mon", dom:"Logs Insights", type:"input",
+  code:"fields @message\n| ____ @message \"user=* action=*\" as utilisateur, action\n| stats count() by utilisateur",
+  q:"Complète l'opérateur qui extrait des champs d'un message non structuré :",
+  accept:["parse"],
+  explain:"parse avec un glob (ou une regex) transforme un log texte en champs exploitables — indispensable quand l'application ne logue pas en JSON." },
+{ id:"c-cw-alarm-cli", level:2, d:"mon", dom:"CLI", type:"input",
+  code:"aws cloudwatch put-metric-alarm \\\n  --alarm-name erreurs-5xx \\\n  --metric-name HTTPCode_Target_5XX_Count \\\n  --threshold 10 \\\n  --comparison-operator GreaterThanThreshold \\\n  --evaluation-periods 2 \\\n  --____ 300",
+  q:"Complète le paramètre qui définit la durée (en secondes) de chaque période d'évaluation :",
+  accept:["period"],
+  explain:"period × evaluation-periods = la fenêtre totale. Ici 2 périodes de 300 s : l'alarme se déclenche après 10 minutes de dépassement continu." },
+{ id:"c-ssm-param-cli", level:2, d:"sec", dom:"CLI", type:"qcm",
+  code:"aws ssm put-parameter \\\n  --name /app/prod/db-password \\\n  --value \"S3cret!\" \\\n  --type ____",
+  q:"Complète le type de paramètre chiffré par KMS :",
+  choices:["SecureString","String","StringList","Encrypted"],
+  answer:0,
+  explain:"Les 3 types : String, StringList, SecureString. À la lecture, il faut --with-decryption ET la permission kms:Decrypt." },
+{ id:"c-asg-hook-cli", level:3, d:"resil", dom:"CLI", type:"input",
+  code:"# a la fin du script de bootstrap\naws autoscaling ____-lifecycle-action \\\n  --lifecycle-hook-name init-app \\\n  --auto-scaling-group-name mon-asg \\\n  --lifecycle-action-result CONTINUE \\\n  --instance-id $INSTANCE_ID",
+  q:"Complète le verbe de la commande qui libère l'instance du hook :",
+  accept:["complete"],
+  explain:"complete-lifecycle-action avec CONTINUE (ou ABANDON). Sans cet appel, l'instance reste en Pending:Wait jusqu'au timeout du hook." },
+{ id:"c-ecs-taskdef", level:3, d:"sdlc", dom:"ECS", type:"qcm",
+  code:"\"secrets\": [\n  {\n    \"name\": \"DB_PASSWORD\",\n    \"____\": \"arn:aws:secretsmanager:eu-west-1:123:secret:prod/db-AbC123\"\n  }\n]",
+  q:"Complète la clé qui référence le secret injecté dans le conteneur :",
+  choices:["valueFrom","value","secretArn","source"],
+  answer:0,
+  explain:"« secrets » avec valueFrom injecte depuis Secrets Manager ou Parameter Store au démarrage — la valeur n'apparaît jamais dans la task definition." },
+{ id:"c-s3-lifecycle", level:2, d:"mon", dom:"S3", type:"qcm",
+  code:"{\n  \"Rules\": [{\n    \"Status\": \"Enabled\",\n    \"Transitions\": [{ \"Days\": 90, \"StorageClass\": \"____\" }],\n    \"Expiration\": { \"Days\": 2555 }\n  }]\n}",
+  q:"Quelle classe de stockage pour archiver des logs consultés très rarement, au coût le plus bas avec restauration en quelques heures ?",
+  choices:["GLACIER (ou DEEP_ARCHIVE pour encore moins cher)","STANDARD_IA","INTELLIGENT_TIERING","STANDARD"],
+  answer:0,
+  explain:"Standard-IA pour l'accès occasionnel immédiat ; Glacier/Deep Archive pour l'archivage long terme avec délai de restauration. 2555 jours ≈ 7 ans de rétention." },
+{ id:"c-cfn-guard", level:3, d:"sec", dom:"Policy as code", type:"qcm",
+  code:"rule s3_chiffrement {\n  Resources.*[ Type == 'AWS::S3::Bucket' ] {\n    Properties.BucketEncryption ____\n  }\n}",
+  q:"Complète l'opérateur CloudFormation Guard vérifiant que la propriété est définie :",
+  choices:["exists","== true","is set","required"],
+  answer:0,
+  explain:"CloudFormation Guard (policy-as-code) évalue les templates AVANT déploiement dans le pipeline — le shift left appliqué à l'IaC." },
+/* ============ SÉQUENCES À ORDONNER ============ */
+{ id:"o-pipeline", level:1, d:"sdlc", dom:"Pipeline CI/CD", type:"order",
+  q:"Remets dans l'ordre les étapes d'un pipeline CI/CD complet sur AWS.",
+  steps:["Source : récupération du code sur commit (EventBridge)","Build : CodeBuild compile, teste et scanne","Publication de l'artefact dans le bucket du pipeline","Déploiement automatique en staging","Validation manuelle (Manual approval)","Déploiement en production avec CodeDeploy et alarmes de rollback"],
+  explain:"Les contrôles (tests, scans) se placent AVANT la production de l'artefact ; la porte humaine juste avant la prod." },
+{ id:"o-bluegreen-ecs", level:3, d:"sdlc", dom:"Déploiement", type:"order",
+  q:"Remets dans l'ordre un déploiement blue/green ECS piloté par CodeDeploy.",
+  steps:["Création du nouveau task set (vert) à côté de l'ancien (bleu)","Enregistrement du vert derrière le listener de TEST","Validation automatisée via le hook AfterAllowTestTraffic","Bascule du listener de production vers le vert","Période d'observation (bake time) avec surveillance des alarmes","Suppression de l'ancien task set bleu"],
+  explain:"Le bake time est essentiel : c'est pendant cette fenêtre qu'une alarme peut encore déclencher le rollback avant la destruction du bleu." },
+{ id:"o-cfn-update", level:2, d:"iac", dom:"CloudFormation", type:"order",
+  q:"Remets dans l'ordre une mise à jour de stack CloudFormation maîtrisée.",
+  steps:["Valider et scanner le template (cfn-lint, Guard)","Créer un change set","Examiner le change set : quelles ressources sont REMPLACÉES ?","Exécuter le change set","Surveiller les événements de la stack et les rollback triggers"],
+  explain:"L'étape critique est la lecture du change set : une propriété modifiée peut entraîner un remplacement (donc une perte de données) sans qu'on s'en doute." },
+{ id:"o-secret-leak", level:3, d:"sec", dom:"Incident sécurité", type:"order",
+  q:"Une access key AWS a fuité sur GitHub public. Remets la réponse dans l'ordre.",
+  steps:["Désactiver puis supprimer immédiatement l'access key compromise","Analyser CloudTrail pour repérer toute utilisation frauduleuse","Remplacer l'usage par un rôle IAM (instance profile ou OIDC)","Nettoyer l'historique Git et activer un scan de secrets dans le pipeline"],
+  explain:"Révoquer d'abord : tant que la clé est active, elle est exploitable. L'analyse CloudTrail détermine ensuite l'étendue de la compromission." },
+{ id:"o-incident", level:3, d:"inc", dom:"Incidents", type:"order",
+  q:"Remets dans l'ordre la gestion d'un incident de production.",
+  steps:["Détection par une alarme fondée sur un symptôme utilisateur","Atténuation immédiate : rollback, bascule ou feature flag","Communication aux parties prenantes","Diagnostic de la cause racine une fois le service rétabli","Postmortem sans blâme et actions correctives suivies"],
+  explain:"Restaurer AVANT de comprendre. Chercher la cause pendant que les utilisateurs sont impactés allonge inutilement le MTTR." },
+{ id:"o-remediation", level:3, d:"inc", dom:"Remédiation", type:"order",
+  q:"Remets dans l'ordre la mise en place d'une remédiation automatique de non-conformité.",
+  steps:["Créer la règle AWS Config qui évalue la conformité","Identifier ou écrire le runbook SSM Automation de correction","Associer la remediation action à la règle (avec le rôle IAM adéquat)","Tester en mode manuel sur une ressource non conforme","Activer la remédiation automatique et notifier via SNS"],
+  explain:"Toujours tester la remédiation en manuel d'abord : une correction automatique mal calibrée peut casser la production à grande échelle." },
+{ id:"o-dr-failover", level:3, d:"resil", dom:"Reprise", type:"order",
+  q:"Remets dans l'ordre un basculement de reprise après sinistre (warm standby).",
+  steps:["Détection de la panne régionale (health checks Route 53)","Promotion de la réplica de base de données en région secondaire","Montée en échelle de la capacité applicative secondaire","Bascule DNS Route 53 vers la région de secours","Validation du service et communication","Post-incident : retour en région primaire une fois rétablie"],
+  explain:"Promouvoir la base AVANT de router le trafic, sinon les requêtes arrivent sur une région sans base accessible en écriture." },
+{ id:"o-crossaccount", level:3, d:"sdlc", dom:"CodePipeline", type:"order",
+  q:"Remets dans l'ordre la mise en place d'un pipeline cross-account.",
+  steps:["Créer la clé KMS partagée et le bucket d'artefacts dans le compte outils","Créer dans chaque compte cible un rôle assumable par le pipeline","Autoriser les comptes cibles sur la key policy KMS et la bucket policy","Référencer les rôles cross-account dans les actions de déploiement","Exécuter le pipeline et vérifier les déploiements dans chaque compte"],
+  explain:"L'oubli classique est la key policy KMS : sans elle, le compte cible télécharge l'artefact mais ne peut pas le déchiffrer." },
+{ id:"o-ghas-scan", level:2, d:"sec", dom:"DevSecOps", type:"order",
+  q:"Remets dans l'ordre les contrôles de sécurité d'un pipeline conteneurisé.",
+  steps:["Scan des secrets sur le code source","Analyse statique du code et de l'IaC (SAST, cfn-guard)","Analyse des dépendances open source (SCA, licences)","Build de l'image puis scan de vulnérabilités ECR","Blocage du déploiement si une CVE critique est détectée"],
+  explain:"Du moins coûteux au plus coûteux : les contrôles rapides sur le source d'abord, le scan d'image ensuite, la porte bloquante en dernier." },
+{ id:"o-observability", level:2, d:"mon", dom:"Monitoring", type:"order",
+  q:"Remets dans l'ordre la mise en place de l'observabilité d'une nouvelle application.",
+  steps:["Instrumenter l'application (logs structurés, métriques custom, traces X-Ray)","Configurer les log groups avec une rétention adaptée","Créer les métriques dérivées (metric filters, EMF)","Définir les alarmes sur les symptômes utilisateur et les SLO","Construire le dashboard et brancher les notifications SNS"],
+  explain:"On ne peut alarmer que sur ce qui est mesuré : l'instrumentation précède toujours les alarmes et les tableaux de bord." },
+/* ============ ÉTUDES DE CAS ============ */
+{ id:"csA-pipeline", level:3, d:"sdlc", dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Quelle première action apporte le plus de valeur à Riverstone ?",
+  choices:["Un pipeline CodePipeline déclenché par EventBridge : build et tests automatisés dans CodeBuild, avec artefact unique publié","Automatiser d'abord le déploiement en production","Migrer vers Kubernetes","Recruter une équipe DevOps séparée"],
+  answer:0,
+  explain:"On sécurise l'entrée du code avant d'accélérer la sortie. Automatiser le déploiement sans CI fiable revient à livrer des défauts plus vite." },
+{ id:"csA-deploy", level:3, d:"sdlc", dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Les déploiements provoquent 20 minutes d'indisponibilité. Quelle stratégie sur leur ASG derrière un ALB ?",
+  choices:["CodeDeploy blue/green (ou rolling avec min 100 % de capacité) avec des health checks ELB et un rollback sur alarme","Déployer la nuit pour limiter l'impact","Prévenir les utilisateurs par e-mail","Doubler la taille des instances"],
+  answer:0,
+  explain:"Le blue/green supprime l'indisponibilité et offre un rollback immédiat par bascule de target group — sans fenêtre de maintenance." },
+{ id:"csA-secrets", level:3, d:"sec", dom:"Étude de cas", type:"input", scen:"A",
+  q:"Les mots de passe de base de données sont en clair dans les fichiers de configuration déployés. Quel service AWS recommandes-tu pour les stocker AVEC rotation automatique ?",
+  accept:["Secrets Manager","secrets manager","aws secrets manager"],
+  explain:"Secrets Manager pour la rotation native RDS. Parameter Store SecureString conviendrait pour des secrets sans besoin de rotation, et gratuitement." },
+{ id:"csA-metrics", level:3, d:"sdlc", dom:"Étude de cas", type:"input", scen:"A",
+  q:"La direction veut mesurer objectivement le progrès de la transformation. Quel référentiel de 4 métriques proposes-tu (sigle) ?",
+  accept:["DORA","dora","metriques dora","dora metrics"],
+  explain:"DORA : fréquence de déploiement, lead time, change failure rate, MTTR. Sur AWS, on les dérive des événements CodePipeline/CodeDeploy captés par EventBridge." },
+{ id:"csB-baseline", level:3, d:"iac", dom:"Étude de cas", type:"qcm", scen:"B",
+  q:"Comment appliquer automatiquement la baseline de sécurité aux 60 comptes ET aux comptes créés ensuite ?",
+  choices:["Des StackSets service-managed avec auto-deployment sur les OU, orchestrés par AWS Control Tower","Un script exécuté à chaque création de compte","Un template partagé que chaque équipe applique","Une AMI standardisée"],
+  answer:0,
+  explain:"L'auto-deployment garantit qu'aucun compte n'échappe à la baseline, y compris ceux créés après coup — exactement l'exigence exprimée." },
+{ id:"csB-region", level:3, d:"sec", dom:"Étude de cas", type:"input", scen:"B",
+  q:"Aucune ressource ne doit pouvoir être créée hors d'Europe, même par un administrateur de compte. Quel type de politique Organizations utilises-tu (sigle) ?",
+  accept:["SCP","scp","service control policy"],
+  explain:"Une SCP avec condition aws:RequestedRegion s'impose à tous les principals du compte membre, root inclus. Une policy IAM serait contournable par un admin local." },
+{ id:"csB-evidence", level:3, d:"sec", dom:"Étude de cas", type:"qcm", scen:"B",
+  q:"L'auditeur demande la preuve de conformité continue sur 12 mois. Que fournis-tu ?",
+  choices:["L'historique de conformité AWS Config via un agrégateur multi-comptes, plus les logs d'un organization trail CloudTrail avec validation d'intégrité, conservés en S3 Object Lock","Des exports de la console","Les templates CloudFormation versionnés","Un rapport Security Hub du jour"],
+  answer:0,
+  explain:"Config apporte l'historique dans le TEMPS, CloudTrail le « qui a fait quoi », Object Lock garantit l'inaltérabilité des preuves." },
+{ id:"csB-remediate", level:3, d:"inc", dom:"Étude de cas", type:"qcm", scen:"B",
+  q:"Un bucket S3 rendu public doit être corrigé en moins de 5 minutes, sans intervention humaine.",
+  choices:["Règle AWS Config avec remédiation automatique par runbook SSM Automation, plus notification SNS à l'équipe sécurité","Une revue quotidienne","Un ticket automatique","Un rapport Trusted Advisor hebdomadaire"],
+  answer:0,
+  explain:"Config évalue à chaque changement de configuration et déclenche la remédiation. En prévention, on ajoute S3 Block Public Access verrouillé par SCP." },
+{ id:"csC-canary", level:3, d:"sdlc", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Meridian veut livrer plusieurs fois par jour sans exposer tous ses clients au risque. Quelle approche ?",
+  choices:["Déploiement canary CodeDeploy (Lambda/ECS) piloté par des alarmes CloudWatch, complété par des feature flags AppConfig pour activer progressivement","Un déploiement all-at-once avec rollback manuel","Livrer une fois par semaine","Doubler les tests de préproduction"],
+  answer:0,
+  explain:"Séparer le déploiement (canary) de l'activation (feature flags) donne deux niveaux de maîtrise du risque, avec coupure en secondes." },
+{ id:"csC-trace", level:3, d:"mon", dom:"Étude de cas", type:"input", scen:"C",
+  q:"Une requête lente traverse 12 microservices. Quel service AWS permet de localiser le maillon responsable par traçage distribué ?",
+  accept:["X-Ray","x-ray","xray","aws x-ray"],
+  explain:"X-Ray corrèle les segments par trace ID et affiche la service map. Sans lui, analyser 12 services indépendamment revient à deviner." },
+{ id:"csC-logs", level:3, d:"mon", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"La facture CloudWatch Logs a triplé en 6 mois. Quelles actions ?",
+  choices:["Définir des rétentions par log group, exporter l'historique vers S3 avec lifecycle Glacier, réduire la verbosité, et privilégier metric filters et EMF","Désactiver les logs des services non critiques","Passer tous les logs en DEBUG","Supprimer les log groups anciens à la main"],
+  answer:0,
+  explain:"La rétention par défaut est INFINIE : c'est la cause n°1. L'ingestion et le stockage étant facturés séparément, on agit sur les deux." },
+{ id:"csC-scale", level:3, d:"resil", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Les pics de trafic du lundi matin saturent la plateforme avant que l'Auto Scaling ne réagisse.",
+  choices:["Predictive scaling (motif hebdomadaire récurrent) ou scheduled scaling, complétés par des warm pools et une AMI dorée pour accélérer la mise en service","Augmenter la capacité désirée en permanence","Réduire le seuil de CPU à 20 %","Passer en instances plus grosses"],
+  answer:0,
+  explain:"Un pic PRÉVISIBLE se traite par anticipation, pas par réaction. Predictive scaling apprend le motif et provisionne avant l'arrivée de la charge." },
+{ id:"csC-dr", level:3, d:"resil", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Meridian exige un RTO de 15 minutes en cas de panne régionale, avec un budget maîtrisé.",
+  choices:["Warm standby : environnement réduit mais actif en région secondaire, données répliquées en continu, montée en échelle et bascule Route 53 au basculement","Backup & restore depuis S3","Multi-site actif/actif","Pilot light avec restauration de snapshots"],
+  answer:0,
+  explain:"Backup & restore et pilot light dépassent 15 min ; l'actif/actif tiendrait mais double la facture. Warm standby est le compromis attendu." },
+];
+
+/* ---------- Scénarios des études de cas ---------- */
+const SCENARIOS = {
+  A: { title: "Riverstone Retail — modernisation",
+      text: "Riverstone déploie son application monolithique manuellement une fois par mois, avec 20 minutes d'indisponibilité à chaque mise en production. Le code tourne sur un Auto Scaling Group derrière un ALB. Les mots de passe de base de données sont en clair dans les fichiers de configuration déployés. La direction veut livrer chaque semaine et mesurer objectivement le progrès." },
+  B: { title: "Northbank — conformité multi-comptes",
+      text: "Northbank est un établissement financier régulé avec 60 comptes AWS dans une organisation, et de nouveaux comptes créés chaque mois. Exigences : une baseline de sécurité identique partout, aucune ressource hors d'Europe, correction automatique des non-conformités en moins de 5 minutes, et une preuve de conformité continue sur 12 mois pour l'auditeur." },
+  C: { title: "Meridian Cloud — passage à l'échelle",
+      text: "Meridian exploite 12 microservices sur ECS Fargate et Lambda. Les pics de trafic du lundi matin saturent la plateforme avant que l'Auto Scaling ne réagisse. Certaines requêtes deviennent lentes sans qu'aucun service ne semble fautif. La facture CloudWatch Logs a triplé en 6 mois. Un RTO de 15 minutes est exigé en cas de panne régionale." }
+};
+
+/* ---------- Labs guidés ---------- */
+const LABS = [
+  { id:"lab1", title:"Lab 1 · CloudFormation : stack, change set, drift", time:"≈ 45 min",
+    obj:"Maîtriser le cycle de vie d'une stack : paramètres, outputs, change set, DeletionPolicy et détection de drift.",
+    steps:[
+      "Écris un template YAML : un bucket S3 (avec un Parameter pour le préfixe du nom), un Output exportant son ARN, et une DeletionPolicy: Retain.",
+      "Déploie : aws cloudformation deploy. Vérifie les Outputs dans la console.",
+      "Modifie le template (ajoute le versioning) et crée un CHANGE SET sans l'exécuter. Lis-le attentivement : quelles ressources sont modifiées ? Remplacées ?",
+      "Exécute le change set et observe les événements de la stack.",
+      "Provoque un drift : ajoute un tag au bucket À LA MAIN dans la console.",
+      "Lance la détection de drift et constate l'écart signalé (MODIFIED).",
+      "Change la DeletionPolicy en Delete, mets à jour, puis supprime la stack. Vérifie le comportement de rétention selon la policy.",
+      "Bonus : casse volontairement le template (type de ressource invalide) et observe le rollback automatique." ],
+    cli:"aws cloudformation deploy --template-file template.yaml --stack-name lab1 --parameter-overrides Prefixe=osama\naws cloudformation create-change-set --stack-name lab1 --change-set-name ajout-versioning --template-body file://template.yaml\naws cloudformation describe-change-set --stack-name lab1 --change-set-name ajout-versioning\naws cloudformation detect-stack-drift --stack-name lab1\naws cloudformation describe-stack-resource-drifts --stack-name lab1\naws cloudformation delete-stack --stack-name lab1",
+    verif:"tu sais lire un change set et dire si une modification entraîne un REMPLACEMENT, et tu as vu la détection de drift signaler ta modification manuelle." },
+  { id:"lab2", title:"Lab 2 · Pipeline CI complet (GitHub → CodeBuild → S3)", time:"≈ 60 min",
+    obj:"Construire un pipeline CodePipeline déclenché par commit, avec buildspec, tests, rapports et artefact versionné.",
+    steps:[
+      "Crée un dépôt GitHub avec une petite application (Node ou Python) et des tests unitaires.",
+      "Dans la console CodePipeline, crée une connexion CodeConnections vers GitHub (CodeCommit n'est plus ouvert aux nouveaux comptes).",
+      "Écris un buildspec.yml : phases install / pre_build / build, une section reports (JUNITXML) et une section artifacts.",
+      "Crée le pipeline : source GitHub → build CodeBuild → deploy vers un bucket S3.",
+      "Pousse un commit et observe le déclenchement automatique. Consulte l'onglet Reports de CodeBuild.",
+      "Fais échouer un test volontairement : le pipeline doit s'arrêter à l'étape build sans déployer.",
+      "Active le cache CodeBuild (S3) sur le dossier de dépendances et compare la durée avant/après sur deux exécutions.",
+      "Bonus : ajoute une action Manual approval avant le déploiement S3.",
+      "Nettoie : supprime le pipeline, le projet CodeBuild et les buckets." ],
+    cli:"# buildspec.yml\nversion: 0.2\nphases:\n  install:\n    runtime-versions:\n      nodejs: 20\n  pre_build:\n    commands: [ npm ci ]\n  build:\n    commands: [ npm test -- --reporters=jest-junit, npm run build ]\nreports:\n  tests:\n    files: [ 'junit.xml' ]\n    file-format: JUNITXML\nartifacts:\n  files: [ '**/*' ]\n  base-directory: dist\ncache:\n  paths: [ 'node_modules/**/*' ]",
+    verif:"un test rouge bloque le pipeline avant le déploiement, les rapports de tests s'affichent dans CodeBuild, et le cache réduit visiblement la durée du 2e build." },
+  { id:"lab3", title:"Lab 3 · CodeDeploy blue/green sur Lambda avec canary", time:"≈ 45 min",
+    obj:"Déployer une Lambda en canary 10 % avec rollback automatique sur alarme, via SAM et CodeDeploy.",
+    steps:[
+      "Installe AWS SAM CLI. Crée une application : sam init (runtime au choix, template Hello World).",
+      "Dans le template SAM, ajoute AutoPublishAlias: prod et un bloc DeploymentPreference de type Canary10Percent5Minutes.",
+      "Crée une alarme CloudWatch sur la métrique Errors de la fonction (seuil bas, ex : 1 erreur) et référence-la dans Alarms de la DeploymentPreference.",
+      "sam deploy --guided : observe la création de l'alias, des versions et de l'application CodeDeploy.",
+      "Modifie le code pour renvoyer une réponse différente, redéploie et suis le déploiement dans la console CodeDeploy : 10 % du trafic pendant 5 min.",
+      "Deuxième test : déploie une version qui LÈVE une exception. Invoque la fonction plusieurs fois pour déclencher l'alarme.",
+      "Observe le ROLLBACK automatique : CodeDeploy replace le trafic sur l'ancienne version.",
+      "Bonus : ajoute un hook BeforeAllowTraffic pointant vers une Lambda de validation.",
+      "Nettoie : sam delete." ],
+    cli:"# extrait template.yaml (SAM)\nResources:\n  MaFonction:\n    Type: AWS::Serverless::Function\n    Properties:\n      Handler: app.handler\n      Runtime: nodejs20.x\n      AutoPublishAlias: prod\n      DeploymentPreference:\n        Type: Canary10Percent5Minutes\n        Alarms:\n          - !Ref ErreursAlarme\n\nsam build && sam deploy --guided\nsam delete",
+    verif:"tu as VU le rollback automatique se déclencher parce que ton alarme est passée en ALARM pendant la phase canary." },
+  { id:"lab4", title:"Lab 4 · Secrets : Parameter Store, Secrets Manager, OIDC", time:"≈ 45 min",
+    obj:"Supprimer tout credential statique : paramètres chiffrés, rotation, et déploiement GitHub Actions sans access key.",
+    steps:[
+      "Crée un paramètre SecureString dans Parameter Store et lis-le avec puis sans --with-decryption. Observe la différence.",
+      "Crée un secret dans Secrets Manager et compare : coût, rotation, versioning (AWSCURRENT / AWSPENDING).",
+      "Dans un template CloudFormation, référence le secret par dynamic reference {{resolve:secretsmanager:...}} et vérifie qu'il n'apparaît nulle part en clair.",
+      "Crée un fournisseur d'identité OIDC IAM pour GitHub (token.actions.githubusercontent.com).",
+      "Crée un rôle IAM avec une trust policy conditionnée sur le claim « sub » = repo:TON-ORG/TON-REPO:ref:refs/heads/main.",
+      "Écris un workflow GitHub Actions avec permissions: id-token: write, utilisant aws-actions/configure-aws-credentials SANS aucune access key.",
+      "Vérifie avec un simple « aws sts get-caller-identity » dans le workflow.",
+      "IMPORTANT : teste depuis une autre branche et constate que l'AssumeRole ÉCHOUE (la condition sub protège bien).",
+      "Nettoie les ressources créées." ],
+    cli:"aws ssm put-parameter --name /lab/db-password --value \"S3cret!\" --type SecureString\naws ssm get-parameter --name /lab/db-password --with-decryption\n\n# .github/workflows/deploy.yml\npermissions:\n  id-token: write\n  contents: read\nsteps:\n  - uses: aws-actions/configure-aws-credentials@v4\n    with:\n      role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsRole\n      aws-region: us-east-1\n  - run: aws sts get-caller-identity",
+    verif:"ton workflow s'authentifie sur AWS sans aucun secret stocké, et une branche non autorisée se voit REFUSER l'AssumeRole." },
+  { id:"lab5", title:"Lab 5 · Monitoring : metric filter, alarme, dashboard", time:"≈ 45 min",
+    obj:"Alarmer sur un contenu de log, comprendre le traitement des données manquantes et écrire des requêtes Logs Insights.",
+    steps:[
+      "Crée une Lambda simple qui logue aléatoirement « INFO ok » ou « ERROR échec du traitement ».",
+      "Crée un metric filter sur son log group détectant le motif ERROR, publiant une métrique custom.",
+      "Crée une alarme sur cette métrique (seuil : plus de 3 en 5 minutes) avec un action group SNS vers ton e-mail. Confirme l'abonnement.",
+      "Invoque la fonction en boucle jusqu'à déclencher l'alarme. Reçois l'e-mail.",
+      "Teste le réglage « treat missing data » : arrête d'invoquer et observe le passage en INSUFFICIENT_DATA (ou non selon l'option choisie). Comprends pourquoi c'est piégeux.",
+      "Dans Logs Insights, écris : fields @timestamp, @message | filter @message like /ERROR/ | stats count() by bin(5m).",
+      "Ajoute une requête avec parse pour extraire un champ d'un message non structuré.",
+      "Configure la RÉTENTION du log group à 7 jours et comprends pourquoi le défaut (infini) fait exploser les factures.",
+      "Bonus : crée une alarme composite combinant deux alarmes.",
+      "Nettoie : supprime la Lambda, le log group, les alarmes et le topic SNS." ],
+    cli:"aws logs put-metric-filter --log-group-name /aws/lambda/ma-fonction \\\n  --filter-name erreurs --filter-pattern \"ERROR\" \\\n  --metric-transformations metricName=ErreursApp,metricNamespace=Lab,metricValue=1\n\naws logs put-retention-policy --log-group-name /aws/lambda/ma-fonction --retention-in-days 7\n\naws cloudwatch put-metric-alarm --alarm-name lab-erreurs \\\n  --metric-name ErreursApp --namespace Lab --statistic Sum \\\n  --period 300 --evaluation-periods 1 --threshold 3 \\\n  --comparison-operator GreaterThanThreshold \\\n  --treat-missing-data notBreaching --alarm-actions <arn-sns>",
+    verif:"tu reçois l'e-mail d'alerte, et tu sais expliquer ce que fait chaque valeur de « treat missing data »." },
+  { id:"lab6", title:"Lab 6 · Remédiation automatique (EventBridge + SSM)", time:"≈ 50 min",
+    obj:"Construire une chaîne détection → réaction sans intervention humaine, le cœur du domaine « réponse aux incidents ».",
+    steps:[
+      "Active AWS Config dans ta région (⚠️ facturé par configuration item — active-le sur un périmètre restreint et désactive-le à la fin).",
+      "Active la règle managée s3-bucket-public-read-prohibited.",
+      "Crée un bucket et rends-le volontairement public : observe le passage en NON_COMPLIANT.",
+      "Associe la remediation action AWS-DisableS3BucketPublicReadWrite à la règle, en mode MANUEL d'abord. Déclenche-la et vérifie la correction.",
+      "Passe la remédiation en AUTOMATIQUE, refais le bucket public, et chronomètre la correction spontanée.",
+      "Deuxième chaîne : crée une règle EventBridge sur les échecs de pipeline (source aws.codepipeline, state FAILED) ciblant un topic SNS.",
+      "Fais échouer ton pipeline du lab 2 et vérifie la notification.",
+      "Bonus : remplace la cible SNS par une Lambda qui crée automatiquement une issue GitHub.",
+      "IMPORTANT : désactive AWS Config (recorder) et supprime les ressources pour arrêter la facturation." ],
+    cli:"aws configservice put-config-rule --config-rule file://rule.json\naws configservice describe-compliance-by-config-rule --config-rule-names s3-bucket-public-read-prohibited\n\naws events put-rule --name pipeline-echec \\\n  --event-pattern '{\"source\":[\"aws.codepipeline\"],\"detail-type\":[\"CodePipeline Pipeline Execution State Change\"],\"detail\":{\"state\":[\"FAILED\"]}}'\n\n# arret de la facturation Config\naws configservice stop-configuration-recorder --configuration-recorder-name default",
+    verif:"un bucket rendu public est corrigé automatiquement en quelques minutes, et un échec de pipeline te notifie par e-mail." },
+  { id:"lab7", title:"Lab 7 · Auto Scaling : lifecycle hook et instance refresh", time:"≈ 50 min",
+    obj:"Comprendre le cycle de vie des instances, les health checks ELB et le remplacement progressif.",
+    steps:[
+      "Crée un launch template (Amazon Linux, t3.micro, UserData installant un serveur web minimal) et un ASG sur 2 AZ (min 2, max 4) derrière un ALB.",
+      "Vérifie que l'ALB répond, puis passe le health check de l'ASG de EC2 à ELB.",
+      "Simule une panne applicative : connecte-toi via Session Manager (sans SSH !) et arrête le serveur web. Observe l'ASG remplacer l'instance — ce qui n'arriverait PAS avec un health check EC2.",
+      "Ajoute un lifecycle hook en Pending:Wait et observe une nouvelle instance rester bloquée en attente.",
+      "Débloque-la avec complete-lifecycle-action et comprends l'usage (installation, enregistrement, préchauffage).",
+      "Modifie le launch template (nouvelle version du UserData) puis lance un instance refresh avec MinHealthyPercentage à 90 %.",
+      "Suis le remplacement progressif dans la console.",
+      "Bonus : configure une politique target tracking sur 50 % de CPU et génère de la charge (stress) pour déclencher le scale-out.",
+      "⚠️ Nettoie impérativement : supprime l'ASG, l'ALB (facturé à l'heure !) et le launch template." ],
+    cli:"aws autoscaling put-lifecycle-hook --auto-scaling-group-name mon-asg \\\n  --lifecycle-hook-name init-app --lifecycle-transition autoscaling:EC2_INSTANCE_LAUNCHING \\\n  --heartbeat-timeout 300 --default-result CONTINUE\n\naws autoscaling complete-lifecycle-action --lifecycle-hook-name init-app \\\n  --auto-scaling-group-name mon-asg --lifecycle-action-result CONTINUE --instance-id i-xxxx\n\naws autoscaling start-instance-refresh --auto-scaling-group-name mon-asg \\\n  --preferences MinHealthyPercentage=90,InstanceWarmup=120",
+    verif:"tu as vu la différence CONCRÈTE entre health check EC2 et ELB, et un instance refresh remplacer les instances sans coupure." },
+  { id:"lab8", title:"Lab 8 · Gouvernance : SCP, StackSets, Security Hub", time:"≈ 40 min",
+    obj:"Appliquer les garde-fous multi-comptes — le domaine sécurité et conformité (17 %).",
+    steps:[
+      "Si tu n'as qu'un compte : crée une organisation AWS et un second compte membre (gratuit) pour ce lab.",
+      "Crée une OU « Bac à sable » et déplaces-y le compte membre.",
+      "Attache une SCP refusant toute action hors de eu-west-1 et eu-west-3 (avec NotAction pour iam, organizations, support).",
+      "Depuis le compte membre, tente de créer un bucket en us-east-1 : l'action doit être REFUSÉE, même en tant qu'administrateur du compte.",
+      "Crée un StackSet service-managed déployant une baseline simple (un log group avec rétention) sur l'OU, avec auto-deployment activé.",
+      "Vérifie le déploiement automatique dans le compte membre.",
+      "Active Security Hub avec un administrateur délégué et observe les findings du standard CIS.",
+      "Crée une règle EventBridge sur les findings de sévérité CRITICAL vers SNS.",
+      "Nettoie : détache la SCP, supprime les stack instances puis le StackSet." ],
+    cli:"aws organizations create-policy --name deny-hors-europe --type SERVICE_CONTROL_POLICY \\\n  --content file://scp.json\naws organizations attach-policy --policy-id p-xxxx --target-id ou-xxxx\n\naws cloudformation create-stack-set --stack-set-name baseline \\\n  --template-body file://baseline.yaml --permission-model SERVICE_MANAGED \\\n  --auto-deployment Enabled=true,RetainStacksOnAccountRemoval=false\n\naws cloudformation delete-stack-instances --stack-set-name baseline \\\n  --deployment-targets OrganizationalUnitIds=ou-xxxx --regions eu-west-1 --no-retain-stacks",
+    verif:"une action hors des régions autorisées est refusée même à un administrateur, et ta baseline s'est déployée toute seule sur le compte membre." }
+];
+
+/* =====================================================================
+   MOTEUR
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const LS_ERRORS = "dopc02-errors", LS_LABS = "dopc02-labs";
+const DOM_LABEL = { sdlc:"SDLC", iac:"IaC", resil:"Résilience", mon:"Monitoring", inc:"Incidents", sec:"Sécurité" };
+/* Répartition de l'examen blanc, calée sur les pourcentages officiels DOP-C02 */
+const BLANC_WEIGHTS = { sdlc:11, iac:8, sec:8, resil:7, mon:7, inc:7 };
+
+const getErrors = () => { try { return JSON.parse(localStorage.getItem(LS_ERRORS)) || []; } catch { return []; } };
+const setErrors = a => localStorage.setItem(LS_ERRORS, JSON.stringify([...new Set(a)]));
+const getLabsDone = () => { try { return JSON.parse(localStorage.getItem(LS_LABS)) || []; } catch { return []; } };
+const setLabsDone = a => localStorage.setItem(LS_LABS, JSON.stringify([...new Set(a)]));
+
+/* =====================================================================
+   MOTEUR DE MAÎTRISE — répétition espacée pilotée par la confiance
+   ===================================================================== */
+const LS_SRS = "dopc02-srs";
+const BOX_DAYS = [0, 1, 2, 4, 8, 16, 30];
+const NEW_CAP = 8;
+const DAY = 86400000;
+
+const getSrs = () => { try { return JSON.parse(localStorage.getItem(LS_SRS)) || {}; } catch { return {}; } };
+const setSrs = o => localStorage.setItem(LS_SRS, JSON.stringify(o));
+const srsOf = (srs, id) => srs[id] || { box: 0, due: 0, seen: 0, lapses: 0, danger: false, reco: false, lastMs: 0 };
+
+function minReasonMs(q) {
+  const len = (q.q || "").length + (q.code || "").length;
+  return Math.max(2000, Math.min(6000, 1200 + 20 * len));
+}
+
+function srsApply(q, ok, conf, ms, isReveal) {
+  const srs = getSrs();
+  const s = { ...srsOf(srs, q.id) };
+  const before = s.box;
+  s.seen++;
+  s.lastMs = ms;
+  s.reco = !!(ok && !isReveal && s.seen >= 2 && ms < minReasonMs(q));
+  if (isReveal || !ok) {
+    if (before >= 3) s.lapses++;
+    s.box = 0;
+    s.danger = !isReveal && conf === 3;
+  } else {
+    const gain = conf === 3 ? 2 : conf === 2 ? 1 : 0;
+    s.box = Math.min(6, s.box + (s.reco ? Math.min(gain, 1) : gain));
+    if (conf === 3) s.danger = false;
+  }
+  s.due = Date.now() + BOX_DAYS[s.box] * DAY;
+  srs[q.id] = s;
+  setSrs(srs);
+  return s;
+}
+
+function buildMaitrise(n) {
+  const srs = getSrs(), now = Date.now();
+  const danger = [], due = [], fresh = [], future = [];
+  QUESTIONS.forEach(q => {
+    const s = srs[q.id];
+    if (!s) { fresh.push(q); return; }
+    if (s.danger) danger.push(q);
+    else if (s.due <= now) due.push(q);
+    else future.push({ q, due: s.due });
+  });
+  const out = [...shuffle(danger), ...shuffle(due)];
+  if (out.length < n) out.push(...shuffle(fresh).slice(0, Math.min(NEW_CAP, n - out.length)));
+  if (out.length < n) {
+    future.sort((a, b) => a.due - b.due);
+    out.push(...future.slice(0, n - out.length).map(x => x.q));
+  }
+  return out.slice(0, n);
+}
+
+function srsStats() {
+  const srs = getSrs(), now = Date.now();
+  let croyances = 0, due = 0, mastered = 0, reco = 0, vus = 0;
+  Object.values(srs).forEach(s => {
+    vus++;
+    if (s.danger) croyances++;
+    else if (s.due <= now) due++;
+    if (s.box >= 5) mastered++;
+    if (s.reco) reco++;
+  });
+  return { croyances, due, mastered, reco, nouveaux: QUESTIONS.length - vus };
+}
+
+function refreshDash() {
+  const s = srsStats();
+  $("dCroyances").textContent = s.croyances;
+  $("dDue").textContent = s.due;
+  $("dMastered").textContent = s.mastered;
+  $("dReco").textContent = s.reco;
+  $("dNew").textContent = s.nouveaux;
+  $("nmaitrise").textContent = (s.croyances + s.due) > 0
+    ? (s.croyances + s.due) + " en attente"
+    : (s.nouveaux > 0 ? "nouveau" : "à jour");
+  let note;
+  if (s.croyances > 0)
+    note = "🚨 " + s.croyances + " question(s) où tu étais SÛR et tu t'es trompé — c'est le plus urgent à corriger.";
+  else if (s.due > 0)
+    note = "🔁 " + s.due + " question(s) arrivent à échéance. Le bon moment pour les revoir est maintenant.";
+  else if (s.nouveaux > 0)
+    note = "✅ Rien à réviser : la prochaine session introduira jusqu'à " + Math.min(NEW_CAP, s.nouveaux) + " nouvelles questions.";
+  else
+    note = "🏆 Toute la banque est planifiée. Reviens quand des questions arriveront à échéance.";
+  $("dNote").textContent = note;
+}
+
+function recordAndFlag(q, ok, conf, isReveal) {
+  const ms = Date.now() - (session.startedAt || Date.now());
+  const key = isReveal ? "reveal" : conf + (ok ? "-ok" : "-ko");
+  if (session.matrix && key in session.matrix) session.matrix[key]++;
+  const s = srsApply(q, ok, conf, ms, isReveal);
+
+  let html = "";
+  if (s.danger) {
+    html += '<div class="srs-flag danger">🚨 Tu étais SÛR et c\'est faux — c\'est une croyance fausse installée, ' +
+            'le type d\'erreur qui coûte des points sans prévenir. Elle repassera en priorité jusqu\'à ce que tu la réussisses en étant sûr.</div>';
+  }
+  if (s.reco) {
+    html += '<div class="srs-flag reco">⏱️ Répondu en ' + (ms / 1000).toFixed(1) + ' s : trop vite pour avoir raisonné. ' +
+            'Tu as probablement reconnu la question plutôt que raisonné — la progression est volontairement freinée.</div>';
+  }
+  const j = BOX_DAYS[s.box];
+  html += '<p class="srs-next">📅 Prochaine révision : ' +
+          (j === 0 ? "dès la prochaine session" : j === 1 ? "demain" : "dans " + j + " jours") +
+          " · palier " + s.box + "/6</p>";
+  return html;
+}
+
+const escapeReg = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const norm = s => (s || "").toLowerCase()
+  .normalize("NFD").replace(/[̀-ͯ]/g, "")
+  .replace(/[^a-z0-9]+/g, " ").trim();
+
+function isCorrect(user, accepts) {
+  const u = norm(user);
+  if (!u) return false;
+  return accepts.some(a => {
+    const v = norm(a);
+    if (!v) return false;
+    if (u === v) return true;
+    return new RegExp("(^| )" + escapeReg(v) + "( |$)").test(u);
+  });
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let session = null;
+let pickCount = 20;
+let domFilter = "all";
+
+$("countSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  pickCount = parseInt(b.dataset.n, 10);
+  [...$("countSeg").children].forEach(x => x.classList.toggle("on", x === b));
+});
+$("domSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  domFilter = b.dataset.d;
+  [...$("domSeg").children].forEach(x => x.classList.toggle("on", x === b));
+  refreshCounts();
+});
+
+const byDom = qs => domFilter === "all" ? qs : qs.filter(q => q.d === domFilter);
+
+function poolFor(mode) {
+  if (mode === "err") { const errs = getErrors(); return byDom(QUESTIONS.filter(q => errs.includes(q.id))); }
+  if (mode === "mix") return byDom(QUESTIONS);
+  if (mode === "code") return byDom(QUESTIONS.filter(q => q.code));
+  if (mode === "cas") return byDom(QUESTIONS.filter(q => q.scen || q.type === "order"));
+  return byDom(QUESTIONS.filter(q => q.level === Number(mode)));
+}
+
+/* Examen blanc : tirage pondéré par domaine + études de cas groupées en fin */
+function buildExamBlanc() {
+  const list = [];
+  Object.entries(BLANC_WEIGHTS).forEach(([dk, n]) => {
+    const pool = QUESTIONS.filter(q => q.d === dk && !q.scen);
+    list.push(...shuffle(pool).slice(0, n));
+  });
+  const out = shuffle(list);
+  const groups = {};
+  QUESTIONS.filter(q => q.scen).forEach(q => (groups[q.scen] = groups[q.scen] || []).push(q));
+  shuffle(Object.values(groups)).forEach(g => out.push(...g));
+  return out;
+}
+
+function refreshCounts() {
+  [1, 2, 3].forEach(l => $("n" + l).textContent = poolFor(String(l)).length + " q");
+  $("ncode").textContent = poolFor("code").length + " q";
+  $("ncas").textContent = poolFor("cas").length + " q";
+  $("nblanc").textContent = "≈ " + (Object.values(BLANC_WEIGHTS).reduce((a, b) => a + b, 0) + QUESTIONS.filter(q => q.scen).length) + " q";
+  $("nmix").textContent = poolFor("mix").length + " q";
+  $("nerr").textContent = poolFor("err").length + " q";
+  $("nlabs").textContent = getLabsDone().length + " / " + LABS.length;
+  refreshDash();
+}
+
+document.querySelectorAll(".mode-btn").forEach(b => b.addEventListener("click", () => {
+  const mode = b.dataset.mode;
+  if (mode === "labs") { renderLabs(); show("labs"); return; }
+  if (mode === "maitrise") {
+    const list = buildMaitrise(pickCount === 0 ? QUESTIONS.length : pickCount);
+    if (!list.length) { alert("Rien à réviser pour le moment — reviens plus tard !"); return; }
+    session = { mode, list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false, perDom: {},
+                matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 } };
+    show("quiz"); renderQuestion(); return;
+  }
+  let list;
+  if (mode === "blanc") {
+    list = buildExamBlanc();
+  } else {
+    const pool = poolFor(mode);
+    if (!pool.length) {
+      alert(mode === "err"
+        ? "Aucune erreur enregistrée pour ce filtre — joue d'abord un quiz !"
+        : "Aucune question pour ce domaine dans ce mode. Change le filtre de domaine.");
+      return;
+    }
+    list = shuffle(pool).slice(0, pickCount === 0 ? pool.length : pickCount);
+  }
+  session = { list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false, perDom: {} };
+  show("quiz"); renderQuestion();
+}));
+
+function show(name) {
+  ["home", "quiz", "end", "labs"].forEach(n =>
+    $("screen-" + n).classList.toggle("hidden", n !== name));
+  if (name === "home") refreshCounts();
+}
+
+function renderLabs() {
+  const done = getLabsDone();
+  const list = $("labsList");
+  list.innerHTML = "";
+  LABS.forEach(l => {
+    const d = document.createElement("details");
+    d.className = "lab" + (done.includes(l.id) ? " done" : "");
+    const cliSafe = l.cli.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    d.innerHTML =
+      "<summary>" + (done.includes(l.id) ? "✅ " : "⬜ ") + l.title +
+      ' <span class="lab-time">' + l.time + "</span></summary>" +
+      '<p class="lab-obj"><b>Objectif :</b> ' + l.obj + "</p>" +
+      "<ol>" + l.steps.map(s => "<li>" + s + "</li>").join("") + "</ol>" +
+      '<pre class="qcode">' + cliSafe + "</pre>" +
+      '<p class="lab-verif"><b>Lab réussi si :</b> ' + l.verif + "</p>" +
+      '<button class="btn ghost lab-toggle">' + (done.includes(l.id) ? "Marquer non terminé" : "✅ Marquer terminé") + "</button>";
+    d.querySelector(".lab-toggle").addEventListener("click", () => {
+      const cur = getLabsDone();
+      setLabsDone(cur.includes(l.id) ? cur.filter(x => x !== l.id) : [...cur, l.id]);
+      renderLabs();
+    });
+    list.appendChild(d);
+  });
+}
+
+function renderQuestion() {
+  const q = session.list[session.idx];
+  session.answered = false; session.selectedChoice = null;
+  $("qLevel").textContent = "Niveau " + q.level;
+  $("qLevel").className = "pill lv" + q.level;
+  $("qDom").textContent = DOM_LABEL[q.d] + " · " + q.dom;
+  $("qCount").textContent = (session.idx + 1) + " / " + session.list.length;
+  $("qBar").style.width = (session.idx / session.list.length * 100) + "%";
+  $("qText").textContent = q.q;
+  $("qFeedback").innerHTML = "";
+  $("btnReveal").classList.remove("hidden");
+  $("btnNext").classList.add("hidden");
+
+  const maitrise = session.mode === "maitrise";
+  $("confRow").classList.toggle("hidden", !maitrise);
+  $("btnValidate").classList.toggle("hidden", maitrise);
+  session.startedAt = Date.now();
+
+  const scen = q.scen && SCENARIOS[q.scen];
+  $("qScenario").innerHTML = scen
+    ? '<div class="scenario"><div class="sc-title">📋 Étude de cas — ' + scen.title + "</div><p>" + scen.text + "</p></div>"
+    : "";
+
+  const zone = $("qInputZone");
+  zone.innerHTML = "";
+  if (q.code) {
+    const pre = document.createElement("pre");
+    pre.className = "qcode";
+    pre.textContent = q.code;
+    zone.appendChild(pre);
+  }
+  if (q.type === "input") {
+    const inp = document.createElement("input");
+    inp.type = "text"; inp.id = "answerInput";
+    inp.placeholder = "Écris ta réponse…";
+    inp.autocomplete = "off"; inp.spellcheck = false;
+    zone.appendChild(inp);
+    inp.focus();
+  } else if (q.type === "order") {
+    session.orderPick = [];
+    session.orderShuffled = shuffle(q.steps);
+    const wrap = document.createElement("div");
+    wrap.innerHTML = '<p class="order-hint">Clique les étapes dans le bon ordre (re-clique une étape choisie pour la retirer) :</p>' +
+      '<div class="order-list" id="orderPicked"></div><div class="order-list" id="orderAvail"></div>';
+    zone.appendChild(wrap);
+    renderOrder(q);
+  } else {
+    const div = document.createElement("div");
+    div.className = "choices";
+    shuffle(q.choices.map((c, i) => ({ c, i }))).forEach(({ c, i }) => {
+      const btn = document.createElement("button");
+      btn.className = "choice"; btn.textContent = c; btn.dataset.orig = i;
+      btn.addEventListener("click", () => {
+        if (session.answered) return;
+        session.selectedChoice = i;
+        div.querySelectorAll(".choice").forEach(x => x.classList.toggle("sel", x === btn));
+      });
+      div.appendChild(btn);
+    });
+    zone.appendChild(div);
+  }
+}
+
+function renderOrder(q) {
+  const picked = $("orderPicked"), avail = $("orderAvail");
+  picked.innerHTML = ""; avail.innerHTML = "";
+  session.orderPick.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "order-item picked";
+    b.textContent = (i + 1) + ". " + s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick = session.orderPick.filter(x => x !== s);
+      renderOrder(q);
+    });
+    picked.appendChild(b);
+  });
+  session.orderShuffled.filter(s => !session.orderPick.includes(s)).forEach(s => {
+    const b = document.createElement("button");
+    b.className = "order-item";
+    b.textContent = s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick.push(s);
+      renderOrder(q);
+    });
+    avail.appendChild(b);
+  });
+}
+
+function goodAnswerOf(q) {
+  return q.type === "input" ? q.accept[0]
+    : q.type === "order" ? q.steps.map((s, i) => (i + 1) + ". " + s).join("<br>")
+    : q.choices[q.answer];
+}
+
+function trackDom(q, ok) {
+  const s = session.perDom[q.d] || (session.perDom[q.d] = { ok: 0, total: 0 });
+  s.total++; if (ok) s.ok++;
+}
+
+function finishQuestion(q, ok, isReveal, conf) {
+  session.answered = true;
+  const srsHtml = recordAndFlag(q, ok, conf || (isReveal ? 1 : 2), isReveal);
+  trackDom(q, ok);
+  const errs = getErrors();
+  if (ok) {
+    session.score++; session.streak++;
+    setErrors(errs.filter(id => id !== q.id));
+  } else {
+    session.streak = 0;
+    session.wrongIds.push(q.id);
+    setErrors([...errs, q.id]);
+  }
+  $("score").textContent = session.score;
+  $("streak").textContent = session.streak;
+
+  const fb = document.createElement("div");
+  fb.className = "feedback " + (isReveal ? "info" : ok ? "ok" : "ko");
+  fb.innerHTML =
+    '<div class="verdict">' + (isReveal ? "💡 Correction" : ok ? "✅ Bonne réponse !" : "❌ Raté") + "</div>" +
+    (ok && !isReveal ? "" : '<p class="rep">' + (isReveal ? "La bonne réponse était" : "Réponse attendue") +
+      " : <b>" + goodAnswerOf(q) + "</b></p>") +
+    '<p class="exp">' + q.explain + "</p>" + srsHtml;
+  $("qFeedback").innerHTML = "";
+  $("qFeedback").appendChild(fb);
+
+  $("confRow").classList.add("hidden");
+  $("btnValidate").classList.add("hidden");
+  $("btnReveal").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+  $("qBar").style.width = ((session.idx + 1) / session.list.length * 100) + "%";
+}
+
+function validate(conf) {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  let ok;
+  if (q.type === "input") {
+    const val = $("answerInput").value;
+    if (!val.trim()) { $("answerInput").focus(); return; }
+    ok = isCorrect(val, q.accept);
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    if (session.orderPick.length !== q.steps.length) return;
+    ok = q.steps.every((s, i) => session.orderPick[i] === s);
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    if (session.selectedChoice === null) return;
+    ok = session.selectedChoice === q.answer;
+    document.querySelectorAll(".choice").forEach(btn => {
+      const i = Number(btn.dataset.orig);
+      btn.disabled = true;
+      if (i === q.answer) btn.classList.add("good");
+      else if (i === session.selectedChoice) btn.classList.add("bad");
+    });
+  }
+  finishQuestion(q, ok, false, conf);
+}
+
+function reveal() {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  if (q.type === "input") {
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    document.querySelectorAll(".choice").forEach(btn => {
+      btn.disabled = true;
+      if (Number(btn.dataset.orig) === q.answer) btn.classList.add("good");
+    });
+  }
+  finishQuestion(q, false, true, 1);
+}
+
+function next() {
+  if (session.idx + 1 < session.list.length) { session.idx++; renderQuestion(); }
+  else endSession();
+}
+
+function endSession() {
+  const total = session.list.length, s = session.score;
+  const pct = Math.round(s / total * 100);
+  $("endScore").textContent = s + " / " + total;
+  let v;
+  if (pct >= 90) v = "🏆 Niveau Professional — tu es prêt !";
+  else if (pct >= 75) v = "💪 Solide : au-dessus de la barre des 750.";
+  else if (pct >= 55) v = "📚 En bonne voie — cible tes domaines faibles ci-dessous.";
+  else v = "🌱 Rejoue tes erreurs et refais les labs du domaine concerné.";
+  $("endVerdict").textContent = v;
+
+  const mm = session.matrix;
+  const enMaitrise = session.mode === "maitrise";
+  $("endMatrix").classList.toggle("hidden", !enMaitrise);
+  if (enMaitrise && mm) {
+    $("endMatrix").innerHTML =
+      "<table><tr><th></th><th>Correct</th><th>Faux</th></tr>" +
+      '<tr><th>💪 Sûr</th><td class="n good">' + mm["3-ok"] + '</td><td class="n danger">' + mm["3-ko"] + "</td></tr>" +
+      '<tr><th>🤔 Hésitant</th><td class="n">' + mm["2-ok"] + '</td><td class="n">' + mm["2-ko"] + "</td></tr>" +
+      '<tr><th>✋ Au hasard</th><td class="n">' + mm["1-ok"] + '</td><td class="n">' + mm["1-ko"] + "</td></tr>" +
+      "</table><caption>" +
+      (mm["3-ko"] > 0
+        ? "🚨 " + mm["3-ko"] + " croyance(s) fausse(s) détectée(s) — la case la plus importante du tableau. Elles reviendront en priorité."
+        : "✅ Aucune croyance fausse cette session. " +
+          (mm["1-ok"] > 0 ? "En revanche " + mm["1-ok"] + " bonne(s) réponse(s) au hasard : elles ne comptent pas comme acquises." : "")) +
+      "</caption>";
+  }
+
+  const bd = $("endByDom");
+  bd.innerHTML = Object.entries(session.perDom)
+    .sort((a, b) => (a[1].ok / a[1].total) - (b[1].ok / b[1].total))
+    .map(([k, o]) => {
+      const p = Math.round(o.ok / o.total * 100);
+      const icon = p >= 75 ? "✅" : p >= 50 ? "⚠️" : "❌";
+      return '<span class="dl">' + icon + " " + DOM_LABEL[k] + '</span><span class="dv">' +
+             o.ok + "/" + o.total + " · " + p + "%</span>";
+    }).join("");
+
+  $("endDetail").textContent = pct + " % de bonnes réponses · " +
+    (total - s) + " erreur(s) ajoutée(s) au mode « Rejouer mes erreurs » (" + getErrors().length + " au total)";
+  $("btnReplayErrors").style.display = getErrors().length ? "" : "none";
+  show("end");
+}
+
+$("btnValidate").addEventListener("click", () => validate(2));
+document.querySelectorAll(".conf").forEach(b =>
+  b.addEventListener("click", () => validate(Number(b.dataset.conf))));
+$("btnReveal").addEventListener("click", reveal);
+$("btnNext").addEventListener("click", next);
+$("btnQuit").addEventListener("click", () => show("home"));
+$("btnHome").addEventListener("click", () => show("home"));
+$("btnLabsHome").addEventListener("click", () => show("home"));
+$("btnReplayErrors").addEventListener("click", () => {
+  const pool = poolFor("err");
+  if (!pool.length) { show("home"); return; }
+  session = { list: shuffle(pool), idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false, perDom: {} };
+  show("quiz"); renderQuestion();
+});
+document.addEventListener("keydown", e => {
+  if ($("screen-quiz").classList.contains("hidden")) return;
+  if (session && !session.answered && session.mode === "maitrise" && ["1", "2", "3"].includes(e.key)) {
+    const el = document.activeElement;
+    const dansUnChamp = el && el.tagName === "INPUT" && el.type === "text";
+    if (!dansUnChamp) { e.preventDefault(); validate(Number(e.key)); return; }
+  }
+  if (e.key !== "Enter") return;
+  if (session && session.answered) next(); else validate(2);
+});
+
+refreshCounts();
+show("home");
+</script>
+</body>
+</html>

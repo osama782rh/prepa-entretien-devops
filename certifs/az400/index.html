@@ -1,0 +1,2150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZ-400 DevOps Expert — Quiz</title>
+<style>
+  :root {
+    --ground: #F4F8F9;
+    --surface: #FFFFFF;
+    --ink: #14232A;
+    --muted: #55707A;
+    --accent: #0E7C86;
+    --accent-deep: #0A5C64;
+    --accent-soft: #E2F2F3;
+    --good: #1E7A46;
+    --good-soft: #E7F5EC;
+    --bad: #B3352B;
+    --bad-soft: #FBEAE8;
+    --warn: #9A4E00;
+    --border: #D6E4E7;
+    --shadow: 0 2px 8px rgba(20,35,42,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0C1417; --surface: #142025; --ink: #DCE9EC; --muted: #8AA5AD;
+      --accent: #4FC3CE; --accent-deep: #7FD9E2; --accent-soft: #123037;
+      --good: #5BC98A; --good-soft: #12291B; --bad: #F08578; --bad-soft: #2E1512;
+      --warn: #EDAA5F; --border: #22383F; --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    font-size: 16px; line-height: 1.5; min-height: 100vh;
+  }
+  code { font-family: "Cascadia Code", Consolas, monospace; background: var(--accent-soft); color: var(--accent-deep); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  header.top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+  header.top h1 { font-size: 20px; margin: 0; font-weight: 700; }
+  header.top h1 .az { color: var(--accent); }
+  .stats { display: flex; gap: 14px; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stats b { color: var(--ink); }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); }
+
+  .home h2 { margin: 0 0 4px; font-size: 24px; }
+  .home p.sub { color: var(--muted); margin: 0 0 12px; }
+  .exam-banner { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; margin-bottom: 8px; }
+  .weights { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; font-size: 12.5px; margin: 8px 0 0; }
+  .weights .wl { color: var(--muted); }
+  .weights .wv { font-weight: 700; color: var(--accent-deep); font-variant-numeric: tabular-nums; text-align: right; }
+  .weights .big { color: var(--accent); }
+
+  .filters { margin: 16px 0 10px; display: grid; gap: 8px; }
+  .frow { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); flex-wrap: wrap; }
+  .seg { display: flex; gap: 4px; flex-wrap: wrap; }
+  .seg button { border: 1px solid var(--border); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 13.5px; }
+  .seg button.on { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  .seg button:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 1px; }
+
+  .modes { display: grid; gap: 10px; }
+  .mode-btn {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; cursor: pointer; text-align: left; color: var(--ink);
+    font-family: inherit; font-size: 15px; transition: border-color .15s, transform .1s;
+  }
+  .mode-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .mode-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mode-btn .ico { font-size: 24px; width: 34px; text-align: center; }
+  .mode-btn .t { font-weight: 650; }
+  .mode-btn .d { font-size: 13px; color: var(--muted); }
+  .mode-btn .n { margin-left: auto; font-size: 12.5px; color: var(--accent); background: var(--accent-soft); border-radius: 20px; padding: 2px 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .qmeta { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .pill { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; border-radius: 20px; padding: 3px 11px; }
+  .pill.lv1 { background: var(--good-soft); color: var(--good); }
+  .pill.lv2 { background: var(--accent-soft); color: var(--accent); }
+  .pill.lv3 { background: var(--bad-soft); color: var(--bad); }
+  .pill.dom { background: transparent; border: 1px solid var(--border); color: var(--muted); font-weight: 600; }
+  .progressbar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 18px; }
+  .progressbar div { height: 100%; background: var(--accent); border-radius: 3px; transition: width .25s; }
+  .question { font-size: 19px; font-weight: 650; margin: 0 0 18px; line-height: 1.4; text-wrap: balance; }
+
+  input[type=text] {
+    width: 100%; padding: 12px 14px; font-size: 16px; font-family: inherit;
+    border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink);
+  }
+  input[type=text]:focus { outline: none; border-color: var(--accent); }
+  .choices { display: grid; gap: 8px; }
+  .choice {
+    text-align: left; padding: 11px 14px; border: 2px solid var(--border); border-radius: 10px;
+    background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 15px;
+    transition: border-color .12s;
+  }
+  .choice:hover { border-color: var(--accent); }
+  .choice.sel { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .choice.good { border-color: var(--good); background: var(--good-soft); font-weight: 600; }
+  .choice.bad { border-color: var(--bad); background: var(--bad-soft); }
+  .choice:disabled { cursor: default; opacity: .85; }
+
+  .actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .btn { padding: 11px 22px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 650; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-deep); }
+  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+
+  .feedback { margin-top: 18px; border-radius: 12px; padding: 14px 16px; font-size: 15px; }
+  .feedback.ok { background: var(--good-soft); border: 1px solid var(--good); }
+  .feedback.ko { background: var(--bad-soft); border: 1px solid var(--bad); }
+  .feedback.info { background: var(--accent-soft); border: 1px solid var(--accent); }
+  .feedback .verdict { font-weight: 750; font-size: 16px; }
+  .feedback.ok .verdict { color: var(--good); }
+  .feedback.ko .verdict { color: var(--bad); }
+  .feedback.info .verdict { color: var(--accent-deep); }
+  .feedback .rep { margin: 6px 0 0; }
+  .feedback .exp { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+  pre.qcode {
+    background: #101C21; color: #DCEAEE; border-radius: 10px;
+    padding: 12px 14px; overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+    font-family: "Cascadia Code", Consolas, monospace; margin: 0 0 14px; text-align: left;
+  }
+  .scenario { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 10px 14px; margin: 0 0 14px; font-size: 14px; }
+  .scenario .sc-title { font-weight: 700; color: var(--accent-deep); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+  .scenario p { margin: 0; }
+  .order-hint { font-size: 13.5px; color: var(--muted); margin: 0 0 8px; }
+  .order-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+  .order-list:empty { display: none; }
+  .order-item { text-align: left; padding: 10px 13px; border: 2px solid var(--border); border-radius: 10px; background: var(--ground); color: var(--ink); cursor: pointer; font-family: inherit; font-size: 14.5px; }
+  .order-item:hover { border-color: var(--accent); }
+  .order-item.picked { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .order-item:disabled { cursor: default; opacity: .85; }
+
+  .lab { background: var(--ground); border: 1px solid var(--border); border-radius: 12px; padding: 4px 16px 12px; margin-bottom: 10px; }
+  .lab summary { cursor: pointer; font-weight: 650; padding: 10px 0; font-size: 15.5px; }
+  .lab.done summary { color: var(--good); }
+  .lab .lab-time { color: var(--muted); font-weight: 400; font-size: 13px; }
+  .lab ol { padding-left: 20px; font-size: 14.5px; }
+  .lab li { margin: 4px 0; }
+  .lab .lab-obj, .lab .lab-verif { font-size: 14px; }
+  .lab .lab-verif { background: var(--good-soft); border-radius: 8px; padding: 8px 12px; }
+  .labs-note { background: color-mix(in srgb, var(--warn) 12%, transparent); border-radius: 10px; padding: 10px 14px; font-size: 13.5px; color: var(--warn); margin-bottom: 14px; }
+
+  .end { text-align: center; }
+  .end .big { font-size: 52px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; margin: 10px 0 0; }
+  .end .verdict { font-size: 18px; font-weight: 650; margin: 6px 0 18px; }
+  .end .detail { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .end .bydom { text-align: left; font-size: 13.5px; margin: 0 auto 18px; max-width: 420px; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; }
+  .end .bydom .dl { color: var(--muted); }
+  .end .bydom .dv { font-variant-numeric: tabular-nums; font-weight: 650; }
+  .kbd-hint { text-align: center; color: var(--muted); font-size: 12.5px; margin-top: 14px; }
+  .hidden { display: none; }
+
+  /* ---- Mode Maîtrise ---- */
+  .dash { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  .dash h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; color: var(--accent-deep); }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; }
+  .dash-cell { background: var(--surface); border-radius: 9px; padding: 8px 10px; text-align: center; }
+  .dash-cell .v { font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .dash-cell .k { font-size: 11px; color: var(--muted); line-height: 1.25; }
+  .dash-cell.danger .v { color: var(--bad); }
+  .dash-cell.due .v { color: var(--accent); }
+  .dash-cell.mastered .v { color: var(--good); }
+  .dash-cell.reco .v { color: var(--warn); }
+  .dash-note { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
+
+  .conf-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .conf-label { width: 100%; font-size: 12.5px; color: var(--muted); margin-bottom: 2px; }
+  .conf {
+    flex: 1 1 30%; min-width: 120px; padding: 11px 12px; border-radius: 10px; cursor: pointer;
+    font-family: inherit; font-size: 14.5px; font-weight: 650; border: 2px solid var(--border);
+    background: var(--surface); color: var(--ink); text-align: center; line-height: 1.25;
+  }
+  .conf small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
+  .conf:hover { border-color: var(--accent); }
+  .conf:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+  .conf.c3 { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+  .conf.c3:hover { border-color: var(--good); background: var(--good-soft); }
+  .conf.c1 { border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+  .conf.c1:hover { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+
+  .srs-flag { font-size: 12.5px; border-radius: 8px; padding: 7px 11px; margin-top: 10px; }
+  .srs-flag.danger { background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad); font-weight: 600; }
+  .srs-flag.reco { background: color-mix(in srgb, var(--warn) 12%, transparent); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
+  .srs-next { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+  .matrix { max-width: 420px; margin: 0 auto 18px; }
+  .matrix table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .matrix th, .matrix td { padding: 7px 9px; border: 1px solid var(--border); text-align: center; }
+  .matrix th { background: var(--accent-soft); color: var(--accent-deep); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
+  .matrix td.n { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; }
+  .matrix td.danger { background: var(--bad-soft); color: var(--bad); }
+  .matrix td.good { background: var(--good-soft); color: var(--good); }
+  .matrix caption { caption-side: bottom; font-size: 12px; color: var(--muted); padding-top: 8px; text-align: left; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1><span class="az">AZ-400</span> · DevOps Engineer Expert</h1>
+    <div class="stats">
+      <span>Série : <b id="streak">0</b> 🔥</span>
+      <span>Score : <b id="score">0</b></span>
+    </div>
+  </header>
+
+  <!-- Accueil -->
+  <div id="screen-home" class="card home">
+    <h2>Choisis ton mode</h2>
+    <p class="sub">Banque calée sur le référentiel officiel <b>en vigueur depuis le 27 juillet 2026</b>. Réponses à taper pour la majorité des questions.</p>
+    <div class="exam-banner">
+      <b>Pondération officielle</b> — le domaine « pipelines » pèse plus que les 4 autres réunis :
+      <div class="weights">
+        <span class="wl">Processus et communications</span><span class="wv">10–15 %</span>
+        <span class="wl">Stratégie de contrôle de code source</span><span class="wv">10–15 %</span>
+        <span class="wl big">Pipelines de build et de release</span><span class="wv big">50–55 %</span>
+        <span class="wl">Sécurité et conformité</span><span class="wv">10–15 %</span>
+        <span class="wl">Instrumentation</span><span class="wv">5–10 %</span>
+      </div>
+    </div>
+    <div class="filters">
+      <div class="frow">
+        Questions :
+        <div class="seg" id="countSeg">
+          <button data-n="10">10</button>
+          <button data-n="20" class="on">20</button>
+          <button data-n="0">Toutes</button>
+        </div>
+      </div>
+      <div class="frow">
+        Domaine :
+        <div class="seg" id="domSeg">
+          <button data-d="all" class="on">Tous</button>
+          <button data-d="proc">Processus</button>
+          <button data-d="src">Source</button>
+          <button data-d="pipe">Pipelines</button>
+          <button data-d="sec">Sécurité</button>
+          <button data-d="mon">Monitoring</button>
+        </div>
+      </div>
+    </div>
+    <div class="dash">
+      <h3>🧠 Ta progression</h3>
+      <div class="dash-grid">
+        <div class="dash-cell danger"><div class="v" id="dCroyances">0</div><div class="k">croyances fausses</div></div>
+        <div class="dash-cell due"><div class="v" id="dDue">0</div><div class="k">à réviser</div></div>
+        <div class="dash-cell mastered"><div class="v" id="dMastered">0</div><div class="k">ancrés</div></div>
+        <div class="dash-cell reco"><div class="v" id="dReco">0</div><div class="k">reconnaissance ?</div></div>
+        <div class="dash-cell"><div class="v" id="dNew">0</div><div class="k">jamais vus</div></div>
+      </div>
+      <p class="dash-note" id="dNote"></p>
+    </div>
+    <div class="modes">
+      <button class="mode-btn" data-mode="maitrise" style="border-color:var(--accent);background:var(--accent-soft)">
+        <span class="ico">🧠</span>
+        <span><span class="t">Session Maîtrise (recommandé)</span><br><span class="d">Répétition espacée pilotée par ta confiance — corrige d'abord ce que tu crois savoir à tort</span></span>
+        <span class="n" id="nmaitrise"></span>
+      </button>
+      <button class="mode-btn" data-mode="1">
+        <span class="ico">🌱</span>
+        <span><span class="t">Niveau 1 — Culture DevOps &amp; vocabulaire</span><br><span class="d">DORA, SRE, CI/CD, Git, sigles, services Azure DevOps &amp; GitHub</span></span>
+        <span class="n" id="n1"></span>
+      </button>
+      <button class="mode-btn" data-mode="2">
+        <span class="ico">⚙️</span>
+        <span><span class="t">Niveau 2 — Faits, YAML &amp; commandes</span><br><span class="d">Syntaxe pipelines, agents, policies, GHAS, KQL — le par-cœur</span></span>
+        <span class="n" id="n2"></span>
+      </button>
+      <button class="mode-btn" data-mode="3">
+        <span class="ico">🎯</span>
+        <span><span class="t">Niveau 3 — Scénarios &amp; design</span><br><span class="d">« Quelle stratégie recommandes-tu ? » — le cœur de l'examen Expert</span></span>
+        <span class="n" id="n3"></span>
+      </button>
+      <button class="mode-btn" data-mode="code">
+        <span class="ico">💻</span>
+        <span><span class="t">Code à compléter</span><br><span class="d">YAML Azure Pipelines, GitHub Actions, KQL, Git, Bicep, Mermaid</span></span>
+        <span class="n" id="ncode"></span>
+      </button>
+      <button class="mode-btn" data-mode="cas">
+        <span class="ico">🧩</span>
+        <span><span class="t">Études de cas &amp; séquences</span><br><span class="d">3 entreprises + workflows à remettre dans l'ordre</span></span>
+        <span class="n" id="ncas"></span>
+      </button>
+      <button class="mode-btn" data-mode="blanc">
+        <span class="ico">🎓</span>
+        <span><span class="t">Examen blanc pondéré</span><br><span class="d">≈ 45 questions réparties selon les vrais pourcentages officiels</span></span>
+        <span class="n" id="nblanc"></span>
+      </button>
+      <button class="mode-btn" data-mode="mix">
+        <span class="ico">🎲</span>
+        <span><span class="t">Tout mélanger</span><br><span class="d">Toute la banque aléatoirement</span></span>
+        <span class="n" id="nmix"></span>
+      </button>
+      <button class="mode-btn" data-mode="err">
+        <span class="ico">🩹</span>
+        <span><span class="t">Rejouer mes erreurs</span><br><span class="d">Uniquement les questions déjà ratées</span></span>
+        <span class="n" id="nerr"></span>
+      </button>
+      <button class="mode-btn" data-mode="labs">
+        <span class="ico">🧪</span>
+        <span><span class="t">Labs guidés</span><br><span class="d">Azure DevOps + GitHub (gratuits) et ton abonnement Azure</span></span>
+        <span class="n" id="nlabs"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div id="screen-quiz" class="card hidden">
+    <div class="qmeta">
+      <span class="pill" id="qLevel"></span>
+      <span class="pill dom" id="qDom"></span>
+      <span style="margin-left:auto;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums" id="qCount"></span>
+    </div>
+    <div class="progressbar"><div id="qBar" style="width:0%"></div></div>
+    <div id="qScenario"></div>
+    <p class="question" id="qText"></p>
+    <div id="qInputZone"></div>
+    <div class="conf-row hidden" id="confRow">
+      <span class="conf-label">Valide en déclarant ta confiance — c'est ce qui pilote ta prochaine révision :</span>
+      <button class="conf c1" data-conf="1" id="conf1">✋ Au hasard<small>touche 1</small></button>
+      <button class="conf c2" data-conf="2" id="conf2">🤔 Hésitant<small>touche 2 ou Entrée</small></button>
+      <button class="conf c3" data-conf="3" id="conf3">💪 Sûr<small>touche 3</small></button>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnValidate">Valider</button>
+      <button class="btn primary hidden" id="btnNext">Question suivante →</button>
+      <button class="btn ghost" id="btnReveal">💡 Je ne sais pas</button>
+      <button class="btn ghost" id="btnQuit">Quitter</button>
+    </div>
+    <div id="qFeedback"></div>
+    <p class="kbd-hint">Entrée = valider / question suivante</p>
+  </div>
+
+  <!-- Fin -->
+  <div id="screen-end" class="card end hidden">
+    <h2>Session terminée !</h2>
+    <p class="big" id="endScore"></p>
+    <p class="verdict" id="endVerdict"></p>
+    <div class="matrix hidden" id="endMatrix"></div>
+    <div class="bydom" id="endByDom"></div>
+    <p class="detail" id="endDetail"></p>
+    <div class="actions" style="justify-content:center">
+      <button class="btn primary" id="btnReplayErrors">🩹 Rejouer mes erreurs</button>
+      <button class="btn ghost" id="btnHome">← Menu</button>
+    </div>
+  </div>
+
+  <!-- Labs -->
+  <div id="screen-labs" class="card hidden">
+    <h2>🧪 Labs guidés — Azure DevOps, GitHub &amp; Azure</h2>
+    <p class="labs-note">Tout est gratuit : crée une organisation sur <code>dev.azure.com</code> (5 utilisateurs, 1 job parallèle Microsoft-hosted, 1 800 min/mois) et un compte GitHub (Actions gratuit sur repo public). Les labs qui déploient sur Azure utilisent ton abonnement — supprime le resource group à la fin.</p>
+    <div id="labsList"></div>
+    <div class="actions">
+      <button class="btn ghost" id="btnLabsHome">← Menu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   BANQUE DE QUESTIONS — AZ-400 (référentiel du 27 juillet 2026)
+   d: domaine officiel — proc | src | pipe | sec | mon
+   ===================================================================== */
+const QUESTIONS = [
+/* ================= NIVEAU 1 — CULTURE DEVOPS & VOCABULAIRE ================= */
+{ id:"v-devops", level:1, d:"proc", dom:"Culture DevOps", type:"qcm",
+  q:"Quelle est la meilleure définition de DevOps ?",
+  choices:["L'union des personnes, des processus et des produits pour livrer de la valeur en continu aux utilisateurs","Un outil d'automatisation des déploiements","Une équipe dédiée entre les devs et les ops","Un synonyme de CI/CD"],
+  answer:0,
+  explain:"Définition officielle Microsoft : « people, process and products to enable continuous delivery of value ». Créer une « équipe DevOps » séparée est justement un anti-pattern (nouveau silo)." },
+{ id:"v-calms", level:1, d:"proc", dom:"Culture DevOps", type:"qcm",
+  q:"Que recouvre l'acronyme CALMS, cadre d'évaluation de la maturité DevOps ?",
+  choices:["Culture, Automation, Lean, Measurement, Sharing","Code, Agile, Learn, Monitor, Ship","Continuous, Automated, Layered, Managed, Secure","Collaboration, Analytics, Logs, Metrics, Security"],
+  answer:0,
+  explain:"CALMS : Culture (collaboration), Automation, Lean (flux, petits lots), Measurement (mesurer pour améliorer), Sharing (partage des responsabilités)." },
+{ id:"v-dora", level:1, d:"proc", dom:"Métriques DORA", type:"qcm",
+  q:"Quelles sont les 4 métriques DORA de performance DevOps ?",
+  choices:["Deployment frequency, Lead time for changes, Change failure rate, Time to restore service","Vélocité, burndown, story points, capacité","CPU, mémoire, disque, réseau","Couverture de tests, dette technique, bugs, incidents"],
+  answer:0,
+  explain:"Les 4 clés DORA : deux de vitesse (fréquence de déploiement, délai de livraison) et deux de stabilité (taux d'échec des changements, temps de restauration). Explicitement au programme des dashboards." },
+{ id:"v-leadtime", level:1, d:"proc", dom:"Métriques DORA", type:"qcm",
+  q:"Que mesure le « lead time for changes » (délai de livraison) ?",
+  choices:["Le temps entre le commit du code et sa mise en production","La durée d'un sprint","Le temps de build","Le temps entre l'idée et le commit"],
+  answer:0,
+  explain:"Du commit à la production. À distinguer du cycle time (début du travail → livraison) et du lead time métier (demande → livraison)." },
+{ id:"v-mttr", level:1, d:"mon", dom:"Métriques DORA", type:"input",
+  q:"Quelle métrique mesure le temps moyen nécessaire pour restaurer le service après un incident (sigle) ?",
+  accept:["mttr","mean time to restore","mean time to recovery","time to restore"],
+  explain:"MTTR — Mean Time To Restore/Recovery. Une des 4 métriques DORA, appelée « time to recovery » dans les dashboards Azure DevOps." },
+{ id:"v-cfr", level:1, d:"proc", dom:"Métriques DORA", type:"qcm",
+  q:"Que mesure le « change failure rate » ?",
+  choices:["Le pourcentage de déploiements en production qui provoquent une dégradation nécessitant une correction","Le nombre de builds échoués","Le taux de bugs par sprint","Le pourcentage de PR rejetées"],
+  answer:0,
+  explain:"Le taux d'échec des changements : % de déploiements causant un incident/rollback/hotfix. Un build échoué en CI ne compte PAS (il n'atteint pas la prod)." },
+{ id:"v-ci", level:1, d:"pipe", dom:"CI/CD", type:"qcm",
+  q:"Qu'est-ce que l'intégration continue (CI) ?",
+  choices:["Fusionner fréquemment le code dans une branche partagée, avec build et tests automatiques à chaque intégration","Déployer automatiquement en production","Écrire des tests unitaires","Surveiller l'application en continu"],
+  answer:0,
+  explain:"CI = intégrer souvent + valider automatiquement (build + tests). Objectif : détecter les conflits et régressions au plus tôt." },
+{ id:"v-cd-diff", level:1, d:"pipe", dom:"CI/CD", type:"qcm",
+  q:"Quelle est la différence entre continuous delivery et continuous deployment ?",
+  choices:["Delivery : chaque build validé est PRÊT à être déployé, la mise en prod reste déclenchée manuellement. Deployment : la mise en prod est automatique","Ce sont deux noms du même concept","Delivery concerne les artefacts, deployment les conteneurs","Deployment est manuel, delivery automatique"],
+  answer:0,
+  explain:"Les deux automatisent le pipeline ; seule la porte finale diffère. Continuous deployment = aucune intervention humaine jusqu'à la prod." },
+{ id:"v-shiftleft", level:1, d:"sec", dom:"Culture DevOps", type:"qcm",
+  q:"Que signifie « shift left » en DevSecOps ?",
+  choices:["Déplacer les tests et la sécurité au plus TÔT dans le cycle (dès le commit / la PR)","Déplacer la charge vers l'équipe ops","Passer en revue le code de droite à gauche","Réduire le nombre d'environnements"],
+  answer:0,
+  explain:"Plus un défaut est détecté tard, plus il coûte cher. Shift left = scanner le code, les dépendances et les secrets dès la PR, pas juste avant la prod." },
+{ id:"v-sre", level:1, d:"mon", dom:"SRE", type:"qcm",
+  q:"Que signifie SRE et quel est son principe central ?",
+  choices:["Site Reliability Engineering — traiter la fiabilité comme un problème d'ingénierie, piloté par des SLO et un budget d'erreur","Secure Runtime Environment — sécuriser l'exécution","System Resource Estimation — dimensionner les serveurs","Software Release Engineering — gérer les livraisons"],
+  answer:0,
+  explain:"SRE applique des pratiques d'ingénierie logicielle à l'exploitation : SLI/SLO, error budget, automatisation du toil, postmortems sans blâme." },
+{ id:"v-sli-slo", level:1, d:"mon", dom:"SRE", type:"qcm",
+  q:"Quelle est la différence entre SLI, SLO et SLA ?",
+  choices:["SLI = la mesure (ex : % de requêtes < 300 ms) ; SLO = l'objectif interne visé ; SLA = l'engagement contractuel avec pénalités","SLI et SLO sont identiques, SLA est technique","SLA est interne, SLO est contractuel","Ce sont trois niveaux de sévérité d'incident"],
+  answer:0,
+  explain:"Indicator (je mesure) → Objective (je vise) → Agreement (je m'engage juridiquement). Le SLO est toujours plus strict que le SLA." },
+{ id:"v-errorbudget", level:1, d:"mon", dom:"SRE", type:"qcm",
+  q:"Qu'est-ce qu'un « error budget » ?",
+  choices:["La part d'indisponibilité tolérée par le SLO (ex : SLO 99,9 % → 0,1 % de budget) ; épuisé, on gèle les nouvelles features pour fiabiliser","Le budget financier alloué aux incidents","Le nombre de bugs autorisés par sprint","La marge de dépassement du coût cloud"],
+  answer:0,
+  explain:"L'error budget arbitre objectivement entre vitesse et stabilité : tant qu'il reste du budget, on livre ; épuisé, la priorité passe à la fiabilité." },
+{ id:"v-postmortem", level:1, d:"mon", dom:"SRE", type:"qcm",
+  q:"Qu'est-ce qu'un postmortem « blameless » ?",
+  choices:["Une analyse d'incident centrée sur les causes systémiques, sans désigner de coupable, pour que l'information circule librement","Un rapport anonyme","Une réunion sans les managers","Un incident classé sans suite"],
+  answer:0,
+  explain:"Blâmer pousse à cacher les erreurs. Sans blâme, on obtient la vraie chronologie et on corrige le système (process, garde-fous), pas la personne." },
+{ id:"v-toil", level:1, d:"mon", dom:"SRE", type:"qcm",
+  q:"Qu'appelle-t-on le « toil » en SRE ?",
+  choices:["Le travail manuel, répétitif, automatisable et sans valeur durable — à éliminer par l'automatisation","Les heures supplémentaires","Le travail de documentation","Les incidents de production"],
+  answer:0,
+  explain:"Le toil grandit avec le service. Les SRE plafonnent le temps qu'ils y consacrent (souvent 50 %) pour garder du temps d'ingénierie." },
+{ id:"v-azdo-services", level:1, d:"proc", dom:"Azure DevOps", type:"qcm",
+  q:"Quels sont les 5 services d'Azure DevOps ?",
+  choices:["Boards, Repos, Pipelines, Artifacts, Test Plans","Boards, Wiki, Actions, Packages, Monitor","Repos, Actions, Registry, Insights, Plans","Projects, Issues, Builds, Releases, Reports"],
+  answer:0,
+  explain:"Boards (travail), Repos (Git), Pipelines (CI/CD), Artifacts (packages), Test Plans (tests manuels/exploratoires — licence à part)." },
+{ id:"v-gh-services", level:1, d:"proc", dom:"GitHub", type:"qcm",
+  q:"Quel est l'équivalent GitHub d'Azure Pipelines ?",
+  choices:["GitHub Actions","GitHub Packages","GitHub Projects","GitHub Codespaces"],
+  answer:0,
+  explain:"Actions = CI/CD. Correspondances : Boards ↔ Issues/Projects, Repos ↔ Repositories, Artifacts ↔ Packages. L'examen teste les DEUX plateformes." },
+{ id:"v-yaml", level:1, d:"pipe", dom:"Pipelines", type:"qcm",
+  q:"Pourquoi privilégier les pipelines YAML aux pipelines classiques (interface graphique) ?",
+  choices:["Le pipeline est versionné avec le code : historique, revue en PR, branches, réutilisation par templates","Le YAML s'exécute plus vite","Les pipelines classiques ne supportent pas Azure","Le YAML permet plus de jobs parallèles"],
+  answer:0,
+  explain:"« Pipeline as code » : le pipeline suit le cycle de vie du code. Les pipelines classiques sont en fin de vie — la migration classic → YAML est explicitement au programme." },
+{ id:"v-artifact", level:1, d:"pipe", dom:"Artefacts", type:"qcm",
+  q:"Qu'est-ce qu'un artefact de pipeline ?",
+  choices:["Le résultat d'un build (binaire, package, image, template) publié pour être consommé par les étapes ou pipelines suivants","Un fichier de log","Une variable de pipeline","Un agent de build"],
+  answer:0,
+  explain:"Principe clé : « build once, deploy many » — on construit l'artefact UNE fois puis on déploie le MÊME artefact sur chaque environnement." },
+{ id:"v-buildonce", level:1, d:"pipe", dom:"Pipelines", type:"qcm",
+  q:"Que signifie le principe « build once, deploy many » ?",
+  choices:["Un seul artefact est construit puis promu tel quel de dev à prod, la configuration étant injectée à l'exécution","Rebuild à chaque environnement pour garantir la fraîcheur","Un build par branche","Construire une image par région"],
+  answer:0,
+  explain:"Rebuilder par environnement casse la garantie : ce qui est testé en staging n'est plus le binaire déployé en prod. La config vient des variables/App Configuration." },
+{ id:"v-iac", level:1, d:"pipe", dom:"IaC", type:"input",
+  q:"Décrire l'infrastructure dans des fichiers versionnés et déployés automatiquement. Quel terme (sigle) ?",
+  accept:["iac","infrastructure as code"],
+  explain:"Infrastructure as Code : ARM, Bicep, Terraform, Azure Machine Configuration. Au programme du domaine pipelines (50-55 %)." },
+{ id:"v-idempotent", level:1, d:"pipe", dom:"IaC", type:"qcm",
+  q:"Pourquoi une opération de déploiement doit-elle être idempotente ?",
+  choices:["Pour qu'une réexécution donne le même résultat, sans effet de bord — indispensable aux retries et à la reprise après échec","Pour aller plus vite","Pour réduire les coûts","Pour chiffrer les secrets"],
+  answer:0,
+  explain:"Idempotent = rejouable sans risque. C'est ce qui permet de relancer un déploiement partiellement échoué en toute sécurité." },
+{ id:"v-drift", level:1, d:"pipe", dom:"IaC", type:"input",
+  q:"Écart entre la configuration déclarée et l'état réel des serveurs/ressources (souvent dû à des modifications manuelles). Quel terme anglais ?",
+  accept:["drift","configuration drift","derive"],
+  explain:"Le configuration drift. Contré par la desired state configuration (Azure Automation State Configuration, Azure Machine Configuration) qui ré-applique l'état voulu." },
+{ id:"v-bluegreen", level:1, d:"pipe", dom:"Déploiement", type:"input",
+  q:"Quelle stratégie utilise DEUX environnements identiques, déploie sur l'inactif puis bascule tout le trafic d'un coup (rollback = rebascule) ?",
+  accept:["blue green","bluegreen","bleu vert"],
+  explain:"Bascule instantanée et rollback immédiat, au prix de deux environnements. Sur App Service, les deployment slots + swap sont l'implémentation native." },
+{ id:"v-canary", level:1, d:"pipe", dom:"Déploiement", type:"input",
+  q:"Quelle stratégie expose d'abord la nouvelle version à un petit pourcentage d'instances, surveille les métriques, puis étend progressivement ?",
+  accept:["canary","canari"],
+  explain:"Le « canari dans la mine » : petit périmètre d'abord pour limiter le rayon d'impact. La stratégie « canary » existe nativement dans les deployment jobs YAML." },
+{ id:"v-ring", level:1, d:"pipe", dom:"Déploiement", type:"input",
+  q:"Quelle stratégie livre par cercles d'utilisateurs de plus en plus larges (interne → early adopters → tous), chaque cercle servant de validation ?",
+  accept:["ring","anneaux","anneau","ring based","deploiement en anneaux"],
+  explain:"Forme de progressive exposure : ring 0 (équipe), ring 1 (beta), ring 2 (production générale). Chaque anneau est une porte de qualité." },
+{ id:"v-featureflag", level:1, d:"pipe", dom:"Déploiement", type:"input",
+  q:"Quel mécanisme découple le DÉPLOIEMENT du code de son ACTIVATION (livrer désactivé, activer progressivement, couper sans redéployer) ?",
+  accept:["feature flag","feature flags","feature toggle","indicateur de fonctionnalite"],
+  explain:"Deploy ≠ release. Le kill switch permet de couper une fonctionnalité en secondes, sans rollback de déploiement. Implémentation Azure : App Configuration Feature Manager." },
+{ id:"v-ab", level:1, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Quel est l'objectif d'un test A/B (par opposition à un canary) ?",
+  choices:["Comparer deux variantes sur une MÉTRIQUE MÉTIER (conversion, engagement) — c'est une expérimentation produit","Réduire le risque technique d'une mise en production","Tester la charge","Valider un rollback"],
+  answer:0,
+  explain:"Canary = réduire le risque technique ; A/B = décider quelle variante est la meilleure pour le business. Même mécanique de routage, finalité différente." },
+{ id:"v-gitflow", level:1, d:"src", dom:"Branching", type:"input",
+  q:"Quelle stratégie de branches fait intégrer tout le monde très fréquemment dans UNE branche principale, via des branches de feature de 1-2 jours maximum ?",
+  accept:["trunk based","trunk based development","trunk"],
+  explain:"Trunk-based = la pratique qui corrèle le mieux avec les hautes performances DORA. Les branches longues créent des merges douloureux et retardent l'intégration." },
+{ id:"v-ghflow", level:1, d:"src", dom:"Branching", type:"qcm",
+  q:"En quoi consiste GitHub Flow ?",
+  choices:["Une branche main toujours déployable + branches de feature courtes fusionnées par pull request","Cinq types de branches avec des règles de fusion strictes","Une branche par environnement","Développer directement sur main sans PR"],
+  answer:0,
+  explain:"GitHub Flow (explicitement au programme) : simple, adapté au déploiement continu. GitFlow est plus lourd (develop/release/hotfix), adapté aux versions livrées périodiquement." },
+{ id:"v-pr", level:1, d:"src", dom:"Branching", type:"qcm",
+  q:"À quoi sert une pull request (PR) ?",
+  choices:["Proposer une fusion, déclencher la revue par les pairs et les validations automatiques avant intégration","Récupérer les modifications distantes","Créer une branche","Publier un package"],
+  answer:0,
+  explain:"La PR est le point de contrôle qualité : revue humaine + build de validation + scans de sécurité, avant que le code n'entre dans la branche protégée." },
+{ id:"v-monorepo", level:1, d:"src", dom:"Repos", type:"qcm",
+  q:"Quel est l'avantage principal d'un monorepo ?",
+  choices:["Refactoring atomique inter-projets et partage de code simplifié, au prix de pipelines plus complexes (filtres de chemins)","Des dépôts plus légers","Une sécurité renforcée","Des builds toujours plus rapides"],
+  answer:0,
+  explain:"Monorepo = un commit peut modifier plusieurs composants de façon cohérente. Il faut alors des path filters pour ne builder que ce qui a changé." },
+{ id:"v-lfs", level:1, d:"src", dom:"Repos", type:"input",
+  q:"Quelle extension Git stocke les gros fichiers binaires hors du dépôt, en ne gardant qu'un pointeur texte dans l'historique (sigle) ?",
+  accept:["lfs","git lfs","large file storage"],
+  explain:"Git LFS (Large File Storage). Alternative citée au programme : git-fat. Sans cela, chaque version d'un binaire alourdit définitivement le clone." },
+{ id:"v-scalar", level:1, d:"src", dom:"Repos", type:"input",
+  q:"Quel outil (cité au programme) optimise les TRÈS grands dépôts Git via clone partiel, sparse-checkout et maintenance en arrière-plan ?",
+  accept:["scalar"],
+  explain:"Scalar configure automatiquement les optimisations Git (partial clone, sparse checkout, prefetch) pour les dépôts massifs." },
+{ id:"v-semver", level:1, d:"pipe", dom:"Packages", type:"qcm",
+  q:"Dans le versionnement sémantique MAJOR.MINOR.PATCH, quand incrémente-t-on MAJOR ?",
+  choices:["Lors d'un changement incompatible (breaking change) avec les versions précédentes","À chaque nouvelle fonctionnalité","À chaque correction de bug","À chaque build"],
+  answer:0,
+  explain:"MAJOR = rupture de compatibilité, MINOR = ajout rétrocompatible, PATCH = correction rétrocompatible. CalVer (versionnement par date, ex : 2026.07.1) est l'alternative citée au programme." },
+{ id:"v-calver", level:1, d:"pipe", dom:"Packages", type:"qcm",
+  q:"Qu'est-ce que le CalVer ?",
+  choices:["Un versionnement basé sur la date (ex : 2026.07.1), utile quand la cadence prime sur la compatibilité","Un calcul automatique de version par le pipeline","Une version calibrée sur les tests","Le versionnement des calendriers de release"],
+  answer:0,
+  explain:"CalVer (Calendar Versioning) — explicitement cité dans le référentiel à côté de SemVer. Utilisé par Ubuntu, PyCharm… quand la date porte plus de sens que la compatibilité." },
+{ id:"v-feed", level:1, d:"pipe", dom:"Packages", type:"qcm",
+  q:"Qu'est-ce qu'un « feed » dans Azure Artifacts ?",
+  choices:["Un dépôt de packages (NuGet, npm, Maven, Python, Universal) partageable, avec vues et sources amont","Un flux d'événements du pipeline","Un canal de notifications","Un flux RSS des releases"],
+  answer:0,
+  explain:"Le feed héberge tes packages ET peut relayer des sources amont (nuget.org, npmjs) — un seul point d'accès, avec cache et traçabilité." },
+{ id:"v-sast", level:1, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Quelle est la différence entre SAST et DAST ?",
+  choices:["SAST analyse le code source à l'arrêt (statique) ; DAST teste l'application en cours d'exécution (dynamique)","SAST teste en production, DAST en développement","SAST concerne les dépendances, DAST le code","Ce sont des synonymes"],
+  answer:0,
+  explain:"SAST (ex : CodeQL) tourne dès la PR ; DAST attaque une instance déployée. SCA (Software Composition Analysis, ex : Dependabot) analyse les dépendances tierces." },
+{ id:"v-sca", level:1, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Que fait l'analyse SCA (Software Composition Analysis) ?",
+  choices:["Inventorier les dépendances open source et détecter leurs vulnérabilités et licences","Analyser la complexité du code","Scanner les secrets","Tester les performances"],
+  answer:0,
+  explain:"SCA = dépendances tierces (Dependabot, Mend, Snyk). Les 4 types de scan au programme : dependency, code, secret et licensing scanning." },
+{ id:"v-cve", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Identifiant public standardisé d'une vulnérabilité connue (ex : CVE-2021-44228 pour Log4Shell). Quel sigle ?",
+  accept:["cve","common vulnerabilities and exposures"],
+  explain:"CVE. Le scoring associé s'appelle CVSS. Dependabot signale les dépendances affectées par des CVE connues." },
+{ id:"v-sbom", level:1, d:"sec", dom:"Sécurité", type:"input",
+  q:"Inventaire complet des composants et dépendances d'un livrable, qui permet de répondre en minutes à « suis-je impacté par cette CVE ? ». Quel sigle ?",
+  accept:["sbom","software bill of materials"],
+  explain:"Le SBOM répond à « suis-je impacté par cette CVE ? » en quelques minutes. Souvent généré dans le pipeline (formats SPDX, CycloneDX)." },
+{ id:"v-spn", level:1, d:"sec", dom:"Identité", type:"qcm",
+  q:"Qu'est-ce qu'un service principal Microsoft Entra ?",
+  choices:["Une identité applicative permettant à un pipeline ou script de s'authentifier avec des droits RBAC","Un compte administrateur","Un groupe de sécurité","Un certificat TLS"],
+  answer:0,
+  explain:"Un service principal = identité non humaine. Il a des credentials à faire tourner (secret/certificat), contrairement à une managed identity ou à la fédération d'identité de charge de travail." },
+{ id:"v-mi", level:1, d:"sec", dom:"Identité", type:"input",
+  q:"Identité Azure attachée à une ressource, sans aucun secret à gérer ni faire tourner. Quel nom ?",
+  accept:["managed identity","identite manageee","identite managee","identite geree"],
+  explain:"Managed identity (system-assigned ou user-assigned). Le référentiel demande explicitement de savoir CHOISIR entre service principal et managed identity." },
+{ id:"v-oidc", level:1, d:"sec", dom:"Identité", type:"qcm",
+  q:"Qu'est-ce que la fédération d'identité de charge de travail (workload identity federation / OIDC) dans un pipeline ?",
+  choices:["Le pipeline échange un jeton OIDC de confiance contre un jeton Entra : plus AUCUN secret stocké à faire tourner","Un système de single sign-on pour les développeurs","Un chiffrement des variables","Un annuaire fédéré multi-tenant"],
+  answer:0,
+  explain:"C'est l'authentification « secretless » recommandée pour GitHub Actions et Azure Pipelines : fini les secrets qui expirent ou fuitent." },
+{ id:"v-pat", level:1, d:"sec", dom:"Identité", type:"qcm",
+  q:"Qu'est-ce qu'un PAT (Personal Access Token) et quelle est la bonne pratique ?",
+  choices:["Un jeton personnel remplaçant le mot de passe : durée de vie courte, périmètre (scope) minimal, jamais partagé ni committé","Un mot de passe administrateur permanent","Un certificat client","Un jeton attaché au projet, pas à la personne"],
+  answer:0,
+  explain:"Un PAT porte l'identité de la PERSONNE (il meurt avec son compte). Pour l'automatisation durable : service principal, managed identity ou workload identity federation." },
+{ id:"v-kv", level:1, d:"sec", dom:"Secrets", type:"input",
+  q:"Service Azure centralisant secrets, clés et certificats, intégrable aux variable groups d'Azure DevOps. Quel nom ?",
+  accept:["key vault","azure key vault","keyvault"],
+  explain:"Azure Key Vault. Un variable group peut être lié à un Key Vault : les secrets sont lus au runtime, jamais stockés dans le pipeline." },
+{ id:"v-kql", level:1, d:"mon", dom:"Monitoring", type:"input",
+  q:"Langage de requête d'Azure Monitor Logs / Application Insights (where, summarize, project, ago…). Quel sigle ?",
+  accept:["kql","kusto","kusto query language"],
+  explain:"KQL — explicitement au programme (« interrogate logs using basic KQL queries »). À savoir lire ET écrire simplement." },
+{ id:"v-appinsights", level:1, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"À quoi sert Application Insights ?",
+  choices:["Surveiller les performances applicatives : requêtes, dépendances, exceptions, traçage distribué, disponibilité","Gérer les identités","Stocker les artefacts","Orchestrer les conteneurs"],
+  answer:0,
+  explain:"C'est l'APM d'Azure Monitor. Le référentiel cite explicitement le traçage distribué (distributed tracing) via App Insights." },
+{ id:"v-tracing", level:1, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"Qu'est-ce que le traçage distribué (distributed tracing) ?",
+  choices:["Suivre une requête unique à travers tous les microservices traversés, via un identifiant de corrélation","Tracer les logs de plusieurs serveurs dans un même fichier","Répliquer les traces entre régions","Déboguer pas à pas à distance"],
+  answer:0,
+  explain:"Indispensable en microservices : l'operation_Id corrèle les télémétries, et la vue end-to-end transaction montre où le temps se perd." },
+{ id:"v-webhook", level:1, d:"proc", dom:"Intégrations", type:"input",
+  q:"Mécanisme d'intégration où un service envoie un POST HTTP vers une URL que tu exposes dès qu'un événement survient. Quel terme ?",
+  accept:["webhook","web hook","service hook"],
+  explain:"Le webhook (« service hooks » dans Azure DevOps). Au programme : « configure integration by using webhooks »." },
+{ id:"v-mermaid", level:1, d:"proc", dom:"Documentation", type:"qcm",
+  q:"Qu'est-ce que Mermaid, cité au programme pour la documentation ?",
+  choices:["Une syntaxe texte pour générer des diagrammes (flowchart, séquence, Gantt) dans un wiki ou un Markdown","Un moteur de recherche de wiki","Un générateur d'API REST","Un format d'artefact"],
+  answer:0,
+  explain:"Mermaid = diagrammes as code, versionnés avec la doc. Supporté dans les wikis Azure DevOps et le Markdown GitHub." },
+{ id:"v-shiftright", level:1, d:"mon", dom:"Culture DevOps", type:"qcm",
+  q:"Que désigne le « shift right » ?",
+  choices:["Tester et observer en production (monitoring, chaos engineering, canary) car tout ne peut pas être validé avant","Repousser les tests à la fin","Déléguer aux ops","Déployer plus tard dans la semaine"],
+  answer:0,
+  explain:"Complémentaire du shift left : certains comportements n'apparaissent qu'en conditions réelles. D'où l'instrumentation et les déploiements progressifs." },
+{ id:"v-wip", level:1, d:"proc", dom:"Agile", type:"qcm",
+  q:"À quoi sert une limite de WIP (work in progress) sur un tableau Kanban ?",
+  choices:["Limiter le nombre de tâches en cours pour réduire le temps de cycle et révéler les goulots d'étranglement","Limiter le nombre de développeurs","Plafonner les heures travaillées","Limiter la taille des PR"],
+  answer:0,
+  explain:"Loi de Little : plus il y a de travail en cours, plus le cycle time s'allonge. La limite WIP force à terminer avant de commencer." },
+{ id:"v-cycletime", level:1, d:"proc", dom:"Métriques", type:"qcm",
+  q:"Dans Azure Boards, quelle est la différence entre cycle time et lead time ?",
+  choices:["Cycle time : du début du travail (In Progress) à la clôture. Lead time : de la CRÉATION du work item à sa clôture","Ce sont deux noms du même indicateur","Cycle time inclut l'attente, lead time non","Lead time concerne les bugs uniquement"],
+  answer:0,
+  explain:"Lead time ≥ cycle time : il inclut le temps passé dans le backlog. Les deux widgets existent dans les dashboards Azure Boards." },
+{ id:"v-stakeholder", level:1, d:"sec", dom:"Azure DevOps", type:"qcm",
+  q:"Que permet le niveau d'accès « Stakeholder » (gratuit et illimité) dans Azure DevOps ?",
+  choices:["Consulter et modifier les work items et dashboards, mais PAS accéder au code ni aux pipelines complets","Un accès complet en lecture seule à tout","Le même accès que Basic","Uniquement la lecture des wikis"],
+  answer:0,
+  explain:"Stakeholder = parties prenantes métier : suivre le travail sans licence Basic. Sans accès au code source. Question fréquente sur le choix du niveau d'accès." },
+{ id:"v-outside", level:1, d:"sec", dom:"GitHub", type:"qcm",
+  q:"Qu'est-ce qu'un « outside collaborator » sur GitHub ?",
+  choices:["Une personne extérieure à l'organisation, invitée sur des dépôts précis sans être membre de l'organisation","Un utilisateur en lecture seule","Un bot d'automatisation","Un compte de service"],
+  answer:0,
+  explain:"C'est l'accès de moindre privilège pour un prestataire : accès ciblé à un dépôt, sans visibilité sur l'organisation. Cité explicitement au programme." },
+/* ================= NIVEAU 2 — FAITS, YAML & COMMANDES ================= */
+/* --- Pipelines : structure YAML --- */
+{ id:"f-yaml-hier", level:2, d:"pipe", dom:"Pipelines YAML", type:"qcm",
+  q:"Quelle est la hiérarchie correcte d'un pipeline YAML Azure ?",
+  choices:["Pipeline → stages → jobs → steps (tasks/scripts)","Pipeline → jobs → stages → steps","Pipeline → phases → tasks → actions","Pipeline → workflows → jobs → runs"],
+  answer:0,
+  explain:"Stage = frontière logique (Build, Test, Deploy) ; job = unité exécutée sur UN agent ; step = tâche ou script. Chez GitHub Actions il n'y a pas de stage : workflow → jobs → steps." },
+{ id:"f-job-agent", level:2, d:"pipe", dom:"Pipelines YAML", type:"qcm",
+  q:"Deux steps d'un même job partagent-ils le système de fichiers ?",
+  choices:["Oui — un job s'exécute entièrement sur un seul agent, les steps partagent l'espace de travail","Non, chaque step a son propre agent","Seulement si on active un cache","Uniquement en self-hosted"],
+  answer:0,
+  explain:"Le job est l'unité d'exécution sur un agent. Entre DEUX jobs (potentiellement sur des agents différents), il faut publier/télécharger des artefacts pour transmettre des fichiers." },
+{ id:"f-trigger-ci", level:2, d:"pipe", dom:"Pipelines YAML", type:"qcm",
+  q:"À quoi sert le mot-clé « trigger » (par opposition à « pr ») dans un pipeline YAML ?",
+  choices:["trigger = déclenchement CI sur push vers les branches listées ; pr = déclenchement sur pull request","trigger = manuel, pr = automatique","trigger = planifié, pr = sur commit","Ce sont deux alias du même mécanisme"],
+  answer:0,
+  explain:"trigger: branches: include: [main] pour la CI. pr: pour valider les PR. « trigger: none » désactive le déclenchement automatique." },
+{ id:"f-trigger-none", level:2, d:"pipe", dom:"Pipelines YAML", type:"input",
+  q:"Quelle valeur donner à « trigger » pour désactiver complètement le déclenchement automatique d'un pipeline ?",
+  accept:["none","trigger none"],
+  explain:"trigger: none — typique d'un pipeline appelé uniquement manuellement ou par un autre pipeline (resource pipelines)." },
+{ id:"f-pathfilter", level:2, d:"pipe", dom:"Pipelines YAML", type:"input",
+  q:"Dans un monorepo, quel mécanisme du trigger évite de déclencher un pipeline quand le dossier concerné n'a pas changé (2 mots) ?",
+  accept:["path filters","path filter","filtres de chemin","paths"],
+  explain:"trigger: paths: include/exclude. Économise des minutes d'agent et évite les builds inutiles — question classique sur les monorepos." },
+{ id:"f-schedule", level:2, d:"pipe", dom:"Pipelines YAML", type:"qcm",
+  q:"Comment planifier un pipeline tous les jours à 3 h du matin en YAML ?",
+  choices:["Un bloc schedules: avec cron: '0 3 * * *' et la branche cible","trigger: daily","Un timer trigger","Uniquement via l'interface graphique"],
+  answer:0,
+  explain:"schedules: - cron: '0 3 * * *' branches: include: [main] always: true. Cron UTC à 5 champs (contrairement au NCRONTAB à 6 champs des Azure Functions)." },
+{ id:"f-var-syntax", level:2, d:"pipe", dom:"Variables", type:"qcm",
+  q:"Quelle est la différence entre $(var), ${{ var }} et $[ var ] dans un pipeline YAML ?",
+  choices:["$( ) = macro, remplacée au runtime ; ${{ }} = expression évaluée à la COMPILATION (avant l'exécution) ; $[ ] = expression runtime","Trois syntaxes équivalentes","$( ) pour les secrets uniquement","${{ }} est réservé aux templates GitHub"],
+  answer:0,
+  explain:"LA question de syntaxe la plus fréquente. ${{ }} est résolu quand le YAML est compilé (utilisable pour générer la structure), $[ ] et $( ) au moment de l'exécution." },
+{ id:"f-var-secret-env", level:2, d:"pipe", dom:"Variables", type:"qcm",
+  q:"Pourquoi une variable SECRÈTE n'est-elle pas accessible via $(maSecret) dans un script sans configuration supplémentaire ?",
+  choices:["Les secrets ne sont pas injectés automatiquement dans l'environnement : il faut les mapper explicitement via env:","Les secrets sont chiffrés et illisibles","Il faut un agent self-hosted","Ils expirent immédiatement"],
+  answer:0,
+  explain:"Il faut un mapping explicite : env: MON_SECRET: $(maSecret). C'est une protection contre les fuites accidentelles dans les logs." },
+{ id:"f-vargroup", level:2, d:"pipe", dom:"Variables", type:"input",
+  q:"Quel objet de la Library regroupe des variables réutilisables entre plusieurs pipelines et peut être lié à un Key Vault (2 mots) ?",
+  accept:["variable group","groupe de variables","variable groups"],
+  explain:"Library → Variable groups, référencé par « variables: - group: MonGroupe ». Lié à Key Vault, il lit les secrets au runtime sans les dupliquer." },
+{ id:"f-outputvar", level:2, d:"pipe", dom:"Variables", type:"input",
+  q:"Quel type de variable faut-il déclarer (isOutput=true) pour transmettre une valeur calculée d'un job A vers un job B (2 mots) ?",
+  accept:["output variable","variable de sortie","output"],
+  explain:"echo '##vso[task.setvariable variable=maVar;isOutput=true]valeur' puis $[ dependencies.JobA.outputs['step.maVar'] ]. Le dependsOn est obligatoire." },
+{ id:"f-logging-cmd", level:2, d:"pipe", dom:"Variables", type:"qcm",
+  q:"Quelle syntaxe permet à un script de définir une variable consommable par les steps suivants ?",
+  choices:["echo \"##vso[task.setvariable variable=nom]valeur\"","export nom=valeur","set-variable nom=valeur","echo nom=valeur >> $VARS"],
+  answer:0,
+  explain:"Les logging commands ##vso[...] pilotent l'agent depuis un script. Équivalent GitHub Actions : echo \"nom=valeur\" >> $GITHUB_OUTPUT." },
+{ id:"f-params-vs-var", level:2, d:"pipe", dom:"Templates", type:"qcm",
+  q:"Quelle différence entre « parameters » et « variables » dans un template YAML ?",
+  choices:["parameters sont TYPÉS et résolus à la compilation (ils peuvent modifier la structure du pipeline) ; variables sont des chaînes résolues au runtime","Les parameters sont secrets","Les variables sont typées, pas les parameters","Aucune différence"],
+  answer:0,
+  explain:"Un parameter peut être boolean/number/object/step/stageList et conditionner la GÉNÉRATION du YAML. Une variable ne peut pas créer ou supprimer un job." },
+{ id:"f-template-extends", level:2, d:"pipe", dom:"Templates", type:"qcm",
+  q:"Quelle est la différence entre « extends » et l'inclusion simple d'un template ?",
+  choices:["extends impose un template parent qui contrôle la structure entière (utilisé pour la gouvernance/sécurité) ; l'inclusion insère juste un fragment","extends est plus rapide","L'inclusion est dépréciée","extends ne fonctionne qu'avec GitHub"],
+  answer:0,
+  explain:"extends + required templates permet à la sécurité d'imposer des étapes obligatoires (scans) qu'un pipeline enfant ne peut pas contourner." },
+{ id:"f-taskgroup", level:2, d:"pipe", dom:"Templates", type:"qcm",
+  q:"Qu'est-ce qu'un « task group » et quelle est sa limite ?",
+  choices:["Un ensemble de tâches réutilisable des pipelines CLASSIQUES uniquement — l'équivalent YAML est le template","Un groupe de jobs parallèles","Un regroupement d'agents","Un groupe de variables"],
+  answer:0,
+  explain:"Les task groups n'existent PAS en YAML : la réutilisation y passe par les templates. Piège fréquent lors des questions de migration classic → YAML." },
+{ id:"f-hosted-agent", level:2, d:"pipe", dom:"Agents", type:"qcm",
+  q:"Quel est l'avantage principal d'un agent Microsoft-hosted ?",
+  choices:["Machine neuve et propre à chaque job, maintenance et outillage gérés par Microsoft, aucune infrastructure à administrer","Il est toujours plus rapide","Il accède au réseau privé de l'entreprise","Il conserve le cache entre les builds"],
+  answer:0,
+  explain:"Machine jetable = builds reproductibles. Ses limites : pas d'accès aux réseaux privés, pas de cache local persistant, logiciels préinstallés imposés." },
+{ id:"f-selfhosted-why", level:2, d:"pipe", dom:"Agents", type:"qcm",
+  q:"Dans quels cas un agent self-hosted est-il nécessaire ?",
+  choices:["Accès à des ressources réseau privées, logiciels/licences spécifiques, matériel particulier, cache persistant, ou builds très longs","Uniquement pour réduire les coûts","Quand on utilise GitHub","Pour exécuter du YAML"],
+  answer:0,
+  explain:"Le critère décisif à l'examen : accès réseau privé (VNet, on-premises) ou environnement d'exécution non standard. Contrepartie : c'est TOI qui maintiens et sécurises la machine." },
+{ id:"f-agent-timeout", level:2, d:"pipe", dom:"Agents", type:"input",
+  q:"Quel est le timeout d'un job sur agent Microsoft-hosted avec le niveau gratuit (projet privé), en minutes ?",
+  accept:["60","60 min","60 minutes","soixante"],
+  explain:"Projet privé gratuit : 60 min. Avec un job parallèle payant : jusqu'à 360 min. Projets publics : 360 min. Les agents self-hosted n'ont pas de limite imposée." },
+{ id:"f-free-minutes", level:2, d:"pipe", dom:"Agents", type:"input",
+  q:"Combien de minutes gratuites d'agent Microsoft-hosted par mois offre un projet PRIVÉ Azure DevOps ?",
+  accept:["1800","1 800","1800 minutes"],
+  explain:"1 job parallèle gratuit et 1 800 min/mois en privé. Les projets publics ont 10 jobs parallèles gratuits et des minutes illimitées." },
+{ id:"f-demands", level:2, d:"pipe", dom:"Agents", type:"qcm",
+  q:"À quoi servent les « capabilities » et « demands » ?",
+  choices:["L'agent publie ses capabilities (logiciels installés) ; le job exprime des demands pour être routé vers un agent compatible","À limiter la consommation CPU","À définir les droits d'accès","À planifier les jobs"],
+  answer:0,
+  explain:"pool: name: MonPool, demands: [java, Agent.OS -equals Linux]. Sert à cibler le bon agent dans un pool hétérogène." },
+{ id:"f-parallel-jobs", level:2, d:"pipe", dom:"Agents", type:"qcm",
+  q:"Que détermine le nombre de « jobs parallèles » acheté dans Azure DevOps ?",
+  choices:["Combien de jobs peuvent s'exécuter SIMULTANÉMENT dans toute l'organisation (les autres sont mis en file d'attente)","Le nombre de pipelines autorisés","Le nombre d'agents installables","Le nombre de stages par pipeline"],
+  answer:0,
+  explain:"C'est le levier n°1 pour réduire l'attente quand plusieurs équipes buildent en même temps. Optimiser la concurrence pour le coût et la perf est explicitement au programme." },
+{ id:"f-matrix", level:2, d:"pipe", dom:"Pipelines YAML", type:"input",
+  q:"Quelle stratégie de job exécute le même job en parallèle avec des combinaisons de variables (plusieurs OS, plusieurs versions de runtime) ?",
+  accept:["matrix","matrice"],
+  explain:"strategy: matrix: { linux: {...}, windows: {...} } — chaque entrée devient un job parallèle. « maxParallel » plafonne la concurrence." },
+{ id:"f-slicing", level:2, d:"pipe", dom:"Pipelines YAML", type:"qcm",
+  q:"Que fait « strategy: parallel: 5 » sur un job de tests ?",
+  choices:["Découpe le job en 5 tranches (slicing) exécutées en parallèle, chacune traitant une partie des tests","Lance 5 pipelines","Autorise 5 tentatives","Réserve 5 agents pour la journée"],
+  answer:0,
+  explain:"Le job slicing utilise System.JobPositionInPhase / System.TotalJobsInPhase pour répartir les tests. Levier direct de réduction de la durée du pipeline." },
+{ id:"f-cond-func", level:2, d:"pipe", dom:"Conditions", type:"input",
+  q:"Quelle fonction de condition exécute un step dans TOUS les cas, y compris après une annulation du job ?",
+  accept:["always","always()"],
+  explain:"always() s'exécute même en cas d'annulation. succeededOrFailed() s'exécute après succès ou échec mais PAS si le job est annulé — nuance testée à l'examen." },
+{ id:"f-cond-default", level:2, d:"pipe", dom:"Conditions", type:"input",
+  q:"Quelle est la condition PAR DÉFAUT d'un step si aucune n'est précisée ?",
+  accept:["succeeded","succeeded()"],
+  explain:"Par défaut, un échec interrompt la suite. C'est pourquoi les steps de publication de résultats de tests portent souvent condition: succeededOrFailed()." },
+{ id:"f-dependson", level:2, d:"pipe", dom:"Pipelines YAML", type:"qcm",
+  q:"Par défaut, comment s'exécutent plusieurs jobs déclarés dans un même stage ?",
+  choices:["En PARALLÈLE (s'il y a assez de jobs parallèles) — dependsOn permet de les séquencer","Séquentiellement dans l'ordre d'écriture","Aléatoirement","Un seul job par stage est autorisé"],
+  answer:0,
+  explain:"Les jobs sont parallèles par défaut ; les STAGES sont séquentiels par défaut. Inverser un stage en parallèle se fait avec dependsOn: []." },
+{ id:"f-stage-parallel", level:2, d:"pipe", dom:"Pipelines YAML", type:"qcm",
+  q:"Comment rendre deux stages parallèles alors qu'ils sont séquentiels par défaut ?",
+  choices:["Mettre dependsOn: [] sur le second stage","Ajouter parallel: true","Les fusionner en un seul stage","Utiliser deux pipelines"],
+  answer:0,
+  explain:"dependsOn: [] supprime la dépendance implicite au stage précédent. Utile pour déployer plusieurs régions simultanément." },
+{ id:"f-deployjob", level:2, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Qu'apporte un « deployment job » par rapport à un job classique ?",
+  choices:["Il cible un environment (traçabilité, checks et approbations) et offre des stratégies : runOnce, rolling, canary","Il est plus rapide","Il autorise plus de steps","Il chiffre les variables"],
+  answer:0,
+  explain:"jobs: - deployment: Deploy / environment: prod / strategy: runOnce. C'est ce qui donne l'historique de déploiement par environnement et les portes d'approbation." },
+{ id:"f-strategies", level:2, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Quelles sont les 3 stratégies d'un deployment job YAML ?",
+  choices:["runOnce, rolling, canary","blue-green, canary, ring","manual, auto, scheduled","fast, safe, staged"],
+  answer:0,
+  explain:"runOnce (une passe), rolling (par lots de machines), canary (increments successifs). Le blue-green s'implémente via les slots ou le routage, pas comme stratégie native." },
+{ id:"f-lifecycle-hooks", level:2, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Quels hooks de cycle de vie sont disponibles dans une stratégie de deployment job ?",
+  choices:["preDeploy, deploy, routeTraffic, postRouteTraffic, on: success | failure","before, main, after","init, run, cleanup","start, stop, rollback"],
+  answer:0,
+  explain:"routeTraffic bascule le trafic, postRouteTraffic sert à surveiller après bascule, et on: failure exécute le rollback. Séquence à connaître pour les canary/blue-green." },
+{ id:"f-environment", level:2, d:"pipe", dom:"Déploiement", type:"input",
+  q:"Quel objet d'Azure Pipelines représente une cible logique de déploiement et porte l'historique, les checks et les approbations ?",
+  accept:["environment","environnement","environments"],
+  explain:"L'environment est le point où l'on attache les approbations et les checks — c'est le mécanisme de contrôle des déploiements en YAML." },
+{ id:"f-checks", level:2, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Quels types de « checks » peut-on attacher à un environment YAML ?",
+  choices:["Approbations manuelles, Azure Monitor alerts, Invoke REST API, Invoke Azure Function, Business hours, Required template, Exclusive lock","Uniquement des approbations manuelles","Uniquement des tests unitaires","Uniquement des scans de sécurité"],
+  answer:0,
+  explain:"Les checks sont la version YAML des release gates classiques : approbation humaine ET portes automatiques (santé, ITSM, horaires, template imposé)." },
+{ id:"f-gates", level:2, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"À quoi sert une « gate » automatique avant un déploiement en production ?",
+  choices:["Vérifier automatiquement des conditions externes (aucune alerte active, aucun bug bloquant, ticket ITSM approuvé) avant de laisser passer","Bloquer les commits","Valider la syntaxe YAML","Chiffrer les artefacts"],
+  answer:0,
+  explain:"Query Azure Monitor alerts, Query work items, Invoke REST API, Invoke Azure Function. Elles peuvent être réévaluées périodiquement jusqu'au timeout." },
+{ id:"f-approval-manual", level:2, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Qui NE PEUT PAS approuver un déploiement, par bonne pratique de séparation des tâches ?",
+  choices:["La personne qui a déclenché le run (option « approbateurs ne peuvent pas approuver leurs propres runs »)","Un membre de l'équipe sécurité","Un chef de projet","Un approbateur d'un autre groupe"],
+  answer:0,
+  explain:"L'option « Requesters can't approve their own runs » implémente la séparation des tâches exigée par les audits de conformité." },
+{ id:"f-publish-artifact", level:2, d:"pipe", dom:"Artefacts", type:"input",
+  q:"Quelle tâche moderne publie un artefact de pipeline (plus rapide que l'ancienne PublishBuildArtifacts) ?",
+  accept:["PublishPipelineArtifact","publish pipeline artifact"],
+  explain:"PublishPipelineArtifact utilise un stockage optimisé et déduplique. Le raccourci YAML est « - publish: $(Build.ArtifactStagingDirectory) artifact: drop »." },
+{ id:"f-download", level:2, d:"pipe", dom:"Artefacts", type:"qcm",
+  q:"Dans un deployment job, faut-il télécharger explicitement les artefacts ?",
+  choices:["Non — les artefacts du pipeline courant sont téléchargés automatiquement (comportement désactivable avec « download: none »)","Oui, toujours manuellement","Seulement en runOnce","Seulement sur agents self-hosted"],
+  answer:0,
+  explain:"Les deployment jobs téléchargent automatiquement les artefacts ; les jobs classiques non. Piège fréquent dans les questions de dépannage." },
+{ id:"f-resources-pipeline", level:2, d:"pipe", dom:"Artefacts", type:"qcm",
+  q:"Comment consommer l'artefact d'un AUTRE pipeline et se déclencher quand il se termine ?",
+  choices:["Une ressource « resources: pipelines: - pipeline: X source: ... trigger: true »","Un webhook","Un script de copie","Une variable partagée"],
+  answer:0,
+  explain:"Les pipeline resources créent le lien de traçabilité et le déclenchement en cascade (pipeline chaining), utile pour séparer build et release." },
+{ id:"f-feed-views", level:2, d:"pipe", dom:"Packages", type:"qcm",
+  q:"À quoi servent les vues @local, @prerelease et @release d'un feed Azure Artifacts ?",
+  choices:["Promouvoir progressivement un package : @local (tout) → @prerelease (testable) → @release (validé pour la prod)","Séparer les packages par langage","Gérer les permissions","Archiver les anciennes versions"],
+  answer:0,
+  explain:"Les vues implémentent la promotion de qualité : les consommateurs de prod pointent sur @release et ne voient jamais un package non validé." },
+{ id:"f-upstream", level:2, d:"pipe", dom:"Packages", type:"input",
+  q:"Quel réglage d'un feed Azure Artifacts relaie et met en cache les packages d'une source publique comme nuget.org (2 mots) ?",
+  accept:["upstream source","upstream sources","upstream","source amont"],
+  explain:"Les packages publics utilisés sont sauvegardés dans ton feed — protection contre la suppression amont, et un seul endpoint à configurer côté développeurs." },
+{ id:"f-retention", level:2, d:"pipe", dom:"Maintenance", type:"qcm",
+  q:"Pourquoi définir une politique de rétention sur les runs et artefacts de pipeline ?",
+  choices:["Maîtriser les coûts de stockage tout en conservant ce qui est requis par la conformité (les runs peuvent être épinglés/retenus)","Accélérer les builds","Améliorer la sécurité des agents","Réduire le nombre de jobs parallèles"],
+  answer:0,
+  explain:"« Design and implement a retention strategy for pipeline artifacts and dependencies » est au programme. On peut retenir indéfiniment un run précis (release auditée)." },
+{ id:"f-cache", level:2, d:"pipe", dom:"Maintenance", type:"input",
+  q:"Quelle tâche accélère les builds en réutilisant les dépendances téléchargées entre exécutions ?",
+  accept:["Cache@2","cache","tache cache"],
+  explain:"Cache@2 avec key: 'npm | \"$(Agent.OS)\" | package-lock.json'. La clé DOIT dépendre du lock file, sinon le cache devient obsolète." },
+{ id:"f-flaky", level:2, d:"pipe", dom:"Maintenance", type:"input",
+  q:"Comment appelle-t-on un test qui réussit ou échoue de façon non déterministe, sans changement de code (terme anglais) ?",
+  accept:["flaky","flaky test","test flaky","instable"],
+  explain:"Les tests flaky détruisent la confiance dans la CI. Azure DevOps peut les détecter (re-runs) et les signaler dans les rapports — « monitor pipeline health » au programme." },
+{ id:"f-testresults", level:2, d:"pipe", dom:"Tests", type:"input",
+  q:"Quelle tâche publie les résultats de tests pour qu'ils apparaissent dans l'onglet Tests du run ?",
+  accept:["PublishTestResults","publish test results"],
+  explain:"PublishTestResults alimente les analyses (tendances, flaky). Pour la couverture, c'est PublishCodeCoverageResults (formats Cobertura ou JaCoCo)." },
+{ id:"f-coverage", level:2, d:"pipe", dom:"Tests", type:"qcm",
+  q:"Quels formats la tâche PublishCodeCoverageResults accepte-t-elle ?",
+  choices:["Cobertura et JaCoCo","JUnit et NUnit","JSON et XML génériques","SARIF"],
+  answer:0,
+  explain:"Cobertura/JaCoCo pour la couverture ; JUnit/NUnit/VSTest/xUnit pour les résultats de tests ; SARIF pour les résultats de scan de sécurité. Ne pas les confondre." },
+{ id:"f-loadtest", level:2, d:"pipe", dom:"Tests", type:"input",
+  q:"Quel service Azure exécute des tests de CHARGE à grande échelle (compatible scripts JMeter) intégrables au pipeline ?",
+  accept:["azure load testing","load testing"],
+  explain:"Azure Load Testing pour les tests de charge (au programme : « local tests, unit tests, integration tests, and load tests »). Test Plans concerne les tests manuels/exploratoires." },
+/* --- Source control --- */
+{ id:"f-branchpolicy", level:2, d:"src", dom:"Branch policies", type:"qcm",
+  q:"Quelles protections une branch policy Azure Repos peut-elle imposer ?",
+  choices:["Nombre minimal de reviewers, work items liés, commentaires résolus, build de validation, reviewers automatiques, vérifications de statut","Uniquement le nombre de reviewers","Uniquement un build vert","Uniquement la signature des commits"],
+  answer:0,
+  explain:"Équivalent GitHub : branch protection rules (required reviews, required status checks, CODEOWNERS, linear history). Le référentiel demande de connaître les DEUX." },
+{ id:"f-buildvalidation", level:2, d:"src", dom:"Branch policies", type:"qcm",
+  q:"Que fait une policy « build validation » sur une branche ?",
+  choices:["Déclenche un pipeline sur la fusion proposée et bloque la complétion de la PR s'il échoue","Valide la syntaxe du YAML","Construit une image Docker à chaque commit","Vérifie la signature du build"],
+  answer:0,
+  explain:"C'est le mécanisme qui garantit que main reste toujours verte : le code est testé fusionné AVANT d'être réellement fusionné." },
+{ id:"f-codeowners", level:2, d:"src", dom:"Branch policies", type:"qcm",
+  q:"À quoi sert un fichier CODEOWNERS sur GitHub ?",
+  choices:["Désigner automatiquement les reviewers obligatoires selon les chemins modifiés","Lister les licences du projet","Définir les permissions du dépôt","Attribuer les issues"],
+  answer:0,
+  explain:"CODEOWNERS + « Require review from Code Owners » garantit que l'équipe compétente relit son périmètre. Équivalent Azure Repos : les automatic reviewers." },
+{ id:"f-mergetypes", level:2, d:"src", dom:"Git", type:"qcm",
+  q:"Que fait un « squash merge » ?",
+  choices:["Condense tous les commits de la branche en UN seul commit sur la cible : historique linéaire et lisible, mais détail des commits perdu","Fusionne sans créer de commit","Rejoue les commits un par un","Crée un commit de merge classique"],
+  answer:0,
+  explain:"Les 4 types Azure Repos : merge (no fast-forward), squash, rebase, semi-linear merge (rebase + commit de merge)." },
+{ id:"f-rebase-vs-merge", level:2, d:"src", dom:"Git", type:"qcm",
+  q:"Quelle est la règle d'or du rebase ?",
+  choices:["Ne jamais rebaser des commits déjà poussés sur une branche partagée (cela réécrit l'historique commun)","Toujours rebaser avant chaque commit","Le rebase remplace le merge dans tous les cas","Rebaser uniquement main"],
+  answer:0,
+  explain:"Le rebase réécrit les SHA : sur une branche partagée, les collègues se retrouvent avec des historiques divergents. Sur SA branche locale, c'est idéal." },
+{ id:"f-cherrypick", level:2, d:"src", dom:"Git", type:"input",
+  q:"Quelle commande Git applique UN commit précis d'une branche sur une autre (typiquement pour un hotfix) ?",
+  accept:["git cherry-pick","cherry-pick","cherry pick"],
+  explain:"git cherry-pick <sha> — le cœur du « hotfix path plan » : corriger sur main puis reporter sur la branche de release (ou l'inverse)." },
+{ id:"f-revert-vs-reset", level:2, d:"src", dom:"Git", type:"qcm",
+  q:"Quelle différence entre git revert et git reset ?",
+  choices:["revert crée un NOUVEAU commit qui annule les changements (sûr sur branche partagée) ; reset déplace la branche en réécrivant l'historique","revert est local, reset est distant","Ce sont des synonymes","reset est plus sûr que revert"],
+  answer:0,
+  explain:"Sur une branche partagée : TOUJOURS revert. reset --hard sur main déjà poussée casse le dépôt de toute l'équipe." },
+{ id:"f-bisect", level:2, d:"src", dom:"Git", type:"input",
+  q:"Quelle commande Git trouve par dichotomie le commit ayant introduit un bug ?",
+  accept:["git bisect","bisect"],
+  explain:"git bisect start / bad / good : recherche binaire dans l'historique. Cité au programme (« recover specific data by using Git commands »)." },
+{ id:"f-reflog", level:2, d:"src", dom:"Git", type:"input",
+  q:"Quelle commande Git permet de retrouver un commit « perdu » après un reset ou une suppression de branche ?",
+  accept:["git reflog","reflog"],
+  explain:"git reflog liste tous les déplacements de HEAD, même ceux sortis de l'historique : on récupère le SHA puis git checkout/cherry-pick." },
+{ id:"f-remove-secret", level:2, d:"src", dom:"Git", type:"qcm",
+  q:"Un secret a été committé il y a 3 mois. Que faut-il faire ?",
+  choices:["RÉVOQUER immédiatement le secret, puis réécrire l'historique (git filter-repo ou BFG) et forcer le push","Supprimer le fichier dans un nouveau commit","Rendre le dépôt privé","Ajouter le fichier au .gitignore"],
+  answer:0,
+  explain:"Ordre crucial : la révocation d'abord (le secret est déjà compromis), la réécriture ensuite. Un simple delete laisse le secret dans l'historique." },
+{ id:"f-gitattributes", level:2, d:"src", dom:"Git", type:"qcm",
+  q:"À quoi sert le fichier .gitattributes ?",
+  choices:["Définir le traitement des fichiers par Git : fins de ligne, fichiers binaires, suivi par LFS, stratégie de diff/merge","Lister les contributeurs","Définir les permissions","Configurer les hooks"],
+  answer:0,
+  explain:"C'est là qu'on déclare « *.psd filter=lfs diff=lfs merge=lfs -text » pour router les gros binaires vers Git LFS." },
+{ id:"f-tags", level:2, d:"src", dom:"Git", type:"qcm",
+  q:"Quelle est la différence entre un tag léger (lightweight) et un tag annoté (annotated) ?",
+  choices:["Le tag annoté est un objet Git complet (auteur, date, message, signature possible) — recommandé pour marquer les releases","Le tag léger est plus sûr","Le tag annoté est temporaire","Aucune différence fonctionnelle"],
+  answer:0,
+  explain:"git tag -a v1.2.0 -m \"...\" pour une release traçable et signable. Le tag léger n'est qu'un pointeur vers un SHA." },
+{ id:"f-fork", level:2, d:"src", dom:"Git", type:"qcm",
+  q:"Pourquoi un pipeline déclenché par une PR issue d'un FORK n'a-t-il pas accès aux secrets par défaut ?",
+  choices:["Pour empêcher un contributeur externe d'exfiltrer les secrets via du code malveillant dans sa PR","Parce que les forks sont hors ligne","Par limitation technique du stockage","Parce que les forks n'ont pas de pipeline"],
+  answer:0,
+  explain:"Sécurité fondamentale des dépôts publics. On peut l'autoriser explicitement (déconseillé) ou exiger une approbation avant l'exécution du pipeline de fork." },
+{ id:"f-submodule", level:2, d:"src", dom:"Git", type:"qcm",
+  q:"Qu'est-ce qu'un submodule Git ?",
+  choices:["Une référence vers un COMMIT précis d'un autre dépôt, permettant le partage de code entre dépôts","Un dossier ignoré","Une branche liée","Un package NuGet"],
+  answer:0,
+  explain:"Le submodule épingle un commit exact (reproductibilité) mais complique le workflow. Alternative souvent préférable : publier un package versionné." },
+/* --- Sécurité --- */
+{ id:"f-ghas", level:2, d:"sec", dom:"GHAS", type:"qcm",
+  q:"Quelles sont les 3 fonctionnalités principales de GitHub Advanced Security ?",
+  choices:["Code scanning (CodeQL), secret scanning (avec push protection) et dependency review/Dependabot","Pare-feu, antivirus et VPN","Chiffrement, signature et audit","SAST, DAST et tests de pénétration"],
+  answer:0,
+  explain:"GHAS existe pour GitHub ET pour Azure DevOps (GHAS for Azure DevOps) — le référentiel demande explicitement de configurer les deux." },
+{ id:"f-codeql", level:2, d:"sec", dom:"GHAS", type:"input",
+  q:"Quel moteur d'analyse statique (SAST) de GitHub traite le code comme une base de données interrogeable pour trouver des vulnérabilités ?",
+  accept:["codeql"],
+  explain:"CodeQL alimente le code scanning. Le référentiel cite même l'exécution d'une analyse CodeQL dans un conteneur." },
+{ id:"f-pushprotection", level:2, d:"sec", dom:"GHAS", type:"input",
+  q:"Quelle fonctionnalité du secret scanning BLOQUE le push contenant un secret, avant qu'il n'entre dans l'historique (2 mots) ?",
+  accept:["push protection"],
+  explain:"C'est la prévention plutôt que la détection : le secret n'atteint jamais le dépôt, ce qui évite toute la procédure de révocation/réécriture." },
+{ id:"f-dependabot", level:2, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Quelle est la différence entre Dependabot alerts et Dependabot security updates ?",
+  choices:["Les alerts signalent une dépendance vulnérable ; les security updates ouvrent automatiquement une PR de mise à jour","Les alerts sont payantes","Les updates ne concernent que npm","Ce sont deux noms du même mécanisme"],
+  answer:0,
+  explain:"Alerts = détection (via la GitHub Advisory Database). Security updates = remédiation automatisée par PR. Version updates = mises à jour régulières hors sécurité." },
+{ id:"f-defender-devops", level:2, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Que permet Microsoft Defender for Cloud DevOps Security ?",
+  choices:["Centraliser la posture de sécurité des dépôts GitHub/Azure DevOps dans Defender for Cloud, avec les résultats de GHAS","Scanner les VM uniquement","Remplacer les branch policies","Chiffrer les pipelines"],
+  answer:0,
+  explain:"La vue unifiée « du code au cloud » : les vulnérabilités du code remontent au même endroit que celles de l'infrastructure. Intégration GHAS ↔ Defender explicitement au programme." },
+{ id:"f-securefiles", level:2, d:"sec", dom:"Secrets", type:"input",
+  q:"Quel mécanisme de la Library stocke de façon chiffrée un certificat ou un keystore, récupéré ensuite par DownloadSecureFile ?",
+  accept:["secure files","secure file","fichiers securises"],
+  explain:"Secure files : stockage chiffré des fichiers sensibles (certificats, profils de provisioning, clés SSH), avec contrôle d'accès par pipeline. Au programme." },
+{ id:"f-svc-connection", level:2, d:"sec", dom:"Secrets", type:"input",
+  q:"Quelle méthode d'authentification d'une service connection vers Azure n'exige AUCUN secret à stocker ni à faire tourner (nom complet ou sigle) ?",
+  accept:["workload identity federation","oidc","federation d identite de charge de travail","openid connect"],
+  explain:"La fédération élimine le secret. À défaut, service principal avec certificat, puis avec secret (à faire tourner). Jamais de compte nominatif." },
+{ id:"f-github-token", level:2, d:"sec", dom:"Secrets", type:"qcm",
+  q:"Qu'est-ce que le GITHUB_TOKEN dans un workflow GitHub Actions ?",
+  choices:["Un jeton temporaire généré automatiquement pour chaque run, expirant à la fin du job, dont on peut restreindre les permissions","Un PAT à créer manuellement","Le mot de passe du compte","Un secret d'organisation permanent"],
+  answer:0,
+  explain:"Éphémère et scopé — toujours le préférer à un PAT. Bonne pratique : « permissions: contents: read » pour appliquer le moindre privilège." },
+{ id:"f-github-app", level:2, d:"sec", dom:"Secrets", type:"qcm",
+  q:"Quand privilégier une GitHub App plutôt qu'un PAT pour une automatisation ?",
+  choices:["Quand l'automatisation doit survivre au départ d'une personne : permissions fines, jetons courts, identité propre non nominative","Quand il faut un accès permanent","Pour les scripts locaux","Jamais, le PAT est recommandé"],
+  answer:0,
+  explain:"Le PAT est lié à un individu (il meurt avec son compte et porte tous ses droits). La GitHub App est l'identité d'automatisation propre." },
+{ id:"f-azdo-groups", level:2, d:"sec", dom:"Azure DevOps", type:"qcm",
+  q:"Quels sont les groupes de sécurité intégrés d'un projet Azure DevOps ?",
+  choices:["Readers, Contributors, Build Administrators, Project Administrators","Owners, Members, Guests","Admin, User, Guest","Developers, Testers, Managers"],
+  answer:0,
+  explain:"Bonne pratique : attribuer les droits à des GROUPES (idéalement synchronisés depuis Entra ID), jamais à des individus." },
+{ id:"f-gh-roles", level:2, d:"sec", dom:"GitHub", type:"qcm",
+  q:"Quels sont les rôles de dépôt GitHub, du moins au plus permissif ?",
+  choices:["Read, Triage, Write, Maintain, Admin","Guest, User, Power User, Admin","Viewer, Editor, Owner","Reader, Contributor, Owner"],
+  answer:0,
+  explain:"Triage = gérer issues/PR sans écrire de code ; Maintain = gérer le dépôt sans accès aux actions destructrices/sécurité sensibles." },
+/* --- Instrumentation --- */
+{ id:"f-kql-basics", level:2, d:"mon", dom:"KQL", type:"input",
+  q:"Quel opérateur KQL agrège les données (équivalent d'un GROUP BY) ?",
+  accept:["summarize"],
+  explain:"where = filtrer les lignes, project = choisir les colonnes, extend = ajouter une colonne calculée, summarize = agréger, order by = trier." },
+{ id:"f-kql-ago", level:2, d:"mon", dom:"KQL", type:"qcm",
+  q:"Que fait « where timestamp > ago(24h) » en KQL ?",
+  choices:["Filtre les 24 dernières heures","Décale l'horodatage de 24 h","Regroupe par tranches de 24 h","Supprime les données de plus de 24 h"],
+  answer:0,
+  explain:"ago() est relatif à maintenant. Pour des tranches temporelles : summarize count() by bin(timestamp, 1h)." },
+{ id:"f-appinsights-tables", level:2, d:"mon", dom:"Monitoring", type:"input",
+  q:"Quelle table Application Insights contient les appels SORTANTS (SQL, HTTP, stockage) ?",
+  accept:["dependencies"],
+  explain:"requests = appels entrants, dependencies = appels sortants, exceptions, traces (logs), customEvents/customMetrics, availabilityResults, pageViews." },
+{ id:"f-actiongroup", level:2, d:"mon", dom:"Monitoring", type:"input",
+  q:"Quel objet Azure Monitor définit ce qui se passe quand une alerte se déclenche (e-mail, SMS, webhook, Logic App…) — 2 mots ?",
+  accept:["action group","action groups","groupe d actions"],
+  explain:"Une alert rule (condition) + un action group (réaction). Le même action group est réutilisable par de nombreuses alertes." },
+{ id:"f-insights-types", level:2, d:"mon", dom:"Monitoring", type:"input",
+  q:"Quelle solution Azure Monitor surveille spécifiquement les clusters de conteneurs (AKS) ?",
+  accept:["container insights"],
+  explain:"Le référentiel cite explicitement VM Insights, Container Insights, Monitor for Storage et Monitor for Networks — savoir associer chaque cible à sa solution." },
+{ id:"f-workbook", level:2, d:"mon", dom:"Monitoring", type:"input",
+  q:"Quel objet Azure Monitor est un rapport interactif combinant texte, requêtes KQL, métriques et graphiques (à ne pas confondre avec le runbook) ?",
+  accept:["workbook","workbooks","classeur"],
+  explain:"À distinguer du runbook (script Azure Automation) et du dashboard (vue épinglée). Le workbook est le format de rapport analytique riche." },
+{ id:"f-gh-insights", level:2, d:"mon", dom:"GitHub", type:"qcm",
+  q:"Que trouve-t-on dans l'onglet Insights d'un dépôt GitHub ?",
+  choices:["Les graphiques d'activité : pulse, contributeurs, fréquence de commits, dependency graph, trafic","Les logs applicatifs","Les métriques Azure Monitor","Les résultats de tests"],
+  answer:0,
+  explain:"« Configure monitoring in GitHub, including enabling insights and creating and configuring charts » est explicitement au programme." },
+{ id:"f-alert-pipeline", level:2, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"Comment être alerté de l'échec d'un pipeline Azure DevOps ?",
+  choices:["Les notifications intégrées (abonnements par équipe/projet), un service hook vers Teams/Slack, ou une alerte sur métrique","Uniquement par e-mail personnel","Ce n'est pas possible nativement","Uniquement via Azure Monitor"],
+  answer:0,
+  explain:"« Configure alerts for events in GitHub Actions and Azure Pipelines » est au programme : notifications, service hooks, intégration Teams." },
+{ id:"f-availability", level:2, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"Quel outil vérifie en continu qu'une URL répond correctement depuis plusieurs régions ?",
+  choices:["Les availability tests d'Application Insights (standard test ou TrackAvailability custom)","Container Insights","Log Analytics agent","Network Watcher"],
+  answer:0,
+  explain:"Standard test pour une requête simple ; TrackAvailability() dans une Function pour un parcours multi-étapes. Tester depuis ≥ 5 régions." },
+{ id:"f-loganalytics", level:2, d:"mon", dom:"Monitoring", type:"qcm",
+  q:"Quel est le rôle d'un Log Analytics workspace ?",
+  choices:["Stocker et indexer les logs et métriques de multiples sources, interrogeables en KQL","Héberger les pipelines","Stocker les artefacts","Gérer les identités"],
+  answer:0,
+  explain:"C'est le magasin de données d'Azure Monitor Logs. Centraliser plusieurs sources dans UN workspace permet les requêtes croisées." },
+/* --- Processus & collaboration --- */
+{ id:"f-process-templates", level:2, d:"proc", dom:"Azure Boards", type:"qcm",
+  q:"Quels sont les 4 process templates d'Azure Boards ?",
+  choices:["Basic, Agile, Scrum, CMMI","Kanban, Scrum, SAFe, Lean","Simple, Standard, Advanced, Enterprise","Waterfall, Agile, Hybrid, Custom"],
+  answer:0,
+  explain:"Basic (Issue/Task, le plus simple), Agile (User Story/Bug), Scrum (Product Backlog Item), CMMI (Requirement, le plus formel — environnements régulés)." },
+{ id:"f-boards-github", level:2, d:"proc", dom:"Intégrations", type:"input",
+  q:"Quelle syntaxe faut-il mentionner dans un message de commit GitHub pour le lier au work item Azure Boards n°123 ?",
+  accept:["AB#123","AB#","ab 123"],
+  explain:"La syntaxe AB#<id> crée le lien de traçabilité. « Fixes AB#123 » ferme même le work item. Intégration Boards ↔ GitHub explicitement au programme." },
+{ id:"f-traceability", level:2, d:"proc", dom:"Traçabilité", type:"qcm",
+  q:"Qu'appelle-t-on la traçabilité de bout en bout dans un contexte DevOps ?",
+  choices:["Pouvoir relier une exigence → commit → build → release → déploiement → incident, dans les deux sens","Tracer les logs applicatifs","Suivre les utilisateurs","Auditer les connexions"],
+  answer:0,
+  explain:"« Design and implement source, bug, and quality traceability » : indispensable en environnement audité pour répondre à « qu'est-ce qui est parti en prod, validé par qui ? »." },
+{ id:"f-wiki-code", level:2, d:"proc", dom:"Documentation", type:"qcm",
+  q:"Quelle est la différence entre un wiki de projet et un « publish code as wiki » ?",
+  choices:["Le wiki de projet vit dans un dépôt Git dédié ; publish as wiki publie des fichiers Markdown d'un dépôt de code existant (doc versionnée avec le code)","Le second est en lecture seule pour tous","Le premier ne supporte pas Markdown","Aucune différence"],
+  answer:0,
+  explain:"Publier le code comme wiki maintient la doc au plus près du code, revue dans la même PR — la pratique « docs as code »." },
+{ id:"f-releasenotes", level:2, d:"proc", dom:"Documentation", type:"qcm",
+  q:"Comment générer automatiquement des release notes à partir de l'historique Git ?",
+  choices:["Une tâche/script de pipeline qui exploite git log et les work items liés (ou la génération automatique de notes GitHub Releases)","Il faut les écrire à la main","Via Azure Monitor","Via un webhook Teams"],
+  answer:0,
+  explain:"« Automate creation of documentation from Git history » est au programme. GitHub génère des notes depuis les PR fusionnées ; côté Azure DevOps, des extensions/scripts exploitent les work items liés." },
+{ id:"f-teams-integration", level:2, d:"proc", dom:"Intégrations", type:"qcm",
+  q:"Comment notifier un canal Microsoft Teams quand un déploiement échoue ?",
+  choices:["Le connecteur Azure Pipelines pour Teams, ou un service hook vers un webhook entrant du canal","Uniquement par e-mail","Via une Logic App obligatoirement","Ce n'est pas supporté"],
+  answer:0,
+  explain:"« Configure integration between GitHub or Azure DevOps and Microsoft Teams » est explicitement au programme. Les approbations peuvent même se faire depuis Teams." },
+{ id:"f-deliveryplans", level:2, d:"proc", dom:"Azure Boards", type:"qcm",
+  q:"À quoi servent les Delivery Plans dans Azure Boards ?",
+  choices:["Visualiser sur un calendrier les livrables de PLUSIEURS équipes pour repérer les dépendances et conflits","Planifier les déploiements","Gérer les congés","Estimer les coûts"],
+  answer:0,
+  explain:"Vue calendaire multi-équipes — l'outil de coordination inter-équipes du domaine « processus et communications »." },
+{ id:"f-analytics", level:2, d:"proc", dom:"Métriques", type:"input",
+  q:"Quel service alimente les widgets de rapports avancés et l'export Power BI dans Azure DevOps (via ses vues et OData) ?",
+  accept:["analytics","analytics views"],
+  explain:"Analytics est le moteur de reporting d'Azure DevOps (CFD, vélocité, burndown, lead/cycle time) et la source des jeux de données Power BI." },
+{ id:"f-cfd", level:2, d:"proc", dom:"Métriques", type:"qcm",
+  q:"Que montre un diagramme de flux cumulé (CFD) ?",
+  choices:["La quantité de travail dans chaque état au fil du temps : un élargissement de bande révèle un goulot d'étranglement","La vélocité par sprint","La couverture de tests","Le taux d'échec des déploiements"],
+  answer:0,
+  explain:"CFD = outil de diagnostic du flux. Une bande « In Review » qui s'élargit signale que les revues de code sont le goulot." },
+/* ================= NIVEAU 3 — SCÉNARIOS & DESIGN ================= */
+{ id:"s-branch-strategy", level:3, d:"src", dom:"Branching", type:"qcm",
+  q:"Une équipe de 8 devs déploie plusieurs fois par jour. Les merges sont douloureux car les branches vivent 2 semaines. Que recommandes-tu ?",
+  choices:["Trunk-based development : branches de feature de moins de 1-2 jours, intégration continue dans main, feature flags pour le code inachevé","GitFlow avec develop et release","Une branche par développeur","Une branche par environnement"],
+  answer:0,
+  explain:"La douleur du merge vient de la DURÉE de vie des branches. Les feature flags permettent de fusionner du code inachevé mais désactivé." },
+{ id:"s-env-branches", level:3, d:"src", dom:"Branching", type:"qcm",
+  q:"Une équipe utilise des branches dev/staging/prod et « promeut » par merge entre branches. Quel est le problème ?",
+  choices:["Le binaire est rebuild à chaque branche : ce qui est testé n'est pas ce qui part en prod. Il faut un artefact unique promu entre environnements","Aucun, c'est la bonne pratique","Il manque une branche QA","Les branches doivent être protégées"],
+  answer:0,
+  explain:"Anti-pattern des « environment branches ». Le bon modèle : une branche source de vérité, un artefact construit une fois, promu de stage en stage." },
+{ id:"s-hotfix", level:3, d:"src", dom:"Hotfix", type:"input",
+  q:"Un bug critique est en production, mais main contient déjà des features non validées. Depuis quel point de départ crées-tu la branche de hotfix ?",
+  accept:["tag","le tag","tag de production","tag de la version en production","depuis le tag"],
+  explain:"« Design a hotfix path plan » est au programme. Partir du tag de prod garantit qu'on ne livre QUE le correctif, sans embarquer de code non validé." },
+{ id:"s-large-files", level:3, d:"src", dom:"Repos", type:"qcm",
+  q:"Le clone du dépôt prend 40 minutes à cause d'assets binaires volumineux versionnés depuis des années. Que fais-tu ?",
+  choices:["Migrer les binaires vers Git LFS (et réécrire l'historique si nécessaire) ; envisager Scalar / clone partiel pour les très gros dépôts","Supprimer l'historique","Passer en clone superficiel définitivement","Découper en 10 dépôts"],
+  answer:0,
+  explain:"LFS remplace les blobs par des pointeurs. Attention : migrer les fichiers EXISTANTS impose une réécriture d'historique (git lfs migrate)." },
+{ id:"s-agents-cost", level:3, d:"pipe", dom:"Agents", type:"qcm",
+  q:"Les builds attendent 30 minutes en file d'attente aux heures de pointe. Quelle est la première action ?",
+  choices:["Augmenter le nombre de jobs parallèles (ou ajouter des agents self-hosted), puis optimiser la durée des builds (cache, parallélisme, path filters)","Acheter des agents plus puissants","Réduire le nombre de commits","Supprimer les tests"],
+  answer:0,
+  explain:"Attente en file = manque de CONCURRENCE (jobs parallèles). Un build lent est un autre problème (durée), qu'on traite ensuite par le cache et le découpage." },
+{ id:"s-private-net", level:3, d:"pipe", dom:"Agents", type:"qcm",
+  q:"Le pipeline doit déployer sur un SQL Server on-premises accessible uniquement depuis le réseau interne. Que mets-tu en place ?",
+  choices:["Un agent self-hosted (ou un scale set d'agents) placé dans le réseau qui a la visibilité sur la ressource","Ouvrir le SQL Server sur Internet","Utiliser un agent Microsoft-hosted avec une IP fixe","Passer par un webhook"],
+  answer:0,
+  explain:"C'est LE cas d'usage canonique du self-hosted. Alternative gérée : les VM scale set agents dans un VNet, qui combinent isolation réseau et élasticité." },
+{ id:"s-slow-pipeline", level:3, d:"pipe", dom:"Maintenance", type:"qcm",
+  q:"Un pipeline dure 45 minutes, dont 20 de restauration de dépendances et 15 de tests séquentiels. Quelles optimisations ?",
+  choices:["Mettre en cache les dépendances (Cache@2 clé sur le lock file) et paralléliser les tests (matrix ou job slicing)","Supprimer les tests","Passer sur un agent plus gros uniquement","Réduire la fréquence des builds"],
+  answer:0,
+  explain:"« Optimize a pipeline for cost, time, performance, and reliability » est au programme. Cache + parallélisme sont les deux leviers principaux." },
+{ id:"s-classic-migrate", level:3, d:"pipe", dom:"Migration", type:"qcm",
+  q:"Comment migrer un pipeline classique (interface graphique) vers YAML avec le moins de risque ?",
+  choices:["Exporter le YAML depuis l'éditeur classique (« View YAML »), créer le pipeline YAML en parallèle sur une branche, comparer les résultats, puis basculer","Tout réécrire de zéro directement sur main","Supprimer le classique puis recréer","Attendre une migration automatique de Microsoft"],
+  answer:0,
+  explain:"« Migrate a pipeline from classic to YAML » est au programme. Exécuter les deux en parallèle valide l'équivalence avant la bascule. Rappel : les task groups n'existent pas en YAML (→ templates)." },
+{ id:"s-order-deploy", level:3, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"L'API dépend d'une migration de base de données qui doit être appliquée AVANT elle, et le front après l'API. Comment garantir l'ordre ?",
+  choices:["Des stages distincts chaînés par dependsOn (DB → API → Front), chacun avec ses conditions de réussite","Trois pipelines déclenchés manuellement dans l'ordre","Des sleep entre les tâches","Tout dans un seul job"],
+  answer:0,
+  explain:"« Design a pipeline to ensure that dependency deployments are reliably ordered ». dependsOn crée le graphe : un échec de la migration bloque la suite." },
+{ id:"s-db-deploy", level:3, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Comment déployer un changement de schéma de base sans casser l'application pendant le déploiement progressif ?",
+  choices:["Des migrations rétrocompatibles (expand/contract) : ajouter d'abord les colonnes sans supprimer, déployer le code, puis nettoyer dans une release ultérieure","Arrêter l'application pendant la migration","Déployer le schéma après le code","Ne jamais modifier le schéma"],
+  answer:0,
+  explain:"Pendant un canary/rolling, ANCIENNE et NOUVELLE versions coexistent : le schéma doit être compatible avec les deux. C'est le pattern expand/contract." },
+{ id:"s-zero-downtime", level:3, d:"pipe", dom:"Déploiement", type:"input",
+  q:"Une App Service doit être mise à jour sans aucune interruption : on déploie sur un emplacement de staging, on préchauffe, puis on effectue une opération. Comment s'appelle-t-elle ?",
+  accept:["swap","echange","le swap"],
+  explain:"« Plan for minimizing downtime by using load balancing, rolling deployments, and deployment slot usage and swap » — le swap est l'implémentation blue-green d'App Service." },
+{ id:"s-rollback", level:3, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Quelle stratégie offre le rollback le plus RAPIDE en cas de problème en production ?",
+  choices:["Blue-green (rebasculer le trafic vers l'environnement précédent) ou un feature flag désactivé instantanément","Redéployer la version précédente depuis le pipeline","Restaurer une sauvegarde","Corriger et redéployer (roll forward)"],
+  answer:0,
+  explain:"Rebasculer un swap ou couper un flag prend quelques secondes ; un redéploiement complet prend des minutes. D'où feature flags + blue-green pour les systèmes critiques." },
+{ id:"s-progressive", level:3, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"L'équipe veut valider une refonte majeure sur 5 % des utilisateurs réels avant de généraliser, avec possibilité de coupure immédiate. Que combines-tu ?",
+  choices:["Feature flags (App Configuration Feature Manager) avec filtre de pourcentage + surveillance des métriques applicatives","Un déploiement blue-green seul","Un canary sans instrumentation","Des tests de charge en préproduction"],
+  answer:0,
+  explain:"Le flag avec filtre percentage cible les UTILISATEURS (pas les serveurs) et se coupe sans redéploiement. Le monitoring est indispensable pour décider d'étendre." },
+{ id:"s-approvals-audit", level:3, d:"sec", dom:"Conformité", type:"qcm",
+  q:"Un audit exige la preuve que chaque mise en production a été approuvée par une personne différente du développeur. Comment l'implémenter ?",
+  choices:["Des approbations sur l'environment de production, avec l'option interdisant au demandeur d'approuver son propre run — l'historique fait foi","Un e-mail de validation archivé","Une signature dans le commit","Une revue de code suffit"],
+  answer:0,
+  explain:"Séparation des tâches native + piste d'audit intégrée (qui a approuvé, quand, quel artefact). Bien plus solide qu'un processus manuel externe." },
+{ id:"s-required-template", level:3, d:"sec", dom:"Conformité", type:"input",
+  q:"La sécurité veut garantir que TOUS les pipelines exécutent un scan avant la production, sans dépendre de la bonne volonté des équipes. Quel check attaches-tu à l'environment (2 mots) ?",
+  accept:["required template","template requis","required templates"],
+  explain:"Le contrôle technique bat la consigne écrite : le déploiement est refusé si le pipeline n'étend pas le template obligatoire." },
+{ id:"s-secret-strategy", level:3, d:"sec", dom:"Secrets", type:"qcm",
+  q:"Un pipeline a besoin d'une chaîne de connexion et d'un certificat pour déployer. Quelle conception ?",
+  choices:["Secrets dans Key Vault (variable group lié) + certificat en secure file, accès via une service connection en workload identity federation","Variables secrètes du pipeline copiées à la main","Fichiers chiffrés committés dans le dépôt","Un PAT partagé par l'équipe"],
+  answer:0,
+  explain:"Chaque type de sensible a son mécanisme : Key Vault (secrets), secure files (fichiers), fédération OIDC (authentification sans secret)." },
+{ id:"s-leak-prevent", level:3, d:"sec", dom:"Secrets", type:"qcm",
+  q:"Comment concevoir un pipeline pour éviter la fuite d'informations sensibles dans les logs ?",
+  choices:["Utiliser des variables secrètes (masquées), ne pas activer le debug verbeux en prod, éviter d'echo les valeurs, et activer le secret scanning avec push protection","Supprimer les logs après chaque run","Restreindre l'accès aux logs uniquement","Chiffrer les logs"],
+  answer:0,
+  explain:"« Design pipelines to prevent leakage of sensitive information ». Les secrets sont masqués automatiquement, mais un script qui les transforme (base64) peut les révéler." },
+{ id:"s-mi-vs-spn", level:3, d:"sec", dom:"Identité", type:"input",
+  q:"Une VM Azure exécutant un agent self-hosted doit accéder à Key Vault, sans aucun secret à stocker ni faire tourner. Quel type d'identité choisis-tu ?",
+  accept:["managed identity","identite manageee","identite managee","identite geree"],
+  explain:"Dès que la charge s'exécute SUR une ressource Azure, la managed identity est la bonne réponse. Le service principal reste pour l'externe (GitHub Actions sans OIDC)." },
+{ id:"s-scan-strategy", level:3, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Comment concevoir une stratégie de scan complète dans la CI ?",
+  choices:["Combiner secret scanning (push protection), SAST sur le code (CodeQL), SCA sur les dépendances et licences (Dependabot), et scan des images de conteneurs","Un scan antivirus des artefacts","Un pentest annuel","Le scan SAST uniquement"],
+  answer:0,
+  explain:"Les 4 axes du référentiel : dependency, code, secret et licensing scanning — plus le scan des images de conteneurs, explicitement cité." },
+{ id:"s-license", level:3, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"L'entreprise interdit les dépendances sous licence GPL dans ses produits propriétaires. Comment l'appliquer automatiquement ?",
+  choices:["Un scan de licences dans la CI (dependency review GitHub, Mend/Snyk) qui échoue le build ou bloque la PR en cas de licence interdite","Une revue juridique manuelle par release","Une mention dans le README","Interdire l'open source"],
+  answer:0,
+  explain:"Le licensing scanning est explicitement au programme. Le contrôle doit se faire à la PR (shift left), pas à la livraison." },
+{ id:"s-container-scan", level:3, d:"sec", dom:"Sécurité", type:"qcm",
+  q:"Quand faut-il scanner une image de conteneur ?",
+  choices:["Au build (dans la CI) ET en continu dans le registre, car de nouvelles CVE apparaissent après la publication","Uniquement au build","Uniquement au déploiement","Une fois par trimestre"],
+  answer:0,
+  explain:"Une image « propre » aujourd'hui ne l'est plus demain : une CVE peut être publiée après le build. D'où le scan continu du registre (Defender for Containers)." },
+{ id:"s-ghas-azdo", level:3, d:"sec", dom:"GHAS", type:"qcm",
+  q:"Une entreprise utilise Azure Repos (pas GitHub) mais veut CodeQL et le secret scanning. Est-ce possible ?",
+  choices:["Oui — GitHub Advanced Security for Azure DevOps apporte code scanning, secret scanning et dependency scanning dans Azure Repos","Non, il faut migrer vers GitHub","Seulement le secret scanning","Uniquement avec un outil tiers"],
+  answer:0,
+  explain:"GHAS for Azure DevOps est explicitement cité au programme, à côté de GHAS for GitHub. Piège classique : croire que GHAS est réservé à GitHub." },
+{ id:"s-dsc", level:3, d:"pipe", dom:"IaC", type:"input",
+  q:"Un parc de VMs doit rester conforme à une configuration précise, avec réévaluation et correction automatique du drift. Quelle technologie Azure (nom actuel ou son prédécesseur) ?",
+  accept:["azure machine configuration","machine configuration","azure automation state configuration","state configuration","dsc"],
+  explain:"Ces deux technologies sont nommées dans le référentiel. La DSC applique et REMET en conformité, contrairement à un script exécuté une seule fois." },
+{ id:"s-iac-choice", level:3, d:"pipe", dom:"IaC", type:"qcm",
+  q:"Quelle différence essentielle entre provisionnement (ARM/Bicep/Terraform) et gestion de configuration (DSC/Ansible) ?",
+  choices:["Le provisionnement crée l'infrastructure (VM, réseau, PaaS) ; la gestion de configuration règle ce qui tourne DANS les machines et maintient leur état","Ce sont des synonymes","Le provisionnement concerne le cloud, la configuration l'on-premises","La configuration précède toujours le provisionnement"],
+  answer:0,
+  explain:"« Recommend a configuration management technology for application infrastructure » : savoir choisir la bonne catégorie d'outil selon le besoin." },
+{ id:"s-iac-test", level:3, d:"pipe", dom:"IaC", type:"qcm",
+  q:"Comment tester l'infrastructure as code avant de l'appliquer en production ?",
+  choices:["Validation/linting, what-if (ARM/Bicep) ou plan (Terraform), déploiement dans un environnement éphémère, puis tests d'intégration","Appliquer directement en prod et surveiller","Relire le code uniquement","Tester après le déploiement"],
+  answer:0,
+  explain:"« Define an IaC strategy, including source control and automation of testing and deployment ». az deployment group what-if est l'équivalent Azure du terraform plan." },
+{ id:"s-ade", level:3, d:"pipe", dom:"IaC", type:"input",
+  q:"Les développeurs doivent créer eux-mêmes des environnements de test conformes depuis un catalogue de templates approuvés, sans passer par l'équipe plateforme. Quel service Azure ?",
+  accept:["azure deployment environments","deployment environments"],
+  explain:"Azure Deployment Environments est explicitement au programme (« for on-demand self-deployment ») : self-service encadré par un catalogue d'IaC validé." },
+{ id:"s-package-strategy", level:3, d:"pipe", dom:"Packages", type:"qcm",
+  q:"Plusieurs équipes dupliquent la même bibliothèque interne par copier-coller. Que recommandes-tu ?",
+  choices:["La publier comme package versionné (Azure Artifacts ou GitHub Packages) avec SemVer, consommé via un feed","Un submodule Git dans chaque dépôt","Un dossier partagé réseau","Un monorepo obligatoire"],
+  answer:0,
+  explain:"Le package versionné découple les cycles de vie : chaque équipe monte de version quand elle le décide, et un correctif se diffuse par une nouvelle version." },
+{ id:"s-breaking-pkg", level:3, d:"pipe", dom:"Packages", type:"qcm",
+  q:"Une bibliothèque interne doit introduire un changement incompatible. Comment gérer la transition ?",
+  choices:["Publier une nouvelle version MAJEURE (SemVer), maintenir temporairement la précédente, et communiquer un chemin de migration","Modifier la version existante","Forcer toutes les équipes à migrer le jour même","Créer un nouveau feed"],
+  answer:0,
+  explain:"SemVer est un contrat : MAJOR signale la rupture, et les consommateurs migrent à leur rythme grâce à la coexistence des versions." },
+{ id:"s-gate-monitor", level:3, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Le déploiement en production ne doit pas partir s'il existe une alerte Azure Monitor active sur le service. Comment l'automatiser ?",
+  choices:["Un check/gate « Query Azure Monitor alerts » sur l'environment de production","Vérifier manuellement avant chaque release","Un script qui lit les e-mails d'alerte","Bloquer le pipeline la nuit"],
+  answer:0,
+  explain:"Les gates automatiques interrogent l'état réel du système avant de laisser passer, et peuvent être réévaluées périodiquement pendant une fenêtre d'attente." },
+{ id:"s-gate-workitem", level:3, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Une release ne doit pas partir s'il reste des bugs bloquants ouverts sur l'itération. Quelle gate ?",
+  choices:["« Query work items » avec une requête filtrant les bugs bloquants : la gate échoue si le résultat n'est pas vide","Une approbation manuelle","Un test unitaire","Une branch policy"],
+  answer:0,
+  explain:"La gate transforme une règle de gouvernance en contrôle automatique et traçable, sans dépendre de la vigilance humaine." },
+{ id:"s-canary-monitor", level:3, d:"pipe", dom:"Déploiement", type:"qcm",
+  q:"Dans un déploiement canary, comment décider automatiquement d'étendre ou de faire marche arrière ?",
+  choices:["Comparer les métriques (taux d'erreur, latence) du canary à la référence pendant postRouteTraffic, avec une gate qui déclenche le rollback via on: failure","Attendre les retours utilisateurs","Décider après 24 h","Étendre systématiquement"],
+  answer:0,
+  explain:"Le canary sans instrumentation n'a aucun intérêt : c'est le hook postRouteTraffic + les métriques qui rendent la décision automatique et rapide." },
+{ id:"s-flaky-strategy", level:3, d:"pipe", dom:"Tests", type:"qcm",
+  q:"20 % des builds échouent à cause de tests instables, et l'équipe a pris l'habitude de relancer sans regarder. Que fais-tu ?",
+  choices:["Activer la détection de flaky tests pour les isoler, créer des work items pour les corriger, et interdire le simple « re-run » comme solution","Désactiver tous les tests instables définitivement","Augmenter le nombre de tentatives automatiques","Ignorer les échecs de tests"],
+  answer:0,
+  explain:"La normalisation du « relance et ça passe » détruit la valeur de la CI : on finit par ignorer de vrais échecs. Isoler puis corriger, sans supprimer la couverture." },
+{ id:"s-test-pyramid", level:3, d:"pipe", dom:"Tests", type:"qcm",
+  q:"Comment répartir les tests dans une stratégie équilibrée ?",
+  choices:["Beaucoup de tests unitaires rapides, moins de tests d'intégration, très peu de tests end-to-end lents (pyramide des tests)","Uniquement des tests end-to-end réalistes","Autant de chaque type","Uniquement des tests manuels"],
+  answer:0,
+  explain:"Les tests E2E sont lents et fragiles (source principale de flakiness). La pyramide maximise la couverture rapide en CI et réserve l'E2E aux parcours critiques." },
+{ id:"s-shared-runner-sec", level:3, d:"sec", dom:"Agents", type:"qcm",
+  q:"Quel est le principal risque de sécurité d'un agent self-hosted partagé entre projets ?",
+  choices:["La persistance entre jobs : un pipeline malveillant peut laisser des fichiers ou récupérer les secrets d'un autre projet","Une consommation CPU excessive","Une version d'outil obsolète","Un coût plus élevé"],
+  answer:0,
+  explain:"Contrairement aux agents hosted (machine neuve à chaque job), le self-hosted garde son état. D'où : pools séparés par niveau de confiance, jamais de dépôt public sur un pool de prod." },
+{ id:"s-slo-alerting", level:3, d:"mon", dom:"SRE", type:"qcm",
+  q:"L'équipe est submergée d'alertes dont la plupart n'exigent aucune action. Que fais-tu ?",
+  choices:["Alerter sur les symptômes visibles par l'utilisateur (violation de SLO/budget d'erreur), supprimer les alertes non actionnables et regrouper le reste en tableaux de bord","Augmenter tous les seuils","Désactiver les alertes la nuit","Ajouter des destinataires"],
+  answer:0,
+  explain:"La fatigue d'alerte fait rater les vrais incidents. Règle SRE : une alerte qui réveille quelqu'un doit être urgente, actionnable et liée à l'impact utilisateur." },
+{ id:"s-dashboard-dora", level:3, d:"proc", dom:"Métriques", type:"qcm",
+  q:"La direction veut mesurer objectivement la performance de la livraison logicielle. Quel tableau de bord construis-tu ?",
+  choices:["Les 4 métriques DORA : fréquence de déploiement, lead time for changes, change failure rate et time to restore","Le nombre de lignes de code et de commits par développeur","La vélocité de chaque équipe","Le nombre d'heures travaillées"],
+  answer:0,
+  explain:"Les métriques d'activité individuelle (lignes, commits) sont contre-productives. DORA mesure le SYSTÈME de livraison et équilibre vitesse et stabilité." },
+{ id:"s-incident-flow", level:3, d:"mon", dom:"SRE", type:"qcm",
+  q:"Comment garantir qu'un incident de production alimente réellement l'amélioration continue ?",
+  choices:["Postmortem sans blâme → actions correctives converties en work items priorisés et suivis dans le backlog","Un rapport archivé","Une réunion de crise","Sanctionner l'auteur de l'erreur"],
+  answer:0,
+  explain:"Une analyse dont les actions ne sont pas suivies ne change rien : la traçabilité incident → work item → correctif déployé ferme la boucle de feedback." },
+{ id:"s-teams-notif", level:3, d:"proc", dom:"Communication", type:"qcm",
+  q:"Trop de notifications noient l'équipe : personne ne réagit plus aux échecs de build sur main. Que fais-tu ?",
+  choices:["Cibler les notifications : seuls les échecs sur les branches protégées et les déploiements de prod vont dans un canal dédié, le reste est filtré","Envoyer tout à tout le monde","Supprimer toutes les notifications","Créer un canal par pipeline"],
+  answer:0,
+  explain:"Même logique que la fatigue d'alerte : trop de signaux tue le signal. Un canal dédié aux événements actionnables restaure la réactivité." },
+{ id:"s-github-azdo", level:3, d:"proc", dom:"Intégrations", type:"qcm",
+  q:"L'entreprise garde le code sur GitHub mais veut piloter le travail dans Azure Boards, avec traçabilité complète.",
+  choices:["Connecter Azure Boards au dépôt GitHub (Azure Boards app) et référencer AB#<id> dans les commits et PR","Migrer tout le code vers Azure Repos","Copier manuellement les liens","Utiliser uniquement GitHub Issues"],
+  answer:0,
+  explain:"« Design and implement integration between GitHub repositories and Azure Pipelines » et l'intégration Boards ↔ GitHub sont toutes deux au programme." },
+{ id:"s-selfservice-doc", level:3, d:"proc", dom:"Documentation", type:"qcm",
+  q:"La documentation d'architecture est systématiquement obsolète. Quelle approche ?",
+  choices:["« Docs as code » : Markdown et diagrammes Mermaid dans le dépôt, revus dans la même PR que le code, publiés en wiki","Un document Word partagé","Une réunion mensuelle de mise à jour","Un wiki libre non versionné"],
+  answer:0,
+  explain:"La doc suit le code dans la même PR : elle ne peut plus diverger sans être vue en revue. Mermaid et le wiki publié depuis le code sont explicitement au programme." },
+{ id:"s-migration-plan", level:3, d:"proc", dom:"Adoption", type:"qcm",
+  q:"Une équipe déploie manuellement une fois par trimestre. Par où commencer la transformation DevOps ?",
+  choices:["Mesurer l'existant (DORA), puis automatiser d'abord le build et les tests (CI) avant d'automatiser le déploiement","Automatiser d'abord le déploiement en production","Réorganiser les équipes","Acheter tous les outils DevOps"],
+  answer:0,
+  explain:"Sans CI fiable, automatiser le déploiement ne fait qu'accélérer la livraison de défauts. On mesure, on sécurise la CI, puis on ouvre le robinet de la CD." },
+{ id:"s-shared-pipeline", level:3, d:"pipe", dom:"Templates", type:"qcm",
+  q:"15 microservices ont des pipelines quasi identiques, copiés-collés. Un changement de règle impose 15 modifications. Que fais-tu ?",
+  choices:["Extraire un template YAML centralisé (dépôt dédié) que chaque pipeline étend avec ses paramètres","Un pipeline unique pour les 15 services","Un script partagé appelé par chaque pipeline","Documenter la procédure de mise à jour"],
+  answer:0,
+  explain:"« Create reusable pipeline elements, including YAML templates » : le template dans un dépôt dédié, référencé en resource, se met à jour en un seul endroit." },
+{ id:"s-multi-repo-tmpl", level:3, d:"pipe", dom:"Templates", type:"qcm",
+  q:"Comment référencer un template YAML hébergé dans un AUTRE dépôt ?",
+  choices:["Déclarer une resource « repositories » puis « extends: template: chemin.yml@nomResource »","Copier le fichier dans chaque dépôt","Une URL HTTP dans extends","C'est impossible"],
+  answer:0,
+  explain:"resources: repositories: - repository: templates, type: git, name: Projet/DepotTemplates, ref: refs/tags/v1 — épingler un tag garantit la stabilité." },
+{ id:"s-retention-audit", level:3, d:"sec", dom:"Conformité", type:"qcm",
+  q:"La conformité impose de conserver 7 ans la preuve de ce qui a été déployé en production, mais le stockage coûte cher.",
+  choices:["Rétention courte par défaut + rétention/épinglage spécifique des runs de production, et archivage des artefacts de release dans un stockage froid","Tout conserver indéfiniment","Ne rien conserver","Des captures d'écran archivées"],
+  answer:0,
+  explain:"On distingue les runs de CI (jetables) des releases de production (preuves d'audit). Les politiques de rétention permettent exactement cette granularité." },
+/* ================= CODE À COMPLÉTER ================= */
+{ id:"c-yaml-trigger", level:2, d:"pipe", dom:"YAML — trigger", type:"input",
+  code:"trigger:\n  branches:\n    include: [ main, releases/* ]\n  ____:\n    include: [ 'src/api/**' ]",
+  q:"Complète le mot-clé qui limite le déclenchement à certains dossiers :",
+  accept:["paths","path"],
+  explain:"trigger: paths: include/exclude — indispensable en monorepo pour ne builder que le service modifié." },
+{ id:"c-yaml-pool", level:2, d:"pipe", dom:"YAML — pool", type:"input",
+  code:"jobs:\n- job: Build\n  pool:\n    ____: ubuntu-latest\n  steps:\n  - script: dotnet build",
+  q:"Complète la clé qui désigne une image d'agent Microsoft-hosted :",
+  accept:["vmImage","vm image"],
+  explain:"pool: vmImage: pour les agents Microsoft-hosted ; pool: name: MonPool pour un pool self-hosted." },
+{ id:"c-yaml-deployjob", level:2, d:"pipe", dom:"YAML — deployment", type:"input",
+  code:"jobs:\n- ____: DeployProd\n  environment: production\n  strategy:\n    runOnce:\n      deploy:\n        steps:\n        - script: ./deploy.sh",
+  q:"Complète le mot-clé qui déclare un job de déploiement (au lieu de « job ») :",
+  accept:["deployment"],
+  explain:"« - deployment: » active l'historique par environment, les checks et les stratégies. Un « - job: » classique n'a rien de tout ça." },
+{ id:"c-yaml-strategy", level:3, d:"pipe", dom:"YAML — deployment", type:"input",
+  code:"strategy:\n  canary:\n    increments: [10, 25]\n    deploy: { steps: [...] }\n    ____:\n      steps:\n      - script: ./switch-traffic.sh",
+  q:"Complète le hook qui bascule le trafic vers la nouvelle version :",
+  accept:["routeTraffic","route traffic"],
+  explain:"Ordre des hooks : preDeploy → deploy → routeTraffic → postRouteTraffic → on: success|failure. postRouteTraffic sert à surveiller APRÈS la bascule." },
+{ id:"c-yaml-condition", level:2, d:"pipe", dom:"YAML — conditions", type:"input",
+  code:"- task: PublishTestResults@2\n  condition: ____()\n  # doit publier les resultats meme si les tests ont echoue",
+  q:"Complète la condition qui s'exécute après un succès OU un échec (mais pas si annulé) :",
+  accept:["succeededOrFailed","succeeded or failed"],
+  explain:"succeededOrFailed() est LE choix pour publier des résultats de tests. always() irait plus loin en s'exécutant aussi après une annulation." },
+{ id:"c-yaml-condition-branch", level:3, d:"pipe", dom:"YAML — conditions", type:"qcm",
+  code:"- stage: DeployProd\n  condition: and(succeeded(), eq(variables['Build.SourceBranch'], '____'))",
+  q:"Complète pour ne déployer que depuis la branche main :",
+  choices:["refs/heads/main","main","origin/main","$(main)"],
+  answer:0,
+  explain:"Build.SourceBranch contient la référence COMPLÈTE (refs/heads/main). Pour le nom court, utiliser Build.SourceBranchName — confusion classique." },
+{ id:"c-yaml-template", level:2, d:"pipe", dom:"YAML — templates", type:"input",
+  code:"steps:\n- ____: steps/build-and-test.yml\n  parameters:\n    buildConfiguration: Release",
+  q:"Complète le mot-clé qui insère un template de steps :",
+  accept:["template"],
+  explain:"- template: chemin.yml avec parameters. Pour imposer un template parent (gouvernance), c'est « extends: » au niveau du pipeline." },
+{ id:"c-yaml-vargroup", level:2, d:"pipe", dom:"YAML — variables", type:"input",
+  code:"variables:\n- ____: SecretsProduction\n- name: buildConfiguration\n  value: Release",
+  q:"Complète pour référencer un variable group de la Library :",
+  accept:["group"],
+  explain:"variables: - group: NomDuGroupe. Un groupe lié à Key Vault résout les secrets au runtime sans jamais les stocker dans le YAML." },
+{ id:"c-yaml-secret-env", level:3, d:"pipe", dom:"YAML — variables", type:"input",
+  code:"- script: ./deploy.sh\n  ____:\n    API_KEY: $(apiKeySecret)",
+  q:"Complète le mot-clé qui rend une variable SECRÈTE disponible au script :",
+  accept:["env"],
+  explain:"Les secrets ne sont pas injectés automatiquement dans l'environnement : le mapping explicite via env: est obligatoire. (« with: » est la syntaxe GitHub Actions.)" },
+{ id:"c-yaml-output", level:3, d:"pipe", dom:"YAML — variables", type:"input",
+  code:"# Job A\n- script: echo \"##vso[task.setvariable variable=ver;____=true]1.2.3\"\n  name: setver",
+  q:"Complète pour rendre la variable consommable par un AUTRE job :",
+  accept:["isOutput","is output"],
+  explain:"isOutput=true + un « name: » sur le step, puis dans le job dépendant : $[ dependencies.JobA.outputs['setver.ver'] ]." },
+{ id:"c-yaml-matrix", level:2, d:"pipe", dom:"YAML — matrix", type:"input",
+  code:"strategy:\n  ____:\n    linux:   { imageName: ubuntu-latest }\n    windows: { imageName: windows-latest }\npool:\n  vmImage: $(imageName)",
+  q:"Complète la stratégie qui duplique le job par combinaison :",
+  accept:["matrix"],
+  explain:"Chaque entrée devient un job parallèle avec ses variables. maxParallel limite la concurrence si les jobs parallèles sont comptés." },
+{ id:"c-yaml-cache", level:3, d:"pipe", dom:"YAML — cache", type:"input",
+  code:"- task: Cache@2\n  inputs:\n    key: 'npm | \"$(Agent.OS)\" | ____'\n    path: $(npm_config_cache)",
+  q:"Sur quel fichier baser la clé de cache des dépendances npm ?",
+  accept:["package-lock.json","package lock json","package-lock"],
+  explain:"Le LOCK file décrit les versions exactes : il change dès qu'une dépendance change. Baser la clé sur package.json manquerait les mises à jour transitives." },
+{ id:"c-yaml-publish", level:2, d:"pipe", dom:"YAML — artefacts", type:"input",
+  code:"- ____: $(Build.ArtifactStagingDirectory)\n  artifact: drop",
+  q:"Complète le raccourci YAML qui publie un artefact de pipeline :",
+  accept:["publish"],
+  explain:"« - publish: chemin / artifact: nom » est le raccourci de PublishPipelineArtifact. Le raccourci inverse est « - download: »." },
+{ id:"c-yaml-resource-repo", level:3, d:"pipe", dom:"YAML — resources", type:"input",
+  code:"resources:\n  ____:\n  - repository: templates\n    type: git\n    name: Plateforme/PipelineTemplates\n    ref: refs/tags/v2.1.0",
+  q:"Complète le type de ressource permettant d'utiliser des templates d'un autre dépôt :",
+  accept:["repositories"],
+  explain:"resources: repositories: puis « extends: template: prod.yml@templates ». Épingler un tag (ref) évite qu'une modif du template casse tous les pipelines." },
+{ id:"c-gha-on", level:2, d:"pipe", dom:"GitHub Actions", type:"input",
+  code:"name: CI\n____:\n  push:\n    branches: [ main ]\n  pull_request:\n    branches: [ main ]",
+  q:"Complète le mot-clé GitHub Actions qui définit les déclencheurs :",
+  accept:["on"],
+  explain:"« on: » est l'équivalent de trigger/pr d'Azure Pipelines. Autres valeurs utiles : workflow_dispatch (manuel), schedule (cron)." },
+{ id:"c-gha-runs-on", level:2, d:"pipe", dom:"GitHub Actions", type:"input",
+  code:"jobs:\n  build:\n    ____: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4",
+  q:"Complète la clé qui désigne le runner GitHub :",
+  accept:["runs-on","runs on"],
+  explain:"runs-on: est l'équivalent de « pool: vmImage: ». Pour un runner self-hosted : runs-on: [self-hosted, linux]." },
+{ id:"c-gha-secret", level:2, d:"pipe", dom:"GitHub Actions", type:"input",
+  code:"      - name: Deploy\n        run: ./deploy.sh\n        env:\n          TOKEN: ${{ ____.AZURE_TOKEN }}",
+  q:"Complète le contexte qui accède aux secrets du dépôt :",
+  accept:["secrets"],
+  explain:"${{ secrets.NOM }}. Les variables non sensibles passent par ${{ vars.NOM }}, et le contexte github porte les métadonnées de l'événement." },
+{ id:"c-gha-oidc", level:3, d:"sec", dom:"GitHub Actions", type:"input",
+  code:"permissions:\n  ____: write     # requis pour l'authentification OIDC vers Azure\n  contents: read",
+  q:"Complète la permission nécessaire pour que le workflow demande un jeton OIDC :",
+  accept:["id-token","id token"],
+  explain:"permissions: id-token: write autorise la demande du jeton OIDC — la clé de l'authentification sans secret vers Azure (azure/login)." },
+{ id:"c-gha-needs", level:2, d:"pipe", dom:"GitHub Actions", type:"input",
+  code:"  deploy:\n    ____: build      # attendre la fin du job build\n    runs-on: ubuntu-latest",
+  q:"Complète la clé qui crée une dépendance entre jobs GitHub Actions :",
+  accept:["needs"],
+  explain:"« needs: » est l'équivalent GitHub du « dependsOn: » d'Azure Pipelines. Sans lui, les jobs partent en parallèle." },
+{ id:"c-gha-permissions", level:3, d:"sec", dom:"GitHub Actions", type:"qcm",
+  code:"permissions:\n  contents: read\n  # applique le principe du ____ au GITHUB_TOKEN",
+  q:"Quel principe de sécurité applique-t-on en restreignant ainsi les permissions ?",
+  choices:["Le moindre privilège","La défense en profondeur","La séparation des tâches","Le zero trust"],
+  answer:0,
+  explain:"Par défaut le GITHUB_TOKEN peut être trop permissif : déclarer explicitement les permissions minimales limite les dégâts d'une action compromise." },
+{ id:"c-kql-fail", level:2, d:"mon", dom:"KQL", type:"input",
+  code:"requests\n| where timestamp > ago(1h)\n| where success == false\n| ____ nb = count() by name\n| order by nb desc",
+  q:"Complète l'opérateur d'agrégation :",
+  accept:["summarize"],
+  explain:"summarize est le GROUP BY de KQL. La séquence where → summarize → order by est le squelette à reconnaître." },
+{ id:"c-kql-bin", level:3, d:"mon", dom:"KQL", type:"input",
+  code:"exceptions\n| summarize count() by ____(timestamp, 1h)\n| render timechart",
+  q:"Complète la fonction qui regroupe par tranches d'une heure :",
+  accept:["bin"],
+  explain:"bin(timestamp, 1h) découpe en intervalles réguliers — indispensable pour tracer une série temporelle avec render timechart." },
+{ id:"c-kql-join", level:3, d:"mon", dom:"KQL", type:"input",
+  code:"requests\n| where success == false\n| ____ (exceptions) on operation_Id",
+  q:"Complète l'opérateur qui corrèle deux tables par identifiant d'opération :",
+  accept:["join"],
+  explain:"join on operation_Id relie une requête échouée à son exception — la base du traçage distribué. union empile des tables au lieu de les corréler." },
+{ id:"c-git-lfs", level:2, d:"src", dom:"Git", type:"input",
+  code:"# .gitattributes\n*.psd filter=____ diff=____ merge=____ -text",
+  q:"Complète le filtre à utiliser pour stocker ces fichiers hors du dépôt :",
+  accept:["lfs"],
+  explain:"filter=lfs diff=lfs merge=lfs -text : Git remplace le contenu par un pointeur et stocke le binaire dans LFS." },
+{ id:"c-git-hotfix", level:3, d:"src", dom:"Git", type:"input",
+  code:"git checkout -b hotfix/1.4.1 v1.4.0\n# ... correction, commit ...\ngit checkout main\ngit ____ a1b2c3d   # reporter le correctif sur main",
+  q:"Complète la commande qui applique ce seul commit sur main :",
+  accept:["cherry-pick","cherry pick"],
+  explain:"Le chemin de hotfix canonique : brancher depuis le TAG de prod, corriger, livrer, puis cherry-pick vers main pour ne pas perdre le correctif." },
+{ id:"c-git-undo", level:2, d:"src", dom:"Git", type:"input",
+  code:"# annuler un commit deja pousse sur main, sans reecrire l'historique\ngit ____ a1b2c3d",
+  q:"Complète la commande sûre sur une branche partagée :",
+  accept:["revert"],
+  explain:"revert crée un commit inverse : l'historique reste intact pour tous. reset réécrirait l'historique et casserait les dépôts des collègues." },
+{ id:"c-bicep-param", level:3, d:"pipe", dom:"IaC — Bicep", type:"input",
+  code:"____ location string = resourceGroup().location\n\nresource st 'Microsoft.Storage/storageAccounts@2023-01-01' = {\n  name: 'st${uniqueString(resourceGroup().id)}'\n  location: location\n}",
+  q:"Complète le mot-clé Bicep qui déclare un paramètre d'entrée :",
+  accept:["param"],
+  explain:"param = entrée (surchargeable au déploiement), var = variable calculée interne, output = valeur de sortie." },
+{ id:"c-whatif", level:3, d:"pipe", dom:"IaC", type:"input",
+  code:"az deployment group ____ \\\n  --resource-group rg-prod \\\n  --template-file main.bicep",
+  q:"Complète la commande qui PRÉVISUALISE les changements sans les appliquer (équivalent du plan Terraform) :",
+  accept:["what-if","what if","whatif"],
+  explain:"az deployment group what-if montre les créations/modifications/suppressions avant application — la porte de validation IaC en CI." },
+{ id:"c-mermaid", level:2, d:"proc", dom:"Documentation", type:"input",
+  code:"```mermaid\n____ LR\n  A[Commit] --> B[Build]\n  B --> C{Tests OK ?}\n  C -->|Oui| D[Deploy]\n```",
+  q:"Complète le mot-clé Mermaid qui déclare un diagramme de flux orienté :",
+  accept:["graph","flowchart"],
+  explain:"graph LR (left-right) ou graph TD (top-down) — « flowchart » fonctionne aussi. Mermaid est explicitement cité au programme pour la documentation." },
+{ id:"c-ab-link", level:2, d:"proc", dom:"Intégrations", type:"input",
+  code:"git commit -m \"Corrige le calcul de TVA. Fixes ____123\"",
+  q:"Complète la syntaxe qui relie ce commit GitHub à un work item Azure Boards :",
+  accept:["AB#","ab"],
+  explain:"AB#<id> crée le lien de traçabilité GitHub → Azure Boards ; « Fixes AB#123 » ferme même le work item à la fusion. « #123 » référencerait une issue GitHub." },
+/* ================= SÉQUENCES À ORDONNER ================= */
+{ id:"o-ci", level:1, d:"pipe", dom:"Workflow CI", type:"order",
+  q:"Remets dans l'ordre les étapes d'un pipeline d'intégration continue.",
+  steps:["Le développeur pousse son code / ouvre une pull request","L'agent récupère les sources (checkout)","Restauration des dépendances et compilation","Exécution des tests et analyse de couverture","Scans de sécurité (SAST, dépendances, secrets)","Publication de l'artefact"],
+  explain:"La CI valide AVANT de produire l'artefact : inutile de publier un binaire dont les tests ou les scans échouent." },
+{ id:"o-cd", level:2, d:"pipe", dom:"Workflow CD", type:"order",
+  q:"Remets dans l'ordre les étapes d'une release multi-environnements.",
+  steps:["Téléchargement de l'artefact validé en CI","Déploiement automatique en développement","Tests d'intégration automatisés","Approbation manuelle pour la production","Évaluation des gates automatiques (alertes, work items)","Déploiement en production et surveillance post-déploiement"],
+  explain:"Le MÊME artefact traverse tous les environnements. Les portes (approbations + gates) se placent juste avant la production." },
+{ id:"o-secret-leak", level:3, d:"sec", dom:"Incident sécurité", type:"order",
+  q:"Un secret a été committé dans le dépôt. Remets la réponse dans l'ordre.",
+  steps:["Révoquer immédiatement le secret compromis","Générer un nouveau secret et le stocker dans Key Vault","Réécrire l'historique Git (git filter-repo / BFG) et forcer le push","Activer le secret scanning avec push protection pour l'avenir"],
+  explain:"La révocation d'abord : tant que le secret est valide, il est exploitable, même après nettoyage de l'historique. La prévention vient en dernier." },
+{ id:"o-canary", level:3, d:"pipe", dom:"Déploiement", type:"order",
+  q:"Remets dans l'ordre un déploiement canary piloté par les métriques.",
+  steps:["Déployer la nouvelle version sur un petit incrément (ex : 10 %)","Router une partie du trafic vers le canary","Comparer les métriques du canary à la référence (postRouteTraffic)","Étendre progressivement, ou déclencher le rollback via on: failure"],
+  explain:"Sans l'étape de comparaison des métriques, un canary n'est qu'un déploiement partiel : c'est la mesure qui pilote la décision." },
+{ id:"o-selfhosted", level:2, d:"pipe", dom:"Agents", type:"order",
+  q:"Remets dans l'ordre la mise en place d'un agent self-hosted.",
+  steps:["Créer un agent pool dans les paramètres de l'organisation","Préparer la machine (réseau, outils, comptes de service)","Télécharger et configurer l'agent avec un PAT d'enregistrement","Enregistrer l'agent dans le pool et l'exécuter comme service","Cibler ce pool dans le YAML du pipeline"],
+  explain:"Le PAT ne sert QU'À l'enregistrement initial ; ensuite l'agent utilise sa propre identité. Le pool doit exister avant la configuration." },
+{ id:"o-ghas", level:3, d:"sec", dom:"GHAS", type:"order",
+  q:"Remets dans l'ordre l'activation de GitHub Advanced Security sur un dépôt.",
+  steps:["Activer GHAS sur le dépôt ou l'organisation","Activer le secret scanning et la push protection","Configurer le code scanning (workflow CodeQL)","Activer Dependabot (alerts et security updates)","Rendre les vérifications bloquantes via les branch protection rules"],
+  explain:"L'ordre logique : activer, configurer chaque analyse, puis rendre les résultats bloquants — on ne bloque pas les équipes avant d'avoir traité la dette initiale." },
+{ id:"o-migration-yaml", level:3, d:"pipe", dom:"Migration", type:"order",
+  q:"Remets dans l'ordre la migration d'un pipeline classique vers YAML.",
+  steps:["Exporter le YAML depuis l'éditeur classique (View YAML)","Créer le fichier azure-pipelines.yml sur une branche de travail","Remplacer les task groups par des templates YAML","Exécuter les deux pipelines en parallèle et comparer les résultats","Basculer les branch policies vers le pipeline YAML et désactiver le classique"],
+  explain:"L'exécution en parallèle est l'étape de sécurité : on ne coupe l'ancien qu'après avoir prouvé l'équivalence. Les task groups n'existent pas en YAML." },
+{ id:"o-incident", level:3, d:"mon", dom:"SRE", type:"order",
+  q:"Remets dans l'ordre la gestion d'un incident de production.",
+  steps:["Détection par une alerte basée sur un symptôme utilisateur","Atténuation immédiate (rollback, feature flag, bascule de trafic)","Diagnostic de la cause racine une fois le service rétabli","Postmortem sans blâme","Actions correctives converties en work items priorisés"],
+  explain:"Restaurer le service AVANT de comprendre : chercher la cause racine pendant que les utilisateurs sont impactés allonge le MTTR." },
+{ id:"o-package", level:2, d:"pipe", dom:"Packages", type:"order",
+  q:"Remets dans l'ordre la publication et la promotion d'un package interne.",
+  steps:["Versionner le package selon SemVer dans le pipeline de build","Publier le package dans le feed Azure Artifacts","Promouvoir vers la vue @prerelease pour les tests","Promouvoir vers la vue @release après validation","Les consommateurs de production tirent depuis @release"],
+  explain:"Les vues implémentent la promotion de qualité : la production ne consomme jamais un package qui n'a pas franchi les étapes de validation." },
+/* ================= ÉTUDES DE CAS ================= */
+{ id:"csA-branch", level:3, d:"src", dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Quelle stratégie de branches recommandes-tu à Northwind pour réduire les conflits et accélérer la livraison ?",
+  choices:["Trunk-based avec des branches de feature très courtes, branch policies sur main (build de validation + 2 reviewers) et feature flags","GitFlow complet avec develop, release et hotfix","Une branche par environnement","Une branche permanente par équipe"],
+  answer:0,
+  explain:"Les conflits viennent des branches longues. Trunk-based + flags permet d'intégrer en continu du code même inachevé, sans bloquer la livraison." },
+{ id:"csA-ci", level:3, d:"pipe", dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Le build manuel de 2 h doit devenir une CI fiable. Quelle première étape apporte le plus de valeur ?",
+  choices:["Un pipeline YAML déclenché sur PR : build + tests + publication d'artefact, rendu obligatoire par une policy de build validation","Automatiser d'abord le déploiement en production","Migrer vers GitHub","Acheter 10 jobs parallèles"],
+  answer:0,
+  explain:"On sécurise l'entrée du code avant d'accélérer la sortie. La build validation policy garantit que main reste toujours déployable." },
+{ id:"csA-artifact", level:3, d:"pipe", dom:"Étude de cas", type:"qcm", scen:"A",
+  q:"Chaque environnement rebuild actuellement depuis les sources. Quel principe appliques-tu ?",
+  choices:["Build once, deploy many : un artefact unique produit en CI, promu de dev à prod, la configuration étant injectée au déploiement","Rebuilder garantit la fraîcheur du code","Un pipeline par environnement","Compiler directement sur le serveur cible"],
+  answer:0,
+  explain:"Rebuilder par environnement rompt la garantie de test : le binaire validé en staging n'est pas celui déployé en prod." },
+{ id:"csA-metrics", level:3, d:"proc", dom:"Étude de cas", type:"input", scen:"A",
+  q:"La direction veut mesurer objectivement le progrès de la transformation. Quel jeu de 4 métriques standard proposes-tu (nom du référentiel) ?",
+  accept:["dora","metriques dora","dora metrics","les 4 metriques dora"],
+  explain:"DORA : deployment frequency, lead time for changes, change failure rate, time to restore. Elles équilibrent vitesse ET stabilité — un dashboard Azure DevOps peut les afficher." },
+{ id:"csB-approval", level:3, d:"sec", dom:"Étude de cas", type:"qcm", scen:"B",
+  q:"Comment satisfaire l'exigence de séparation des tâches sur les déploiements de production ?",
+  choices:["Approbations sur l'environment production, avec interdiction pour le demandeur d'approuver son propre run, et l'historique comme piste d'audit","Une revue de code par un pair suffit","Un e-mail de validation du responsable","Restreindre le droit de push sur main"],
+  answer:0,
+  explain:"L'auditeur veut une preuve horodatée et infalsifiable : l'historique d'approbation de l'environment la fournit nativement." },
+{ id:"csB-scan", level:3, d:"sec", dom:"Étude de cas", type:"qcm", scen:"B",
+  q:"Fabrikam doit prouver qu'aucune dépendance vulnérable ou sous licence interdite n'atteint la production. Que mets-tu en place ?",
+  choices:["Scans obligatoires dans un template imposé (extends) : SCA, licences, SAST et secrets, avec résultats bloquants et archivés","Un audit de sécurité annuel","Un scan manuel avant chaque release","Une clause contractuelle avec les fournisseurs"],
+  answer:0,
+  explain:"Le required template rend les scans impossibles à contourner, et leurs résultats horodatés constituent la preuve de conformité continue." },
+{ id:"csB-secret", level:3, d:"sec", dom:"Étude de cas", type:"input", scen:"B",
+  q:"Fabrikam veut supprimer TOUS les secrets stockés dans les pipelines pour l'authentification vers Azure. Quelle méthode d'authentification sans secret recommandes-tu (nom ou sigle) ?",
+  accept:["workload identity federation","oidc","federation d identite de charge de travail","openid connect"],
+  explain:"La workload identity federation (OIDC) : le pipeline échange un jeton de confiance contre un jeton Entra. Plus aucun secret à stocker ni à faire tourner." },
+{ id:"csB-audit", level:3, d:"sec", dom:"Étude de cas", type:"qcm", scen:"B",
+  q:"L'auditeur demande, pour une release donnée, quel code exact est parti en production et qui l'a validé. Comment y répondre ?",
+  choices:["La traçabilité de bout en bout : work items → commits → build → artefact → release approuvée, avec rétention prolongée des runs de production","Consulter les logs du serveur web","Demander à l'équipe de développement","Comparer les fichiers déployés"],
+  answer:0,
+  explain:"C'est exactement l'objectif de « source, bug, and quality traceability » couplé à une politique de rétention adaptée aux exigences d'audit." },
+{ id:"csC-runner", level:3, d:"pipe", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Contoso doit déployer vers un cluster AKS privé, non joignable depuis Internet. Quelle infrastructure d'exécution ?",
+  choices:["Des agents self-hosted (idéalement un VM scale set d'agents) déployés dans le VNet ayant accès au cluster","Des agents Microsoft-hosted avec une plage d'IP autorisée","Exposer l'API du cluster publiquement","Un déploiement manuel depuis un poste"],
+  answer:0,
+  explain:"L'accès réseau privé impose le self-hosted. Le scale set d'agents apporte l'élasticité et le renouvellement automatique des machines." },
+{ id:"csC-monorepo", level:3, d:"pipe", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Le monorepo de 30 microservices rebuild tout à chaque commit (45 min). Que fais-tu ?",
+  choices:["Des path filters par service pour ne builder que ce qui change, plus du cache et de la parallélisation","Découper en 30 dépôts immédiatement","Builder uniquement la nuit","Supprimer les tests d'intégration"],
+  answer:0,
+  explain:"Les path filters règlent la cause (on build ce qui n'a pas changé). Éclater le monorepo est une décision structurelle bien plus lourde." },
+{ id:"csC-progressive", level:3, d:"pipe", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Contoso veut livrer plusieurs fois par jour sans risquer d'impacter tous ses clients. Quelle combinaison ?",
+  choices:["Déploiement canary/anneaux piloté par les métriques + feature flags pour activer progressivement et couper instantanément","Déployer tout le monde en une fois avec un plan de rollback","Livrer une fois par semaine en soirée","Doubler les tests de préproduction"],
+  answer:0,
+  explain:"Séparer le déploiement (canary) de l'activation (flags) donne deux niveaux de maîtrise du risque, et un kill switch en secondes." },
+{ id:"csC-observe", level:3, d:"mon", dom:"Étude de cas", type:"qcm", scen:"C",
+  q:"Une requête lente traverse 6 microservices : comment identifier le maillon responsable ?",
+  choices:["Le traçage distribué d'Application Insights : corrélation par operation_Id, Application Map et vue end-to-end transaction","Lire les logs de chaque service séparément","Ajouter des compteurs CPU","Interroger les utilisateurs"],
+  answer:0,
+  explain:"Le traçage distribué est explicitement au programme. Sans corrélation, diagnostiquer 6 services revient à chercher une aiguille dans une botte de foin." },
+{ id:"csC-slo", level:3, d:"mon", dom:"Étude de cas", type:"input", scen:"C",
+  q:"Contoso veut un critère objectif pour arbitrer entre livrer de nouvelles features et fiabiliser la plateforme. Quel mécanisme SRE proposes-tu (2 mots) ?",
+  accept:["error budget","budget d erreur","budget erreur"],
+  explain:"L'error budget dérivé du SLO : tant qu'il reste du budget, on livre ; épuisé, la priorité bascule automatiquement vers la fiabilité. Fin des débats subjectifs." },
+];
+
+/* ---------- Scénarios des études de cas ---------- */
+const SCENARIOS = {
+  A: { title: "Northwind — modernisation",
+      text: "Northwind livre son application .NET une fois par trimestre. Le build est manuel (2 h), chaque environnement est recompilé depuis les sources, les branches de feature vivent 3 semaines et les merges sont douloureux. La direction veut livrer chaque semaine et mesurer objectivement le progrès." },
+  B: { title: "Fabrikam Finance — conformité",
+      text: "Fabrikam est un établissement financier audité. Exigences : toute mise en production doit être approuvée par une personne distincte du développeur, aucune dépendance vulnérable ou sous licence interdite ne doit atteindre la production, plus aucun secret ne doit être stocké dans les pipelines, et l'auditeur doit pouvoir retracer chaque release." },
+  C: { title: "Contoso Cloud — passage à l'échelle",
+      text: "Contoso exploite 30 microservices dans un monorepo, déployés sur un cluster AKS privé non exposé sur Internet. Le pipeline rebuild tout à chaque commit (45 min). L'entreprise veut livrer plusieurs fois par jour sans impacter tous ses clients, et diagnostiquer rapidement les latences qui traversent plusieurs services." }
+};
+
+/* ---------- Labs guidés ---------- */
+const LABS = [
+  { id:"lab1", title:"Lab 1 · Première CI en YAML (Azure Pipelines)", time:"≈ 45 min",
+    obj:"Créer une organisation Azure DevOps, un dépôt, et un pipeline YAML complet : build, tests, couverture, artefact.",
+    steps:[
+      "Crée une organisation sur dev.azure.com et un projet privé. Pousse-y une petite app (dotnet new webapi + dotnet new xunit, ou un projet Node).",
+      "Ajoute azure-pipelines.yml : trigger sur main, pool vmImage ubuntu-latest, steps build + test.",
+      "Ajoute la publication des résultats de tests (PublishTestResults avec condition succeededOrFailed()) et de la couverture (PublishCodeCoverageResults, format Cobertura).",
+      "Publie l'artefact avec le raccourci « - publish: ... artifact: drop » et vérifie-le dans l'onglet Artifacts du run.",
+      "Fais échouer volontairement un test : observe que le build casse ET que les résultats sont quand même publiés (grâce à la condition).",
+      "Ajoute un path filter (paths: include) et vérifie qu'un commit hors de ce chemin ne déclenche rien.",
+      "Regarde Analytics → durée du pipeline et taux d'échec (monitor pipeline health)." ],
+    cli:"# En local avant de pousser\ndotnet new webapi -o src/Api\ndotnet new xunit -o tests/Api.Tests\ndotnet test --collect:\"XPlat Code Coverage\"\n\n# Extrait azure-pipelines.yml\ntrigger:\n  branches: { include: [ main ] }\n  paths:    { include: [ 'src/**' ] }\npool: { vmImage: ubuntu-latest }\nsteps:\n- script: dotnet build --configuration Release\n- script: dotnet test --collect:\"XPlat Code Coverage\" --logger trx\n- task: PublishTestResults@2\n  condition: succeededOrFailed()\n  inputs: { testResultsFormat: VSTest, testResultsFiles: '**/*.trx' }\n- publish: $(Build.ArtifactStagingDirectory)\n  artifact: drop",
+    verif:"un test rouge fait échouer le build, les résultats et la couverture apparaissent dans les onglets du run, et l'artefact est téléchargeable." },
+  { id:"lab2", title:"Lab 2 · Branch policies & pull requests", time:"≈ 35 min",
+    obj:"Protéger main avec une build validation, des reviewers obligatoires et la traçabilité vers les work items.",
+    steps:[
+      "Dans Repos → Branches → main → Branch policies : exige 1 reviewer minimum et coche « interdire à l'auteur d'approuver ses propres changements ».",
+      "Ajoute une Build Validation pointant sur ton pipeline du lab 1 (obligatoire).",
+      "Active « Check for linked work items » et « Check for comment resolution ».",
+      "Crée un work item dans Boards, puis une branche depuis ce work item.",
+      "Ouvre une PR SANS work item lié : constate le blocage. Lie-le, observe le déblocage.",
+      "Pousse un commit qui casse un test : la PR devient non fusionnable — c'est exactement le but.",
+      "Teste les 4 types de merge (merge, squash, rebase, semi-linear) sur des PR distinctes et compare l'historique avec git log --graph." ],
+    cli:"git checkout -b feature/ma-feature\ngit commit -am \"Ajoute X (AB#1)\"\ngit push -u origin feature/ma-feature\ngit log --graph --oneline --all",
+    verif:"impossible de fusionner sans build vert, sans reviewer et sans work item lié ; tu sais décrire la différence d'historique entre squash et merge." },
+  { id:"lab3", title:"Lab 3 · Multi-stage, environments, approbations", time:"≈ 50 min",
+    obj:"Construire un pipeline multi-stages Build → Dev → Prod avec deployment jobs, approbation manuelle et gate automatique.",
+    steps:[
+      "Transforme ton pipeline en stages : Build (produit l'artefact), DeployDev, DeployProd (chacun avec un « - deployment: » et un environment).",
+      "Crée les environments dev et production dans Pipelines → Environments.",
+      "Sur production, ajoute un check « Approvals » avec toi-même comme approbateur, et coche l'interdiction d'auto-approbation.",
+      "Ajoute une condition sur DeployProd : and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main')).",
+      "Déploie réellement vers une Azure Web App (crée une service connection Azure Resource Manager, idéalement en workload identity federation).",
+      "Lance le pipeline : observe l'attente d'approbation, puis approuve et vérifie l'historique de déploiement de l'environment.",
+      "Bonus : ajoute un check « Business hours » sur production et observe le blocage hors plage.",
+      "Supprime les ressources Azure créées à la fin." ],
+    cli:"az group create -n rg-az400-lab3 -l westeurope\naz appservice plan create -g rg-az400-lab3 -n plan-lab3 --sku B1 --is-linux\naz webapp create -g rg-az400-lab3 -p plan-lab3 -n webapp-osama-<unique> --runtime \"DOTNETCORE:8.0\"\n\n# Extrait YAML\nstages:\n- stage: Build\n  jobs: [ { job: BuildJob, steps: [ ... ] } ]\n- stage: DeployProd\n  dependsOn: Build\n  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))\n  jobs:\n  - deployment: Deploy\n    environment: production\n    strategy:\n      runOnce:\n        deploy:\n          steps:\n          - task: AzureWebApp@1\n            inputs: { azureSubscription: 'MaServiceConnection', appName: 'webapp-osama-<unique>' }\n\naz group delete -n rg-az400-lab3 --yes --no-wait",
+    verif:"le déploiement en production attend ton approbation, l'historique de l'environment liste qui a approuvé quoi, et l'app répond sur Azure." },
+  { id:"lab4", title:"Lab 4 · Secrets : Key Vault, variable groups, OIDC", time:"≈ 40 min",
+    obj:"Supprimer tout secret en clair : variable group lié à Key Vault, secure file, et service connection sans secret.",
+    steps:[
+      "Crée un Key Vault et un secret (ex : ApiKey). Donne à l'identité de la service connection le rôle « Key Vault Secrets User ».",
+      "Dans Library → Variable groups, crée un groupe lié au Key Vault et sélectionne le secret.",
+      "Référence-le dans le pipeline (variables: - group: MonGroupeKV) et utilise-le dans un script AVEC le mapping env: — puis SANS, pour constater la différence.",
+      "Tente d'afficher le secret avec echo : observe le masquage automatique (***) dans les logs.",
+      "Teste le contournement classique : echo $(secret) | base64 → le masquage ne fonctionne plus. Comprends pourquoi « prevent leakage » est un sujet d'examen.",
+      "Ajoute un secure file (un certificat de test) et récupère-le avec DownloadSecureFile.",
+      "Vérifie que ta service connection utilise bien la workload identity federation (sinon convertis-la depuis ses paramètres).",
+      "Nettoie le resource group." ],
+    cli:"az keyvault create -g rg-az400-lab4 -n kv-osama-<unique> --enable-rbac-authorization\naz keyvault secret set --vault-name kv-osama-<unique> -n ApiKey --value \"S3cret!\"\naz role assignment create --assignee <appId-service-connection> --role \"Key Vault Secrets User\" --scope $(az keyvault show -n kv-osama-<unique> --query id -o tsv)\n\n# Dans le YAML\nvariables:\n- group: MonGroupeKV\nsteps:\n- script: ./use-secret.sh\n  env:\n    API_KEY: $(ApiKey)",
+    verif:"le secret n'existe nulle part en clair, il est masqué dans les logs, et tu sais expliquer comment un script peut malgré tout le faire fuiter." },
+  { id:"lab5", title:"Lab 5 · GitHub Actions + OIDC vers Azure", time:"≈ 45 min",
+    obj:"Reproduire la CI/CD côté GitHub et s'authentifier sur Azure sans aucun secret grâce à la fédération d'identité.",
+    steps:[
+      "Crée un dépôt GitHub public (Actions gratuit) avec la même application.",
+      "Crée .github/workflows/ci.yml : on push/pull_request, jobs build et test, avec actions/checkout@v4 et une matrice sur deux versions de runtime.",
+      "Crée une app registration Entra ID et configure une federated credential (issuer GitHub, sujet repo:<org>/<repo>:ref:refs/heads/main).",
+      "Donne-lui le rôle Contributor sur un resource group de test.",
+      "Ajoute permissions: id-token: write et contents: read, puis utilise azure/login@v2 avec client-id / tenant-id / subscription-id (aucun secret !).",
+      "Déploie quelque chose de simple (az CLI dans un step) et vérifie que ça marche sans secret stocké.",
+      "Ajoute un job « needs: build » pour observer la dépendance, puis compare mentalement avec dependsOn d'Azure Pipelines.",
+      "Explore l'onglet Insights du dépôt (graphiques d'activité) — au programme de l'examen." ],
+    cli:"# .github/workflows/ci.yml (extrait)\nname: CI\non:\n  push: { branches: [ main ] }\n  pull_request: { branches: [ main ] }\npermissions:\n  id-token: write\n  contents: read\njobs:\n  build:\n    runs-on: ubuntu-latest\n    strategy:\n      matrix: { dotnet: [ '8.0.x', '9.0.x' ] }\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-dotnet@v4\n        with: { dotnet-version: '${{ matrix.dotnet }}' }\n      - run: dotnet test\n  deploy:\n    needs: build\n    runs-on: ubuntu-latest\n    steps:\n      - uses: azure/login@v2\n        with:\n          client-id: ${{ vars.AZURE_CLIENT_ID }}\n          tenant-id: ${{ vars.AZURE_TENANT_ID }}\n          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}\n      - run: az group list -o table",
+    verif:"le workflow s'authentifie sur Azure sans aucun secret dans le dépôt, et la matrice produit bien deux jobs parallèles." },
+  { id:"lab6", title:"Lab 6 · Sécurité : GHAS, Dependabot, secret scanning", time:"≈ 40 min",
+    obj:"Activer les scans de sécurité, provoquer volontairement des alertes et rendre les vérifications bloquantes.",
+    steps:[
+      "Sur ton dépôt GitHub public : Settings → Security → active secret scanning, push protection, Dependabot alerts et security updates.",
+      "Active le code scanning en ajoutant le workflow CodeQL (Security → Code scanning → Set up).",
+      "Introduis volontairement une vulnérabilité simple (concaténation SQL, ou une dépendance ancienne connue vulnérable) et observe l'alerte CodeQL / Dependabot.",
+      "Tente de committer une fausse clé au format reconnu (ex : un token de test) : la push protection doit BLOQUER le push. Note le message.",
+      "Regarde une PR : le dependency review signale les dépendances ajoutées et leurs licences.",
+      "Dans les branch protection rules, rends le code scanning obligatoire (required status check) et vérifie qu'une PR vulnérable ne peut plus être fusionnée.",
+      "Laisse Dependabot ouvrir sa PR de mise à jour et fusionne-la." ],
+    cli:"# Provoquer une alerte de dependance (exemple Node)\nnpm install lodash@4.17.15   # version avec CVE connue\ngit commit -am \"test dependabot\" && git push",
+    verif:"la push protection t'a bloqué au moins une fois, une alerte CodeQL et une alerte Dependabot sont visibles, et une PR vulnérable est non fusionnable." },
+  { id:"lab7", title:"Lab 7 · IaC dans le pipeline (Bicep + what-if)", time:"≈ 40 min",
+    obj:"Déployer l'infrastructure depuis le pipeline, avec validation what-if avant application et approbation en production.",
+    steps:[
+      "Écris un main.bicep créant un App Service plan et une Web App, avec des param pour l'environnement.",
+      "Teste en local : az deployment group what-if puis create.",
+      "Crée un pipeline IaC : stage Validate (az bicep build + what-if, résultat publié) puis stage Deploy (environment prod avec approbation).",
+      "Lance-le et LIS attentivement la sortie du what-if : quelles ressources seraient créées, modifiées, supprimées ?",
+      "Modifie un paramètre (ex : le SKU) et relance : le what-if doit annoncer une modification, pas une création.",
+      "Provoque un drift : change le SKU à la main dans le portail, relance le what-if et observe la détection.",
+      "Bonus : ajoute un job de test d'infrastructure après déploiement (curl sur l'URL, vérification du code 200).",
+      "Supprime le resource group." ],
+    cli:"az deployment group what-if -g rg-az400-lab7 --template-file main.bicep --parameters env=dev\naz deployment group create -g rg-az400-lab7 --template-file main.bicep --parameters env=dev\n\n# Dans le pipeline\n- task: AzureCLI@2\n  inputs:\n    azureSubscription: 'MaServiceConnection'\n    scriptType: bash\n    scriptLocation: inlineScript\n    inlineScript: az deployment group what-if -g $(rg) --template-file main.bicep\n\naz group delete -n rg-az400-lab7 --yes --no-wait",
+    verif:"tu sais lire un what-if et tu as vu la détection d'un drift provoqué manuellement dans le portail." },
+  { id:"lab8", title:"Lab 8 · Feature flags & monitoring (App Insights + KQL)", time:"≈ 45 min",
+    obj:"Découpler déploiement et activation avec App Configuration, puis instrumenter et interroger la télémétrie en KQL.",
+    steps:[
+      "Crée une ressource Azure App Configuration et un feature flag « NouvelleUI » avec un filtre de pourcentage à 10 %.",
+      "Branche ton app dessus (SDK Feature Management) et déploie-la : la feature est livrée mais désactivée pour 90 % des utilisateurs.",
+      "Fais passer le filtre à 100 % puis à 0 % SANS redéployer : c'est le kill switch.",
+      "Active Application Insights sur la Web App, génère du trafic (dont des erreurs volontaires : appelle une route inexistante).",
+      "Dans Logs, écris ces requêtes KQL : requests en échec par nom sur 24 h ; exceptions groupées par bin(timestamp, 1h) avec render timechart ; un join entre requests et exceptions sur operation_Id.",
+      "Crée une alerte sur le taux d'échec avec un action group qui t'envoie un e-mail, puis déclenche-la.",
+      "Ouvre l'Application Map et la vue end-to-end transaction d'une requête lente.",
+      "Bonus : ajoute une gate « Query Azure Monitor alerts » sur ton environment de production et vérifie qu'une alerte active bloque le déploiement.",
+      "Supprime le resource group." ],
+    cli:"# KQL a executer dans Logs\nrequests\n| where timestamp > ago(24h) and success == false\n| summarize nb = count() by name\n| order by nb desc\n\nexceptions\n| summarize count() by bin(timestamp, 1h)\n| render timechart\n\nrequests\n| where success == false\n| join (exceptions) on operation_Id\n| project timestamp, name, type, outerMessage",
+    verif:"tu actives et coupes une fonctionnalité sans redéployer, tes 3 requêtes KQL renvoient des résultats, et une alerte active bloque bien le déploiement." }
+];
+
+/* =====================================================================
+   MOTEUR
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const LS_ERRORS = "az400-errors", LS_LABS = "az400-labs";
+const DOM_LABEL = { proc:"Processus", src:"Source", pipe:"Pipelines", sec:"Sécurité", mon:"Monitoring" };
+/* Répartition de l'examen blanc, calée sur les pourcentages officiels */
+const BLANC_WEIGHTS = { proc:5, src:5, pipe:22, sec:5, mon:3 };
+
+const getErrors = () => { try { return JSON.parse(localStorage.getItem(LS_ERRORS)) || []; } catch { return []; } };
+const setErrors = a => localStorage.setItem(LS_ERRORS, JSON.stringify([...new Set(a)]));
+const getLabsDone = () => { try { return JSON.parse(localStorage.getItem(LS_LABS)) || []; } catch { return []; } };
+const setLabsDone = a => localStorage.setItem(LS_LABS, JSON.stringify([...new Set(a)]));
+
+/* =====================================================================
+   MOTEUR DE MAÎTRISE — répétition espacée pilotée par la confiance
+   ===================================================================== */
+const LS_SRS = "az400-srs";
+const BOX_DAYS = [0, 1, 2, 4, 8, 16, 30];
+const NEW_CAP = 8;
+const DAY = 86400000;
+
+const getSrs = () => { try { return JSON.parse(localStorage.getItem(LS_SRS)) || {}; } catch { return {}; } };
+const setSrs = o => localStorage.setItem(LS_SRS, JSON.stringify(o));
+const srsOf = (srs, id) => srs[id] || { box: 0, due: 0, seen: 0, lapses: 0, danger: false, reco: false, lastMs: 0 };
+
+function minReasonMs(q) {
+  const len = (q.q || "").length + (q.code || "").length;
+  return Math.max(2000, Math.min(6000, 1200 + 20 * len));
+}
+
+function srsApply(q, ok, conf, ms, isReveal) {
+  const srs = getSrs();
+  const s = { ...srsOf(srs, q.id) };
+  const before = s.box;
+  s.seen++;
+  s.lastMs = ms;
+  s.reco = !!(ok && !isReveal && s.seen >= 2 && ms < minReasonMs(q));
+  if (isReveal || !ok) {
+    if (before >= 3) s.lapses++;
+    s.box = 0;
+    s.danger = !isReveal && conf === 3;
+  } else {
+    const gain = conf === 3 ? 2 : conf === 2 ? 1 : 0;
+    s.box = Math.min(6, s.box + (s.reco ? Math.min(gain, 1) : gain));
+    if (conf === 3) s.danger = false;
+  }
+  s.due = Date.now() + BOX_DAYS[s.box] * DAY;
+  srs[q.id] = s;
+  setSrs(srs);
+  return s;
+}
+
+function buildMaitrise(n) {
+  const srs = getSrs(), now = Date.now();
+  const danger = [], due = [], fresh = [], future = [];
+  QUESTIONS.forEach(q => {
+    const s = srs[q.id];
+    if (!s) { fresh.push(q); return; }
+    if (s.danger) danger.push(q);
+    else if (s.due <= now) due.push(q);
+    else future.push({ q, due: s.due });
+  });
+  const out = [...shuffle(danger), ...shuffle(due)];
+  if (out.length < n) out.push(...shuffle(fresh).slice(0, Math.min(NEW_CAP, n - out.length)));
+  if (out.length < n) {
+    future.sort((a, b) => a.due - b.due);
+    out.push(...future.slice(0, n - out.length).map(x => x.q));
+  }
+  return out.slice(0, n);
+}
+
+function srsStats() {
+  const srs = getSrs(), now = Date.now();
+  let croyances = 0, due = 0, mastered = 0, reco = 0, vus = 0;
+  Object.values(srs).forEach(s => {
+    vus++;
+    if (s.danger) croyances++;
+    else if (s.due <= now) due++;
+    if (s.box >= 5) mastered++;
+    if (s.reco) reco++;
+  });
+  return { croyances, due, mastered, reco, nouveaux: QUESTIONS.length - vus };
+}
+
+function refreshDash() {
+  const s = srsStats();
+  $("dCroyances").textContent = s.croyances;
+  $("dDue").textContent = s.due;
+  $("dMastered").textContent = s.mastered;
+  $("dReco").textContent = s.reco;
+  $("dNew").textContent = s.nouveaux;
+  $("nmaitrise").textContent = (s.croyances + s.due) > 0
+    ? (s.croyances + s.due) + " en attente"
+    : (s.nouveaux > 0 ? "nouveau" : "à jour");
+  let note;
+  if (s.croyances > 0)
+    note = "🚨 " + s.croyances + " question(s) où tu étais SÛR et tu t'es trompé — c'est le plus urgent à corriger.";
+  else if (s.due > 0)
+    note = "🔁 " + s.due + " question(s) arrivent à échéance. Le bon moment pour les revoir est maintenant.";
+  else if (s.nouveaux > 0)
+    note = "✅ Rien à réviser : la prochaine session introduira jusqu'à " + Math.min(NEW_CAP, s.nouveaux) + " nouvelles questions.";
+  else
+    note = "🏆 Toute la banque est planifiée. Reviens quand des questions arriveront à échéance.";
+  $("dNote").textContent = note;
+}
+
+function recordAndFlag(q, ok, conf, isReveal) {
+  const ms = Date.now() - (session.startedAt || Date.now());
+  const key = isReveal ? "reveal" : conf + (ok ? "-ok" : "-ko");
+  if (session.matrix && key in session.matrix) session.matrix[key]++;
+  const s = srsApply(q, ok, conf, ms, isReveal);
+
+  let html = "";
+  if (s.danger) {
+    html += '<div class="srs-flag danger">🚨 Tu étais SÛR et c\'est faux — c\'est une croyance fausse installée, ' +
+            'le type d\'erreur qui coûte des points sans prévenir. Elle repassera en priorité jusqu\'à ce que tu la réussisses en étant sûr.</div>';
+  }
+  if (s.reco) {
+    html += '<div class="srs-flag reco">⏱️ Répondu en ' + (ms / 1000).toFixed(1) + ' s : trop vite pour avoir raisonné. ' +
+            'Tu as probablement reconnu la question plutôt que raisonné — la progression est volontairement freinée.</div>';
+  }
+  const j = BOX_DAYS[s.box];
+  html += '<p class="srs-next">📅 Prochaine révision : ' +
+          (j === 0 ? "dès la prochaine session" : j === 1 ? "demain" : "dans " + j + " jours") +
+          " · palier " + s.box + "/6</p>";
+  return html;
+}
+
+const escapeReg = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const norm = s => (s || "").toLowerCase()
+  .normalize("NFD").replace(/[̀-ͯ]/g, "")
+  .replace(/[^a-z0-9]+/g, " ").trim();
+
+function isCorrect(user, accepts) {
+  const u = norm(user);
+  if (!u) return false;
+  return accepts.some(a => {
+    const v = norm(a);
+    if (!v) return false;
+    if (u === v) return true;
+    return new RegExp("(^| )" + escapeReg(v) + "( |$)").test(u);
+  });
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let session = null;
+let pickCount = 20;
+let domFilter = "all";
+
+$("countSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  pickCount = parseInt(b.dataset.n, 10);
+  [...$("countSeg").children].forEach(x => x.classList.toggle("on", x === b));
+});
+$("domSeg").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  domFilter = b.dataset.d;
+  [...$("domSeg").children].forEach(x => x.classList.toggle("on", x === b));
+  refreshCounts();
+});
+
+const byDom = qs => domFilter === "all" ? qs : qs.filter(q => q.d === domFilter);
+
+function poolFor(mode) {
+  if (mode === "err") { const errs = getErrors(); return byDom(QUESTIONS.filter(q => errs.includes(q.id))); }
+  if (mode === "mix") return byDom(QUESTIONS);
+  if (mode === "code") return byDom(QUESTIONS.filter(q => q.code));
+  if (mode === "cas") return byDom(QUESTIONS.filter(q => q.scen || q.type === "order"));
+  return byDom(QUESTIONS.filter(q => q.level === Number(mode)));
+}
+
+/* Examen blanc : tirage pondéré par domaine + études de cas groupées en fin */
+function buildExamBlanc() {
+  const list = [];
+  Object.entries(BLANC_WEIGHTS).forEach(([dk, n]) => {
+    const pool = QUESTIONS.filter(q => q.d === dk && !q.scen);
+    list.push(...shuffle(pool).slice(0, n));
+  });
+  const out = shuffle(list);
+  const groups = {};
+  QUESTIONS.filter(q => q.scen).forEach(q => (groups[q.scen] = groups[q.scen] || []).push(q));
+  shuffle(Object.values(groups)).forEach(g => out.push(...g));
+  return out;
+}
+
+function refreshCounts() {
+  [1, 2, 3].forEach(l => $("n" + l).textContent = poolFor(String(l)).length + " q");
+  $("ncode").textContent = poolFor("code").length + " q";
+  $("ncas").textContent = poolFor("cas").length + " q";
+  $("nblanc").textContent = "≈ " + (Object.values(BLANC_WEIGHTS).reduce((a, b) => a + b, 0) + QUESTIONS.filter(q => q.scen).length) + " q";
+  $("nmix").textContent = poolFor("mix").length + " q";
+  $("nerr").textContent = poolFor("err").length + " q";
+  $("nlabs").textContent = getLabsDone().length + " / " + LABS.length;
+  refreshDash();
+}
+
+document.querySelectorAll(".mode-btn").forEach(b => b.addEventListener("click", () => {
+  const mode = b.dataset.mode;
+  if (mode === "labs") { renderLabs(); show("labs"); return; }
+  if (mode === "maitrise") {
+    const list = buildMaitrise(pickCount === 0 ? QUESTIONS.length : pickCount);
+    if (!list.length) { alert("Rien à réviser pour le moment — reviens plus tard !"); return; }
+    session = { mode, list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false, perDom: {},
+                matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 } };
+    show("quiz"); renderQuestion(); return;
+  }
+  let list;
+  if (mode === "blanc") {
+    list = buildExamBlanc();
+  } else {
+    const pool = poolFor(mode);
+    if (!pool.length) {
+      alert(mode === "err"
+        ? "Aucune erreur enregistrée pour ce filtre — joue d'abord un quiz !"
+        : "Aucune question pour ce domaine dans ce mode. Change le filtre de domaine.");
+      return;
+    }
+    list = shuffle(pool).slice(0, pickCount === 0 ? pool.length : pickCount);
+  }
+  session = { list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false, perDom: {} };
+  show("quiz"); renderQuestion();
+}));
+
+function show(name) {
+  ["home", "quiz", "end", "labs"].forEach(n =>
+    $("screen-" + n).classList.toggle("hidden", n !== name));
+  if (name === "home") refreshCounts();
+}
+
+function renderLabs() {
+  const done = getLabsDone();
+  const list = $("labsList");
+  list.innerHTML = "";
+  LABS.forEach(l => {
+    const d = document.createElement("details");
+    d.className = "lab" + (done.includes(l.id) ? " done" : "");
+    const cliSafe = l.cli.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    d.innerHTML =
+      "<summary>" + (done.includes(l.id) ? "✅ " : "⬜ ") + l.title +
+      ' <span class="lab-time">' + l.time + "</span></summary>" +
+      '<p class="lab-obj"><b>Objectif :</b> ' + l.obj + "</p>" +
+      "<ol>" + l.steps.map(s => "<li>" + s + "</li>").join("") + "</ol>" +
+      '<pre class="qcode">' + cliSafe + "</pre>" +
+      '<p class="lab-verif"><b>Lab réussi si :</b> ' + l.verif + "</p>" +
+      '<button class="btn ghost lab-toggle">' + (done.includes(l.id) ? "Marquer non terminé" : "✅ Marquer terminé") + "</button>";
+    d.querySelector(".lab-toggle").addEventListener("click", () => {
+      const cur = getLabsDone();
+      setLabsDone(cur.includes(l.id) ? cur.filter(x => x !== l.id) : [...cur, l.id]);
+      renderLabs();
+    });
+    list.appendChild(d);
+  });
+}
+
+function renderQuestion() {
+  const q = session.list[session.idx];
+  session.answered = false; session.selectedChoice = null;
+  $("qLevel").textContent = "Niveau " + q.level;
+  $("qLevel").className = "pill lv" + q.level;
+  $("qDom").textContent = DOM_LABEL[q.d] + " · " + q.dom;
+  $("qCount").textContent = (session.idx + 1) + " / " + session.list.length;
+  $("qBar").style.width = (session.idx / session.list.length * 100) + "%";
+  $("qText").textContent = q.q;
+  $("qFeedback").innerHTML = "";
+  $("btnReveal").classList.remove("hidden");
+  $("btnNext").classList.add("hidden");
+
+  const maitrise = session.mode === "maitrise";
+  $("confRow").classList.toggle("hidden", !maitrise);
+  $("btnValidate").classList.toggle("hidden", maitrise);
+  session.startedAt = Date.now();
+
+  const scen = q.scen && SCENARIOS[q.scen];
+  $("qScenario").innerHTML = scen
+    ? '<div class="scenario"><div class="sc-title">📋 Étude de cas — ' + scen.title + "</div><p>" + scen.text + "</p></div>"
+    : "";
+
+  const zone = $("qInputZone");
+  zone.innerHTML = "";
+  if (q.code) {
+    const pre = document.createElement("pre");
+    pre.className = "qcode";
+    pre.textContent = q.code;
+    zone.appendChild(pre);
+  }
+  if (q.type === "input") {
+    const inp = document.createElement("input");
+    inp.type = "text"; inp.id = "answerInput";
+    inp.placeholder = "Écris ta réponse…";
+    inp.autocomplete = "off"; inp.spellcheck = false;
+    zone.appendChild(inp);
+    inp.focus();
+  } else if (q.type === "order") {
+    session.orderPick = [];
+    session.orderShuffled = shuffle(q.steps);
+    const wrap = document.createElement("div");
+    wrap.innerHTML = '<p class="order-hint">Clique les étapes dans le bon ordre (re-clique une étape choisie pour la retirer) :</p>' +
+      '<div class="order-list" id="orderPicked"></div><div class="order-list" id="orderAvail"></div>';
+    zone.appendChild(wrap);
+    renderOrder(q);
+  } else {
+    const div = document.createElement("div");
+    div.className = "choices";
+    shuffle(q.choices.map((c, i) => ({ c, i }))).forEach(({ c, i }) => {
+      const btn = document.createElement("button");
+      btn.className = "choice"; btn.textContent = c; btn.dataset.orig = i;
+      btn.addEventListener("click", () => {
+        if (session.answered) return;
+        session.selectedChoice = i;
+        div.querySelectorAll(".choice").forEach(x => x.classList.toggle("sel", x === btn));
+      });
+      div.appendChild(btn);
+    });
+    zone.appendChild(div);
+  }
+}
+
+function renderOrder(q) {
+  const picked = $("orderPicked"), avail = $("orderAvail");
+  picked.innerHTML = ""; avail.innerHTML = "";
+  session.orderPick.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.className = "order-item picked";
+    b.textContent = (i + 1) + ". " + s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick = session.orderPick.filter(x => x !== s);
+      renderOrder(q);
+    });
+    picked.appendChild(b);
+  });
+  session.orderShuffled.filter(s => !session.orderPick.includes(s)).forEach(s => {
+    const b = document.createElement("button");
+    b.className = "order-item";
+    b.textContent = s;
+    b.addEventListener("click", () => {
+      if (session.answered) return;
+      session.orderPick.push(s);
+      renderOrder(q);
+    });
+    avail.appendChild(b);
+  });
+}
+
+function goodAnswerOf(q) {
+  return q.type === "input" ? q.accept[0]
+    : q.type === "order" ? q.steps.map((s, i) => (i + 1) + ". " + s).join("<br>")
+    : q.choices[q.answer];
+}
+
+function trackDom(q, ok) {
+  const s = session.perDom[q.d] || (session.perDom[q.d] = { ok: 0, total: 0 });
+  s.total++; if (ok) s.ok++;
+}
+
+function finishQuestion(q, ok, isReveal, conf) {
+  session.answered = true;
+  const srsHtml = recordAndFlag(q, ok, conf || (isReveal ? 1 : 2), isReveal);
+  trackDom(q, ok);
+  const errs = getErrors();
+  if (ok) {
+    session.score++; session.streak++;
+    setErrors(errs.filter(id => id !== q.id));
+  } else {
+    session.streak = 0;
+    session.wrongIds.push(q.id);
+    setErrors([...errs, q.id]);
+  }
+  $("score").textContent = session.score;
+  $("streak").textContent = session.streak;
+
+  const fb = document.createElement("div");
+  fb.className = "feedback " + (isReveal ? "info" : ok ? "ok" : "ko");
+  fb.innerHTML =
+    '<div class="verdict">' + (isReveal ? "💡 Correction" : ok ? "✅ Bonne réponse !" : "❌ Raté") + "</div>" +
+    (ok && !isReveal ? "" : '<p class="rep">' + (isReveal ? "La bonne réponse était" : "Réponse attendue") +
+      " : <b>" + goodAnswerOf(q) + "</b></p>") +
+    '<p class="exp">' + q.explain + "</p>" + srsHtml;
+  $("qFeedback").innerHTML = "";
+  $("qFeedback").appendChild(fb);
+
+  $("confRow").classList.add("hidden");
+  $("btnValidate").classList.add("hidden");
+  $("btnReveal").classList.add("hidden");
+  $("btnNext").classList.remove("hidden");
+  $("btnNext").focus();
+  $("qBar").style.width = ((session.idx + 1) / session.list.length * 100) + "%";
+}
+
+function validate(conf) {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  let ok;
+  if (q.type === "input") {
+    const val = $("answerInput").value;
+    if (!val.trim()) { $("answerInput").focus(); return; }
+    ok = isCorrect(val, q.accept);
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    if (session.orderPick.length !== q.steps.length) return;
+    ok = q.steps.every((s, i) => session.orderPick[i] === s);
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    if (session.selectedChoice === null) return;
+    ok = session.selectedChoice === q.answer;
+    document.querySelectorAll(".choice").forEach(btn => {
+      const i = Number(btn.dataset.orig);
+      btn.disabled = true;
+      if (i === q.answer) btn.classList.add("good");
+      else if (i === session.selectedChoice) btn.classList.add("bad");
+    });
+  }
+  finishQuestion(q, ok, false, conf);
+}
+
+function reveal() {
+  if (session.answered) return;
+  const q = session.list[session.idx];
+  if (q.type === "input") {
+    $("answerInput").disabled = true;
+  } else if (q.type === "order") {
+    document.querySelectorAll(".order-item").forEach(b => b.disabled = true);
+  } else {
+    document.querySelectorAll(".choice").forEach(btn => {
+      btn.disabled = true;
+      if (Number(btn.dataset.orig) === q.answer) btn.classList.add("good");
+    });
+  }
+  finishQuestion(q, false, true, 1);
+}
+
+function next() {
+  if (session.idx + 1 < session.list.length) { session.idx++; renderQuestion(); }
+  else endSession();
+}
+
+function endSession() {
+  const total = session.list.length, s = session.score;
+  const pct = Math.round(s / total * 100);
+  $("endScore").textContent = s + " / " + total;
+  let v;
+  if (pct >= 90) v = "🏆 Niveau Expert — tu es prêt !";
+  else if (pct >= 75) v = "💪 Solide : au-dessus de la barre des 700 points.";
+  else if (pct >= 55) v = "📚 En bonne voie — cible tes domaines faibles ci-dessous.";
+  else v = "🌱 Rejoue tes erreurs et refais les labs du domaine concerné.";
+  $("endVerdict").textContent = v;
+
+  const mm = session.matrix;
+  const enMaitrise = session.mode === "maitrise";
+  $("endMatrix").classList.toggle("hidden", !enMaitrise);
+  if (enMaitrise && mm) {
+    $("endMatrix").innerHTML =
+      "<table><tr><th></th><th>Correct</th><th>Faux</th></tr>" +
+      '<tr><th>💪 Sûr</th><td class="n good">' + mm["3-ok"] + '</td><td class="n danger">' + mm["3-ko"] + "</td></tr>" +
+      '<tr><th>🤔 Hésitant</th><td class="n">' + mm["2-ok"] + '</td><td class="n">' + mm["2-ko"] + "</td></tr>" +
+      '<tr><th>✋ Au hasard</th><td class="n">' + mm["1-ok"] + '</td><td class="n">' + mm["1-ko"] + "</td></tr>" +
+      "</table><caption>" +
+      (mm["3-ko"] > 0
+        ? "🚨 " + mm["3-ko"] + " croyance(s) fausse(s) détectée(s) — la case la plus importante du tableau. Elles reviendront en priorité."
+        : "✅ Aucune croyance fausse cette session. " +
+          (mm["1-ok"] > 0 ? "En revanche " + mm["1-ok"] + " bonne(s) réponse(s) au hasard : elles ne comptent pas comme acquises." : "")) +
+      "</caption>";
+  }
+
+  const bd = $("endByDom");
+  bd.innerHTML = Object.entries(session.perDom)
+    .sort((a, b) => (a[1].ok / a[1].total) - (b[1].ok / b[1].total))
+    .map(([k, o]) => {
+      const p = Math.round(o.ok / o.total * 100);
+      const icon = p >= 75 ? "✅" : p >= 50 ? "⚠️" : "❌";
+      return '<span class="dl">' + icon + " " + DOM_LABEL[k] + '</span><span class="dv">' +
+             o.ok + "/" + o.total + " · " + p + "%</span>";
+    }).join("");
+
+  $("endDetail").textContent = pct + " % de bonnes réponses · " +
+    (total - s) + " erreur(s) ajoutée(s) au mode « Rejouer mes erreurs » (" + getErrors().length + " au total)";
+  $("btnReplayErrors").style.display = getErrors().length ? "" : "none";
+  show("end");
+}
+
+$("btnValidate").addEventListener("click", () => validate(2));
+document.querySelectorAll(".conf").forEach(b =>
+  b.addEventListener("click", () => validate(Number(b.dataset.conf))));
+$("btnReveal").addEventListener("click", reveal);
+$("btnNext").addEventListener("click", next);
+$("btnQuit").addEventListener("click", () => show("home"));
+$("btnHome").addEventListener("click", () => show("home"));
+$("btnLabsHome").addEventListener("click", () => show("home"));
+$("btnReplayErrors").addEventListener("click", () => {
+  const pool = poolFor("err");
+  if (!pool.length) { show("home"); return; }
+  session = { list: shuffle(pool), idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false, perDom: {} };
+  show("quiz"); renderQuestion();
+});
+document.addEventListener("keydown", e => {
+  if ($("screen-quiz").classList.contains("hidden")) return;
+  if (session && !session.answered && session.mode === "maitrise" && ["1", "2", "3"].includes(e.key)) {
+    const el = document.activeElement;
+    const dansUnChamp = el && el.tagName === "INPUT" && el.type === "text";
+    if (!dansUnChamp) { e.preventDefault(); validate(Number(e.key)); return; }
+  }
+  if (e.key !== "Enter") return;
+  if (session && session.answered) next(); else validate(2);
+});
+
+refreshCounts();
+show("home");
+</script>
+</body>
+</html>
