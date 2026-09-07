@@ -213,6 +213,63 @@
     </div>
   </header>
 
+  <nav class="xnav" aria-label="Navigation entre modules">
+    <label class="xnav-cert"><span>Certif</span><select id="xnav-sel"></select></label>
+    <span class="xnav-sep" aria-hidden="true"></span>
+    <span class="xnav-links" id="xnav-links"></span>
+  </nav>
+  <style>
+    .xnav{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:14px 0 4px;
+      padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:13px}
+    .xnav-cert{display:flex;align-items:center;gap:7px;font-weight:650;color:var(--muted)}
+    .xnav-cert>span{text-transform:uppercase;letter-spacing:.05em;font-size:11.5px}
+    .xnav-cert select{font:inherit;font-size:13px;font-weight:650;color:var(--ink);background:var(--surface);
+      border:1px solid var(--border);border-radius:8px;padding:5px 26px 5px 9px;cursor:pointer;
+      -webkit-appearance:none;appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238d9ab2'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 9px center}
+    .xnav-cert select:hover,.xnav-cert select:focus-visible{border-color:var(--accent);outline:none}
+    .xnav-sep{flex:0 0 1px;align-self:stretch;min-height:20px;background:var(--border)}
+    .xnav-links{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+    .xnav-links a{color:var(--muted);text-decoration:none;font-weight:600;padding:4px 8px;border-radius:7px;white-space:nowrap;transition:.12s}
+    .xnav-links a:hover{color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+    @media(max-width:560px){.xnav-sep{display:none}}
+  </style>
+  <script>
+  (function(){
+    var CERTIFS=[
+      {id:"az104",dir:"az104-quiz",label:"AZ-104 · Azure Administrator"},
+      {id:"az204",dir:"az204-quiz",label:"AZ-204 · Azure Developer"},
+      {id:"az400",dir:"az400-quiz",label:"AZ-400 · Azure DevOps"},
+      {id:"aws-devops",dir:"aws-devops-quiz",label:"DOP-C02 · AWS DevOps Pro"},
+      {id:"cka",dir:"cka-trainer",label:"CKA · Kubernetes Admin"},
+      {id:"terraform",dir:"terraform-quiz",label:"Terraform Associate"},
+      {id:"az900",dir:"az900-quiz",label:"AZ-900 · Azure Fundamentals"},
+      {id:"clf",dir:"clf-quiz",label:"CLF-C02 · AWS Cloud Practitioner"}
+    ];
+    var parts=location.pathname.split("/").filter(Boolean);
+    var seg=parts.length>1?parts[parts.length-2]:"";
+    var deployed=parts.indexOf("certifs")!==-1;
+    var current=CERTIFS.filter(function(c){return deployed?c.id===seg:c.dir===seg;})[0];
+    var site=deployed?"../../":"../entretien-bnp/";
+    var certHref=function(c){return deployed?"../"+c.id+"/index.html":"../"+c.dir+"/index.html";};
+    var sel=document.getElementById("xnav-sel");
+    if(!current){var p=document.createElement("option");p.textContent="— choisir une certif —";p.disabled=true;p.selected=true;sel.appendChild(p);}
+    CERTIFS.forEach(function(c){
+      var o=document.createElement("option");
+      o.value=certHref(c);o.textContent=c.label;
+      if(current&&c.id===current.id)o.selected=true;
+      sel.appendChild(o);
+    });
+    sel.addEventListener("change",function(){if(sel.value)location.href=sel.value;});
+    var box=document.getElementById("xnav-links");
+    [["Choix multiples","qcm.html"],["Réponses libres","quiz.html"],["Fiches","etude.html"],
+     ["Certifications","certifications.html"],["Accueil","index.html"]].forEach(function(m){
+      var a=document.createElement("a");a.textContent=m[0];a.href=site+m[1];box.appendChild(a);
+    });
+  })();
+  </script>
+
   <!-- Accueil -->
   <div id="screen-home" class="card home">
     <h2>Entraînement CKA</h2>
