@@ -181,36 +181,11 @@
   .dash-cell.reco .v { color: var(--warn); }
   .dash-note { font-size: 12.5px; color: var(--muted); margin: 8px 0 0; }
 
-  /* ---- Boutons de confiance ---- */
-  .conf-row { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
-  .conf-label { width: 100%; font-size: 12.5px; color: var(--muted); margin-bottom: 2px; }
-  .conf {
-    flex: 1 1 30%; min-width: 120px; padding: 11px 12px; border-radius: 10px; cursor: pointer;
-    font-family: inherit; font-size: 14.5px; font-weight: 650; border: 2px solid var(--border);
-    background: var(--surface); color: var(--ink); text-align: center; line-height: 1.25;
-  }
-  .conf small { display: block; font-weight: 400; font-size: 11px; color: var(--muted); }
-  .conf:hover { border-color: var(--accent); }
-  .conf:focus-visible { outline: 2px solid var(--accent-deep); outline-offset: 2px; }
-  .conf.c3 { border-color: color-mix(in srgb, var(--good) 45%, transparent); }
-  .conf.c3:hover { border-color: var(--good); background: var(--good-soft); }
-  .conf.c1 { border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
-  .conf.c1:hover { border-color: var(--warn); background: var(--warn-soft); }
-
   .srs-flag { font-size: 12.5px; border-radius: 8px; padding: 7px 11px; margin-top: 10px; }
   .srs-flag.danger { background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad); font-weight: 600; }
   .srs-flag.reco { background: var(--warn-soft); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
   .srs-next { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
 
-  /* ---- Matrice confiance × résultat (écran de fin) ---- */
-  .matrix { max-width: 420px; margin: 0 auto 18px; }
-  .matrix table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  .matrix th, .matrix td { padding: 7px 9px; border: 1px solid var(--border); text-align: center; }
-  .matrix th { background: var(--accent-soft); color: var(--accent-deep); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; }
-  .matrix td.n { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 16px; }
-  .matrix td.danger { background: var(--bad-soft); color: var(--bad); }
-  .matrix td.good { background: var(--good-soft); color: var(--good); }
-  .matrix caption { caption-side: bottom; font-size: 12px; color: var(--muted); padding-top: 8px; text-align: left; }
 
   .bydom { text-align: left; font-size: 13.5px; margin: 0 auto 18px; max-width: 440px; display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; }
   .bydom .dl { color: var(--muted); }
@@ -265,7 +240,7 @@
     <div class="modes">
       <button class="mode-btn" data-mode="maitrise" style="border-color:var(--accent);background:var(--accent-soft)">
         <span class="ico">🧠</span>
-        <span><span class="t">Session Maîtrise (recommandé au quotidien)</span><br><span class="d">Répétition espacée pilotée par ta confiance — corrige d'abord ce que tu crois savoir à tort</span></span>
+        <span><span class="t">Session Maîtrise (recommandé au quotidien)</span><br><span class="d">Répétition espacée — corrige d'abord ce que tu crois savoir à tort</span></span>
         <span class="n" id="nmaitrise"></span>
       </button>
       <button class="mode-btn" data-mode="1">
@@ -327,12 +302,6 @@
     <div id="qScenario"></div>
     <p class="question" id="qText"></p>
     <div id="qInputZone"></div>
-    <div class="conf-row hidden" id="confRow">
-      <span class="conf-label">Valide en déclarant ta confiance — c'est ce qui pilote ta prochaine révision :</span>
-      <button class="conf c1" data-conf="1" id="conf1">✋ Au hasard<small>touche 1</small></button>
-      <button class="conf c2" data-conf="2" id="conf2">🤔 Hésitant<small>touche 2 ou Entrée</small></button>
-      <button class="conf c3" data-conf="3" id="conf3">💪 Sûr<small>touche 3</small></button>
-    </div>
     <div class="actions">
       <button class="btn primary" id="btnValidate">Valider</button>
       <button class="btn primary hidden" id="btnNext">Question suivante →</button>
@@ -348,7 +317,6 @@
     <h2>Session terminée !</h2>
     <p class="big" id="endScore"></p>
     <p class="verdict" id="endVerdict"></p>
-    <div class="matrix hidden" id="endMatrix"></div>
     <div class="bydom" id="endByDom"></div>
     <p class="detail" id="endDetail"></p>
     <div class="actions" style="justify-content:center">
@@ -1649,7 +1617,7 @@ const getErrors = () => { try { return JSON.parse(localStorage.getItem(LS_ERRORS
 const setErrors = a => localStorage.setItem(LS_ERRORS, JSON.stringify([...new Set(a)]));
 
 /* =====================================================================
-   MOTEUR DE MAÎTRISE — répétition espacée pilotée par la confiance
+   MOTEUR DE MAÎTRISE — répétition espacée (Leitner)
    État par question : { box, due, seen, lapses, danger, reco, lastMs }
    ===================================================================== */
 const LS_SRS = "az204-srs";
@@ -1681,11 +1649,10 @@ function srsApply(q, ok, conf, ms, isReveal) {
   if (isReveal || !ok) {
     if (before >= 3) s.lapses++;           // on oublie quelque chose qu'on maîtrisait
     s.box = 0;
-    s.danger = !isReveal && conf === 3;    // « sûr » + faux = croyance fausse installée
+    s.danger = !isReveal && before >= 3;
   } else {
-    const gain = conf === 3 ? 2 : conf === 2 ? 1 : 0;
-    s.box = Math.min(6, s.box + (s.reco ? Math.min(gain, 1) : gain));
-    if (conf === 3) s.danger = false;      // on ne lève le drapeau qu'avec une réussite assumée
+    s.box = Math.min(6, s.box + 1);
+    s.danger = false;
   }
   s.due = Date.now() + BOX_DAYS[s.box] * DAY;
   srs[q.id] = s;
@@ -1745,7 +1712,7 @@ function refreshDash() {
   if (s.croyances > 0) {
     const pires = Object.entries(s.parDomaine).sort((a, b) => b[1] - a[1])
       .map(([k, v]) => DOM_LABEL[k] + " (" + v + ")").join(", ");
-    note = "🚨 " + s.croyances + " question(s) où tu étais SÛR et tu t'es trompé — le plus urgent à corriger." +
+    note = "🚨 " + s.croyances + " question(s) déjà ancrée(s) où tu t'es retrompé — le plus urgent à corriger." +
            (pires ? " Domaines concernés : " + pires + "." : "");
   }
   else if (s.due > 0)
@@ -1760,8 +1727,6 @@ function refreshDash() {
 /* Enregistre la réponse dans le planificateur et renvoie les bandeaux à afficher */
 function recordAndFlag(q, ok, conf, isReveal) {
   const ms = Date.now() - (session.startedAt || Date.now());
-  const key = isReveal ? "reveal" : conf + (ok ? "-ok" : "-ko");
-  if (session.matrix && key in session.matrix) session.matrix[key]++;
   if (q.d) {
     const pd = session.perDom || (session.perDom = {});
     const pe = pd[q.d] || (pd[q.d] = { ok: 0, total: 0 });
@@ -1771,8 +1736,8 @@ function recordAndFlag(q, ok, conf, isReveal) {
 
   let html = "";
   if (s.danger) {
-    html += '<div class="srs-flag danger">🚨 Tu étais SÛR et c\'est faux — c\'est une croyance fausse installée, ' +
-            'le type d\'erreur qui coûte des points sans prévenir. Elle repassera en priorité jusqu\'à ce que tu la réussisses en étant sûr.</div>';
+    html += '<div class="srs-flag danger">🚨 Tu t\'es trompé sur une question que tu avais déjà ancrée — ' +
+            'c\'est le type d\'erreur qui coûte des points sans prévenir. Elle repassera en priorité jusqu\'à ce que tu la réussisses.</div>';
   }
   if (s.reco) {
     html += '<div class="srs-flag reco">⏱️ Répondu en ' + (ms / 1000).toFixed(1) + ' s : trop vite pour avoir raisonné. ' +
@@ -1886,8 +1851,7 @@ document.querySelectorAll(".mode-btn").forEach(b => b.addEventListener("click", 
     if (!pool.length) { alert("Aucune erreur enregistrée pour l'instant — joue d'abord un quiz !"); return; }
     list = shuffle(pool).slice(0, pickCount === 0 ? pool.length : pickCount);
   }
-  session = { mode, list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false,
-              matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 }, perDom: {} };
+  session = { mode, list, idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null, answered: false, perDom: {} };
   show("quiz"); renderQuestion();
 }));
 
@@ -1938,10 +1902,7 @@ function renderQuestion() {
   $("btnReveal").classList.remove("hidden");
   $("btnNext").classList.add("hidden");
 
-  // En mode Maîtrise, la validation passe par les 3 boutons de confiance
-  const maitrise = session.mode === "maitrise";
-  $("confRow").classList.toggle("hidden", !maitrise);
-  $("btnValidate").classList.toggle("hidden", maitrise);
+  $("btnValidate").classList.remove("hidden");
   session.startedAt = Date.now();
 
   const scen = q.scen && SCENARIOS[q.scen];
@@ -2067,7 +2028,6 @@ function validate(conf) {
   $("qFeedback").innerHTML = "";
   $("qFeedback").appendChild(fb);
 
-  $("confRow").classList.add("hidden");
   $("btnValidate").classList.add("hidden");
   $("btnReveal").classList.add("hidden");
   $("btnNext").classList.remove("hidden");
@@ -2111,7 +2071,6 @@ function reveal() {
   $("qFeedback").innerHTML = "";
   $("qFeedback").appendChild(fb);
 
-  $("confRow").classList.add("hidden");
   $("btnValidate").classList.add("hidden");
   $("btnReveal").classList.add("hidden");
   $("btnNext").classList.remove("hidden");
@@ -2136,24 +2095,6 @@ function endSession() {
   else v = "🌱 C'est en forgeant… rejoue cette série !";
   $("endVerdict").textContent = v;
 
-  // Matrice confiance × résultat : le vrai diagnostic d'une session Maîtrise
-  const m = session.matrix;
-  const enMaitrise = session.mode === "maitrise";
-  $("endMatrix").classList.toggle("hidden", !enMaitrise);
-  if (enMaitrise && m) {
-    $("endMatrix").innerHTML =
-      "<table><tr><th></th><th>Correct</th><th>Faux</th></tr>" +
-      '<tr><th>💪 Sûr</th><td class="n good">' + m["3-ok"] + '</td><td class="n danger">' + m["3-ko"] + "</td></tr>" +
-      '<tr><th>🤔 Hésitant</th><td class="n">' + m["2-ok"] + '</td><td class="n">' + m["2-ko"] + "</td></tr>" +
-      '<tr><th>✋ Au hasard</th><td class="n">' + m["1-ok"] + '</td><td class="n">' + m["1-ko"] + "</td></tr>" +
-      "</table><caption>" +
-      (m["3-ko"] > 0
-        ? "🚨 " + m["3-ko"] + " croyance(s) fausse(s) détectée(s) — la case la plus importante du tableau. Elles reviendront en priorité."
-        : "✅ Aucune croyance fausse cette session. " +
-          (m["1-ok"] > 0 ? "En revanche " + m["1-ok"] + " bonne(s) réponse(s) au hasard : elles ne comptent pas comme acquises." : "")) +
-      "</caption>";
-  }
-
   // Bilan par domaine officiel, trié du plus faible au plus fort
   const pd = session.perDom || {};
   $("endByDom").innerHTML = Object.entries(pd)
@@ -2176,8 +2117,6 @@ function endSession() {
 $("btnValidate").addEventListener("click", () => validate(2));
 $("btnReveal").addEventListener("click", reveal);
 $("btnNext").addEventListener("click", next);
-document.querySelectorAll(".conf").forEach(b =>
-  b.addEventListener("click", () => validate(Number(b.dataset.conf))));
 $("btnQuit").addEventListener("click", () => show("home"));
 $("btnHome").addEventListener("click", () => show("home"));
 $("btnLabsHome").addEventListener("click", () => show("home"));
@@ -2185,17 +2124,11 @@ $("btnReplayErrors").addEventListener("click", () => {
   const pool = poolFor("err");
   if (!pool.length) { show("home"); return; }
   session = { mode: "err", list: shuffle(pool), idx: 0, score: 0, streak: 0, wrongIds: [], selectedChoice: null,
-              answered: false, matrix: { "3-ok":0, "3-ko":0, "2-ok":0, "2-ko":0, "1-ok":0, "1-ko":0, "reveal":0 }, perDom: {} };
+              answered: false, perDom: {} };
   show("quiz"); renderQuestion();
 });
 document.addEventListener("keydown", e => {
   if ($("screen-quiz").classList.contains("hidden")) return;
-  // En mode Maîtrise, 1/2/3 valident directement avec le niveau de confiance
-  if (session && !session.answered && session.mode === "maitrise" && ["1", "2", "3"].includes(e.key)) {
-    const el = document.activeElement;
-    const dansUnChamp = el && el.tagName === "INPUT" && el.type === "text";
-    if (!dansUnChamp) { e.preventDefault(); validate(Number(e.key)); return; }
-  }
   if (e.key !== "Enter") return;
   if (session && session.answered) next(); else validate(2);
 });
