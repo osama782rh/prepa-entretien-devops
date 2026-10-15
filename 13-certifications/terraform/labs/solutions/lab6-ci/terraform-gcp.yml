@@ -1,0 +1,109 @@
+# .github/workflows/terraform-gcp.yml
+# Plan sur PR, apply (approuve) sur main avec LE MEME plan, drift nocturne. Auth OIDC -> GCP (WIF), aucun secret statique.
+name: terraform-gcp
+
+on:
+  pull_request:
+    paths: ["infra/**"]
+  push:
+    branches: [main]
+    paths: ["infra/**"]
+  schedule:
+    - cron: "0 3 * * *" # detection de drift
+
+permissions:
+  contents: read
+  id-token: write # indispensable pour OIDC
+  pull-requests: write
+
+concurrency:
+  group: terraform-gcp-${{ github.ref }}
+  cancel-in-progress: false # ne jamais annuler un apply en cours
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+  WORKDIR: infra/gcp
+
+jobs:
+  plan:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: ${{ env.WORKDIR }} } }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}   # sortie "wif_provider" du lab 4
+          service_account: ${{ vars.TF_PLAN_SA }}                 # SA en LECTURE (+ ecriture state)
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend-config="bucket=${{ vars.STATE_BUCKET }}" -backend-config="prefix=lab4"
+      - run: terraform validate
+      - run: terraform plan -lock-timeout=5m -out=tfplan -var="project_id=${{ vars.PROJECT_ID }}" -var="github_repo=${{ github.repository }}" -var="alert_email=${{ vars.ALERT_EMAIL }}"
+
+      - name: Resume du plan en commentaire de PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            const out = execSync('terraform show -no-color tfplan', { cwd: process.env.WORKDIR }).toString().slice(0, 60000);
+            github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
+              body: '```\n' + out + '\n```'
+            });
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ github.sha }}
+          path: ${{ env.WORKDIR }}/tfplan
+
+  apply:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production # regle de protection = approbation manuelle requise
+    defaults: { run: { working-directory: ${{ env.WORKDIR }} } }
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.TF_APPLY_SA }}                # SA d'ECRITURE, distinct du SA de plan
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - run: terraform init -backend-config="bucket=${{ vars.STATE_BUCKET }}" -backend-config="prefix=lab4"
+
+      # Sur push main on RE-PLANIFIE (le plan de la PR est lie a l'ancien commit de base).
+      # Alternative stricte : un apply declenche depuis le plan archive de la PR (voir README)
+      - run: terraform plan -lock-timeout=5m -out=tfplan -var="project_id=${{ vars.PROJECT_ID }}" -var="github_repo=${{ github.repository }}" -var="alert_email=${{ vars.ALERT_EMAIL }}"
+      - run: terraform apply -lock-timeout=5m tfplan
+
+  drift:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: ${{ env.WORKDIR }} } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.TF_PLAN_SA }}
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -backend-config="bucket=${{ vars.STATE_BUCKET }}" -backend-config="prefix=lab4"
+      - name: Detecter le drift (code 2 = changements)
+        run: |
+          set +e
+          terraform plan -detailed-exitcode -lock=false -var="project_id=${{ vars.PROJECT_ID }}" -var="github_repo=${{ github.repository }}" -var="alert_email=${{ vars.ALERT_EMAIL }}"
+          code=$?
+          if [ $code -eq 2 ]; then echo "::error::Drift detecte"; exit 1; fi
+          exit $code

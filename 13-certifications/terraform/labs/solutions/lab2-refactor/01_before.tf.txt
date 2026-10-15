@@ -1,0 +1,24 @@
+# ETAPE 1 : copiez ce fichier en main.tf, puis terraform init && terraform apply
+terraform {
+  required_providers {
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.5"
+    }
+  }
+}
+
+resource "local_file" "a" {
+  filename = "${path.module}/out/a.txt"
+  content  = "config A"
+}
+
+resource "local_file" "b" {
+  filename = "${path.module}/out/b.txt"
+  content  = "config B"
+}
+
+resource "local_file" "legacy" {
+  filename = "${path.module}/out/legacy.txt"
+  content  = "ancienne config a ne plus gerer"
+}

@@ -1,0 +1,75 @@
+# .github/workflows/terraform-azure.yml
+# Meme logique que la version GCP, auth OIDC -> Azure (federated credential), aucun client secret.
+#
+# Pre-requis Azure :
+#   1. App registration (ou managed identity) avec un "federated credential" :
+#        issuer  : https://token.actions.githubusercontent.com
+#        subject : repo:<org>/<repo>:environment:production   (apply)
+#                  repo:<org>/<repo>:pull_request             (plan)
+#   2. RBAC : Reader + "Storage Blob Data Contributor" (state) pour le plan ;
+#             Contributor (+ role assignment limite) sur la portee pour l'apply.
+name: terraform-azure
+
+on:
+  pull_request:
+    paths: ["infra/**"]
+  push:
+    branches: [main]
+    paths: ["infra/**"]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: terraform-azure-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  ARM_USE_OIDC: "true"
+  ARM_USE_AZUREAD: "true" # backend azurerm via Entra ID (pas de cle de stockage)
+  ARM_CLIENT_ID: ${{ vars.ARM_CLIENT_ID }}
+  ARM_TENANT_ID: ${{ vars.ARM_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.ARM_SUBSCRIPTION_ID }}
+  WORKDIR: infra/azure
+
+jobs:
+  plan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: ${{ env.WORKDIR }} } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with: { terraform_version: 1.9.8 }
+      - run: terraform fmt -check -recursive
+      - run: >
+          terraform init
+          -backend-config="resource_group_name=${{ vars.STATE_RG }}"
+          -backend-config="storage_account_name=${{ vars.STATE_SA }}"
+          -backend-config="container_name=tfstate"
+          -backend-config="key=lab5.tfstate"
+      - run: terraform validate
+      - run: terraform plan -lock-timeout=5m -out=tfplan -var="subscription_id=${{ vars.ARM_SUBSCRIPTION_ID }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ github.sha }}
+          path: ${{ env.WORKDIR }}/tfplan
+
+  apply:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    defaults: { run: { working-directory: ${{ env.WORKDIR }} } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with: { terraform_version: 1.9.8 }
+      - run: >
+          terraform init
+          -backend-config="resource_group_name=${{ vars.STATE_RG }}"
+          -backend-config="storage_account_name=${{ vars.STATE_SA }}"
+          -backend-config="container_name=tfstate"
+          -backend-config="key=lab5.tfstate"
+      - run: terraform plan -lock-timeout=5m -out=tfplan -var="subscription_id=${{ vars.ARM_SUBSCRIPTION_ID }}"
+      - run: terraform apply -lock-timeout=5m tfplan

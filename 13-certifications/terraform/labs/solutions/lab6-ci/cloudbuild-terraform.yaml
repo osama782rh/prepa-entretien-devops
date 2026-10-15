@@ -1,0 +1,46 @@
+# cloudbuild-terraform.yaml - equivalent Cloud Build (GCP natif, SA attache : pas de cle)
+# Declenchement : trigger PR (_MODE=plan) et trigger push main (_MODE=apply, avec approbation requise sur le trigger).
+#
+#   gcloud builds triggers create github --name=tf-plan --repo-owner=ORG --repo-name=REPO \
+#     --pull-request-pattern='^main$' --build-config=cloudbuild-terraform.yaml \
+#     --substitutions=_MODE=plan --service-account=projects/PRJ/serviceAccounts/tf-plan@PRJ.iam.gserviceaccount.com
+#   gcloud builds triggers create github --name=tf-apply --repo-owner=ORG --repo-name=REPO \
+#     --branch-pattern='^main$' --build-config=cloudbuild-terraform.yaml --require-approval \
+#     --substitutions=_MODE=apply --service-account=projects/PRJ/serviceAccounts/tf-apply@PRJ.iam.gserviceaccount.com
+substitutions:
+  _MODE: plan
+  _STATE_BUCKET: my-tfstate-bucket
+  _TF_VERSION: "1.9.8"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+steps:
+  - id: init
+    name: hashicorp/terraform:${_TF_VERSION}
+    dir: infra/gcp
+    args: ["init", "-input=false", "-backend-config=bucket=${_STATE_BUCKET}", "-backend-config=prefix=lab4"]
+
+  - id: validate
+    name: hashicorp/terraform:${_TF_VERSION}
+    dir: infra/gcp
+    args: ["validate"]
+
+  - id: plan
+    name: hashicorp/terraform:${_TF_VERSION}
+    dir: infra/gcp
+    args: ["plan", "-input=false", "-lock-timeout=5m", "-out=tfplan", "-var=project_id=$PROJECT_ID",
+           "-var=github_repo=ORG/REPO", "-var=alert_email=oncall@example.com"]
+
+  - id: apply
+    name: hashicorp/terraform:${_TF_VERSION}
+    dir: infra/gcp
+    entrypoint: sh
+    args:
+      - -c
+      - |
+        if [ "${_MODE}" = "apply" ]; then
+          terraform apply -input=false -lock-timeout=5m tfplan
+        else
+          echo "Mode plan : apply ignore."
+        fi

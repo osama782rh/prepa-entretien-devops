@@ -1,0 +1,9 @@
+# environment: ${env}
+replicas = ${replicas}
+port = ${port}
+%{ for f in features ~}
+feature.${f} = enabled
+%{ endfor ~}
+%{ for k, v in tags ~}
+tag.${k} = ${v}
+%{ endfor ~}

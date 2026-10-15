@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certif Trainer</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1c2230;--mute:#667085;--line:#e3e6ec;--acc:#2f6fed;--acc-ink:#fff;--ok:#12805c;--okbg:#e4f5ee;--ko:#c0352b;--kobg:#fdeceb;--warn:#a96b00;--code:#eef0f4}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#12151c;--card:#1b202b;--ink:#e8ebf2;--mute:#9aa3b5;--line:#2c3342;--acc:#6b9bff;--acc-ink:#0c1020;--ok:#4cc79a;--okbg:#14382c;--ko:#ff8a80;--kobg:#3c1d1b;--warn:#e5b04a;--code:#252b38}}
+:root[data-theme=dark]{--bg:#12151c;--card:#1b202b;--ink:#e8ebf2;--mute:#9aa3b5;--line:#2c3342;--acc:#6b9bff;--acc-ink:#0c1020;--ok:#4cc79a;--okbg:#14382c;--ko:#ff8a80;--kobg:#3c1d1b;--warn:#e5b04a;--code:#252b38}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line)}
+.bar{max-width:1100px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:8px;min-height:56px;flex-wrap:wrap}
+.brand{font-weight:700;margin-right:12px}
+nav{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+nav a{color:var(--mute);text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:600;font-size:15px}
+nav a:hover{background:var(--bg)}
+nav a.on{background:var(--acc);color:var(--acc-ink)}
+.badge{background:var(--ko);color:#fff;border-radius:99px;font-size:12px;padding:1px 7px;margin-left:6px}
+.icon{background:none;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:6px 10px;cursor:pointer}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:20px;margin:28px 0 10px}
+.sub{color:var(--mute);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--acc);color:var(--acc-ink);border:0;border-radius:8px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}
+.btn.sec{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,a:focus-visible,.opt:focus-within,.icon:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+label.f{display:block;font-size:13px;color:var(--mute);font-weight:600;margin-bottom:4px}
+select,input[type=number]{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;min-width:150px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:var(--card);color:var(--ink);border:0;padding:8px 14px;font:inherit;cursor:pointer}
+.seg button.on{background:var(--acc);color:var(--acc-ink);font-weight:600}
+.bigstat{font-size:30px;font-weight:700;line-height:1.1}
+.mute{color:var(--mute)}.small{font-size:13px}
+.meter{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:8px}
+.meter i{display:block;height:100%;background:var(--acc)}
+.meter i.g{background:var(--ok)}
+.qhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--mute);font-size:13px;margin-bottom:8px}
+.tag{border:1px solid var(--line);border-radius:99px;padding:1px 9px;font-size:12px;color:var(--mute)}
+.stem{font-size:17px}
+.stem p,.exp p{margin:.5em 0}
+pre{background:var(--code);padding:12px;border-radius:8px;overflow:auto;font-size:14px;line-height:1.45}
+code{background:var(--code);padding:1px 5px;border-radius:4px;font-size:.9em;font-family:ui-monospace,Consolas,monospace}
+pre code{background:none;padding:0}
+.opts{margin:16px 0;display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;background:var(--card)}
+.opt:hover{border-color:var(--acc)}
+.opt input{margin-top:5px}
+.opt .k{font-weight:700;color:var(--mute);min-width:1.2em}
+.opt.sel{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}
+.opt.ko{background:var(--kobg);border-color:var(--ko)}
+.opt.lock{cursor:default}
+.fb{border-radius:10px;padding:12px 14px;margin-top:12px}
+.fb.ok{background:var(--okbg)}.fb.ko{background:var(--kobg)}.fb.neutral{background:var(--code)}
+.fb h3{margin:0 0 4px;font-size:16px}
+.timer{font-variant-numeric:tabular-nums;font-weight:700}
+table.t{border-collapse:collapse;width:100%}
+table.t th,table.t td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-size:14px}
+.course{display:grid;grid-template-columns:240px 1fr;gap:24px}
+.toc{position:sticky;top:76px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:14px}
+.toc a{display:block;color:var(--mute);text-decoration:none;padding:4px 8px;border-left:2px solid var(--line)}
+.toc a:hover{color:var(--ink);border-color:var(--acc)}
+.md{overflow-wrap:anywhere}
+.md table{border-collapse:collapse;display:block;overflow:auto}
+.md th,.md td{border:1px solid var(--line);padding:6px 10px;font-size:14px}
+.md blockquote{margin:12px 0;padding:4px 14px;border-left:4px solid var(--acc);background:var(--code);border-radius:0 8px 8px 0}
+.md details{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 0}
+.md h1,.md h2,.md h3{scroll-margin-top:76px}
+.md h2{border-top:1px solid var(--line);padding-top:18px}
+.md a{color:var(--acc)}
+@media (max-width:760px){.course{grid-template-columns:1fr}.toc{position:static;max-height:none}.brand{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <span class="brand">Certif Trainer</span>
+  <nav aria-label="Navigation principale" id="nav"></nav>
+  <button class="icon" id="theme" title="Changer de theme" aria-label="Changer de theme">Theme</button>
+</div></header>
+<main id="app"></main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+<script>
+const DATA = /*__DATA__*/null;
+const Q = DATA.questions, T = DATA.tracks;
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- stockage (peut echouer : navigation privee, etc.) ---------- */
+const KEY = 'certif-trainer-v1';
+let store = {stats:{}, flags:{}, theme:null};
+try { Object.assign(store, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch(e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch(e) {} };
+const NOSTAT = {ok:0, ko:0, last:null};
+const stat = id => store.stats[id] || NOSTAT;
+const record = (id, ok) => { const s = store.stats[id] || (store.stats[id] = {ok:0, ko:0, last:null}); ok ? s.ok++ : s.ko++; s.last = ok; save(); };
+
+/* ---------- rendu Markdown minimal pour les questions ---------- */
+function inline(s){
+  return esc(s).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/(^|[^*\w])\*([^*\s][^*]*)\*/g,'$1<em>$2</em>');
+}
+function mini(md){
+  const parts = md.split(/```[^\n]*\n([\s\S]*?)```/);
+  return parts.map((p,i) => {
+    if (i % 2) return '<pre><code>' + esc(p.replace(/\n$/,'')) + '</code></pre>';
+    let out = '', list = false;
+    for (const raw of p.split('\n')) {
+      const l = raw.trim();
+      const li = l.match(/^(?:[-*]|\d+\.)\s+(.*)/);
+      if (li) { if(!list){out+='<ul>';list=true;} out += '<li>'+inline(li[1])+'</li>'; continue; }
+      if (list){out+='</ul>';list=false;}
+      if (l) out += '<p>'+inline(l)+'</p>';
+    }
+    return out + (list?'</ul>':'');
+  }).join('');
+}
+function renderMd(md){
+  if (window.marked) return marked.parse(md.replace(/<details>\s*<summary>/g,'<details><summary>'));
+  return '<pre>' + esc(md) + '</pre><p class="mute">(Rendu enrichi indisponible hors connexion.)</p>';
+}
+
+/* ---------- utilitaires ---------- */
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const pct = (a,b) => b ? Math.round(100*a/b) : 0;
+const sectionOf = q => q.section || 'General';
+const failed = () => Q.filter(q => stat(q.id).last === false || store.flags[q.id]);
+const fmt = s => String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+
+/* ---------- navigation ---------- */
+const ROUTES = [['home','Accueil'],['quiz','Quiz'],['course','Cours'],['notebook','Carnet d\'erreurs']];
+function renderNav(route){
+  $('#nav').innerHTML = ROUTES.map(([r,l]) =>
+    `<a href="#/${r}" class="${r===route?'on':''}" ${r===route?'aria-current="page"':''}>${l}${r==='notebook'&&failed().length?`<span class="badge">${failed().length}</span>`:''}</a>`).join('');
+}
+let run = null;      // session de quiz en cours (en memoire)
+let timerId = null;
+function route(){
+  clearInterval(timerId);
+  const [, r='home', a, b] = location.hash.split('/');
+  renderNav(['home','quiz','course','notebook'].includes(r) ? r : 'home');
+  window.scrollTo(0,0);
+  ({home:viewHome, quiz:viewQuiz, course:()=>viewCourse(a,b), notebook:viewNotebook}[r] || viewHome)();
+}
+addEventListener('hashchange', route);
+$('#theme').onclick = () => {
+  const dark = matchMedia('(prefers-color-scheme:dark)').matches;
+  const cur = document.documentElement.dataset.theme || (dark?'dark':'light');
+  const nx = cur==='dark'?'light':'dark'; document.documentElement.dataset.theme = nx; store.theme = nx; save();
+};
+if (store.theme) document.documentElement.dataset.theme = store.theme;
+
+/* ================= ACCUEIL ================= */
+function trackStats(tid){
+  const qs = Q.filter(q => q.track===tid && !q.open);
+  const seen = qs.filter(q => stat(q.id).ok + stat(q.id).ko > 0);
+  const mastered = qs.filter(q => stat(q.id).last === true);
+  return {total: qs.length, seen: seen.length, mastered: mastered.length, all: Q.filter(q=>q.track===tid).length};
+}
+function viewHome(){
+  const cards = Object.entries(T).map(([tid,t]) => {
+    const s = trackStats(tid);
+    return `<div class="card">
+      <h2 style="margin-top:0">${t.name}</h2>
+      <div class="bigstat">${pct(s.mastered,s.total)}%</div><div class="mute small">maitrise (derniere reponse juste)</div>
+      <div class="meter"><i class="g" style="width:${pct(s.mastered,s.total)}%"></i></div>
+      <p class="small mute">${s.all} questions · ${s.seen} deja vues · ${s.mastered} acquises</p>
+      <div class="row"><a class="btn" href="#/quiz" data-start="${tid}">S'entrainer</a>
+      <a class="btn sec" href="#/course/${tid}/Cours" style="text-decoration:none">Cours</a></div></div>`;
+  }).join('');
+  const nf = failed().length;
+  $('#app').innerHTML = `<h1>Preparation aux certifications</h1>
+    <p class="sub">${Q.length} questions · ${DATA.courses.length} documents de cours. Votre progression est enregistree dans ce navigateur.</p>
+    <div class="grid">${cards}</div>
+    <h2>Revision rapide</h2>
+    <div class="row">
+      <button class="btn" id="quick">Quiz express (10 questions au hasard)</button>
+      <a class="btn sec" style="text-decoration:none" href="#/notebook">Carnet d'erreurs${nf?` (${nf})`:''}</a>
+      ${run && !run.done ? '<a class="btn sec" style="text-decoration:none" href="#/quiz">Reprendre le quiz en cours</a>' : ''}
+    </div>
+    <h2>Methode conseillee</h2>
+    <div class="card"><ol style="margin:0;padding-left:20px">
+      <li>Lire le chapitre du <strong>Cours</strong>, puis faire les questions du meme domaine en mode <em>Entrainement</em>.</li>
+      <li>Passer ensuite en mode <em>Examen</em> (chronometre, correction a la fin).</li>
+      <li>Revoir uniquement le <strong>Carnet d'erreurs</strong> jusqu'a ce qu'il soit vide.</li>
+    </ol></div>`;
+  $('#quick').onclick = () => { startRun({tracks:[], sources:[], section:'', n:10, mode:'train', only:'all'}); };
+  document.querySelectorAll('[data-start]').forEach(a => a.onclick = () => { setup.tracks = [a.dataset.start]; });
+}
+
+/* ================= QUIZ : configuration ================= */
+const setup = {tracks:[], sources:[], section:'', n:20, mode:'train', only:'all'};
+function viewQuiz(){
+  if (run && !run.done) return viewRun();
+  if (run && run.done) return viewResult();
+  viewSetup();
+}
+function pool(cfg){
+  return Q.filter(q =>
+    (!cfg.tracks.length || cfg.tracks.includes(q.track)) &&
+    (!cfg.sources.length || cfg.sources.includes(q.source)) &&
+    (!cfg.section || sectionOf(q)===cfg.section) &&
+    (cfg.only==='all' || (cfg.only==='new' ? !(stat(q.id).ok+stat(q.id).ko) : cfg.only==='failed' ? failed().includes(q) : true)));
+}
+function viewSetup(){
+  const sources = [...new Set(Q.map(q=>q.source))];
+  const secs = [...new Set(Q.filter(q => !setup.tracks.length || setup.tracks.includes(q.track)).map(sectionOf))];
+  const chip = (group, val, label) => `<button data-g="${group}" data-v="${val}" class="${(Array.isArray(setup[group])?setup[group].includes(val):setup[group]===val)?'on':''}">${label}</button>`;
+  const n = pool(setup).length;
+  $('#app').innerHTML = `<h1>Quiz</h1><p class="sub">Configurez votre session.</p>
+  <div class="card" style="display:grid;gap:18px">
+    <div><label class="f">Certification</label><div class="seg">
+      ${Object.entries(T).map(([k,t])=>chip('tracks',k,t.short)).join('')}</div>
+      <span class="small mute"> (aucune selection = toutes)</span></div>
+    <div><label class="f">Niveau / source</label><div class="seg">${sources.map(s=>chip('sources',s,s)).join('')}</div></div>
+    <div class="row">
+      <div><label class="f" for="sec">Domaine</label><select id="sec"><option value="">Tous</option>
+        ${secs.map(s=>`<option ${s===setup.section?'selected':''}>${esc(s)}</option>`).join('')}</select></div>
+      <div><label class="f" for="only">Filtre</label><select id="only">
+        ${[['all','Toutes'],['new','Jamais vues'],['failed','Ratees / marquees']].map(([v,l])=>`<option value="${v}" ${setup.only===v?'selected':''}>${l}</option>`).join('')}</select></div>
+      <div><label class="f" for="n">Nombre de questions</label><select id="n">
+        ${[10,20,40,60,0].map(v=>`<option value="${v}" ${setup.n===v?'selected':''}>${v||'Toutes'}</option>`).join('')}</select></div>
+    </div>
+    <div><label class="f">Mode</label><div class="seg">${chip('mode','train','Entrainement (correction immediate)')}${chip('mode','exam','Examen (chrono, correction a la fin)')}</div></div>
+    <div class="row"><button class="btn" id="go" ${n?'':'disabled'}>Demarrer (${Math.min(n, setup.n||n)} / ${n} disponibles)</button></div>
+  </div>`;
+  document.querySelectorAll('[data-g]').forEach(b => b.onclick = () => {
+    const g=b.dataset.g, v=b.dataset.v;
+    if (Array.isArray(setup[g])) { const i=setup[g].indexOf(v); i<0?setup[g].push(v):setup[g].splice(i,1); setup.section=''; }
+    else setup[g]=v;
+    viewSetup();
+  });
+  $('#sec').onchange = e => { setup.section=e.target.value; viewSetup(); };
+  $('#only').onchange = e => { setup.only=e.target.value; viewSetup(); };
+  $('#n').onchange = e => { setup.n=+e.target.value; viewSetup(); };
+  $('#go').onclick = () => startRun(setup);
+}
+
+/* ================= QUIZ : session ================= */
+function startRun(cfg, ids){
+  let qs = ids ? ids.map(id => Q.find(q=>q.id===id)) : shuffle(pool(cfg));
+  if (!ids && cfg.n) qs = qs.slice(0, cfg.n);
+  if (!qs.length) { location.hash = '#/quiz'; return; }
+  run = {cfg:{...cfg}, qs: qs.map(q => ({q, order: q.open ? [] : shuffle(q.opts.map(o=>o.k)), sel:[], done:false, ok:null, self:null})),
+         i:0, done:false, t0:Date.now(), limit: cfg.mode==='exam' ? qs.length*90 : 0};
+  if (location.hash==='#/quiz') route(); else location.hash = '#/quiz';
+}
+const isOk = (item) => { const a=item.q.ans.slice().sort().join(); return item.sel.slice().sort().join()===a; };
+function viewRun(){
+  const it = run.qs[run.i], q = it.q, exam = run.cfg.mode==='exam';
+  const multi = q.ans.length>1;
+  const letters = {}; it.order.forEach((k,i)=>letters[k]=String.fromCharCode(65+i));
+  const optHtml = it.order.map(k => {
+    const o = q.opts.find(x=>x.k===k);
+    let cls = it.sel.includes(k) ? 'sel' : '';
+    if (it.done && !exam) cls = q.ans.includes(k) ? 'ok lock' : (it.sel.includes(k) ? 'ko lock' : 'lock');
+    return `<label class="opt ${cls}"><input type="${multi?'checkbox':'radio'}" name="o" value="${k}" ${it.sel.includes(k)?'checked':''} ${it.done&&!exam?'disabled':''}>
+      <span class="k">${letters[k]}.</span><span>${inline(o.t)}</span></label>`;
+  }).join('');
+  const answered = run.qs.filter(x=>x.done||x.sel.length).length;
+  $('#app').innerHTML = `
+  <div class="row" style="justify-content:space-between;margin-bottom:10px">
+    <div class="small mute">Question ${run.i+1} / ${run.qs.length} · ${answered} repondue(s)</div>
+    <div class="row">${run.limit?`<span class="timer" id="tm"></span>`:''}
+      <button class="btn sec" id="quit">Abandonner</button></div>
+  </div>
+  <div class="meter" style="margin:0 0 16px"><i style="width:${pct(run.i+1,run.qs.length)}%"></i></div>
+  <div class="card">
+    <div class="qhead"><span><span class="tag">${T[q.track].short}</span> <span class="tag">${q.source}</span> <span class="tag">${esc(sectionOf(q))}</span> ${q.num}</span>
+      <button class="icon" id="flag" aria-pressed="${!!store.flags[q.id]}">${store.flags[q.id]?'Marquee':'Marquer'}</button></div>
+    <div class="stem">${mini(q.q)}</div>
+    ${q.open ? '' : `<div class="small mute">${multi?`Plusieurs reponses (${q.ans.length}).`:'Une seule reponse.'}</div><div class="opts" id="opts">${optHtml}</div>`}
+    <div id="fb"></div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn sec" id="prev" ${run.i?'':'disabled'}>Precedente</button>
+      <span id="actions"></span>
+    </div>
+  </div>`;
+  const actions = $('#actions');
+  const next = () => run.i < run.qs.length-1 ? (run.i++, viewRun()) : finish();
+  const nextLabel = run.i < run.qs.length-1 ? 'Suivante' : 'Terminer';
+  const showFeedback = () => {
+    const f = $('#fb');
+    if (q.open) {
+      if (it.done) { f.innerHTML = `<div class="fb ${it.ok?'ok':'ko'} exp"><h3>${it.ok?'Auto-evaluation : acquis':'Auto-evaluation : a revoir'}</h3>${mini(q.exp)}</div>`; return; }
+      f.innerHTML = `<div class="fb neutral exp"><h3>Reponse type</h3>${mini(q.exp)}</div>
+        <div class="row" style="margin-top:10px"><span>Votre reponse etait-elle complete ?</span>
+        <button class="btn" data-self="1">Oui</button><button class="btn sec" data-self="0">A revoir</button></div>`;
+      f.querySelectorAll('[data-self]').forEach(b => b.onclick = () => { it.self = b.dataset.self==='1'; it.ok = it.self; it.done = true; record(q.id, it.ok); viewRun(); });
+      return;
+    }
+    const good = it.ok;
+    const ans = q.ans.map(k=>letters[k]).sort().join(', ');
+    f.innerHTML = `<div class="fb ${good?'ok':'ko'} exp"><h3>${good?'Correct':'Incorrect'} - bonne(s) reponse(s) : ${ans}</h3>${mini(q.exp)}
+      <p class="small"><a href="#/course/${q.track}/Cours">Revoir le cours ${T[q.track].short}</a></p></div>`;
+  };
+  if (it.done && (q.open || !exam)) { showFeedback(); actions.innerHTML = `<button class="btn" id="nx">${nextLabel}</button>`; $('#nx').onclick = next; }
+  else if (q.open) { actions.innerHTML = `<button class="btn" id="rv">Voir la reponse</button>`; $('#rv').onclick = showFeedback; }
+  else {
+    actions.innerHTML = exam
+      ? `<button class="btn" id="nx">${nextLabel}</button>`
+      : `<button class="btn" id="val" ${it.sel.length?'':'disabled'}>Valider</button>`;
+    if (exam) $('#nx').onclick = next;
+    else $('#val').onclick = () => { it.done = true; it.ok = isOk(it); record(q.id, it.ok); viewRun(); };
+  }
+  document.querySelectorAll('input[name=o]').forEach(inp => inp.onchange = () => {
+    if (multi) { const s = new Set(it.sel); inp.checked ? s.add(inp.value) : s.delete(inp.value); it.sel=[...s]; }
+    else it.sel = [inp.value];
+    document.querySelectorAll('.opt').forEach(l => l.classList.toggle('sel', it.sel.includes(l.querySelector('input').value)));
+    const v = $('#val'); if (v) v.disabled = !it.sel.length;
+  });
+  $('#prev').onclick = () => { run.i--; viewRun(); };
+  $('#flag').onclick = () => { store.flags[q.id] ? delete store.flags[q.id] : store.flags[q.id]=true; save(); renderNav('quiz'); viewRun(); };
+  $('#quit').onclick = () => { if (confirm('Abandonner cette session ?')) { run=null; location.hash='#/quiz'; route(); } };
+  if (run.limit) {
+    const tick = () => { const left = run.limit - Math.floor((Date.now()-run.t0)/1000); const e=$('#tm'); if(e) e.textContent = fmt(Math.max(0,left)); if (left<=0) finish(); };
+    tick(); timerId = setInterval(tick, 1000);
+  }
+}
+function finish(){
+  run.done = true; run.elapsed = Math.floor((Date.now()-run.t0)/1000);
+  if (run.cfg.mode==='exam') run.qs.forEach(it => { if (!it.q.open) { it.done=true; it.ok = it.sel.length ? isOk(it) : false; record(it.q.id, it.ok); } });
+  renderNav('quiz'); viewResult();
+}
+function viewResult(){
+  clearInterval(timerId);
+  const gradable = run.qs.filter(x => !x.q.open || x.self!==null);
+  const good = gradable.filter(x=>x.ok).length;
+  const by = {};
+  gradable.forEach(x => { const k = T[x.q.track].short+' - '+sectionOf(x.q); (by[k] = by[k]||{ok:0,n:0}); by[k].n++; if(x.ok) by[k].ok++; });
+  const sc = pct(good, gradable.length);
+  const wrong = run.qs.filter(x => x.ok===false || (!x.done && !x.q.open)).map(x=>x.q.id);
+  $('#app').innerHTML = `<h1>Resultat</h1>
+  <div class="card row" style="justify-content:space-between">
+    <div><div class="bigstat">${good} / ${gradable.length} <span class="mute" style="font-size:18px">(${sc} %)</span></div>
+    <div class="mute small">Duree : ${fmt(run.elapsed)} · ${run.cfg.mode==='exam'?'mode examen':'mode entrainement'}</div></div>
+    <div class="row"><button class="btn" id="again">Nouvelle session</button>
+    <button class="btn sec" id="redo" ${wrong.length?'':'disabled'}>Refaire les erreurs (${wrong.length})</button></div>
+  </div>
+  <h2>Par domaine</h2>
+  <div class="card"><table class="t">${Object.entries(by).map(([k,v])=>`<tr><td>${esc(k)}</td><td style="width:50%"><div class="meter" style="margin:0"><i class="${pct(v.ok,v.n)>=70?'g':''}" style="width:${pct(v.ok,v.n)}%"></i></div></td><td>${v.ok}/${v.n}</td></tr>`).join('')}</table></div>
+  <h2>Correction detaillee</h2>
+  ${run.qs.map((it,i) => { const q=it.q; return `<details class="card" style="margin-bottom:10px"><summary><strong>${i+1}.</strong> ${it.ok?'OK':it.ok===false?'Faux':'-'} · ${T[q.track].short} ${q.num}</summary>
+    <div class="stem">${mini(q.q)}</div>
+    ${q.open?'':`<ul>${q.opts.map(o=>`<li>${q.ans.includes(o.k)?'<strong>[bonne]</strong> ':''}${it.sel.includes(o.k)?'<em>[votre choix]</em> ':''}${inline(o.t)}</li>`).join('')}</ul>`}
+    <div class="fb neutral exp">${mini(q.exp)}</div></details>`; }).join('')}`;
+  $('#again').onclick = () => { run=null; viewSetup(); };
+  $('#redo').onclick = () => { const ids=wrong; const cfg=run.cfg; startRun(cfg, ids); };
+}
+
+/* ================= COURS ================= */
+function viewCourse(track, doc){
+  const docs = DATA.courses;
+  track = track || docs[0].track;
+  const forTrack = docs.filter(d=>d.track===track);
+  const cur = forTrack.find(d=>d.doc===decodeURIComponent(doc||'')) || forTrack[0];
+  const tabs = ['gcp','az','tf','all'].map(t => {
+    const d = docs.find(x=>x.track===t); if(!d) return '';
+    return `<a class="btn ${t===track?'':'sec'}" style="text-decoration:none" href="#/course/${t}/${encodeURIComponent(d.doc)}">${t==='all'?'Vue d\'ensemble':T[t].short}</a>`;
+  }).join('');
+  const sub = forTrack.length>1 ? `<div class="seg" style="margin:12px 0">${forTrack.map(d=>`<button class="${d===cur?'on':''}" data-d="${d.doc}">${d.doc}</button>`).join('')}</div>` : '';
+  $('#app').innerHTML = `<h1>Cours</h1><div class="row">${tabs}</div>${sub}
+    <div class="course" style="margin-top:16px"><aside class="toc" aria-label="Sommaire" id="toc"></aside><article class="md card" id="md">${renderMd(cur.md)}</article></div>`;
+  document.querySelectorAll('[data-d]').forEach(b => b.onclick = () => { location.hash = `#/course/${track}/${encodeURIComponent(b.dataset.d)}`; });
+  const hs = [...document.querySelectorAll('#md h2')];
+  hs.forEach((h,i)=>h.id='h'+i);
+  $('#toc').innerHTML = hs.map((h,i)=>`<a href="#" data-h="h${i}">${esc(h.textContent)}</a>`).join('');
+  $('#toc').onclick = e => { const a=e.target.closest('[data-h]'); if(a){e.preventDefault(); document.getElementById(a.dataset.h).scrollIntoView({behavior:'smooth'});} };
+  $('#md').onclick = e => { const a=e.target.closest('a'); if(a && !/^https?:/.test(a.getAttribute('href')||'')) e.preventDefault(); };
+  if (track!=='all') $('#md').insertAdjacentHTML('afterbegin', `<p><a class="btn" style="text-decoration:none;color:var(--acc-ink)" href="#/quiz" id="trainhere">S'entrainer sur ${T[track].short}</a></p>`);
+  const th = $('#trainhere'); if (th) th.onclick = () => { setup.tracks=[track]; setup.sources=[]; setup.section=''; };
+}
+
+/* ================= CARNET D'ERREURS ================= */
+function viewNotebook(){
+  const list = failed();
+  $('#app').innerHTML = `<h1>Carnet d'erreurs</h1>
+  <p class="sub">Questions dont la derniere reponse etait fausse, ou que vous avez marquees. Elles disparaissent quand vous y repondez juste.</p>
+  <div class="row" style="margin-bottom:14px"><button class="btn" id="rev" ${list.length?'':'disabled'}>Reviser ces ${list.length} questions</button>
+    <button class="btn sec" id="clr" ${Object.keys(store.stats).length?'':'disabled'}>Reinitialiser la progression</button></div>
+  ${list.length ? list.map(q => `<details class="card" style="margin-bottom:10px"><summary><span class="tag">${T[q.track].short}</span> ${q.num} - ${esc(q.q.split('\n').find(l=>l.trim()&&!l.startsWith('```'))||'').slice(0,110)}</summary>
+    <div class="stem">${mini(q.q)}</div>${q.open?'':`<ul>${q.opts.map(o=>`<li>${q.ans.includes(o.k)?'<strong>[bonne]</strong> ':''}${inline(o.t)}</li>`).join('')}</ul>`}
+    <div class="fb neutral exp">${mini(q.exp)}</div></details>`).join('')
+    : '<div class="card mute">Rien a revoir pour le moment.</div>'}`;
+  $('#rev').onclick = () => startRun({tracks:[],sources:[],section:'',n:0,mode:'train',only:'all'}, shuffle(list.map(q=>q.id)));
+  $('#clr').onclick = () => { if (confirm('Effacer toute la progression ?')) { store.stats={}; store.flags={}; save(); route(); } };
+}
+
+route();
+</script>
+</body>
+</html>
