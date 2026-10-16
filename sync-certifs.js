@@ -37,6 +37,14 @@ const CERTIFS = [
     examen:"75 questions · 180 min · 750/1000 requis",
     desc:"CI/CD, IaC CloudFormation et CDK, résilience, supervision, sécurité et gouvernance multi-comptes." },
 
+  /* Parcours sans simulateur autonome : servi par le Certif Trainer (13-certifications/quiz.html).
+     `externe` = pas de copie ; questions et labs sont fixés ici. */
+  { id:"gcp-devops", externe:true, famille:"gcp", etat:"", etatTexte:"cours + questions",
+    code:"PCDE", titre:"Google Cloud Professional Cloud DevOps Engineer", domaines:5,
+    examen:"~50 questions · 120 min · niveau Professional",
+    desc:"SRE, CI/CD sur Cloud Build et Cloud Deploy, GKE, Cloud Logging et Monitoring, gestion d'incidents. Cours, approfondissement et questions avancées dans le Certif Trainer.",
+    url:"13-certifications/quiz.html#/course/gcp/Cours", questions:82, labs:0 },
+
   { id:"cka", dossier:"cka-trainer", famille:"k8s", etat:"", etatTexte:"plus tard",
     code:"CKA", titre:"Certified Kubernetes Administrator", domaines:5,
     examen:"15 à 20 tâches 100 % pratiques · 2 h · 66 % requis",
@@ -81,6 +89,12 @@ const rapport = [];
 const index = [];
 
 CERTIFS.forEach(c => {
+  if (c.externe) {
+    index.push({ id:c.id, code:c.code, titre:c.titre, desc:c.desc, famille:c.famille, etat:c.etat,
+      etatTexte:c.etatTexte||"", examen:c.examen, domaines:c.domaines, miseEnAvant:"",
+      questions:c.questions, labs:c.labs, url:c.url });
+    return;
+  }
   const src = path.join(source, c.dossier, "index.html");
   if (!fs.existsSync(src)) { console.warn("  ! introuvable, ignoré :", src); return; }
 

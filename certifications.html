@@ -20,6 +20,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
     --aws:#f0932b; --aws-soft:#2c2113;
     --hashi:#a67cff; --hashi-soft:#221a35;
     --k8s:#4ecdc4; --k8s-soft:#122b29;
+    --gcp:#ff7a6b; --gcp-soft:#331a17;
     --warn:#edaa5f; --warn-soft:#2a2013;
   }
   @media (prefers-color-scheme: light){
@@ -30,6 +31,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
       --aws:#9c5a00; --aws-soft:#fdf0dd;
       --hashi:#6a3fc0; --hashi-soft:#f0e9fd;
       --k8s:#0d7c74; --k8s-soft:#dff5f3;
+      --gcp:#c4382a; --gcp-soft:#fde8e5;
       --warn:#8a5a00; --warn-soft:#fdf3e3;
     }
   }
@@ -74,12 +76,14 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
   .cert.aws:hover{border-color:var(--aws)}
   .cert.hashi:hover{border-color:var(--hashi)}
   .cert.k8s:hover{border-color:var(--k8s)}
+  .cert.gcp:hover{border-color:var(--gcp)}
   .cert .haut{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .cert .code{font-size:12px;font-weight:700;letter-spacing:.05em;padding:.2rem .55rem;border-radius:6px}
   .cert.azure .code{background:var(--azure-soft);color:var(--azure)}
   .cert.aws .code{background:var(--aws-soft);color:var(--aws)}
   .cert.hashi .code{background:var(--hashi-soft);color:var(--hashi)}
   .cert.k8s .code{background:var(--k8s-soft);color:var(--k8s)}
+  .cert.gcp .code{background:var(--gcp-soft);color:var(--gcp)}
   .cert .etat{font-size:11.5px;color:var(--muted);margin-left:auto}
   .cert .etat.obtenue{color:var(--accent);font-weight:650}
   .cert .etat.focus2{color:var(--warn);font-weight:650}
@@ -94,6 +98,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
   .cert.aws .aller{color:var(--aws)}
   .cert.hashi .aller{color:var(--hashi)}
   .cert.k8s .aller{color:var(--k8s)}
+  .cert.gcp .aller{color:var(--gcp)}
 
   .bilan{display:flex;gap:26px;flex-wrap:wrap;margin:22px 0 0;font-size:13.5px;color:var(--muted)}
   .bilan b{display:block;font-size:23px;color:var(--ink);font-variant-numeric:tabular-nums}
@@ -139,13 +144,14 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
 </div>
 
 <script>
-const CERTIFS = [{"id":"az104","code":"AZ-104","titre":"Azure Administrator Associate","desc":"Identités et gouvernance, stockage, compute, réseau, supervision. L'examen d'administration Azure le plus large.","famille":"azure","etat":"focus","etatTexte":"","examen":"40 à 60 questions · ~100 min · 700/1000 requis","domaines":5,"miseEnAvant":"Créneau d'examen réservé. La banque couvre les 5 domaines officiels avec 3 niveaux, du vocabulaire aux diagnostics réseau, plus les commandes az, le Bicep, le KQL et 10 labs sur ton abonnement.","questions":328,"labs":10,"url":"certifs/az104/index.html"},{"id":"az204","code":"AZ-204","titre":"Azure Developer Associate","desc":"App Service, Functions, conteneurs, Cosmos DB, Key Vault, Service Bus, Event Grid et APIM.","famille":"azure","etat":"","etatTexte":"à venir","examen":"40 à 60 questions · ~120 min · 700/1000 requis","domaines":5,"miseEnAvant":"","questions":260,"labs":6,"url":"certifs/az204/index.html"},{"id":"az400","code":"AZ-400","titre":"Azure DevOps Engineer Expert","desc":"Pipelines, IaC, stratégie de branches, artefacts, sécurité de la chaîne et observabilité.","famille":"azure","etat":"","etatTexte":"après l'AZ-204","examen":"40 à 60 questions · ~150 min · 700/1000 requis","domaines":5,"miseEnAvant":"","questions":239,"labs":8,"url":"certifs/az400/index.html"},{"id":"aws-devops","code":"DOP-C02","titre":"AWS DevOps Engineer – Professional","desc":"CI/CD, IaC CloudFormation et CDK, résilience, supervision, sécurité et gouvernance multi-comptes.","famille":"aws","etat":"","etatTexte":"bon d'examen en main","examen":"75 questions · 180 min · 750/1000 requis","domaines":6,"miseEnAvant":"","questions":229,"labs":8,"url":"certifs/aws-devops/index.html"},{"id":"cka","code":"CKA","titre":"Certified Kubernetes Administrator","desc":"Format à part : des drills de commandes kubectl à taper, pas des QCM, plus des labs sur cluster réel.","famille":"k8s","etat":"","etatTexte":"plus tard","examen":"15 à 20 tâches 100 % pratiques · 2 h · 66 % requis","domaines":5,"miseEnAvant":"","questions":179,"labs":9,"url":"certifs/cka/index.html"},{"id":"terraform","code":"HCTA-004","titre":"HashiCorp Terraform Associate","desc":"Obtenue le 27 juillet 2026, valable jusqu'en juillet 2028. À garder sous le coude pour l'IaC de l'AZ-400.","famille":"hashi","etat":"obtenue","etatTexte":"","examen":"57 questions · 60 min · closed book","domaines":9,"miseEnAvant":"","questions":132,"labs":4,"url":"certifs/terraform/index.html"},{"id":"az900","code":"AZ-900","titre":"Azure Fundamentals","desc":"Le socle cloud et Azure : modèles de service, régions, coûts, gouvernance. Idéal pour réviser les bases avant l'AZ-104.","famille":"azure","etat":"","etatTexte":"fondamentaux","examen":"40 à 60 questions · 45 min · 700/1000 requis","domaines":3,"miseEnAvant":"","questions":153,"labs":0,"url":"certifs/az900/index.html"},{"id":"clf","code":"CLF-C02","titre":"AWS Cloud Practitioner","desc":"Le socle AWS : concepts, sécurité partagée, services clés, facturation et support.","famille":"aws","etat":"","etatTexte":"fondamentaux","examen":"65 questions · 90 min · 700/1000 requis","domaines":4,"miseEnAvant":"","questions":137,"labs":0,"url":"certifs/clf/index.html"}];
+const CERTIFS = [{"id":"az104","code":"AZ-104","titre":"Azure Administrator Associate","desc":"Identités et gouvernance, stockage, compute, réseau, supervision. L\u0027examen d\u0027administration Azure le plus large.","famille":"azure","etat":"focus","etatTexte":"","examen":"40 à 60 questions · ~100 min · 700/1000 requis","domaines":5,"miseEnAvant":"Créneau d\u0027examen réservé. La banque couvre les 5 domaines officiels avec 3 niveaux, du vocabulaire aux diagnostics réseau, plus les commandes az, le Bicep, le KQL et 10 labs sur ton abonnement.","questions":328,"labs":10,"url":"certifs/az104/index.html"},{"id":"az204","code":"AZ-204","titre":"Azure Developer Associate","desc":"App Service, Functions, conteneurs, Cosmos DB, Key Vault, Service Bus, Event Grid et APIM.","famille":"azure","etat":"","etatTexte":"à venir","examen":"40 à 60 questions · ~120 min · 700/1000 requis","domaines":5,"miseEnAvant":"","questions":260,"labs":6,"url":"certifs/az204/index.html"},{"id":"az400","code":"AZ-400","titre":"Azure DevOps Engineer Expert","desc":"Pipelines, IaC, stratégie de branches, artefacts, sécurité de la chaîne et observabilité.","famille":"azure","etat":"","etatTexte":"après l\u0027AZ-204","examen":"40 à 60 questions · ~150 min · 700/1000 requis","domaines":5,"miseEnAvant":"","questions":239,"labs":8,"url":"certifs/az400/index.html"},{"id":"aws-devops","code":"DOP-C02","titre":"AWS DevOps Engineer – Professional","desc":"CI/CD, IaC CloudFormation et CDK, résilience, supervision, sécurité et gouvernance multi-comptes.","famille":"aws","etat":"","etatTexte":"bon d\u0027examen en main","examen":"75 questions · 180 min · 750/1000 requis","domaines":6,"miseEnAvant":"","questions":229,"labs":8,"url":"certifs/aws-devops/index.html"},{"id":"gcp-devops","code":"PCDE","titre":"Google Cloud Professional Cloud DevOps Engineer","desc":"SRE, CI/CD sur Cloud Build et Cloud Deploy, GKE, Cloud Logging et Monitoring, gestion d\u0027incidents. Cours, approfondissement et questions avancées dans le Certif Trainer.","famille":"gcp","etat":"","etatTexte":"cours + questions","examen":"~50 questions · 120 min · niveau Professional","domaines":5,"miseEnAvant":"","questions":82,"labs":0,"url":"13-certifications/quiz.html#/course/gcp/Cours"},{"id":"cka","code":"CKA","titre":"Certified Kubernetes Administrator","desc":"Format à part : des drills de commandes kubectl à taper, pas des QCM, plus des labs sur cluster réel.","famille":"k8s","etat":"","etatTexte":"plus tard","examen":"15 à 20 tâches 100 % pratiques · 2 h · 66 % requis","domaines":5,"miseEnAvant":"","questions":179,"labs":9,"url":"certifs/cka/index.html"},{"id":"terraform","code":"HCTA-004","titre":"HashiCorp Terraform Associate","desc":"Obtenue le 27 juillet 2026, valable jusqu\u0027en juillet 2028. À garder sous le coude pour l\u0027IaC de l\u0027AZ-400.","famille":"hashi","etat":"obtenue","etatTexte":"","examen":"57 questions · 60 min · closed book","domaines":9,"miseEnAvant":"","questions":132,"labs":4,"url":"certifs/terraform/index.html"},{"id":"az900","code":"AZ-900","titre":"Azure Fundamentals","desc":"Le socle cloud et Azure : modèles de service, régions, coûts, gouvernance. Idéal pour réviser les bases avant l\u0027AZ-104.","famille":"azure","etat":"","etatTexte":"fondamentaux","examen":"40 à 60 questions · 45 min · 700/1000 requis","domaines":3,"miseEnAvant":"","questions":153,"labs":0,"url":"certifs/az900/index.html"},{"id":"clf","code":"CLF-C02","titre":"AWS Cloud Practitioner","desc":"Le socle AWS : concepts, sécurité partagée, services clés, facturation et support.","famille":"aws","etat":"","etatTexte":"fondamentaux","examen":"65 questions · 90 min · 700/1000 requis","domaines":4,"miseEnAvant":"","questions":137,"labs":0,"url":"certifs/clf/index.html"}];
 
 const FAMILLES = [
   { id:"tous",  label:"Toutes" },
   { id:"azure", label:"Azure" },
   { id:"aws",   label:"AWS" },
   { id:"hashi", label:"HashiCorp" },
+  { id:"gcp",   label:"Google Cloud" },
   { id:"k8s",   label:"Kubernetes" }
 ];
 

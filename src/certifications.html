@@ -20,6 +20,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
     --aws:#f0932b; --aws-soft:#2c2113;
     --hashi:#a67cff; --hashi-soft:#221a35;
     --k8s:#4ecdc4; --k8s-soft:#122b29;
+    --gcp:#ff7a6b; --gcp-soft:#331a17;
     --warn:#edaa5f; --warn-soft:#2a2013;
   }
   @media (prefers-color-scheme: light){
@@ -30,6 +31,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
       --aws:#9c5a00; --aws-soft:#fdf0dd;
       --hashi:#6a3fc0; --hashi-soft:#f0e9fd;
       --k8s:#0d7c74; --k8s-soft:#dff5f3;
+      --gcp:#c4382a; --gcp-soft:#fde8e5;
       --warn:#8a5a00; --warn-soft:#fdf3e3;
     }
   }
@@ -74,12 +76,14 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
   .cert.aws:hover{border-color:var(--aws)}
   .cert.hashi:hover{border-color:var(--hashi)}
   .cert.k8s:hover{border-color:var(--k8s)}
+  .cert.gcp:hover{border-color:var(--gcp)}
   .cert .haut{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
   .cert .code{font-size:12px;font-weight:700;letter-spacing:.05em;padding:.2rem .55rem;border-radius:6px}
   .cert.azure .code{background:var(--azure-soft);color:var(--azure)}
   .cert.aws .code{background:var(--aws-soft);color:var(--aws)}
   .cert.hashi .code{background:var(--hashi-soft);color:var(--hashi)}
   .cert.k8s .code{background:var(--k8s-soft);color:var(--k8s)}
+  .cert.gcp .code{background:var(--gcp-soft);color:var(--gcp)}
   .cert .etat{font-size:11.5px;color:var(--muted);margin-left:auto}
   .cert .etat.obtenue{color:var(--accent);font-weight:650}
   .cert .etat.focus2{color:var(--warn);font-weight:650}
@@ -94,6 +98,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
   .cert.aws .aller{color:var(--aws)}
   .cert.hashi .aller{color:var(--hashi)}
   .cert.k8s .aller{color:var(--k8s)}
+  .cert.gcp .aller{color:var(--gcp)}
 
   .bilan{display:flex;gap:26px;flex-wrap:wrap;margin:22px 0 0;font-size:13.5px;color:var(--muted)}
   .bilan b{display:block;font-size:23px;color:var(--ink);font-variant-numeric:tabular-nums}
@@ -146,6 +151,7 @@ const FAMILLES = [
   { id:"azure", label:"Azure" },
   { id:"aws",   label:"AWS" },
   { id:"hashi", label:"HashiCorp" },
+  { id:"gcp",   label:"Google Cloud" },
   { id:"k8s",   label:"Kubernetes" }
 ];
 

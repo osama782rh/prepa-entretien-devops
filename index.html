@@ -15,11 +15,11 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
 <style>
   :root{--bg:#0d111a;--surface:#151b27;--surface2:#1d2432;--ink:#dde4f0;--muted:#8d9ab2;
         --accent:#6c8cff;--accent-soft:#1a2440;--border:#26303f;--ok:#3ecf8e;--ok-soft:#10301f;
-        --warn:#f0b04a;--warn-soft:#352a12;--azure:#4aa8ff;--aws:#f0a340;--k8s:#7c8cff;--hashi:#b57cff}
+        --warn:#f0b04a;--warn-soft:#352a12;--azure:#4aa8ff;--aws:#f0a340;--k8s:#7c8cff;--hashi:#b57cff;--gcp:#ff7a6b}
   @media (prefers-color-scheme: light){
     :root{--bg:#f5f7fb;--surface:#fff;--surface2:#f0f3f9;--ink:#161d2b;--muted:#5c687d;
           --accent:#2b5fd9;--accent-soft:#e6edfc;--border:#dce2ee;--ok:#1e7a46;--ok-soft:#e1f4ea;
-          --warn:#8a5a00;--warn-soft:#fdf1d8;--azure:#0b66c2;--aws:#b36200;--k8s:#3d4fd1;--hashi:#7a3fc4}
+          --warn:#8a5a00;--warn-soft:#fdf1d8;--azure:#0b66c2;--aws:#b36200;--k8s:#3d4fd1;--hashi:#7a3fc4;--gcp:#c4382a}
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth;scroll-padding-top:70px}
@@ -64,7 +64,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
   .cert{border-left:4px solid var(--c,var(--accent))}
   .cert .code{font-size:13px;font-weight:750;color:var(--c,var(--accent));letter-spacing:.04em}
   .cert .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
-  .cert.azure{--c:var(--azure)} .cert.aws{--c:var(--aws)} .cert.k8s{--c:var(--k8s)} .cert.hashi{--c:var(--hashi)}
+  .cert.gcp{--c:var(--gcp)} .cert.azure{--c:var(--azure)} .cert.aws{--c:var(--aws)} .cert.k8s{--c:var(--k8s)} .cert.hashi{--c:var(--hashi)}
   .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:12px;background:var(--surface2);color:var(--muted);align-self:flex-start}
   .tag.focus{background:var(--warn-soft);color:var(--warn)}
   .tag.ok{background:var(--ok-soft);color:var(--ok)}
@@ -102,8 +102,8 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
 
   <div class="kpis">
     <div class="kpi"><b>2416</b><span>questions d'entretien</span></div>
-    <div class="kpi"><b>1657</b><span>questions de certification</span></div>
-    <div class="kpi"><b>8</b><span>simulateurs d'examen</span></div>
+    <div class="kpi"><b>1739</b><span>questions de certification</span></div>
+    <div class="kpi"><b>9</b><span>certifications</span></div>
     <div class="kpi"><b>45</b><span>labs pratiques</span></div>
     <div class="kpi"><b>18</b><span>fiches d'étude</span></div>
   </div>
@@ -139,7 +139,7 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
   <p class="h2sub">Un simulateur par examen : 3 niveaux, labs, examen blanc pondéré sur les vrais pourcentages. <a href="certifications.html" style="color:var(--accent)">Voir la page détaillée →</a></p>
   <div class="banner"><b>En priorité : AZ-104.</b> Créneau d'examen réservé, les 5 domaines officiels sont couverts avec 10 labs.</div>
 
-  <div class="grid g4">
+  <div class="grid g3">
     <a class="card cert azure" href="certifs/az104/index.html">
       <span class="tag focus">Prioritaire</span>
       <span class="code">AZ-104</span><b>Azure Administrator</b>
@@ -174,6 +174,13 @@ if("serviceWorker" in navigator && (location.protocol==="https:" || location.hos
       <p>CI/CD, CloudFormation et CDK, résilience, multi-comptes.</p>
       <div class="counts"><span>229 <i>questions</i></span><span>8 <i>labs</i></span></div>
       <span class="go">S'entraîner →</span>
+    </a>
+    <a class="card cert gcp" href="13-certifications/quiz.html#/course/gcp/Cours">
+      <span class="tag">Cours + questions</span>
+      <span class="code">PCDE</span><b>GCP DevOps Engineer</b>
+      <p>Google Cloud Professional : SRE, Cloud Build, GKE, supervision, incidents.</p>
+      <div class="counts"><span>82 <i>questions</i></span><span>cours complet</span></div>
+      <span class="go">Ouvrir le cours →</span>
     </a>
     <a class="card cert aws" href="certifs/clf/index.html">
       <span class="tag">Fondamentaux</span>
